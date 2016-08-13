@@ -3,5 +3,4 @@ sudo: false
 node_js:
   - "4.3"
 script:
-  - cd gorkem/vscode-java
   - npm run vscode:prepublish
