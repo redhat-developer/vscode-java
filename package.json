@@ -11,7 +11,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/gorkem/java-language-server"
+		"url": "https://github.com/gorkem/vscode-java"
 	},
 	"categories": [ 
 		"Other"
@@ -23,24 +23,12 @@
 	],
 	"main": "./out/src/extension",
 	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "Example configuration",
-			"properties": {
-				"numberOfProblems": {
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
-				}
-			}
-		}
 	},	
 	"scripts": {
 		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
 		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"build-server": "mvn -f ../server/pom.xml clean verify"
-
+		"build-server": "mvn -f ../java-language-server/server/pom.xml -Pvscode-build clean verify"
 	},
 	"devDependencies": {
 		"typescript": "^1.8.9",

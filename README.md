@@ -1,6 +1,6 @@
 
 Java language support for Visul Studio Code
- =====================
+=====================
 
 Provides Java languge support via
 [java-language-server](https://github.com/gorkem/java-language-server), which utilizes [Eclipse 
