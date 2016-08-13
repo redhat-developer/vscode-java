@@ -1,6 +1,7 @@
 language: node_js
 sudo: false
 node_js:
-  - "4.2"
+  - "4.3"
 script:
-  - ./node_modules/vscode/bin/compile -p ./
+  - cd gorkem/vscode-java
+  - npm run vscode:prepublish
