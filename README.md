@@ -1,4 +1,6 @@
 
+[![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java)
+
 Java language support for Visul Studio Code
 =====================
 
