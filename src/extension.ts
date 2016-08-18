@@ -10,20 +10,12 @@ import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, N
 
 var electron = require('./electron_j');
 import * as requirements from './requirements';
+import { StatusNotification } from './protocol';
 
 
 declare var v8debug;
 var DEBUG =( typeof v8debug === 'object');
 var storagePath;
-
-interface StatusReport {
-	message: string;
-	type: string;
-}
-
-namespace StatusNotification {
-	export const type: NotificationType<StatusReport> = { get method() { return 'language/status'; } };
-}
 
 function runJavaServer(){
 	return requirements.resolveRequirements().catch(error =>{
@@ -125,7 +117,7 @@ export function activate(context: ExtensionContext) {
 			item.hide();
 		}
 	});
-
+	
 	let disposable = languageClient.start();
 	
 	// Push the disposable to the context's subscriptions so that the 
