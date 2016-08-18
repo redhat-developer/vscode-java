@@ -5,12 +5,12 @@ import * as path from 'path';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 
-import { workspace, Disposable, ExtensionContext, StatusBarItem, window, StatusBarAlignment, commands, ViewColumn, Uri, } from 'vscode';
+import { workspace, Disposable, ExtensionContext, StatusBarItem, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, NotificationType, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
 
 var electron = require('./electron_j');
 import * as requirements from './requirements';
-import { StatusNotification } from './protocol';
+import { StatusNotification,ClassFileContentsRequest } from './protocol';
 
 
 declare var v8debug;
@@ -118,6 +118,16 @@ export function activate(context: ExtensionContext) {
 		}
 	});
 	
+	let provider: TextDocumentContentProvider= <TextDocumentContentProvider> {
+		onDidChange: null,
+		provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
+			return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string):string => { 
+				return v || '';
+			});
+		}
+	};
+	workspace.registerTextDocumentContentProvider("jdt", provider)
+
 	let disposable = languageClient.start();
 	
 	// Push the disposable to the context's subscriptions so that the 
