@@ -1,11 +1,11 @@
 
 [![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java)
 
-Java language support for Visual Studio Code
+Java &trade; language support for Visual Studio Code
 =====================
 
-Provides Java language support via
-[java-language-server](https://github.com/gorkem/java-language-server), which utilizes [Eclipse 
+Provides Java &trade; language support via
+[java-language-server](https://github.com/gorkem/java-language-server), which utilizes [Eclipse &trade;
 JDT](http://www.eclipse.org/jdt/).
 
 
