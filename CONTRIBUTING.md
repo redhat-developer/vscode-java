@@ -26,13 +26,16 @@ and the contributions should be coordinated between the two repositories.
 
 # Building java-language-server
 This assumes that you are starting on the `vscdoe-java` directory
+
 1. `cd ..`
 2. Fork and clone the [java-language-server](https://github.com/gorkem/java-language-server) repository
-3. Build server 
-    ```bash
-    $ cd ..\vscode-java
-    $ npm run-script build-server
-    ```
+3. Build server
+
+	```bash
+	$ cd ..\vscode-java
+	$ npm run-script build-server
+	```
+	
 This will build and place the binaries under the `server` folder. Alternately you can download
 and unzip a pre-built server. For pre-built server information refer to java-language-server 
 project.
