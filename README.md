@@ -1,7 +1,7 @@
 
 [![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java)
 
-Java &trade; language support for Visual Studio Code
+Language support for Java &trade; for Visual Studio Code
 =====================
 
 Provides Java &trade; language support via

@@ -1,11 +1,13 @@
 {
 	"name": "java",
-	"displayName": "Java(TM) Language Support by Red Hat",
-	"description": "Java(TM) language support for Visual Studio Code",
+	"displayName": "Language Support for Java(TM) by Red Hat",
+	"description": "Language Support for Java(TM) for Visual Studio Code provided by Red Hat",
 	"author": "Red Hat",
-	"license": "Eclipse Public License 1.0",
+	"license": "SEE LICENSE IN LICENSE",
 	"version": "0.0.1",
 	"publisher": "redhat",
+	"bugs" : "https://github.com/gorkem/vscode-java/issues",
+	"preview": true,
 	"engines": {
 		"vscode": "^1.3.0"
 	},
@@ -14,7 +16,8 @@
 		"url": "https://github.com/gorkem/vscode-java"
 	},
 	"categories": [ 
-		"Other"
+		"Languages",
+		"Linters"
 	],
 	"activationEvents": [
 		"onLanguage:java",
