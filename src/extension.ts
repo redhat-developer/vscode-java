@@ -83,7 +83,7 @@ export function activate(context: ExtensionContext) {
 	let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
     
 	// Create the language client and start the client.
-	let languageClient = new LanguageClient('java','Java Language Support', serverOptions, clientOptions);
+	let languageClient = new LanguageClient('java','Language Support for Java', serverOptions, clientOptions);
 	languageClient.onNotification(StatusNotification.type, (report) => {
 		console.log(report.message);
 		if(window.activeTextEditor && window.activeTextEditor.document){

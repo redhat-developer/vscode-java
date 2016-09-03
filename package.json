@@ -39,6 +39,10 @@
 	},
 	"dependencies": {
 		"vscode-languageclient": "next",
-		"find-java-home": "^0.1.2"
+		"find-java-home": "^0.1.2",
+		"http-proxy-agent": "^1.0.0",
+		"https-proxy-agent": "^1.0.0",
+		"tmp" : "^0.0.28",
+		"decompress": "^4.0.0"
 	}
 }
