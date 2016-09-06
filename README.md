@@ -8,9 +8,21 @@ Provides Java &trade; language support via
 [java-language-server](https://github.com/gorkem/java-language-server), which utilizes [Eclipse &trade;
 JDT](http://www.eclipse.org/jdt/).
 
+Quick Start
+============
+1. Install the Extension
+2. If you do not have a _Java 8_ Runtime on current system path or _JAVA_HOME_ is not correctly set to point to one
+    * Download and install a Java 8 compatible runtime.
+3. Extension is activated when you first access a Java file.
+    * Initial activation can be longer since it requires extension to download additional parts.
+    * Recognizes only projects with *maven* build files on the directory hierarchy. 
+
 
 Features 
 =========
+![ screencast ](https://github.com/gorkem/vscode-java/blob/master/images/vscode-java.0.0.1.gif)
+
+* Maven pom.xml project support
 * As you type reporting of parsing and compilation errors
 * Code completion
 * Javadoc hovers 
@@ -19,8 +31,6 @@ Features
 * Code lens (references)
 * Highlights
 * Code formatting
-* Maven pom.xml project support
-
 
 Contributing
 ----------------------------
