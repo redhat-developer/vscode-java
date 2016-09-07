@@ -24,7 +24,7 @@ and the contributions should be coordinated between the two repositories.
 	```
 5. Open the folder in VS Code
 
-# Building java-language-server
+## Building java-language-server
 This assumes that you are starting on the `vscdoe-java` directory
 
 1. `cd ..`
@@ -40,3 +40,17 @@ This will build and place the binaries under the `server` folder. Alternately yo
 and unzip a pre-built server. For pre-built server information refer to java-language-server 
 project.
     
+## Sideloading
+
+You can create a binary that you can sideload to your VS Code installation. 
+
+1. Fork and clone this repository
+2. `cd vscode-java`
+3. Install the dependencies:
+
+	```bash
+	$ npm install
+	```
+4. Optionally, follow the instruction to build the server. 
+5. See documentation on [extension installation](https://github.com/Microsoft/vscode-docs/blob/master/docs/extensions/install-extension.md) 
+on ways to sideload or share.
