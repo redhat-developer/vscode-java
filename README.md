@@ -20,7 +20,7 @@ Quick Start
 
 Features 
 =========
-![ screencast ](https://github.com/gorkem/vscode-java/blob/master/images/vscode-java.0.0.1.gif)
+![ screencast ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/vscode-java.0.0.1.gif)
 
 * Maven pom.xml project support
 * As you type reporting of parsing and compilation errors
