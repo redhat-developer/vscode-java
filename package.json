@@ -3,6 +3,7 @@
 	"displayName": "Language Support for Java(TM) by Red Hat",
 	"description": "Language Support for Java(TM) for Visual Studio Code provided by Red Hat",
 	"author": "Red Hat",
+	"icon": "icons/icon128.png",
 	"license": "SEE LICENSE IN LICENSE",
 	"version": "0.0.1",
 	"publisher": "redhat",
