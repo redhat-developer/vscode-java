@@ -5,8 +5,8 @@ Language support for Java &trade; for Visual Studio Code
 =====================
 
 Provides Java &trade; language support via
-[java-language-server](https://github.com/gorkem/java-language-server), which utilizes [Eclipse &trade;
-JDT](http://www.eclipse.org/jdt/).
+[java-language-server](https://github.com/gorkem/java-language-server), which utilizes
+[Eclipse &trade; JDT](http://www.eclipse.org/jdt/).
 
 Quick Start
 ============
@@ -32,18 +32,31 @@ Features
 * Highlights
 * Code formatting
 
+Troubleshooting
+===============
+1. Due to size restrictions on the marketplace extension downloads additional required parts check that they 
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.2/server` folder. 
+You should see a folder named `plugins`.
+
+2. Check the status of the language tools on the lower right corner (marked with A on image below).
+It should show ready (thumbs up) as on the image below. You can click on the status and open the 
+language tool logs for further information in case of a failure. 
+![ status indicator ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/statusMarker.png)
+
+3. Report any problems you face to the [project](https://github.com/gorkem/vscode-java/issues).
+
 Contributing
-----------------------------
+===============
 This is an open source project open to anyone. Contributions are extremely welcome 
 
 For information on getting started refer to [java-language-server](https://github.com/gorkem/java-language-server/blob/master/README.md).
 
 Feedback
----------
-* File a bug in [GitHub Issues](https://github.com/gorkem/java-language-server/issues).
+===============
+* File a bug in [GitHub Issues](https://github.com/gorkem/vscode-java/issues).
 * [Tweet](https://twitter.com/GorkemErcan) us with other feedback.
 
 
 License
--------
+===============
 EPL 1.0, See [LICENSE](LICENSE) for more information.
