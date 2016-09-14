@@ -33,6 +33,11 @@
 			"isBuildCommand": true
 		},
 		{
+			"taskName": "test",
+			"args": ["run", "test"],	
+			"isTestCommand": true
+		},
+		{
 			"taskName": "build-server",
 			// we run the custom script "compile" as defined in package.json
 			"args": ["run", "build-server", "--loglevel", "silent"],	
