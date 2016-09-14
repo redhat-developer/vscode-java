@@ -20,7 +20,7 @@
 		"Languages",
 		"Linters"
 	],
-	"activationEvents": [
+	"activationEvents": [ 
 		"onLanguage:java",
 		"onCommand:java.show.references",
 		"onCommand:java.open.output"
@@ -39,7 +39,7 @@
 		"vscode": "^0.11.0"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^2.5.0",
+		"vscode-languageclient": "2.4.2",
 		"find-java-home": "^0.1.2",
 		"http-proxy-agent": "^1.0.0",
 		"https-proxy-agent": "^1.0.0",
