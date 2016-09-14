@@ -41,6 +41,7 @@ You should see a folder named `plugins`.
 2. Check the status of the language tools on the lower right corner (marked with A on image below).
 It should show ready (thumbs up) as on the image below. You can click on the status and open the 
 language tool logs for further information in case of a failure. 
+
 ![ status indicator ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/statusMarker.png)
 
 3. Report any problems you face to the [project](https://github.com/gorkem/vscode-java/issues).
