@@ -27,6 +27,10 @@
 	],
 	"main": "./out/src/extension",
 	"contributes": {
+		"languages": [{
+			"id": "java",
+			"extensions": [ ".class" ]
+		}]
 	},	
 	"scripts": {
 		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
