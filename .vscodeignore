@@ -8,3 +8,5 @@ images/**
 .gitignore
 tsconfig.json
 vsc-extension-quickstart.md
+undefined/**
+CONTRIBUTING.md 
