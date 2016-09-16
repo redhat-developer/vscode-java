@@ -19,11 +19,11 @@ Quick Start
 
 What is new in 0.0.3 
 ====================
-* In addition to maven, we now support basic Eclipse projects (details)[https://github.com/gorkem/java-language-server/issues/37]. 
+* In addition to maven, we now support basic Eclipse projects [details](https://github.com/gorkem/java-language-server/issues/37). 
 * Go to Definition (<kbd>F12</kbd>) is enabled for libraries and can display Java code that is not part of project's source code
 * Code complete triggers are added for `.#@` characters. 
 #### Significant bugs 
-* (Opening maven project a 2nd time doesn't work)[https://github.com/gorkem/java-language-server/issues/66]
+* [Opening maven project a 2nd time doesn't work](https://github.com/gorkem/java-language-server/issues/66)
 
 
 Features 
