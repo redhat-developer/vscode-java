@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/gorkem/vscode-java.png?label=ready&title=Ready)](https://waffle.io/gorkem/vscode-java)
 
 [![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java)
 
