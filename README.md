@@ -22,7 +22,7 @@ What is new in 0.0.3
 * In addition to maven, we now support basic Eclipse projects [details](https://github.com/gorkem/java-language-server/issues/37). 
 * Go to Definition (<kbd>F12</kbd>) is enabled for libraries and can display Java code that is not part of project's source code
 * Code complete triggers are added for `.#@` characters. 
-#### Significant bugs 
+#### Significant bug fixes
 * [Opening maven project a 2nd time doesn't work](https://github.com/gorkem/java-language-server/issues/66)
 
 
@@ -31,6 +31,7 @@ Features
 ![ screencast ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/vscode-java.0.0.1.gif)
 
 * Maven pom.xml project support
+* Basic Eclipse Java project support 
 * As you type reporting of parsing and compilation errors
 * Code completion
 * Javadoc hovers 
