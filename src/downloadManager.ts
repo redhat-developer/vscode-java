@@ -5,10 +5,18 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as stream from 'stream';
 import {Url, parse} from 'url';
+
 const HttpProxyAgent = require('http-proxy-agent');
 const HttpsProxyAgent = require('https-proxy-agent');
 const tmp = require('tmp');
 const decompress = require('decompress');
+const progress = require('progress-stream');
+
+let downloadProgressItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
+function closeDownloadProgressItem(){
+	downloadProgressItem.hide();
+	downloadProgressItem.dispose();
+}
 
 function download(urlString: string, proxy?: string, strictSSL?: boolean): Promise<stream.Readable> {
     let url = parse(urlString);
@@ -21,7 +29,7 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
     };
 
     return new Promise<stream.Readable>((resolve, reject) => {
-        return https.get(options, res => {
+        let request = https.get(options, res => {
             // handle redirection
             if (res.statusCode === 302) {
                 return download(res.headers.location).then(is => resolve(is)).catch(err => reject(err));
@@ -29,12 +37,22 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
             else if (res.statusCode !== 200) {
                 return reject(Error(`Download failed with code ${res.statusCode}.`));
             }
-            return resolve(res);
+			let len = parseInt(res.headers['content-length'], 10);
+			let progressStream = progress({
+				length: len,
+				time: 500
+			});
+			downloadProgressItem.text = 'Completing Java installation';
+			downloadProgressItem.show();
+			progressStream.on('progress', function (progressData) {
+				downloadProgressItem.text = 'Completing Java installation ' + Number.parseInt(progressData.percentage) + '%';
+			});
+            return resolve(res.pipe(progressStream));
         });
+		request.setTimeout(30000, ()=>{request.abort()});
+		return request;
     });
-
 }
-
 
 function getSystemProxyURL(requestURL: Url): string {
 	if (requestURL.protocol === 'http:') {
@@ -81,20 +99,26 @@ export function downloadAndInstallServer() {
 			tmp.file((err, tmpPath, fd, cleanupCallback) => {
 				const out = fs.createWriteStream(null, { fd: fd });
 				// handle errors 
-				out.once('error', err => reject(err));
-				is.once('error', err => reject(err));
-
+				out.once('error', err => {
+					closeDownloadProgressItem();
+					reject(err);
+				})
+				is.once('error', err => {
+					closeDownloadProgressItem();
+					reject(err);
+				});
 				out.once('finish', () => {
 					decompress(tmpPath, SERVER_FOLDER).then(files => {
+						closeDownloadProgressItem();
 						return resolve(true);
 					}).catch(err => {
+						closeDownloadProgressItem();
 						return reject(err);
-					})
+					});
 				})
 				is.pipe(out);
 			})
-		}).
-			catch(err => {
+		}).catch(err => {
 				console.log(err);
 			});
 	});

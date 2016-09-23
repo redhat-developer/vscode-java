@@ -49,6 +49,7 @@
 		"http-proxy-agent": "^1.0.0",
 		"https-proxy-agent": "^1.0.0",
 		"tmp" : "^0.0.28",
-		"decompress": "^4.0.0"
+		"decompress": "^4.0.0",
+		"progress-stream": "^1.2.0"
 	}
 }
