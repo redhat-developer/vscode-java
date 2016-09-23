@@ -37,12 +37,7 @@ async function checkJavaRuntime(): Promise<any> {
     return new Promise((resolve, reject) => {
         findJavaHome(function (err, home) {
             if (err)
-                reject({
-                    message: "Java could not be detected. Please download and install a Java 8 Development Kit to enable Java Language Support.",
-                    label: "Get OpenJDK",
-                    openUrl: Uri.parse('http://developers.redhat.com/products/openjdk/overview/'),
-                    replaceClose: false
-                });
+                openJDKDownload(reject, "The JAVA_HOME environment variable could not be detected, or it doesn't point to a JDK.");
             else
                 resolve(home);
         });
@@ -53,12 +48,7 @@ async function checkJavaVersion(java_home: string): Promise<any> {
     return new Promise((resolve, reject) => {
         let result = cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
             if (stderr.indexOf('1.8') < 0)
-                reject({
-                    message: "Java Language Support requires Java 8 to run. Please download and install a Java 8 ",
-                    label: "Get OpenJDK",
-                    openUrl: Uri.parse('http://developers.redhat.com/products/openjdk/overview/'),
-                    replaceClose: false
-                });
+                openJDKDownload(reject, "Java 8 is required to run. Please download and install a JDK 8.");
             else
                 resolve(true);
         });
@@ -77,4 +67,17 @@ async function checkServerInstalled(): Promise<any> {
        // Directory does not exist 
     }
     return downloadManager.downloadAndInstallServer();
+}
+
+function openJDKDownload(reject, cause) {
+    let jdkUrl = 'http://developers.redhat.com/products/openjdk/overview/';
+    if (process.platform === 'darwin') {
+        jdkUrl = 'http://www.oracle.com/technetwork/java/javase/downloads/index.html'
+    }
+    reject({
+        message: cause,
+        label: "Get Java Development Kit",
+        openUrl: Uri.parse(jdkUrl),
+        replaceClose: false
+    });
 }
