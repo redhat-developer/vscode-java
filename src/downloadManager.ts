@@ -74,7 +74,6 @@ function getProxyAgent(requestURL: Url, proxy?: string, strictSSL?: boolean): an
 		return null;
 	}
 
-	strictSSL = strictSSL || true;
 	const opts = {
 		host: proxyEndpoint.hostname,
 		port: Number(proxyEndpoint.port),
