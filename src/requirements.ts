@@ -38,7 +38,7 @@ async function checkJavaRuntime(): Promise<any> {
         findJavaHome(function (err, home) {
             if (err)
                 reject({
-                    message: "Java could not be detected. Please download and install a Java Runtime to enable Java Language Support.",
+                    message: "Java could not be detected. Please download and install a Java 8 Development Kit to enable Java Language Support.",
                     label: "Get OpenJDK",
                     openUrl: Uri.parse('http://developers.redhat.com/products/openjdk/overview/'),
                     replaceClose: false
