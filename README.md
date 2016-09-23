@@ -1,6 +1,5 @@
 
-[![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java)
-
+[![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/gorkem/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/gorkem/vscode-java)
 Language support for Java &trade; for Visual Studio Code
 =====================
 
