@@ -16,15 +16,6 @@ Quick Start
     * Initial activation can be longer since it requires extension to download additional parts.
     * Recognizes only projects with *maven* build files on the directory hierarchy. 
 
-What is new in 0.0.3 
-====================
-* In addition to maven, we now support basic Eclipse projects [details](https://github.com/gorkem/java-language-server/issues/37). 
-* Go to Definition (<kbd>F12</kbd>) is enabled for libraries and can display Java code that is not part of project's source code
-* Code complete triggers are added for `.#@` characters. 
-#### Significant bug fixes
-* [Opening maven project a 2nd time doesn't work](https://github.com/gorkem/java-language-server/issues/66)
-
-
 Features 
 =========
 ![ screencast ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/vscode-java.0.0.1.gif)
@@ -39,6 +30,8 @@ Features
 * Code lens (references)
 * Highlights
 * Code formatting
+
+See the [changelog](CHANGELOG.md) for the latest release.
 
 Troubleshooting
 ===============
