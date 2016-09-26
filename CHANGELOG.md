@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.4 (July 27, 2016)
+## 0.0.4 (September 27, 2016)
 * enhancement - improved Javadoc/Markdown formatting, See [#13](https://github.com/gorkem/vscode-java/issues/13). 
 * enhancement - provide Java Language Server download feedback. See [#20](https://github.com/gorkem/vscode-java/issues/20).
 * enhancement - provide syntax highlighting for opened `.class` files. See [#21](https://github.com/gorkem/vscode-java/issues/21).
