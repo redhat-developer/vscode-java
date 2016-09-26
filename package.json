@@ -5,7 +5,7 @@
 	"author": "Red Hat",
 	"icon": "icons/icon128.png",
 	"license": "SEE LICENSE IN LICENSE",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "redhat",
 	"bugs" : "https://github.com/gorkem/vscode-java/issues",
 	"preview": true,
