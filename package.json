@@ -30,7 +30,18 @@
 		"languages": [{
 			"id": "java",
 			"extensions": [ ".class" ]
-		}]
+		}],
+		"configuration": {
+			"type": "object",
+			"title": "Java configuration",
+			"properties": {
+				"java.home": {
+					"type": ["string", "null"],
+					"default": null,
+					"description": "Specifies the folder path to the JDK 8 used to launch the Java Language Server."
+				}
+			}
+		}
 	},	
 	"scripts": {
 		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
@@ -50,6 +61,8 @@
 		"https-proxy-agent": "^1.0.0",
 		"tmp" : "^0.0.28",
 		"decompress": "^4.0.0",
-		"progress-stream": "^1.2.0"
+		"progress-stream": "^1.2.0",
+		"path-exists":"^3.0.0",
+		"expand-home-dir":"^0.0.3"
 	}
 }
