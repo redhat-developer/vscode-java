@@ -1,13 +1,14 @@
 'use strict';
 
-import { Uri } from 'vscode';
+import { workspace, Uri } from 'vscode';
 import * as cp from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as downloadManager from './downloadManager';
 
-
-var findJavaHome = require('find-java-home');
+const pathExists = require('path-exists');
+const expandHomeDir = require('expand-home-dir')
+const findJavaHome = require('find-java-home');
 
 interface RequirementsData {
     java_home: string
@@ -35,13 +36,43 @@ export async function resolveRequirements(): Promise<RequirementsData> {
 
 async function checkJavaRuntime(): Promise<any> {
     return new Promise((resolve, reject) => {
-        findJavaHome(function (err, home) {
-            if (err)
-                openJDKDownload(reject, "The JAVA_HOME environment variable could not be detected, or it doesn't point to a JDK.");
-            else
-                resolve(home);
+        const realJavaHome = process.env["JAVA_HOME"]
+        const config = workspace.getConfiguration();
+        let javaHome = config.get<string>('java.home');
+        let source = "The JAVA_HOME environment variable";
+        if (typeof javaHome === 'string') {
+            source = "The java.home variable defined in VS Code settings";
+        } else {
+            javaHome = realJavaHome;
+        }
+        javaHome = expandHomeDir(javaHome);
+        
+        return  pathExists(javaHome).then (exists => {
+                if (exists) {
+                    resolve({source, javaHome});
+                } else {
+                    console.log("Missing "+javaHome);
+                    openJDKDownload(reject, source+" points to a missing folder");
+                }
+            });
+    }).then((obj) => {
+        const originalJavaHome = process.env["JAVA_HOME"];
+        return new Promise((resolve, reject) => {
+            let source = obj["source"];
+            let javaHome = obj["javaHome"];
+            process.env["JAVA_HOME"] = javaHome;
+            findJavaHome(function (err, home) {
+                process.env["JAVA_HOME"]= originalJavaHome;
+                if (err){
+                    openJDKDownload(reject, source+" could not be detected, or doesn't point to a JDK.");
+                }
+                else {
+                    console.log("Using JDK found in "+home);
+                    resolve(home);
+                }
+            });
         });
-    });
+    })
 }
 
 async function checkJavaVersion(java_home: string): Promise<any> {
