@@ -7,7 +7,6 @@ import * as fs from 'fs';
 
 import { workspace, Disposable, ExtensionContext, StatusBarItem, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, NotificationType, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
-
 var electron = require('./electron_j');
 import * as requirements from './requirements';
 import { StatusNotification,ClassFileContentsRequest } from './protocol';
@@ -16,6 +15,7 @@ import { StatusNotification,ClassFileContentsRequest } from './protocol';
 declare var v8debug;
 var DEBUG =( typeof v8debug === 'object');
 var storagePath;
+var oldConfig;
 
 function runJavaServer(){
 	return requirements.resolveRequirements().catch(error =>{
@@ -81,7 +81,7 @@ export function activate(context: ExtensionContext) {
 	}
 	
 	let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-    
+    oldConfig = workspace.getConfiguration("java");
 	// Create the language client and start the client.
 	let languageClient = new LanguageClient('java','Language Support for Java', serverOptions, clientOptions);
 	languageClient.onNotification(StatusNotification.type, (report) => {
@@ -133,4 +133,22 @@ export function activate(context: ExtensionContext) {
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
 	context.subscriptions.push(disposable);
+	context.subscriptions.push(onConfigurationChange());
+}
+
+function onConfigurationChange() {
+	return workspace.onDidChangeConfiguration(params => {
+		let newConfig = workspace.getConfiguration("java");
+		if (newConfig.get("home") != oldConfig.get("home")) {
+		  let msg =	"java.home configuration changed, please restart VS Code.";
+		  let action =	"Restart Now";
+		  let restartId = "workbench.action.reloadWindow";
+		  oldConfig = newConfig;
+		  window.showWarningMessage(msg,action).then((selection )=>{
+			  if(action == selection) {
+				commands.executeCommand(restartId);
+			  }
+		  });
+		}
+	});
 }
