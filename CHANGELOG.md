@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.5
+* enhancement - configure java.home property in VS Code settings, See [#13](https://github.com/gorkem/vscode-java/issues/28). 
+
 ## 0.0.4 (September 26, 2016)
 * enhancement - improved Javadoc/Markdown formatting, See [#13](https://github.com/gorkem/vscode-java/issues/13). 
 * enhancement - provide Java Language Server download feedback. See [#20](https://github.com/gorkem/vscode-java/issues/20).
