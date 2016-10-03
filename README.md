@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/gorkem/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/gorkem/vscode-java)
+[![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/gorkem/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/gorkem/vscode-java) [![Marketplace Version](http://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 Language support for Java &trade; for Visual Studio Code
 =====================
 
@@ -14,7 +14,7 @@ Quick Start
     * Download and install a Java 8 compatible development kit.
 3. Extension is activated when you first access a Java file.
     * Initial activation can be longer since it requires extension to download additional parts.
-    * Recognizes only projects with *maven* build files on the directory hierarchy. 
+    * Recognizes only projects with *maven* build files on the directory hierarchy, or to a lesser extent, simple Eclipse projects, i.e. containing .project and .classpath files. 
 
 Features 
 =========
