@@ -26,4 +26,20 @@ suite("Java Language Extension", () => {
 			done();
 		});
 	});
+
+	test("should parse VM arguments", function (done) {
+		let userArgs = "-Xmx512m -noverify   -Dfoo=\"something with blank\"  ";
+		let vmArgs = ["-noverify", "foo"];
+
+		java.parseVMargs(vmArgs, userArgs);
+
+		assert.equal(4, vmArgs.length);
+		assert.equal("-noverify", vmArgs[0]);
+		assert.equal("foo", vmArgs[1]);
+		assert.equal("-Xmx512m", vmArgs[2]);
+		assert.equal("-Dfoo=\"something with blank\"", vmArgs[3]);
+
+		done();
+	});
+
 });

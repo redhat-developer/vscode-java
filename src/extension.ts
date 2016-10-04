@@ -55,7 +55,10 @@ function runJavaServer(){
 			}
 			params.push('-configuration'); params.push(path.resolve( __dirname ,'../../server',configDir));
 			params.push('-data'); params.push(workspacePath);
-			
+
+			let vmargs = workspace.getConfiguration("java").get("jdt.ls.vmargs","");
+			parseVMargs(params, vmargs);
+
 			electron.fork(child, params, {}, function(err, result) {
 				if(err) reject(err);
 				if(result) resolve(result);
@@ -139,8 +142,8 @@ export function activate(context: ExtensionContext) {
 function onConfigurationChange() {
 	return workspace.onDidChangeConfiguration(params => {
 		let newConfig = workspace.getConfiguration("java");
-		if (newConfig.get("home") != oldConfig.get("home")) {
-		  let msg =	"java.home configuration changed, please restart VS Code.";
+		if (hasJavaConfigChanged(oldConfig, newConfig)) {
+		  let msg =	"Java Language Server configuration changed, please restart VS Code.";
 		  let action =	"Restart Now";
 		  let restartId = "workbench.action.reloadWindow";
 		  oldConfig = newConfig;
@@ -149,6 +152,30 @@ function onConfigurationChange() {
 				commands.executeCommand(restartId);
 			  }
 		  });
+		}
+	});
+}
+
+function hasJavaConfigChanged(oldConfig, newConfig) {
+	return hasConfigKeyChanged("home", oldConfig, newConfig)
+		|| hasConfigKeyChanged("jdt.ls.vmargs", oldConfig, newConfig);
+}
+
+function hasConfigKeyChanged(key, oldConfig, newConfig) {
+	return oldConfig.get(key) != newConfig.get(key);
+}
+
+export function parseVMargs(params:any[], vmargsLine:string) {
+	if (!vmargsLine) {
+		return;
+	}
+	let vmargs = vmargsLine.match(/(?:[^\s"]+|"[^"]*")+/g);
+	if (vmargs == null) {
+		return;
+	}
+	vmargs.forEach (function(arg) {
+		if (params.indexOf(arg) < 0) {
+			params.push(arg);
 		}
 	});
 }

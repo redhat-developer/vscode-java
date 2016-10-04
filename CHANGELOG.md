@@ -1,10 +1,11 @@
 # Change Log
 
 ## 0.0.5
-* enhancement - configure java.home property in VS Code settings, See [#13](https://github.com/gorkem/vscode-java/issues/28). 
+* enhancement - configure extra VM arguments in VS Code settings, used to launch the Java Language Server. See [#25](https://github.com/gorkem/vscode-java/issues/25). 
+* enhancement - configure java.home property in VS Code settings. See [#28](https://github.com/gorkem/vscode-java/issues/28). 
 
 ## 0.0.4 (September 26, 2016)
-* enhancement - improved Javadoc/Markdown formatting, See [#13](https://github.com/gorkem/vscode-java/issues/13). 
+* enhancement - improved Javadoc/Markdown formatting. See [#13](https://github.com/gorkem/vscode-java/issues/13). 
 * enhancement - provide Java Language Server download feedback. See [#20](https://github.com/gorkem/vscode-java/issues/20).
 * enhancement - provide syntax highlighting for opened `.class` files. See [#21](https://github.com/gorkem/vscode-java/issues/21).
 * enhancement - provide link to Oracle JDK downloads on MacOS. See [#37](https://github.com/gorkem/vscode-java/issues/37).
