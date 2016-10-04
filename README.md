@@ -38,6 +38,7 @@ Supported settings
 Starting from version 0.0.5, the following settings are supported:
 
 * `java.home` : Absolute path to JDK 8 home folder used to launch the Java Language Server. Requires VS Code restart.
+* `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
 
 Troubleshooting
 ===============

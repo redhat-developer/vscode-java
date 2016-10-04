@@ -39,6 +39,11 @@
 					"type": ["string", "null"],
 					"default": null,
 					"description": "Specifies the folder path to the JDK 8 used to launch the Java Language Server."
+				},
+				"java.jdt.ls.vmargs": {
+					"type": ["string", "null"],
+					"default": "-noverify -Xmx1G",
+					"description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G` to bypass class verification and increase the heap size to 1GB"
 				}
 			}
 		}
