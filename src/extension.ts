@@ -91,23 +91,16 @@ export function activate(context: ExtensionContext) {
 	let languageClient = new LanguageClient('java','Language Support for Java', serverOptions, clientOptions);
 	languageClient.onNotification(StatusNotification.type, (report) => {
 		console.log(report.message);
-		if(window.activeTextEditor && window.activeTextEditor.document){
-			if(window.activeTextEditor.document.languageId === "java"){
-				if(report.type === "Started"){
-					item.text = "$(thumbsup)"
-				} else if(report.type === "Error"){
-					item.text = "$(thumbsdown)"
-				} 
-				else {
-					item.text = report.message;
-				}
-				item.command = "java.open.output";
-				item.tooltip = report.message;
-				item.show();
-			} else {
-				item.hide();
-			}
+		if(report.type === "Started"){
+			item.text = "$(thumbsup)"
+		} else if(report.type === "Error"){
+			item.text = "$(thumbsdown)"
+		} else {
+			item.text = report.message;
 		}
+		item.command = "java.open.output";
+		item.tooltip = report.message;
+		toggleItem(window.activeTextEditor, item);
 	});
 	commands.registerCommand("java.open.output", ()=>{
 		languageClient.outputChannel.show(ViewColumn.Three);
@@ -116,11 +109,7 @@ export function activate(context: ExtensionContext) {
 		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), Protocol2Code.asPosition(position), locations.map(Protocol2Code.asLocation));
 	});
 	window.onDidChangeActiveTextEditor((editor) =>{
-		if(editor && editor.document && editor.document.languageId === "java"){
-			item.show();
-		} else{
-			item.hide();
-		}
+		toggleItem(editor, item);
 	});
 	
 	let provider: TextDocumentContentProvider= <TextDocumentContentProvider> {
@@ -133,12 +122,22 @@ export function activate(context: ExtensionContext) {
 	};
 	workspace.registerTextDocumentContentProvider("jdt", provider)
 
+	item.text = "Starting Java Language Server...";
+	toggleItem(window.activeTextEditor, item);
 	let disposable = languageClient.start();
 	
 	// Push the disposable to the context's subscriptions so that the 
 	// client can be deactivated on extension deactivation
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(onConfigurationChange());
+}
+
+function toggleItem(editor, item) {
+	if(editor && editor.document && editor.document.languageId === "java"){
+		item.show();
+	} else{
+		item.hide();
+	}
 }
 
 function onConfigurationChange() {
