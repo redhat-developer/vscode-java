@@ -25,7 +25,7 @@ and the contributions should be coordinated between the two repositories.
 5. Open the folder in VS Code
 
 ## Building java-language-server
-This assumes that you are starting on the `vscdoe-java` directory
+This assumes that you are starting on the `vscode-java` directory
 
 1. `cd ..`
 2. Fork and clone the [java-language-server](https://github.com/gorkem/java-language-server) repository
