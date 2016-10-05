@@ -4,10 +4,10 @@
 import * as path from 'path';
 import * as cp from 'child_process';
 import * as fs from 'fs';
-
 import { workspace, Disposable, ExtensionContext, StatusBarItem, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
 import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, NotificationType, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
 var electron = require('./electron_j');
+var os = require('os');
 import * as requirements from './requirements';
 import { StatusNotification,ClassFileContentsRequest } from './protocol';
 
@@ -69,7 +69,9 @@ function runJavaServer(){
 export function activate(context: ExtensionContext) {
 
 	storagePath = context.storagePath;
-
+	if (!storagePath) {
+		storagePath = getTempWorkspace();
+	}
 	let serverOptions= runJavaServer;
 
 
@@ -178,4 +180,18 @@ export function parseVMargs(params:any[], vmargsLine:string) {
 			params.push(arg);
 		}
 	});
+}
+
+function getTempWorkspace() {
+	return path.resolve(os.tmpdir(),"vscodesws_"+makeRandomHexString(5));
+}
+
+function makeRandomHexString(length) {
+    var chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+    var result = '';
+    for (var i = 0; i < length; i++) {
+        var idx = Math.floor(chars.length * Math.random());
+        result += chars[idx];
+    }
+    return result;
 }
