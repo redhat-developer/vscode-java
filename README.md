@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/gorkem/vscode-java.svg?branch=master)](https://travis-ci.org/gorkem/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/gorkem/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/gorkem/vscode-java) [![Marketplace Version](http://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[![Build Status](https://travis-ci.org/redhat-developer/vscode-java.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/redhat-developer/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/redhat-developer/vscode-java) [![Marketplace Version](http://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 Language support for Java &trade; for Visual Studio Code
 =====================
 
@@ -18,7 +18,7 @@ Quick Start
 
 Features 
 =========
-![ screencast ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/vscode-java.0.0.1.gif)
+![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/vscode-java.0.0.1.gif)
 
 * Maven pom.xml project support
 * Basic Eclipse Java project support 
@@ -50,9 +50,9 @@ You should see a folder named `plugins`.
 It should show ready (thumbs up) as on the image below. You can click on the status and open the 
 language tool logs for further information in case of a failure. 
 
-![ status indicator ](https://raw.githubusercontent.com/gorkem/vscode-java/master/images/statusMarker.png)
+![ status indicator ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png)
 
-3. Report any problems you face to the [project](https://github.com/gorkem/vscode-java/issues).
+3. Report any problems you face to the [project](https://github.com/redhat-developer/vscode-java/issues).
 
 Contributing
 ===============
@@ -62,7 +62,7 @@ For information on getting started refer to [java-language-server](https://githu
 
 Feedback
 ===============
-* File a bug in [GitHub Issues](https://github.com/gorkem/vscode-java/issues).
+* File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-java/issues).
 * [Tweet](https://twitter.com/GorkemErcan) us with other feedback.
 
 
