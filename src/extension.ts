@@ -44,7 +44,7 @@ function runJavaServer(){
 				params.push('-Dlog.protocol=true');
 				params.push('-Dlog.level=ALL');
 			}
-
+		
 			params.push('-jar'); params.push(path.resolve( __dirname ,'../../server/plugins/org.eclipse.equinox.launcher_1.3.200.v20160318-1642.jar'));
 			//select configuration directory according to OS
 			let configDir = 'config_win';
@@ -55,9 +55,6 @@ function runJavaServer(){
 			}
 			params.push('-configuration'); params.push(path.resolve( __dirname ,'../../server',configDir));
 			params.push('-data'); params.push(workspacePath);
-			if (requirements.java_version > 8) {
-				params.push('--add-modules=java.se.ee');
-			}
 
 			let vmargs = workspace.getConfiguration("java").get("jdt.ls.vmargs","");
 			parseVMargs(params, vmargs);
