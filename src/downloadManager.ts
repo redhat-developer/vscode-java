@@ -22,11 +22,14 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
     let url = parse(urlString);
     const agent = getProxyAgent(url, proxy, strictSSL);
 
-    let options: https.RequestOptions = {
-        host: url.host,
-        path: url.path,
-        agent: agent
-    };
+	let options: https.RequestOptions = {
+		host: url.host,
+		port: url.port ? parseInt(url.port) : (url.protocol === 'https:' ? 443 : 80),
+		path: url.path,
+        agent: agent,
+		rejectUnauthorized: strictSSL
+	};
+
 
     return new Promise<stream.Readable>((resolve, reject) => {
         let request = https.get(options, res => {
