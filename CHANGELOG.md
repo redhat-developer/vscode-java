@@ -3,6 +3,7 @@
 ## 0.0.5
 * enhancement - configure extra VM arguments in VS Code settings, used to launch the Java Language Server. See [#25](https://github.com/redhat-developer/vscode-java/issues/25). 
 * enhancement - configure java.home property in VS Code settings. See [#28](https://github.com/redhat-developer/vscode-java/issues/28). 
+* enhancement - support running the Java Language Server with Java 9. See [#43](https://github.com/redhat-developer/vscode-java/issues/43). 
 
 ## 0.0.4 (September 26, 2016)
 * enhancement - improved Javadoc/Markdown formatting. See [#13](https://github.com/redhat-developer/vscode-java/issues/13). 

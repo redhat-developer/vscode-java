@@ -12,6 +12,7 @@ const findJavaHome = require('find-java-home');
 
 interface RequirementsData {
     java_home: string
+    java_version: number
 }
 
 interface ErrorData {
@@ -29,9 +30,9 @@ interface ErrorData {
  */
 export async function resolveRequirements(): Promise<RequirementsData> {
     let java_home = await checkJavaRuntime();
-    let isJava8 = await checkJavaVersion(java_home);
+    let javaVersion = await checkJavaVersion(java_home);
     let serverInstalled = await checkServerInstalled();
-    return Promise.resolve({ "java_home": java_home });
+    return Promise.resolve({ "java_home": java_home, "java_version":javaVersion});
 }
 
 async function checkJavaRuntime(): Promise<any> {
@@ -78,10 +79,12 @@ async function checkJavaRuntime(): Promise<any> {
 async function checkJavaVersion(java_home: string): Promise<any> {
     return new Promise((resolve, reject) => {
         let result = cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
-            if (stderr.indexOf('1.8') < 0)
-                openJDKDownload(reject, "Java 8 is required to run. Please download and install a JDK 8.");
-            else
-                resolve(true);
+            if (stderr.indexOf('1.8') < 0 && stderr.indexOf('9.') < 0) {
+                openJDKDownload(reject, "Java 8 minimum is required to run. Please download and install the latest JDK.");
+            } else {
+                let version = (stderr.indexOf('1.8') >= 0)?8:9;
+                resolve(version);
+            }
         });
     });
 }
