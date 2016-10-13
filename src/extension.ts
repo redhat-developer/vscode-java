@@ -13,7 +13,7 @@ import { StatusNotification,ClassFileContentsRequest } from './protocol';
 
 
 declare var v8debug;
-var DEBUG =( typeof v8debug === 'object');
+const DEBUG = ( typeof v8debug === 'object') || startedInDebugMode();
 var storagePath;
 var oldConfig;
 
@@ -193,4 +193,12 @@ function makeRandomHexString(length) {
         result += chars[idx];
     }
     return result;
+}
+
+function startedInDebugMode(): boolean {
+	let args = (process as any).execArgv;
+	if (args) {
+		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg));
+	};
+	return false;
 }
