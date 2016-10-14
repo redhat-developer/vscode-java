@@ -17,7 +17,7 @@ before_install:
 
 install:
 - npm install
-- npm run compile
+- tsc -p ./
 - npm install -g vsce
 - vsce package
 
