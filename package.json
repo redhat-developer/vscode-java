@@ -5,7 +5,7 @@
 	"author": "Red Hat",
 	"icon": "icons/icon128.png",
 	"license": "SEE LICENSE IN LICENSE",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"publisher": "redhat",
 	"bugs" : "https://github.com/redhat-developer/vscode-java/issues",
 	"preview": true,
@@ -49,22 +49,25 @@
 		}
 	},	
 	"scripts": {
-		"vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-		"compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+		"vscode:prepublish": "tsc -p ./",
+		"compile": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "node ./node_modules/vscode/bin/test",
 		"build-server": "mvn -f ../java-language-server/pom.xml -Pvscode-build -Dmaven.test.skip=true clean verify"
 	},
 	"devDependencies": {
-		"typescript": "^1.8.9",
-		"vscode": "^0.11.0"
+		"typescript": "^2.0.3",
+		"vscode": "^1.0.0",
+		 "mocha": "^2.3.3",
+		"@types/node": "^6.0.40",
+		"@types/mocha": "^2.2.32"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^2.5.0",
+		"vscode-languageclient": "^2.6.0",
 		"find-java-home": "^0.1.3",
 		"http-proxy-agent": "^1.0.0",
 		"https-proxy-agent": "^1.0.0",
-		"tmp" : "^0.0.28",
+		"tmp" : "^0.0.29",
 		"decompress": "^4.0.0",
 		"progress-stream": "^1.2.0",
 		"path-exists":"^3.0.0",
