@@ -1,5 +1,8 @@
 sudo: false
 
+node_js:
+- "6"
+
 os:
   - osx
   - linux
@@ -12,8 +15,10 @@ before_install:
     fi
 
 install:
-  - npm install
-  - npm run vscode:prepublish
+- npm install
+- npm run compile
+- npm install -g vsce
+- vsce package
 
 script:
   - npm test --silent
