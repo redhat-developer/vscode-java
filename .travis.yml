@@ -17,7 +17,7 @@ before_install:
 
 install:
 - npm install
-- tsc -p ./
+- npm vscode:prepublish
 - npm install -g vsce
 - vsce package
 
