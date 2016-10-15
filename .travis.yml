@@ -5,15 +5,16 @@ node_js:
 - "6"
 
 os:
-  - osx
-  - linux
+- osx
+- linux
 
 before_install:
-  - if [ $TRAVIS_OS_NAME == "linux" ]; then
+- if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
       sh -e /etc/init.d/xvfb start;
       sleep 3;
     fi
+- npm install -g typescript
 
 install:
 - npm install
@@ -22,4 +23,4 @@ install:
 - vsce package
 
 script:
-  - npm test --silent
+- npm test --silent
