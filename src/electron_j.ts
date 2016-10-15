@@ -60,15 +60,17 @@ function fork(modulePath, args, options, callback) {
     // Begin listening to stdout pipe
     var serverOut = net.createServer(function (stream) {
             streamInfo.writer = stream;
-            if(streamInfo.reader != null)
+            if(streamInfo.reader !== null){
                 resolve(streamInfo);
+            }
     });
     
     serverOut.listen(stdOutPipeName);
     var serverIn = net.createServer(function (stream) {
             streamInfo.reader = stream;
-            if(streamInfo.writer != null )
+            if(streamInfo.writer !== null ){
                 resolve(streamInfo);
+            }
     });
     serverIn.listen(stdInPipeName);
 

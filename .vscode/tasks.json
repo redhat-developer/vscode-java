@@ -5,27 +5,26 @@
 // ${fileDirname}: the current opened file's dirname
 // ${fileExtname}: the current opened file's extension
 // ${cwd}: the current working directory of the spawned process
-
 // A task runner that calls a custom npm script that compiles the extension.
 {
 	"version": "0.1.0",
-
 	// we want to run npm
 	"command": "npm",
-
 	// the command is a shell script
 	"isShellCommand": true,
-
 	// show the output window only if unrecognized errors occur.
 	"showOutput": "silent",
-	
 	"suppressTaskName": true,
-
 	"tasks": [
 		{
 			"taskName": "compile",
 			// we run the custom script "compile" as defined in package.json
-			"args": ["run", "compile", "--loglevel", "silent"],	
+			"args": [
+				"run",
+				"compile",
+				"--loglevel",
+				"silent"
+			],
 			// The tsc compiler is started in watching mode
 			"isWatching": true,
 			// use the standard tsc in watch mode problem matcher to find compile problems in the output.
@@ -34,15 +33,45 @@
 		},
 		{
 			"taskName": "test",
-			"args": ["run", "test"],	
+			"args": [
+				"run",
+				"test"
+			],
 			"isTestCommand": true
 		},
 		{
 			"taskName": "build-server",
 			// we run the custom script "compile" as defined in package.json
-			"args": ["run", "build-server", "--loglevel", "silent"],	
+			"args": [
+				"run",
+				"build-server",
+				"--loglevel",
+				"silent"
+			],
 			// The tsc compiler is started in watching mode
 			"isWatching": false
+		},
+		{
+			"taskName": "tslint",
+			"args": [
+				"run",
+				"tslint"
+			],
+			"problemMatcher": {
+				"owner": "tslint",
+				"fileLocation": [
+					"relative",
+					"${workspaceRoot}"
+				],
+				"severity": "warning",
+				"pattern": {
+					"regexp": "^(\\S.*)\\[(\\d+), (\\d+)\\]:\\s+(.*)$",
+					"file": 1,
+					"line": 2,
+					"column": 3,
+					"message": 4
+				}
+			}
 		}
 	]
 }

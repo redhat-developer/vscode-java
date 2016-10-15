@@ -52,7 +52,7 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
 			});
             return resolve(res.pipe(progressStream));
         });
-		request.setTimeout(30000, ()=>{request.abort()});
+		request.setTimeout(30000, ()=>{request.abort();});
 		return request;
     });
 }
@@ -95,7 +95,7 @@ export function downloadAndInstallServer() {
 		const SERVER_FOLDER = path.resolve(__dirname, '../../server/');
 		// const SERVER_ARCHIVE = "https://dl.bintray.com/gorkem/java-language-server/java-server-1.0.0-201609020048.tar.gz";
 		// Always use HTTPS download for http adresses may not work over proxies.
-		const SERVER_ARCHIVE = "https://download.jboss.org/jbosstools/static/vscode/java-server-1.0.0-201610132107.tar.gz";
+		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/java-server-1.0.0-201610132107.tar.gz';
 
 		return download(SERVER_ARCHIVE, proxy, strictSSL).then(is => {
 			tmp.file((err, tmpPath, fd, cleanupCallback) => {
@@ -104,7 +104,7 @@ export function downloadAndInstallServer() {
 				out.once('error', err => {
 					closeDownloadProgressItem();
 					reject(err);
-				})
+				});
 				is.once('error', err => {
 					closeDownloadProgressItem();
 					reject(err);
@@ -117,9 +117,9 @@ export function downloadAndInstallServer() {
 						closeDownloadProgressItem();
 						return reject(err);
 					});
-				})
+				});
 				is.pipe(out);
-			})
+			});
 		}).catch(err => {
 				console.log(err);
 			});

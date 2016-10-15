@@ -53,14 +53,17 @@
 		"compile": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "node ./node_modules/vscode/bin/test",
-		"build-server": "mvn -f ../java-language-server/pom.xml -Pvscode-build -Dmaven.test.skip=true clean verify"
+		"build-server": "mvn -f ../java-language-server/pom.xml -Pvscode-build -Dmaven.test.skip=true clean verify",
+		"tslint": "gulp tslint"
 	},
 	"devDependencies": {
 		"typescript": "^2.0.3",
 		"vscode": "^1.0.0",
 		 "mocha": "^2.3.3",
 		"@types/node": "^6.0.40",
-		"@types/mocha": "^2.2.32"
+		"@types/mocha": "^2.2.32",
+		"gulp" :"^3.9.1",
+		"gulp-tslint": "^6.1.2"
 	},
 	"dependencies": {
 		"vscode-languageclient": "^2.6.0",

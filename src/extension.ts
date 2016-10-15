@@ -2,10 +2,8 @@
 'use strict';
 
 import * as path from 'path';
-import * as cp from 'child_process';
-import * as fs from 'fs';
-import { workspace, Disposable, ExtensionContext, StatusBarItem, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
-import { LanguageClient, LanguageClientOptions, SettingMonitor, ServerOptions, NotificationType, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
+import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
+import { LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
 var electron = require('./electron_j');
 var os = require('os');
 import * as requirements from './requirements';
@@ -21,8 +19,9 @@ function runJavaServer(){
 	return requirements.resolveRequirements().catch(error =>{
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection )=>{
-			if(error.label && error.label == selection && error.openUrl)
+			if(error.label && error.label === selection && error.openUrl){
 				commands.executeCommand('vscode.open', error.openUrl);
+			}
 		});
 		// rethrow to disrupt the chain.
 		throw error;
@@ -56,12 +55,12 @@ function runJavaServer(){
 			params.push('-configuration'); params.push(path.resolve( __dirname ,'../../server',configDir));
 			params.push('-data'); params.push(workspacePath);
 
-			let vmargs = workspace.getConfiguration("java").get("jdt.ls.vmargs","");
+			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
 			parseVMargs(params, vmargs);
 
 			electron.fork(child, params, {}, function(err, result) {
-				if(err) reject(err);
-				if(result) resolve(result);
+				if(err) { reject(err); }
+				if(result){ resolve(result); }
 			});
 	}));
 }
@@ -83,29 +82,29 @@ export function activate(context: ExtensionContext) {
 			// Notify the server about file changes to .java files contain in the workspace
 			fileEvents: workspace.createFileSystemWatcher('**/*.java')
 		}
-	}
+	};
 	
 	let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-    oldConfig = workspace.getConfiguration("java");
+    oldConfig = workspace.getConfiguration('java');
 	// Create the language client and start the client.
 	let languageClient = new LanguageClient('java','Language Support for Java', serverOptions, clientOptions);
 	languageClient.onNotification(StatusNotification.type, (report) => {
 		console.log(report.message);
-		if(report.type === "Started"){
-			item.text = "$(thumbsup)"
-		} else if(report.type === "Error"){
-			item.text = "$(thumbsdown)"
+		if(report.type === 'Started'){
+			item.text = '$(thumbsup)';
+		} else if(report.type === 'Error'){
+			item.text = '$(thumbsdown)';
 		} else {
 			item.text = report.message;
 		}
-		item.command = "java.open.output";
+		item.command = 'java.open.output';
 		item.tooltip = report.message;
 		toggleItem(window.activeTextEditor, item);
 	});
-	commands.registerCommand("java.open.output", ()=>{
+	commands.registerCommand('java.open.output', ()=>{
 		languageClient.outputChannel.show(ViewColumn.Three);
 	});
-	commands.registerCommand("java.show.references", (uri:string, position: LSPosition, locations:LSLocation[])=>{
+	commands.registerCommand('java.show.references', (uri:string, position: LSPosition, locations:LSLocation[])=>{
 		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), Protocol2Code.asPosition(position), locations.map(Protocol2Code.asLocation));
 	});
 	window.onDidChangeActiveTextEditor((editor) =>{
@@ -120,9 +119,9 @@ export function activate(context: ExtensionContext) {
 			});
 		}
 	};
-	workspace.registerTextDocumentContentProvider("jdt", provider)
+	workspace.registerTextDocumentContentProvider('jdt', provider);
 
-	item.text = "Starting Java Language Server...";
+	item.text = 'Starting Java Language Server...';
 	toggleItem(window.activeTextEditor, item);
 	let disposable = languageClient.start();
 	
@@ -133,7 +132,7 @@ export function activate(context: ExtensionContext) {
 }
 
 function toggleItem(editor, item) {
-	if(editor && editor.document && editor.document.languageId === "java"){
+	if(editor && editor.document && editor.document.languageId === 'java'){
 		item.show();
 	} else{
 		item.hide();
@@ -142,14 +141,14 @@ function toggleItem(editor, item) {
 
 function onConfigurationChange() {
 	return workspace.onDidChangeConfiguration(params => {
-		let newConfig = workspace.getConfiguration("java");
+		let newConfig = workspace.getConfiguration('java');
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
-		  let msg =	"Java Language Server configuration changed, please restart VS Code.";
-		  let action =	"Restart Now";
-		  let restartId = "workbench.action.reloadWindow";
+		  let msg =	'Java Language Server configuration changed, please restart VS Code.';
+		  let action =	'Restart Now';
+		  let restartId = 'workbench.action.reloadWindow';
 		  oldConfig = newConfig;
 		  window.showWarningMessage(msg,action).then((selection )=>{
-			  if(action == selection) {
+			  if(action === selection) {
 				commands.executeCommand(restartId);
 			  }
 		  });
@@ -158,12 +157,12 @@ function onConfigurationChange() {
 }
 
 function hasJavaConfigChanged(oldConfig, newConfig) {
-	return hasConfigKeyChanged("home", oldConfig, newConfig)
-		|| hasConfigKeyChanged("jdt.ls.vmargs", oldConfig, newConfig);
+	return hasConfigKeyChanged('home', oldConfig, newConfig)
+		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig);
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {
-	return oldConfig.get(key) != newConfig.get(key);
+	return oldConfig.get(key) !== newConfig.get(key);
 }
 
 export function parseVMargs(params:any[], vmargsLine:string) {
@@ -171,7 +170,7 @@ export function parseVMargs(params:any[], vmargsLine:string) {
 		return;
 	}
 	let vmargs = vmargsLine.match(/(?:[^\s"]+|"[^"]*")+/g);
-	if (vmargs == null) {
+	if (vmargs === null) {
 		return;
 	}
 	vmargs.forEach (function(arg) {
@@ -182,7 +181,7 @@ export function parseVMargs(params:any[], vmargsLine:string) {
 }
 
 function getTempWorkspace() {
-	return path.resolve(os.tmpdir(),"vscodesws_"+makeRandomHexString(5));
+	return path.resolve(os.tmpdir(),'vscodesws_'+makeRandomHexString(5));
 }
 
 function makeRandomHexString(length) {

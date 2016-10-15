@@ -7,18 +7,18 @@ import * as path from 'path';
 import * as downloadManager from './downloadManager';
 
 const pathExists = require('path-exists');
-const expandHomeDir = require('expand-home-dir')
+const expandHomeDir = require('expand-home-dir');
 const findJavaHome = require('find-java-home');
 
 interface RequirementsData {
-    java_home: string
+    java_home: string;
 }
 
 interface ErrorData {
-    message: string
-    label: string
-    openUrl: Uri
-    replaceClose: boolean
+    message: string;
+    label: string;
+    openUrl: Uri;
+    replaceClose: boolean;
 }
 /**
  * Resolves the requirements needed to run the extension. 
@@ -29,19 +29,19 @@ interface ErrorData {
  */
 export async function resolveRequirements(): Promise<RequirementsData> {
     let java_home = await checkJavaRuntime();
-    let isJava8 = await checkJavaVersion(java_home);
-    let serverInstalled = await checkServerInstalled();
-    return Promise.resolve({ "java_home": java_home });
+    await checkJavaVersion(java_home);
+    await checkServerInstalled();
+    return Promise.resolve({ 'java_home': java_home });
 }
 
 async function checkJavaRuntime(): Promise<any> {
     return new Promise((resolve, reject) => {
-        const realJavaHome = process.env["JAVA_HOME"]
+        const realJavaHome = process.env['JAVA_HOME'];
         const config = workspace.getConfiguration();
         let javaHome = config.get<string>('java.home');
-        let source = "The JAVA_HOME environment variable";
+        let source = 'The JAVA_HOME environment variable';
         if (typeof javaHome === 'string') {
-            source = "The java.home variable defined in VS Code settings";
+            source = 'The java.home variable defined in VS Code settings';
         } else {
             javaHome = realJavaHome;
         }
@@ -51,37 +51,39 @@ async function checkJavaRuntime(): Promise<any> {
                 if (exists) {
                     resolve({source, javaHome});
                 } else {
-                    console.log("Missing "+javaHome);
-                    openJDKDownload(reject, source+" points to a missing folder");
+                    console.log('Missing '+javaHome);
+                    openJDKDownload(reject, source+' points to a missing folder');
                 }
             });
     }).then((obj) => {
-        const originalJavaHome = process.env["JAVA_HOME"];
+        const originalJavaHome = process.env['JAVA_HOME'];
         return new Promise((resolve, reject) => {
-            let source = obj["source"];
-            let javaHome = obj["javaHome"];
-            process.env["JAVA_HOME"] = javaHome;
+            let source = obj['source'];
+            let javaHome = obj['javaHome'];
+            process.env['JAVA_HOME'] = javaHome;
             findJavaHome(function (err, home) {
-                process.env["JAVA_HOME"]= originalJavaHome;
+                process.env['JAVA_HOME']= originalJavaHome;
                 if (err){
                     openJDKDownload(reject, source+" could not be detected, or doesn't point to a JDK.");
                 }
                 else {
-                    console.log("Using JDK found in "+home);
+                    console.log('Using JDK found in '+home);
                     resolve(home);
                 }
             });
         });
-    })
+    });
 }
 
 async function checkJavaVersion(java_home: string): Promise<any> {
     return new Promise((resolve, reject) => {
-        let result = cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
-            if (stderr.indexOf('1.8') < 0)
-                openJDKDownload(reject, "Java 8 is required to run. Please download and install a JDK 8.");
-            else
+        cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
+            if (stderr.indexOf('1.8') < 0){
+                openJDKDownload(reject, 'Java 8 is required to run. Please download and install a JDK 8.');
+            }
+            else{
                 resolve(true);
+            }
         });
     });
 }
@@ -103,11 +105,11 @@ async function checkServerInstalled(): Promise<any> {
 function openJDKDownload(reject, cause) {
     let jdkUrl = 'http://developers.redhat.com/products/openjdk/overview/';
     if (process.platform === 'darwin') {
-        jdkUrl = 'http://www.oracle.com/technetwork/java/javase/downloads/index.html'
+        jdkUrl = 'http://www.oracle.com/technetwork/java/javase/downloads/index.html';
     }
     reject({
         message: cause,
-        label: "Get Java Development Kit",
+        label: 'Get Java Development Kit',
         openUrl: Uri.parse(jdkUrl),
         replaceClose: false
     });
