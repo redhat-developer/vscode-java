@@ -36,19 +36,27 @@ export async function resolveRequirements(): Promise<RequirementsData> {
 
 async function checkJavaRuntime(): Promise<any> {
     return new Promise((resolve, reject) => {
-        const realJavaHome = process.env['JAVA_HOME'];
+        
         const config = workspace.getConfiguration();
         let javaHome = config.get<string>('java.home');
-        let source = 'The JAVA_HOME environment variable';
+        let source;
         if (typeof javaHome === 'string') {
             source = 'The java.home variable defined in VS Code settings';
         } else {
-            javaHome = realJavaHome;
+            let jdkHome = process.env['JDK_HOME'];
+            if (jdkHome) {
+                javaHome = jdkHome;
+                source = 'The JDK_HOME environment variable'
+            } else {
+                javaHome = process.env['JAVA_HOME'];
+                source = 'The JAVA_HOME environment variable';
+            }
         }
         javaHome = expandHomeDir(javaHome);
         
         return  pathExists(javaHome).then (exists => {
                 if (exists) {
+                    console.log(source + ' defines the Java runtime.');
                     resolve({source, javaHome});
                 } else {
                     console.log('Missing '+javaHome);
