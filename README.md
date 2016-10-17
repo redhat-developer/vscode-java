@@ -10,7 +10,7 @@ Provides Java &trade; language support via
 Quick Start
 ============
 1. Install the Extension
-2. If you do not have a _Java 8_ Development Kit on current system path or _JAVA_HOME_ is not correctly set to point to one
+2. If you do not have a _Java 8_ Development Kit correctly [set](#setting-the-jdk)
     * Download and install a Java 8 compatible development kit.
 3. Extension is activated when you first access a Java file.
     * Initial activation can be longer since it requires extension to download additional parts.
@@ -33,8 +33,17 @@ Features
 
 See the [changelog](CHANGELOG.md) for the latest release.
 
-Supported settings
-==================
+Setting the JDK
+===============
+The path to the Java Development Kit is searched in the following order:
+
+- the `java.home` setting in VS Code settings (workspace then user settings)
+- the `JDK_HOME` environment variable
+- the `JAVA_HOME` environment variable
+- on the current system path
+
+Supported VS Code settings
+==========================
 Starting from version 0.0.5, the following settings are supported:
 
 * `java.home` : Absolute path to JDK 8 home folder used to launch the Java Language Server. Requires VS Code restart.
@@ -43,7 +52,7 @@ Starting from version 0.0.5, the following settings are supported:
 Troubleshooting
 ===============
 1. Due to size restrictions on the marketplace extension downloads additional required parts check that they 
-are downloaded under `~/.vscode/extensions/redhat.java-0.0.5/server` folder. 
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.6/server` folder. 
 You should see a folder named `plugins`.
 
 2. Check the status of the language tools on the lower right corner (marked with A on image below).
