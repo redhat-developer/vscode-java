@@ -57,7 +57,7 @@ function runJavaServer(){
 
 			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
 			parseVMargs(params, vmargs);
-
+			console.log('Executing '+ child + ' '+ params.join(' '));
 			electron.fork(child, params, {}, function(err, result) {
 				if(err) { reject(err); }
 				if(result){ resolve(result); }
