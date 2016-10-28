@@ -9,6 +9,8 @@ import * as downloadManager from './downloadManager';
 const pathExists = require('path-exists');
 const expandHomeDir = require('expand-home-dir');
 const findJavaHome = require('find-java-home');
+const isWindows = process.platform.indexOf('win') === 0;
+const JAVAC_FILENAME = 'javac' + (isWindows?'.exe':'');
 
 interface RequirementsData {
     java_home: string;
@@ -34,56 +36,49 @@ export async function resolveRequirements(): Promise<RequirementsData> {
     return Promise.resolve({ 'java_home': java_home });
 }
 
-async function checkJavaRuntime(): Promise<any> {
+function checkJavaRuntime(): Promise<any> {
     return new Promise((resolve, reject) => {
-        
-        const config = workspace.getConfiguration();
-        let javaHome = config.get<string>('java.home');
-        let source;
-        if (typeof javaHome === 'string') {
+        let source : string;
+        let javaHome : string = readJavaConfig();
+        if (javaHome) {
             source = 'The java.home variable defined in VS Code settings';
         } else {
-            let jdkHome = process.env['JDK_HOME'];
-            if (jdkHome) {
-                javaHome = jdkHome;
-                source = 'The JDK_HOME environment variable'
+            javaHome = process.env['JDK_HOME'];
+            if (javaHome) {
+                source = 'The JDK_HOME environment variable';
             } else {
                 javaHome = process.env['JAVA_HOME'];
                 source = 'The JAVA_HOME environment variable';
             }
         }
-        javaHome = expandHomeDir(javaHome);
-        
-        return  pathExists(javaHome).then (exists => {
-                if (exists) {
-                    console.log(source + ' defines the Java runtime.');
-                    resolve({source, javaHome});
-                } else {
-                    console.log('Missing '+javaHome);
-                    openJDKDownload(reject, source+' points to a missing folder');
-                }
-            });
-    }).then((obj) => {
-        const originalJavaHome = process.env['JAVA_HOME'];
-        return new Promise((resolve, reject) => {
-            let source = obj['source'];
-            let javaHome = obj['javaHome'];
-            process.env['JAVA_HOME'] = javaHome;
-            findJavaHome(function (err, home) {
-                process.env['JAVA_HOME']= originalJavaHome;
+        if(javaHome ){
+            javaHome = expandHomeDir(javaHome);
+            if(!pathExists.sync(javaHome)){
+                openJDKDownload(reject, source+' points to a missing folder');
+            }
+            if(!pathExists.sync(path.resolve(javaHome, 'bin', JAVAC_FILENAME))){
+                openJDKDownload(reject, source+ ' does not point to a JDK.');
+            }
+            return resolve(javaHome);
+        }
+        //No settings, let's try to detect as last resort.
+        findJavaHome(function (err, home) {
                 if (err){
-                    openJDKDownload(reject, source+" could not be detected, or doesn't point to a JDK.");
+                    openJDKDownload(reject,'Java runtime could not be located');
                 }
                 else {
-                    console.log('Using JDK found in '+home);
                     resolve(home);
                 }
             });
-        });
     });
 }
 
-async function checkJavaVersion(java_home: string): Promise<any> {
+function readJavaConfig() : string {
+    const config = workspace.getConfiguration();
+    return config.get<string>('java.home',null);
+}
+
+function checkJavaVersion(java_home: string): Promise<any> {
     return new Promise((resolve, reject) => {
         cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
             if (stderr.indexOf('1.8') < 0){
@@ -96,7 +91,7 @@ async function checkJavaVersion(java_home: string): Promise<any> {
     });
 }
 
-async function checkServerInstalled(): Promise<any> {
+function checkServerInstalled(): Promise<any> {
     let pluginsPath = path.resolve(__dirname, '../../server/plugins');
     try {
         let isDirectory = fs.lstatSync(pluginsPath);
