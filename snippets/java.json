@@ -1,0 +1,197 @@
+{
+  "main": {
+    "prefix": "main",
+    "body": [
+      "public static void main(String[] args) {",
+      "\t$1",
+      "}"
+    ],
+    "description": "Public static main method"
+  },
+  "sysout": {
+    "prefix": "sysout",
+    "body": [
+      "System.out.println($1);"
+    ],
+    "description": "Print to standard out"
+  },
+  "syserr": {
+    "prefix": "syserr",
+    "body": [
+      "System.err.println($1);"
+    ],
+    "description": "Print to standard err"
+  },
+  "foreach": {
+    "prefix": "foreach",
+    "body": [
+      "for (${type} ${var} : ${iterable}) {",
+      "\t$4",
+      "}"
+    ],
+    "description": "Enhanced for loop"
+  },
+  "Public constructor": {
+    "prefix": "ctor",
+    "body": [
+      "public ${name}($1) {",
+      "\tsuper();",
+      "\t$0",
+      "}"
+    ],
+    "description": "Public constructor"
+  },
+  "Class Definition": {
+    "prefix": "class",
+    "body": [
+      "/**",
+      " * ${name}",
+      " */",
+      "public class ${name} {",
+      "",
+      "\tpublic ${name} (${parameters}) {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Class Definition"
+  },
+  "Interface Definition": {
+    "prefix": "interface",
+    "body": [
+      "/**",
+      " * ${name}",
+      " */",
+      "public interface ${name} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Interface Definition"
+  },
+  "if": {
+    "prefix": "if",
+    "body": [
+      "if (${condition}) {",
+      "\t$2",
+      "}"
+    ],
+    "description": "if statement"
+  },
+  "ifelse": {
+    "prefix": "ifelse",
+    "body": [
+      "if (${condition}) {",
+      "\t$2",
+      "} else {",
+      "\t$3",
+      "}"
+    ],
+    "description": "if/else statement"
+  },
+  "ifnull": {
+    "prefix": "ifnull",
+    "body": [
+      "if (${condition} == null) {",
+      "\t$2",
+      "}"
+    ],
+    "description": "if statement checking for null"
+  },
+  "ifnotnull": {
+    "prefix": "ifnotnull",
+    "body": [
+      "if (${condition} != null) {",
+      "\t$2",
+      "}"
+    ],
+    "description": "if statement checking for not null"
+  },
+  "trycatch": {
+    "prefix": "try_catch",
+    "body": [
+      "try {",
+      "\t$1",
+      "} catch (${Exception} ${e}) {",
+      "\t$4//${TODO}: handle exception",
+      "}"
+    ],
+    "description": "try/catch block"
+  },
+  "private_method": {
+    "prefix": "private_method",
+    "body": [
+      "private ${Type} ${name}(${3}) {",
+      "\t$4",
+      "}"
+    ],
+    "description": "private method"
+  },
+  "Public method": {
+    "prefix": "public_method",
+    "body": [
+      "public ${Type} ${name}(${3}) {",
+      "\t$4",
+      "}"
+    ],
+    "description": "public method"
+  },
+  "Private static method": {
+    "prefix": "private_static_method",
+    "body": [
+      "private static ${Type} ${name}(${3}) {",
+      "\t$4",
+      "}"
+    ],
+    "description": "private static method"
+  },
+  "Public static method": {
+    "prefix": "public_static_method",
+    "body": [
+      "public static ${Type} ${name}(${3}) {",
+      "\t$4",
+      "}"
+    ],
+    "description": "public static method"
+  },
+  "Protected Method": {
+    "prefix": "protected_method",
+    "body": [
+      "protected ${Type} ${name}(${3}) {",
+      "\t$4",
+      "}"
+    ],
+    "description": "Protected method"
+  },
+  "Switch Statement": {
+    "prefix": "switch",
+    "body": [
+      "switch (${key}) {",
+      "\tcase ${value}:",
+      "\t\t$0",
+      "\t\tbreak;",
+      "",
+      "\tdefault:",
+      "\t\tbreak;",
+      "}"
+    ],
+    "description": "Switch Statement"
+  },
+  "While Statement": {
+    "prefix": "while",
+    "body": [
+      "while (${condition}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "While Statement"
+  },
+  "Do-While Statement": {
+    "prefix": "dowhile",
+    "body": [
+      "do {",
+      "\t$0",
+      "} while (${condition});"
+    ],
+    "description": "Do-While Statement"
+  }
+}

@@ -31,6 +31,10 @@
 			"id": "java",
 			"extensions": [ ".class" ]
 		}],
+		"snippets": [{
+			"language": "java",
+			"path": "./snippets/java.json"
+		}],
 		"configuration": {
 			"type": "object",
 			"title": "Java configuration",
