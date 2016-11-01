@@ -23,7 +23,8 @@
 	"activationEvents": [ 
 		"onLanguage:java",
 		"onCommand:java.show.references",
-		"onCommand:java.open.output"
+		"onCommand:java.open.output",
+		"workspaceContains:pom.xml"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
