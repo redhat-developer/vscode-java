@@ -1,6 +1,9 @@
 # Change Log
 
-## 0.0.6
+## 0.0.7
+...wait for it...
+
+## 0.0.6 (November 1, 2016)
 * enhancement - auto-import packages referenced by code complete. See [#50](https://github.com/gorkem/java-language-server/issues/50).
 * enhancement – report Java errors for all files project in the project. See [58](https://github.com/gorkem/java-language-server/issues/58).
 * enhancement – Display package names on code completion proposals for Types [#47] (https://github.com/gorkem/java-language-server/issues/47).
@@ -10,7 +13,7 @@
 * bug fix - fix JAVA_HOME detection mechanism. See [#74](https://github.com/redhat-developer/vscode-java/issues/74).
 
 
-## 0.0.5
+## 0.0.5 (October 13, 2016)
 * enhancement - configure extra VM arguments in VS Code settings, used to launch the Java Language Server. See [#25](https://github.com/redhat-developer/vscode-java/issues/25). 
 * enhancement - configure java.home property in VS Code settings. See [#28](https://github.com/redhat-developer/vscode-java/issues/28). 
 * enhancement - improve Javadoc formatting on hover (scrollbar). See [#31](https://github.com/redhat-developer/vscode-java/issues/31).
