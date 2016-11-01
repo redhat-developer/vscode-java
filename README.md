@@ -30,6 +30,7 @@ Features
 * Code lens (references)
 * Highlights
 * Code formatting
+* Code snippets
 
 See the [changelog](CHANGELOG.md) for the latest release.
 

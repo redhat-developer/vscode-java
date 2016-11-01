@@ -1,10 +1,14 @@
 # Change Log
 
 ## 0.0.6
-* enhancement - auto-import packages referenced by code complete. See [#50](https://github.com/gorkem/java-language-server/issues/50)
-* enhancement – report Java errors for all files project in the project. See [58](https://github.com/gorkem/java-language-server/issues/58)
-* enhancement – Display package names on code completion proposals for Types [#47] (https://github.com/gorkem/java-language-server/issues/47)
+* enhancement - auto-import packages referenced by code complete. See [#50](https://github.com/gorkem/java-language-server/issues/50).
+* enhancement – report Java errors for all files project in the project. See [58](https://github.com/gorkem/java-language-server/issues/58).
+* enhancement – Display package names on code completion proposals for Types [#47] (https://github.com/gorkem/java-language-server/issues/47).
 * enhancement - add support for the JDK_HOME environment variable in VS Code settings. See [#65](https://github.com/redhat-developer/vscode-java/issues/65). 
+* enhancement - add Java code snippets. See [#83](https://github.com/redhat-developer/vscode-java/issues/83).
+* bug fix - fix errors thrown when opening a standalone file. See [#55](https://github.com/redhat-developer/vscode-java/issues/55), [#67](https://github.com/redhat-developer/vscode-java/issues/67).
+* bug fix - fix JAVA_HOME detection mechanism. See [#74](https://github.com/redhat-developer/vscode-java/issues/74).
+
 
 ## 0.0.5
 * enhancement - configure extra VM arguments in VS Code settings, used to launch the Java Language Server. See [#25](https://github.com/redhat-developer/vscode-java/issues/25). 
