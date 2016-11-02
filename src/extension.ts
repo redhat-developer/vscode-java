@@ -44,6 +44,9 @@ function runJavaServer(){
 				params.push('-Dlog.level=ALL');
 			}
 		
+			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
+			parseVMargs(params, vmargs);
+			
 			params.push('-jar'); params.push(path.resolve( __dirname ,'../../server/plugins/org.eclipse.equinox.launcher_1.3.200.v20160318-1642.jar'));
 			//select configuration directory according to OS
 			let configDir = 'config_win';
@@ -55,8 +58,6 @@ function runJavaServer(){
 			params.push('-configuration'); params.push(path.resolve( __dirname ,'../../server',configDir));
 			params.push('-data'); params.push(workspacePath);
 
-			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
-			parseVMargs(params, vmargs);
 			console.log('Executing '+ child + ' '+ params.join(' '));
 			electron.fork(child, params, {}, function(err, result) {
 				if(err) { reject(err); }
