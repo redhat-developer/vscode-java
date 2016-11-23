@@ -1,7 +1,11 @@
 # Change Log
 
-## 0.0.7
-...wait for it...
+## 0.0.7 (November 23, 2016)
+* enhancement - Basic Java support for standalone Java files. See [#27](https://github.com/redhat-developer/vscode-java/issues/27).
+* enhancement - Start Java Language Server when pom.xml is detected. See [#84](https://github.com/redhat-developer/vscode-java/issues/84).
+* bug fix - fix out of synch error markers. See [#87](https://github.com/redhat-developer/vscode-java/issues/87)
+* bug fix - fix missing generic types in autocompletion. See [#69](https://github.com/redhat-developer/vscode-java/issues/69).
+* bug fix - fix ignored `jdt.ls.vmargs`. See [#88](https://github.com/redhat-developer/vscode-java/pull/88).
 
 ## 0.0.6 (November 1, 2016)
 * enhancement - auto-import packages referenced by code complete. See [#50](https://github.com/gorkem/java-language-server/issues/50).
