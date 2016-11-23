@@ -95,7 +95,7 @@ export function downloadAndInstallServer() {
 		const SERVER_FOLDER = path.resolve(__dirname, '../../server/');
 		// const SERVER_ARCHIVE = "https://dl.bintray.com/gorkem/java-language-server/java-server-1.0.0-201609020048.tar.gz";
 		// Always use HTTPS download for http adresses may not work over proxies.
-		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/java-server-1.0.0-201611011844.tar.gz';
+		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/java-server-1.0.0-201611232122.tar.gz';
 
 		return download(SERVER_ARCHIVE, proxy, strictSSL).then(is => {
 			tmp.file((err, tmpPath, fd, cleanupCallback) => {
