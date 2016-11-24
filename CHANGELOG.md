@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.8 (December 2016)
+...
+
 ## 0.0.7 (November 23, 2016)
 * enhancement - Basic Java support for standalone Java files. See [#27](https://github.com/redhat-developer/vscode-java/issues/27).
 * enhancement - Start Java Language Server when pom.xml is detected. See [#84](https://github.com/redhat-developer/vscode-java/issues/84).
