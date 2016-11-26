@@ -6,6 +6,7 @@ import { workspace, ExtensionContext, window, StatusBarAlignment, commands, View
 import { LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
 var electron = require('./electron_j');
 var os = require('os');
+var glob = require('glob');
 import * as requirements from './requirements';
 import { StatusNotification,ClassFileContentsRequest } from './protocol';
 
@@ -46,8 +47,14 @@ function runJavaServer(){
 		
 			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
 			parseVMargs(params, vmargs);
-			
-			params.push('-jar'); params.push(path.resolve( __dirname ,'../../server/plugins/org.eclipse.equinox.launcher_1.3.200.v20160318-1642.jar'));
+			let server_home :string = path.resolve( __dirname,'../../server');
+			let launchersFound:Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', {cwd: server_home });
+			if( launchersFound.length ){	
+				params.push('-jar'); params.push(path.resolve(server_home,launchersFound[0]));
+			}else{
+				reject('failed to find launcher');
+			}
+
 			//select configuration directory according to OS
 			let configDir = 'config_win';
 			if (process.platform === 'darwin') {
