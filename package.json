@@ -24,7 +24,8 @@
 		"onLanguage:java",
 		"onCommand:java.show.references",
 		"onCommand:java.open.output",
-		"workspaceContains:pom.xml"
+		"workspaceContains:pom.xml",
+		"workspaceContains:build.gradle"
 	],
 	"main": "./out/src/extension",
 	"contributes": {
