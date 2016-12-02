@@ -88,7 +88,10 @@ export function activate(context: ExtensionContext) {
 		documentSelector: ['java'],
 		synchronize: {
 			// Notify the server about file changes to .java files contain in the workspace
-			fileEvents: workspace.createFileSystemWatcher('**/*.java')
+			fileEvents: [
+				workspace.createFileSystemWatcher('**/*.java'),
+				workspace.createFileSystemWatcher('**/pom.xml')
+			],
 		}
 	};
 	
