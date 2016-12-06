@@ -52,7 +52,20 @@
 					"description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G` to bypass class verification and increase the heap size to 1GB"
 				}
 			}
-		}
+		},
+		"commands": [{
+				"command": "java.project.configuration.update",
+				"title": "Update project configuration",
+				"category": "Java"
+			}
+		],
+		"keybindings": [{
+				"command": "java.project.configuration.update",
+				"key": "ctrl+alt+u",
+				"mac": "cmd+alt+u",
+				"when": "editorFocus"
+			}
+		]
 	},	
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",

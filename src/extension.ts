@@ -2,13 +2,14 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
+import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor } from 'vscode';
 import { LanguageClient, LanguageClientOptions, StreamInfo, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
+
 var electron = require('./electron_j');
 var os = require('os');
 var glob = require('glob');
 import * as requirements from './requirements';
-import { StatusNotification,ClassFileContentsRequest } from './protocol';
+import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest } from './protocol';
 
 
 declare var v8debug;
@@ -16,6 +17,7 @@ const DEBUG = ( typeof v8debug === 'object') || startedInDebugMode();
 var storagePath;
 var oldConfig;
 
+var lastStatus;
 function runJavaServer() : Thenable<StreamInfo> {
 	return requirements.resolveRequirements().catch(error =>{
 		//show error
@@ -106,10 +108,13 @@ export function activate(context: ExtensionContext) {
 		console.log(report.message);
 		if(report.type === 'Started'){
 			item.text = '$(thumbsup)';
+			lastStatus = item.text;
 		} else if(report.type === 'Error'){
 			item.text = '$(thumbsdown)';
-		} else {
+			lastStatus = item.text;
+		} else if(report.type === 'Message') {
 			item.text = report.message;
+			setTimeout(()=> {item.text = lastStatus;}, 3000);
 		}
 		item.command = 'java.open.output';
 		item.tooltip = report.message;
@@ -121,6 +126,11 @@ export function activate(context: ExtensionContext) {
 	commands.registerCommand('java.show.references', (uri:string, position: LSPosition, locations:LSLocation[])=>{
 		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), Protocol2Code.asPosition(position), locations.map(Protocol2Code.asLocation));
 	});
+
+
+
+	commands.registerCommand('java.project.configuration.update', uri => projectConfigurationUpdate(languageClient, uri));
+
 	window.onDidChangeActiveTextEditor((editor) =>{
 		toggleItem(editor, item);
 	});
@@ -145,12 +155,31 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(onConfigurationChange());
 }
 
-function toggleItem(editor, item) {
-	if(editor && editor.document && editor.document.languageId === 'java'){
+function projectConfigurationUpdate(languageClient:LanguageClient, uri?: Uri) {
+	let resource = uri;
+	if (!(resource instanceof Uri)) {
+		if (window.activeTextEditor) {
+			resource = window.activeTextEditor.document.uri;
+		}
+	}
+	if (isJavaConfigFile(resource.path)){
+		languageClient.sendNotification(ProjectConfigurationUpdateRequest.type, {
+			uri: resource.toString()
+		});
+	}
+}
+
+function toggleItem(editor: TextEditor, item) {
+	if(editor && editor.document &&
+		(editor.document.languageId === 'java' || isJavaConfigFile(editor.document.uri.path))){
 		item.show();
 	} else{
 		item.hide();
 	}
+}
+
+function isJavaConfigFile(path:String) {
+	return path.endsWith('pom.xml') || path.endsWith('.gradle');
 }
 
 function onConfigurationChange() {
