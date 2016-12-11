@@ -3,7 +3,7 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider } from 'vscode';
-import { LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, StreamInfo, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
 var electron = require('./electron_j');
 var os = require('os');
 var glob = require('glob');
@@ -16,7 +16,7 @@ const DEBUG = ( typeof v8debug === 'object') || startedInDebugMode();
 var storagePath;
 var oldConfig;
 
-function runJavaServer(){
+function runJavaServer() : Thenable<StreamInfo> {
 	return requirements.resolveRequirements().catch(error =>{
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection )=>{
@@ -27,7 +27,8 @@ function runJavaServer(){
 		// rethrow to disrupt the chain.
 		throw error;
 	})
-	.then(requirements => new Promise(function(resolve, reject){
+	.then(requirements => {
+	 return new Promise<StreamInfo>(function(resolve, reject){
 			let child = path.resolve (requirements.java_home + '/bin/java');
 			let params = [];
 			let workspacePath = path.resolve( storagePath+'/jdt_ws');
@@ -70,7 +71,8 @@ function runJavaServer(){
 				if(err) { reject(err); }
 				if(result){ resolve(result); }
 			});
-	}));
+		});
+	});
 }
 
 export function activate(context: ExtensionContext) {
