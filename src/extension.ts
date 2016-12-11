@@ -44,12 +44,12 @@ function runJavaServer(){
 				params.push('-Dlog.protocol=true');
 				params.push('-Dlog.level=ALL');
 			}
-		
+
 			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
 			parseVMargs(params, vmargs);
 			let server_home :string = path.resolve( __dirname,'../../server');
 			let launchersFound:Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', {cwd: server_home });
-			if( launchersFound.length ){	
+			if( launchersFound.length ){
 				params.push('-jar'); params.push(path.resolve(server_home,launchersFound[0]));
 			}else{
 				reject('failed to find launcher');
@@ -87,6 +87,7 @@ export function activate(context: ExtensionContext) {
 		// Register the server for java
 		documentSelector: ['java'],
 		synchronize: {
+			configurationSection: 'java',
 			// Notify the server about file changes to .java files contain in the workspace
 			fileEvents: [
 				workspace.createFileSystemWatcher('**/*.java'),
@@ -94,7 +95,7 @@ export function activate(context: ExtensionContext) {
 			],
 		}
 	};
-	
+
 	let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
     oldConfig = workspace.getConfiguration('java');
 	// Create the language client and start the client.
@@ -121,11 +122,11 @@ export function activate(context: ExtensionContext) {
 	window.onDidChangeActiveTextEditor((editor) =>{
 		toggleItem(editor, item);
 	});
-	
+
 	let provider: TextDocumentContentProvider= <TextDocumentContentProvider> {
 		onDidChange: null,
 		provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
-			return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string):string => { 
+			return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string):string => {
 				return v || '';
 			});
 		}
@@ -135,8 +136,8 @@ export function activate(context: ExtensionContext) {
 	item.text = 'Starting Java Language Server...';
 	toggleItem(window.activeTextEditor, item);
 	let disposable = languageClient.start();
-	
-	// Push the disposable to the context's subscriptions so that the 
+
+	// Push the disposable to the context's subscriptions so that the
 	// client can be deactivated on extension deactivation
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(onConfigurationChange());
