@@ -14,17 +14,17 @@ Quick Start
     * Download and install a Java 8 compatible development kit.
 3. Extension is activated when you first access a Java file.
     * Initial activation can be longer since it requires extension to download additional parts.
-    * Recognizes only projects with *maven* build files on the directory hierarchy, or to a lesser extent, simple Eclipse projects, i.e. containing .project and .classpath files. 
+    * Recognizes only projects with *maven* build files on the directory hierarchy, or to a lesser extent, simple Eclipse projects, i.e. containing .project and .classpath files.
 
-Features 
+Features
 =========
 ![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/vscode-java.0.0.1.gif)
 
 * Maven pom.xml project support
-* Basic Eclipse Java project support 
+* Basic Eclipse Java project support
 * As you type reporting of parsing and compilation errors
 * Code completion
-* Javadoc hovers 
+* Javadoc hovers
 * Code outline
 * Code navigation
 * Code lens (references)
@@ -43,6 +43,11 @@ The path to the Java Development Kit is searched in the following order:
 - the `JAVA_HOME` environment variable
 - on the current system path
 
+Available commands
+==========================
+Starting from version 0.0.8, the following command is available:
+- Update Project configuration (`Ctrl+Alt+U` or `Cmd+Alt+U` on MacOS):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
+
 Supported VS Code settings
 ==========================
 Starting from version 0.0.5, the following settings are supported:
@@ -52,13 +57,13 @@ Starting from version 0.0.5, the following settings are supported:
 
 Troubleshooting
 ===============
-1. Due to size restrictions on the marketplace extension downloads additional required parts check that they 
-are downloaded under `~/.vscode/extensions/redhat.java-0.0.7/server` folder. 
+1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.7/server` folder.
 You should see a folder named `plugins`.
 
 2. Check the status of the language tools on the lower right corner (marked with A on image below).
-It should show ready (thumbs up) as on the image below. You can click on the status and open the 
-language tool logs for further information in case of a failure. 
+It should show ready (thumbs up) as on the image below. You can click on the status and open the
+language tool logs for further information in case of a failure.
 
 ![ status indicator ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png)
 
@@ -66,7 +71,7 @@ language tool logs for further information in case of a failure.
 
 Contributing
 ===============
-This is an open source project open to anyone. Contributions are extremely welcome 
+This is an open source project open to anyone. Contributions are extremely welcome
 
 For information on getting started refer to [java-language-server](https://github.com/gorkem/java-language-server/blob/master/README.md).
 
