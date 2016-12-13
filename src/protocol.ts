@@ -12,5 +12,5 @@ export namespace StatusNotification {
 }
 
 export namespace ClassFileContentsRequest {
-    export const type: RequestType<TextDocumentIdentifier, string, void> = { get method() { return 'java/ClassFileContents'; }};
+    export const type: RequestType<TextDocumentIdentifier, string, void> = { get method() { return 'java/classFileContents'; }};
 }
