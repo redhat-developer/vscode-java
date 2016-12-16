@@ -1,10 +1,40 @@
 'use strict';
 
 import { RequestType, NotificationType, TextDocumentIdentifier} from 'vscode-languageclient';
+import { Command } from 'vscode';
+
+/**
+ * The message type. Copied from vscode protocol
+ */
+export enum MessageType {
+    /**
+     * An error message.
+     */
+    Error = 1,
+    /**
+     * A warning message.
+     */
+    Warning = 2,
+    /**
+     * An information message.
+     */
+    Info = 3,
+    /**
+     * A log message.
+     */
+    Log = 4,
+}
 
 export interface StatusReport {
 	message: string;
 	type: string;
+}
+
+export interface ActionableMessage {
+	severity: MessageType;
+	message: string;
+	data?: any;
+	commands?: Command[];
 }
 
 export namespace StatusNotification {
@@ -17,4 +47,8 @@ export namespace ClassFileContentsRequest {
 
 export namespace ProjectConfigurationUpdateRequest {
     export const type: NotificationType<TextDocumentIdentifier> = { get method() { return 'java/projectConfigurationUpdate'; }};
+}
+
+export namespace ActionableNotification {
+    export const type: NotificationType<ActionableMessage> = { get method() { return 'language/actionableNotification'; }};
 }

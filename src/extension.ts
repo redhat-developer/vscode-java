@@ -2,14 +2,14 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor } from 'vscode';
+import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration } from 'vscode';
 import { LanguageClient, LanguageClientOptions, StreamInfo, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
 
 var electron = require('./electron_j');
 var os = require('os');
 var glob = require('glob');
 import * as requirements from './requirements';
-import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest } from './protocol';
+import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest,MessageType,ActionableNotification } from './protocol';
 
 
 declare var v8debug;
@@ -48,7 +48,7 @@ function runJavaServer() : Thenable<StreamInfo> {
 				params.push('-Dlog.level=ALL');
 			}
 
-			let vmargs = workspace.getConfiguration('java').get('jdt.ls.vmargs','');
+			let vmargs = getJavaConfiguration().get('jdt.ls.vmargs','');
 			parseVMargs(params, vmargs);
 			let server_home :string = path.resolve( __dirname,'../../server');
 			let launchersFound:Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', {cwd: server_home });
@@ -95,31 +95,65 @@ export function activate(context: ExtensionContext) {
 			// Notify the server about file changes to .java files contain in the workspace
 			fileEvents: [
 				workspace.createFileSystemWatcher('**/*.java'),
-				workspace.createFileSystemWatcher('**/pom.xml')
+				workspace.createFileSystemWatcher('**/pom.xml'),
+				workspace.createFileSystemWatcher('**/*.gradle')
 			],
 		}
 	};
 
 	let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-    oldConfig = workspace.getConfiguration('java');
+    oldConfig = getJavaConfiguration();
 	// Create the language client and start the client.
 	let languageClient = new LanguageClient('java','Language Support for Java', serverOptions, clientOptions);
 	languageClient.onNotification(StatusNotification.type, (report) => {
 		console.log(report.message);
-		if(report.type === 'Started'){
-			item.text = '$(thumbsup)';
-			lastStatus = item.text;
-		} else if(report.type === 'Error'){
-			item.text = '$(thumbsdown)';
-			lastStatus = item.text;
-		} else if(report.type === 'Message') {
-			item.text = report.message;
-			setTimeout(()=> {item.text = lastStatus;}, 3000);
+		switch (report.type) {
+			case 'Started':
+				item.text = '$(thumbsup)';
+				lastStatus = item.text;
+				break;
+			case 'Error':
+				item.text = '$(thumbsdown)';
+				lastStatus = item.text;
+				break;
+			case 'Message':
+				item.text = report.message;
+				setTimeout(()=> {item.text = lastStatus;}, 3000);
+				break;
 		}
 		item.command = 'java.open.output';
 		item.tooltip = report.message;
 		toggleItem(window.activeTextEditor, item);
 	});
+	languageClient.onNotification(ActionableNotification.type, (notification) => {
+		let show = null;
+		switch (notification.severity) {
+			case MessageType.Log:
+			case MessageType.Info:
+				show = window.showInformationMessage;
+				break;
+			case MessageType.Warning:
+				show = window.showWarningMessage;
+				break;
+			case MessageType.Error:
+				show = window.showErrorMessage;
+				break;
+		}
+		if (!show) {
+			return;
+		}
+		const titles = notification.commands.map(a => a.title);
+
+		show(notification.message, ...titles).then((selection )=>{
+			for(let action of notification.commands) {
+				if (action.title === selection) {
+					commands.executeCommand(action.command, notification.data);
+					break;
+				}
+			}
+		});
+	});
+
 	commands.registerCommand('java.open.output', ()=>{
 		languageClient.outputChannel.show(ViewColumn.Three);
 	});
@@ -127,9 +161,9 @@ export function activate(context: ExtensionContext) {
 		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), Protocol2Code.asPosition(position), locations.map(Protocol2Code.asLocation));
 	});
 
-
-
 	commands.registerCommand('java.project.configuration.update', uri => projectConfigurationUpdate(languageClient, uri));
+
+	commands.registerCommand('java.ignoreIncompleteClasspath', (data?:any) => setIncompleteClasspathSeverity('ignore'));
 
 	window.onDidChangeActiveTextEditor((editor) =>{
 		toggleItem(editor, item);
@@ -153,6 +187,16 @@ export function activate(context: ExtensionContext) {
 	// client can be deactivated on extension deactivation
 	context.subscriptions.push(disposable);
 	context.subscriptions.push(onConfigurationChange());
+}
+
+
+function setIncompleteClasspathSeverity(severity:string) {
+	const config = getJavaConfiguration();
+	const section = 'errors.incompleteClasspath.severity';
+	config.update(section, severity, true).then(
+		() => console.log(section + ' globally set to '+severity),
+		(error) => console.log(error)
+	);
 }
 
 function projectConfigurationUpdate(languageClient:LanguageClient, uri?: Uri) {
@@ -184,7 +228,7 @@ function isJavaConfigFile(path:String) {
 
 function onConfigurationChange() {
 	return workspace.onDidChangeConfiguration(params => {
-		let newConfig = workspace.getConfiguration('java');
+		let newConfig = getJavaConfiguration();
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
 		  let msg =	'Java Language Server configuration changed, please restart VS Code.';
 		  let action =	'Restart Now';
@@ -243,4 +287,8 @@ function startedInDebugMode(): boolean {
 		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg));
 	};
 	return false;
+}
+
+function getJavaConfiguration():WorkspaceConfiguration {
+	return workspace.getConfiguration('java');
 }
