@@ -10,17 +10,17 @@
 	"bugs" : "https://github.com/redhat-developer/vscode-java/issues",
 	"preview": true,
 	"engines": {
-		"vscode": "^1.5.0"
+		"vscode": "^1.7.0"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/redhat-developer/vscode-java"
 	},
-	"categories": [ 
+	"categories": [
 		"Languages",
 		"Linters"
 	],
-	"activationEvents": [ 
+	"activationEvents": [
 		"onLanguage:java",
 		"onCommand:java.show.references",
 		"onCommand:java.open.output",
@@ -50,7 +50,18 @@
 					"type": ["string", "null"],
 					"default": "-noverify -Xmx1G",
 					"description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G` to bypass class verification and increase the heap size to 1GB"
-				}
+				},
+        "java.errors.incompleteClasspath.severity": {
+          "type": ["string"],
+          "enum": [
+            "ignore",
+            "info",
+            "warning",
+            "error"
+          ],
+          "default": "warning",
+          "description": "Specifies the severity of the message when the classpath is incomplete for a Java file"
+        }
 			}
 		},
 		"commands": [{
@@ -66,7 +77,7 @@
 				"when": "editorFocus"
 			}
 		]
-	},	
+	},
 	"scripts": {
 		"vscode:prepublish": "tsc -p ./",
 		"compile": "tsc -watch -p ./",
@@ -80,14 +91,14 @@
 		"vscode": "^1.0.0",
 		 "mocha": "^2.3.3",
 		"@types/node": "^6.0.40",
-		"@types/mocha": "^2.2.32",	
+		"@types/mocha": "^2.2.32",
 		"@types/glob":"5.0.30",
 		"gulp" :"^3.9.1",
 		"gulp-tslint": "^6.1.2",
 		"tslint" : "^3.15.1"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^2.6.0",
+		"vscode-languageclient": "^2.6.3",
 		"find-java-home": "git+https://github.com/gorkem/node-find-java-home.git#registry_fix",
 		"http-proxy-agent": "^1.0.0",
 		"https-proxy-agent": "^1.0.0",
