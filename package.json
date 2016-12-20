@@ -61,17 +61,27 @@
           ],
           "default": "warning",
           "description": "Specifies the severity of the message when the classpath is incomplete for a Java file"
+        },
+        "java.configuration.updateBuildConfiguration": {
+          "type": ["string"],
+          "enum": [
+            "disabled",
+            "interactive",
+            "automatic"
+          ],
+          "default": "interactive",
+          "description": "Specifies how modifications on build files update the Java configuration"
         }
 			}
 		},
 		"commands": [{
-				"command": "java.project.configuration.update",
+				"command": "java.projectConfiguration.update",
 				"title": "Update project configuration",
 				"category": "Java"
 			}
 		],
 		"keybindings": [{
-				"command": "java.project.configuration.update",
+				"command": "java.projectConfiguration.update",
 				"key": "ctrl+alt+u",
 				"mac": "cmd+alt+u",
 				"when": "editorFocus"
