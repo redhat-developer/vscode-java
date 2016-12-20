@@ -25,6 +25,24 @@ export enum MessageType {
     Log = 4,
 }
 
+/**
+ * A functionality status
+ */
+export enum FeatureStatus {
+    /**
+     * Disabled.
+     */
+    disabled = 0,
+    /**
+     * Enabled manually.
+     */
+    interactive = 1,
+    /**
+     * Enabled automatically.
+     */
+    automatic = 2,
+}
+
 export interface StatusReport {
 	message: string;
 	type: string;

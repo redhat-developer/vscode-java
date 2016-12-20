@@ -9,7 +9,7 @@ var electron = require('./electron_j');
 var os = require('os');
 var glob = require('glob');
 import * as requirements from './requirements';
-import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest,MessageType,ActionableNotification } from './protocol';
+import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest,MessageType,ActionableNotification,FeatureStatus } from './protocol';
 
 
 declare var v8debug;
@@ -129,6 +129,8 @@ export function activate(context: ExtensionContext) {
 		let show = null;
 		switch (notification.severity) {
 			case MessageType.Log:
+				show = logNotification;
+				break;
 			case MessageType.Info:
 				show = window.showInformationMessage;
 				break;
@@ -147,7 +149,7 @@ export function activate(context: ExtensionContext) {
 		show(notification.message, ...titles).then((selection )=>{
 			for(let action of notification.commands) {
 				if (action.title === selection) {
-					commands.executeCommand(action.command, notification.data);
+					commands.executeCommand(action.command, ...action.arguments);
 					break;
 				}
 			}
@@ -161,9 +163,11 @@ export function activate(context: ExtensionContext) {
 		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), Protocol2Code.asPosition(position), locations.map(Protocol2Code.asLocation));
 	});
 
-	commands.registerCommand('java.project.configuration.update', uri => projectConfigurationUpdate(languageClient, uri));
+	commands.registerCommand('java.projectConfiguration.update', uri => projectConfigurationUpdate(languageClient, uri));
 
 	commands.registerCommand('java.ignoreIncompleteClasspath', (data?:any) => setIncompleteClasspathSeverity('ignore'));
+
+	commands.registerCommand('java.projectConfiguration.status', (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
 
 	window.onDidChangeActiveTextEditor((editor) =>{
 		toggleItem(editor, item);
@@ -189,6 +193,11 @@ export function activate(context: ExtensionContext) {
 	context.subscriptions.push(onConfigurationChange());
 }
 
+function logNotification(message:string, ...items: string[]) {
+	return new Promise((resolve, reject) => {
+    	console.log(message);
+	});
+}
 
 function setIncompleteClasspathSeverity(severity:string) {
 	const config = getJavaConfiguration();
@@ -213,6 +222,19 @@ function projectConfigurationUpdate(languageClient:LanguageClient, uri?: Uri) {
 	}
 }
 
+function setProjectConfigurationUpdate(languageClient:LanguageClient, uri: Uri, status:FeatureStatus) {
+	const config = getJavaConfiguration();
+	const section = 'configuration.updateBuildConfiguration';
+
+	const st = FeatureStatus[status];
+	config.update(section, st).then(
+		() => console.log(section + ' set to '+st),
+		(error) => console.log(error)
+	);
+	if (status !== FeatureStatus.disabled) {
+		projectConfigurationUpdate(languageClient, uri);
+	}
+}
 function toggleItem(editor: TextEditor, item) {
 	if(editor && editor.document &&
 		(editor.document.languageId === 'java' || isJavaConfigFile(editor.document.uri.path))){
