@@ -22,6 +22,7 @@ Features
 
 * Maven pom.xml project support
 * Basic Eclipse Java project support
+* Basic Gradle Java project support
 * As you type reporting of parsing and compilation errors
 * Code completion
 * Javadoc hovers
@@ -31,6 +32,8 @@ Features
 * Highlights
 * Code formatting
 * Code snippets
+
+Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
 See the [changelog](CHANGELOG.md) for the latest release.
 
@@ -55,10 +58,15 @@ Starting from version 0.0.5, the following settings are supported:
 * `java.home` : Absolute path to JDK 8 home folder used to launch the Java Language Server. Requires VS Code restart.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
 
+Starting from version 0.0.8, the following settings are supported:
+
+* `java.configuration.updateBuildConfiguration` : Specifies how modifications on build files update the Java classpath/configuration. Supported values are `disabled` (nothing happens), `interactive` (asks about updating on every modification), `automatic` (updating is automatically triggered).
+* `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
+
 Troubleshooting
 ===============
 1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
-are downloaded under `~/.vscode/extensions/redhat.java-0.0.7/server` folder.
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.8/server` folder.
 You should see a folder named `plugins`.
 
 2. Check the status of the language tools on the lower right corner (marked with A on image below).

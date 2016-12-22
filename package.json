@@ -70,7 +70,7 @@
             "automatic"
           ],
           "default": "interactive",
-          "description": "Specifies how modifications on build files update the Java configuration"
+          "description": "Specifies how modifications on build files update the Java classpath/configuration"
         }
 			}
 		},
