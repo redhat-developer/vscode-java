@@ -66,7 +66,7 @@ Starting from version 0.0.8, the following settings are supported:
 Troubleshooting
 ===============
 1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
-are downloaded under `~/.vscode/extensions/redhat.java-0.0.8/server` folder.
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.9/server` folder.
 You should see a folder named `plugins`.
 
 2. Check the status of the language tools on the lower right corner (marked with A on image below).
