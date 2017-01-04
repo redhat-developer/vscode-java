@@ -109,7 +109,7 @@
 	},
 	"dependencies": {
 		"vscode-languageclient": "^2.6.3",
-		"find-java-home": "git+https://github.com/gorkem/node-find-java-home.git#registry_fix",
+		"find-java-home": "0.1.4",
 		"http-proxy-agent": "^1.0.0",
 		"https-proxy-agent": "^1.0.0",
 		"tmp" : "^0.0.29",
