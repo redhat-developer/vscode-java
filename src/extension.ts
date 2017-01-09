@@ -149,7 +149,8 @@ export function activate(context: ExtensionContext) {
 		show(notification.message, ...titles).then((selection )=>{
 			for(let action of notification.commands) {
 				if (action.title === selection) {
-					commands.executeCommand(action.command, ...action.arguments);
+					let args:any[] = (action.arguments)?action.arguments:[];
+					commands.executeCommand(action.command, ...args);
 					break;
 				}
 			}
