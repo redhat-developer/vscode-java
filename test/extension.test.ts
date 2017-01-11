@@ -19,7 +19,7 @@ suite('Java Language Extension', () => {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			let javaCmds = commands.filter(function(value){
-				return 'java.open.output' === value || 
+				return 'java.open.output' === value ||
 						'java.show.references' === value;
 			});
 			assert.ok(javaCmds.length === 2, 'missing java commands');
@@ -42,4 +42,16 @@ suite('Java Language Extension', () => {
 		done();
 	});
 
+	test('should parse VM arguments with spaces', function (done) {
+		let userArgs = '-javaagent:"C:\\Program Files\\Java\\lombok.jar" -Xbootclasspath/a:"C:\\Program Files\\Java\\lombok.jar" -Dfoo="Some \\"crazy\\" stuff"';
+		let vmArgs = [];
+
+		java.parseVMargs(vmArgs, userArgs);
+
+		assert.equal(vmArgs.length, 3);
+		assert.equal(vmArgs[0], '-javaagent:C:\\Program Files\\Java\\lombok.jar');
+		assert.equal(vmArgs[1], '-Xbootclasspath/a:C:\\Program Files\\Java\\lombok.jar');
+		assert.equal(vmArgs[2], '-Dfoo=Some "crazy" stuff');
+		done();
+	});
 });

@@ -283,7 +283,11 @@ export function parseVMargs(params:any[], vmargsLine:string) {
 	if (vmargs === null) {
 		return;
 	}
-	vmargs.forEach (function(arg) {
+	vmargs.forEach (arg => {
+		//remove all standalone double quotes
+		arg = arg.replace( /(\\)?"/g, function ($0, $1) { return ($1 ? $0 : ''); });
+		//unescape all escaped double quotes
+		arg = arg.replace( /(\\)"/g, '"');
 		if (params.indexOf(arg) < 0) {
 			params.push(arg);
 		}
