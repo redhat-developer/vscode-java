@@ -37,7 +37,7 @@ suite('Java Language Extension', () => {
 		assert.equal('-noverify', vmArgs[0]);
 		assert.equal('foo', vmArgs[1]);
 		assert.equal('-Xmx512m', vmArgs[2]);
-		assert.equal('-Dfoo=\"something with blank\"', vmArgs[3]);
+		assert.equal('-Dfoo=something with blank', vmArgs[3]);
 
 		done();
 	});
