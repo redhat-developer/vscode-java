@@ -1,0 +1,5 @@
+{
+	"autoClosingPairs": [
+		{ "open": "/**", "close": " */", "notIn": ["string"] }
+	]
+}

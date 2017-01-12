@@ -2,8 +2,9 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration } from 'vscode';
+import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction } from 'vscode';
 import { LanguageClient, LanguageClientOptions, StreamInfo, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
+
 
 var electron = require('./electron_j');
 var os = require('os');
@@ -78,6 +79,46 @@ function runJavaServer() : Thenable<StreamInfo> {
 }
 
 export function activate(context: ExtensionContext) {
+	// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
+	// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
+	languages.setLanguageConfiguration('java', {
+		indentationRules: {
+			// ^(.*\*/)?\s*\}.*$
+			decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
+			// ^.*\{[^}"']*$
+			increaseIndentPattern: /^.*\{[^}"']*$/
+		},
+		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+		onEnterRules: [
+			{
+				// e.g. /** | */
+				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				afterText: /^\s*\*\/$/,
+				action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
+			},
+			{
+				// e.g. /** ...|
+				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				action: { indentAction: IndentAction.None, appendText: ' * ' }
+			},
+			{
+				// e.g.  * ...|
+				beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
+				action: { indentAction: IndentAction.None, appendText: '* ' }
+			},
+			{
+				// e.g.  */|
+				beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
+				action: { indentAction: IndentAction.None, removeText: 1 }
+			},
+			{
+				// e.g.  *-----*/|
+				beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
+				action: { indentAction: IndentAction.None, removeText: 1 }
+			}
+		]
+	});
+
 
 	storagePath = context.storagePath;
 	if (!storagePath) {

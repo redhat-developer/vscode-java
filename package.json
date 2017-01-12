@@ -31,7 +31,8 @@
 	"contributes": {
 		"languages": [{
 			"id": "java",
-			"extensions": [ ".class" ]
+			"extensions": [ ".class" ],
+			"configuration": "./language-configuration.json"
 		}],
 		"snippets": [{
 			"language": "java",
