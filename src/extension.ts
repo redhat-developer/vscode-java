@@ -211,6 +211,13 @@ export function activate(context: ExtensionContext) {
 
 	commands.registerCommand('java.projectConfiguration.status', (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
 
+	commands.registerCommand('java.apply.workspaceEdit',(obj)=>{
+		let edit =  Protocol2Code.asWorkspaceEdit(obj);
+		if(edit){
+			workspace.applyEdit(edit);
+		}
+	});
+
 	window.onDidChangeActiveTextEditor((editor) =>{
 		toggleItem(editor, item);
 	});
