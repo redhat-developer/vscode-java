@@ -72,7 +72,18 @@
           ],
           "default": "interactive",
           "description": "Specifies how modifications on build files update the Java classpath/configuration"
+        },
+        "java.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VS Code and the Java language server."
         }
+
 			}
 		},
 		"commands": [{
