@@ -18,11 +18,18 @@ suite('Java Language Extension', () => {
 	test('should register all java commands', function (done) {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
-			let javaCmds = commands.filter(function(value){
-				return 'java.open.output' === value ||
-						'java.show.references' === value;
+			const JAVA_COMMANDS = [
+				'java.open.output',
+				'java.show.references',
+				'java.projectConfiguration.update',
+				'java.ignoreIncompleteClasspath',
+				'java.projectConfiguration.status',
+				'java.apply.workspaceEdit',
+			];
+			let foundJavaCommands = commands.filter(function(value){
+				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
 			});
-			assert.ok(javaCmds.length === 2, 'missing java commands');
+			assert.equal(foundJavaCommands.length ,JAVA_COMMANDS.length, 'Some Java commands are not registered properly or a new command is not added to the test');
 			done();
 		});
 	});
