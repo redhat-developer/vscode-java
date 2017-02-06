@@ -82,8 +82,12 @@
           ],
           "default": "off",
           "description": "Traces the communication between VS Code and the Java language server."
+        },
+        "java.referencesCodeLens.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the references code lens."
         }
-
 			}
 		},
 		"commands": [{
