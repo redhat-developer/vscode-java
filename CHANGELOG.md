@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.0.10 (February 08, 2017)
+* enhancement - Improve intellisense performance. See [#121](https://github.com/redhat-developer/vscode-java/issues/121).
+* enhancement - Document server tracing capabilities. See [#145](https://github.com/redhat-developer/vscode-java/issues/145).
+* enhancement - Disable reference code lenses with `java.referencesCodeLens.enabled`. See [#148](https://github.com/redhat-developer/vscode-java/issues/148).
+* bug fix - fix dubious intellisense relevance. See [#142](https://github.com/redhat-developer/vscode-java/issues/142).
+* bug fix - fix broken autocompletion on constructors. See [#143](https://github.com/redhat-developer/vscode-java/issues/143).
+* bug fix - fix brackets/parentheses autoclosing. See [#144](https://github.com/redhat-developer/vscode-java/issues/144).
+
 ## 0.0.9 (January 16, 2017)
 * enhancement - Autoclose Javadoc statements, adding `*` on new lines. See [#139](https://github.com/redhat-developer/vscode-java/issues/139).
 * bug fix - fix Error when `Go to definition` performed on non-code portion. See [#124](https://github.com/redhat-developer/vscode-java/issues/124).

@@ -48,20 +48,22 @@ The path to the Java Development Kit is searched in the following order:
 
 Available commands
 ==========================
-Starting from version 0.0.8, the following command is available:
+The following command is available:
 - Update Project configuration (`Ctrl+Alt+U` or `Cmd+Alt+U` on MacOS):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
 
 Supported VS Code settings
 ==========================
-Starting from version 0.0.5, the following settings are supported:
+The following settings are supported:
 
 * `java.home` : Absolute path to JDK 8 home folder used to launch the Java Language Server. Requires VS Code restart.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
-
-Starting from version 0.0.8, the following settings are supported:
-
 * `java.configuration.updateBuildConfiguration` : Specifies how modifications on build files update the Java classpath/configuration. Supported values are `disabled` (nothing happens), `interactive` (asks about updating on every modification), `automatic` (updating is automatically triggered).
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
+
+Starting from version 0.0.10, these new settings are supported:
+
+* `java.trace.server` : Traces the communication between VS Code and the Java language server.
+* `java.referencesCodeLens.enabled` : Enable/disable the references code lens.
 
 Troubleshooting
 ===============
