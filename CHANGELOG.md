@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.11 (TBA)
+* build - Now uses [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls) under the hood. See [#152](https://github.com/redhat-developer/vscode-java/issues/152).
+
+
 ## 0.0.10 (February 08, 2017)
 * enhancement - Improve intellisense performance. See [#121](https://github.com/redhat-developer/vscode-java/issues/121).
 * enhancement - Document server tracing capabilities. See [#145](https://github.com/redhat-developer/vscode-java/issues/145).

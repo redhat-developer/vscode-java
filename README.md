@@ -4,8 +4,8 @@ Language support for Java &trade; for Visual Studio Code
 =====================
 
 Provides Java &trade; language support via
-[java-language-server](https://github.com/gorkem/java-language-server), which utilizes
-[Eclipse &trade; JDT](http://www.eclipse.org/jdt/).
+[Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls), which utilizes
+[Eclipse &trade; JDT](http://www.eclipse.org/jdt/), [M2Eclipse](http://www.eclipse.org/m2e/) and [Buildship](https://github.com/eclipse/buildship).
 
 Quick Start
 ============
@@ -68,7 +68,7 @@ Starting from version 0.0.10, these new settings are supported:
 Troubleshooting
 ===============
 1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
-are downloaded under `~/.vscode/extensions/redhat.java-0.0.10/server` folder.
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.11/server` folder.
 You should see a folder named `plugins`.
 
 2. Check the status of the language tools on the lower right corner (marked with A on image below).
@@ -81,14 +81,14 @@ language tool logs for further information in case of a failure.
 
 Contributing
 ===============
-This is an open source project open to anyone. Contributions are extremely welcome
+This is an open source project open to anyone. Contributions are extremely welcome!
 
-For information on getting started refer to [java-language-server](https://github.com/gorkem/java-language-server/blob/master/README.md).
+For information on getting started, refer to the [CONTRIBUTING.md instructions](CONTRIBUTING.md).
 
 Feedback
 ===============
 * File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-java/issues).
-* [Tweet](https://twitter.com/GorkemErcan) us with other feedback.
+* [Tweet](https://twitter.com/GorkemErcan) [us](https://twitter.com/fbricon) with other feedback.
 
 
 License

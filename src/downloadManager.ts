@@ -93,7 +93,7 @@ export function downloadAndInstallServer() {
 		const strictSSL = config.get('http.proxyStrictSSL', true);
 
 		const SERVER_FOLDER = path.resolve(__dirname, '../../server/');
-		// const SERVER_ARCHIVE = "https://dl.bintray.com/gorkem/java-language-server/java-server-1.0.0-201609020048.tar.gz";
+		// const SERVER_ARCHIVE = "https://dl.bintray.com/gorkem/java-language-server/jdt-language-server-<version>.tar.gz";
 		// Always use HTTPS download for http adresses may not work over proxies.
 		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/jdt-language-server-0.1.0-201702092042.tar.gz';
 
