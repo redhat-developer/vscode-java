@@ -1,5 +1,6 @@
 
 import * as https from 'https';
+import * as http from 'http';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -30,10 +31,10 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
 		rejectUnauthorized: strictSSL
 	};
 
-
     return new Promise<stream.Readable>((resolve, reject) => {
-        let request = https.get(options, res => {
-            // handle redirection
+		var request;
+		var downloadExec = function(res : http.IncomingMessage) {
+ 			// handle redirection
             if (res.statusCode === 302) {
                 return download(res.headers.location).then(is => resolve(is)).catch(err => reject(err));
             }
@@ -51,7 +52,13 @@ function download(urlString: string, proxy?: string, strictSSL?: boolean): Promi
 				downloadProgressItem.text = 'Completing Java installation ' + Number.parseInt(progressData.percentage) + '%';
 			});
             return resolve(res.pipe(progressStream));
-        });
+
+		};
+		if (url.protocol.startsWith('https')){
+			request = https.get(options, downloadExec);
+		} else {
+			request = http.get(options, downloadExec);
+		}
 		request.setTimeout(30000, ()=>{request.abort();});
 		return request;
     });
@@ -91,11 +98,10 @@ export function downloadAndInstallServer() {
 		const config = vscode.workspace.getConfiguration();
 		const proxy = config.get<string>('http.proxy');
 		const strictSSL = config.get('http.proxyStrictSSL', true);
-
 		const SERVER_FOLDER = path.resolve(__dirname, '../../server/');
 		// const SERVER_ARCHIVE = "https://dl.bintray.com/gorkem/java-language-server/jdt-language-server-<version>.tar.gz";
 		// Always use HTTPS download for http adresses may not work over proxies.
-		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/jdt-language-server-0.1.0-201702092042.tar.gz';
+		const SERVER_ARCHIVE = 'http://download.eclipse.org/jdtls/snapshots/jdt-language-server-0.1.0-201702132114.tar.gz';
 
 		return download(SERVER_ARCHIVE, proxy, strictSSL).then(is => {
 			tmp.file((err, tmpPath, fd, cleanupCallback) => {
