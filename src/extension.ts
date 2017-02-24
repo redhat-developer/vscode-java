@@ -3,7 +3,7 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction } from 'vscode';
-import { LanguageClient, LanguageClientOptions, StreamInfo, Position as LSPosition, Location as LSLocation, Protocol2Code} from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, StreamInfo, Position as LSPosition, Location as LSLocation} from 'vscode-languageclient';
 
 
 var electron = require('./electron_j');
@@ -146,63 +146,66 @@ export function activate(context: ExtensionContext) {
     oldConfig = getJavaConfiguration();
 	// Create the language client and start the client.
 	let languageClient = new LanguageClient('java','Language Support for Java', serverOptions, clientOptions);
-	languageClient.onNotification(StatusNotification.type, (report) => {
-		console.log(report.message);
-		switch (report.type) {
-			case 'Started':
-				item.text = '$(thumbsup)';
-				lastStatus = item.text;
-				break;
-			case 'Error':
-				item.text = '$(thumbsdown)';
-				lastStatus = item.text;
-				break;
-			case 'Message':
-				item.text = report.message;
-				setTimeout(()=> {item.text = lastStatus;}, 3000);
-				break;
-		}
-		item.command = 'java.open.output';
-		item.tooltip = report.message;
-		toggleItem(window.activeTextEditor, item);
-	});
-	languageClient.onNotification(ActionableNotification.type, (notification) => {
-		let show = null;
-		switch (notification.severity) {
-			case MessageType.Log:
-				show = logNotification;
-				break;
-			case MessageType.Info:
-				show = window.showInformationMessage;
-				break;
-			case MessageType.Warning:
-				show = window.showWarningMessage;
-				break;
-			case MessageType.Error:
-				show = window.showErrorMessage;
-				break;
-		}
-		if (!show) {
-			return;
-		}
-		const titles = notification.commands.map(a => a.title);
-
-		show(notification.message, ...titles).then((selection )=>{
-			for(let action of notification.commands) {
-				if (action.title === selection) {
-					let args:any[] = (action.arguments)?action.arguments:[];
-					commands.executeCommand(action.command, ...args);
+	languageClient.onReady().then(() => {
+		languageClient.onNotification(StatusNotification.type, (report) => {
+			console.log(report.message);
+			switch (report.type) {
+				case 'Started':
+					item.text = '$(thumbsup)';
+					lastStatus = item.text;
 					break;
-				}
+				case 'Error':
+					item.text = '$(thumbsdown)';
+					lastStatus = item.text;
+					break;
+				case 'Message':
+					item.text = report.message;
+					setTimeout(() => { item.text = lastStatus; }, 3000);
+					break;
 			}
+			item.command = 'java.open.output';
+			item.tooltip = report.message;
+			toggleItem(window.activeTextEditor, item);
+		});
+		languageClient.onNotification(ActionableNotification.type, (notification) => {
+			let show = null;
+			switch (notification.severity) {
+				case MessageType.Log:
+					show = logNotification;
+					break;
+				case MessageType.Info:
+					show = window.showInformationMessage;
+					break;
+				case MessageType.Warning:
+					show = window.showWarningMessage;
+					break;
+				case MessageType.Error:
+					show = window.showErrorMessage;
+					break;
+			}
+			if (!show) {
+				return;
+			}
+			const titles = notification.commands.map(a => a.title);
+
+			show(notification.message, ...titles).then((selection) => {
+				for (let action of notification.commands) {
+					if (action.title === selection) {
+						let args: any[] = (action.arguments) ? action.arguments : [];
+						commands.executeCommand(action.command, ...args);
+						break;
+					}
+				}
+			});
 		});
 	});
+
 
 	commands.registerCommand('java.open.output', ()=>{
 		languageClient.outputChannel.show(ViewColumn.Three);
 	});
 	commands.registerCommand('java.show.references', (uri:string, position: LSPosition, locations:LSLocation[])=>{
-		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), Protocol2Code.asPosition(position), locations.map(Protocol2Code.asLocation));
+		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
 	});
 
 	commands.registerCommand('java.projectConfiguration.update', uri => projectConfigurationUpdate(languageClient, uri));
@@ -212,7 +215,7 @@ export function activate(context: ExtensionContext) {
 	commands.registerCommand('java.projectConfiguration.status', (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
 
 	commands.registerCommand('java.apply.workspaceEdit',(obj)=>{
-		let edit =  Protocol2Code.asWorkspaceEdit(obj);
+		let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 		if(edit){
 			workspace.applyEdit(edit);
 		}

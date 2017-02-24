@@ -116,22 +116,22 @@
     "tslint": "gulp tslint"
 	},
 	"devDependencies": {
-		"typescript": "^2.0.3",
-		"vscode": "^1.0.0",
-		 "mocha": "^2.3.3",
+		"typescript": "^2.2.1",
+		"vscode": "^1.0.3",
+		 "mocha": "^3.2.0",
 		"@types/node": "^6.0.40",
-		"@types/mocha": "^2.2.32",
+		"@types/mocha": "^2.2.39",
 		"@types/glob":"5.0.30",
 		"gulp" :"^3.9.1",
-		"gulp-tslint": "^6.1.2",
-		"tslint" : "^3.15.1"
+		"gulp-tslint": "^7.1.0",
+		"tslint" : "^4.4.2"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^2.6.3",
+		"vscode-languageclient": "next",
 		"find-java-home": "0.1.4",
 		"http-proxy-agent": "^1.0.0",
 		"https-proxy-agent": "^1.0.0",
-		"tmp" : "^0.0.29",
+		"tmp" : "^0.0.31",
 		"decompress": "^4.0.0",
 		"progress-stream": "^1.2.0",
 		"path-exists":"^3.0.0",

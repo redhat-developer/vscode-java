@@ -56,17 +56,17 @@ export interface ActionableMessage {
 }
 
 export namespace StatusNotification {
-	export const type: NotificationType<StatusReport> = { get method() { return 'language/status'; } };
+	export const type = new NotificationType<StatusReport,void >('language/status');
 }
 
 export namespace ClassFileContentsRequest {
-    export const type: RequestType<TextDocumentIdentifier, string, void> = { get method() { return 'java/classFileContents'; }};
+    export const type= new RequestType<TextDocumentIdentifier, string, void, void> ('java/classFileContents');
 }
 
 export namespace ProjectConfigurationUpdateRequest {
-    export const type: NotificationType<TextDocumentIdentifier> = { get method() { return 'java/projectConfigurationUpdate'; }};
+    export const type = new NotificationType<TextDocumentIdentifier, void> ('java/projectConfigurationUpdate');
 }
 
 export namespace ActionableNotification {
-    export const type: NotificationType<ActionableMessage> = { get method() { return 'language/actionableNotification'; }};
+    export const type = new NotificationType<ActionableMessage, void>('language/actionableNotification');
 }
