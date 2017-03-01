@@ -109,8 +109,11 @@
 		"compile": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "node ./node_modules/vscode/bin/test",
-		"build-server": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build -Dmaven.test.skip=true clean verify",
-		"tslint": "gulp tslint"
+		"build-server": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build clean package",
+		"build-server-mac": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build,fast -Denvironment.os=macosx -Denvironment.ws=cocoa -Denvironment.arch=x86_64 clean package -o",
+		"build-server-win": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build,fast  -Denvironment.os=win32 -Denvironment.ws=win32 -Denvironment.arch=x86_64 clean package -o",
+		"build-server-linux": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build,fast -Denvironment.os=linux -Denvironment.ws=gtk -Denvironment.arch=x86_64 clean package -o",
+    "tslint": "gulp tslint"
 	},
 	"devDependencies": {
 		"typescript": "^2.0.3",

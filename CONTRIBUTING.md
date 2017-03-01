@@ -35,6 +35,7 @@ This assumes that you are starting on the `vscode-java` directory
 	$ cd ..\vscode-java
 	$ npm run-script build-server
 	```
+You can run faster builds by calling the `build-server-mac`, `build-server-win` or `build-server-linux` script instead, depending on your OS. These commands run Maven in offline mode, so you might need to run `build-server` at least once, to fetch all the dependencies.
 
 This will build and place the binaries under the `server` folder. Alternately you can download
 and unzip a pre-built server. For pre-built server information refer to eclipse.jdt.ls
