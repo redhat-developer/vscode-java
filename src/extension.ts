@@ -43,7 +43,7 @@ function runJavaServer() : Thenable<StreamInfo> {
 			}
 			params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1');
 			params.push('-Dosgi.bundles.defaultStartLevel=4');
-			params.push('-Declipse.product=org.eclipse.jdt.ls.product');
+			params.push('-Declipse.product=org.eclipse.jdt.ls.core.product');
 			if (DEBUG) {
 				params.push('-Dlog.protocol=true');
 				params.push('-Dlog.level=ALL');
