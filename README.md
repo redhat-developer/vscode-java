@@ -14,7 +14,7 @@ Quick Start
     * Download and install a Java 8 compatible development kit.
 3. Extension is activated when you first access a Java file.
     * Initial activation can be longer since it requires extension to download additional parts.
-    * Recognizes only projects with *maven* build files on the directory hierarchy, or to a lesser extent, simple Eclipse projects, i.e. containing .project and .classpath files.
+    * Recognizes projects with *maven* or *gradle* build files in the directory hierarchy, or to a lesser extent, simple Eclipse projects, i.e. containing .project and .classpath files.
 
 Features
 =========
