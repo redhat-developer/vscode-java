@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.12 (TBD)
+...wait for it
+
 ## 0.0.11 (March 2nd, 2017)
 * build - Now uses [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls) under the hood. See [#152](https://github.com/redhat-developer/vscode-java/issues/152).
 * enhancement - Maven errors are reported. See [JLS#85](https://github.com/eclipse/eclipse.jdt.ls/issues/85).
