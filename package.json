@@ -87,6 +87,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable/disable the references code lens."
+        },
+        "java.configuration.maven.userSettings": {
+          "type": "string",
+          "default": null,
+          "description": "Absolute path to Maven's settings.xml"
         }
 			}
 		},
