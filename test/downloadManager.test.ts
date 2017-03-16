@@ -7,7 +7,7 @@ import * as  downloadManager from '../src/downloadManager';
 suite('Java Language Extension downloadManager tests', () => {
 
     // Defines a Mocha unit test
-    test('Download server', function(done ) {
+    test('Download server', function() {
         this.timeout(2*60*1000);
         return downloadManager.downloadAndInstallServer()
             .then(() => {
@@ -20,7 +20,6 @@ suite('Java Language Extension downloadManager tests', () => {
                 catch (err) {
                     assert.ifError(err);
                 }
-                done();
             });
     });
 });
