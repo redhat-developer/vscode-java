@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.13 (TBD)
+...
+
 ## 0.0.12 (March 16th, 2017)
 * enhancement - New `java.configuration.maven.userSettings` preference to set Maven's user settings.xml. See [JLS#184](https://github.com/eclipse/eclipse.jdt.ls/issues/184).
 * enhancement - Adopt new VS Code SnippetString API. See [#99](https://github.com/redhat-developer/vscode-java/issues/99).

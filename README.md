@@ -61,15 +61,13 @@ The following settings are supported:
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
 * `java.referencesCodeLens.enabled` : Enable/disable the references code lens.
-
-Since 0.0.12
 * `java.configuration.maven.userSettings` : Absolute path to Maven's settings.xml.
 
 
 Troubleshooting
 ===============
 1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
-are downloaded under `~/.vscode/extensions/redhat.java-0.0.12/server` folder.
+are downloaded under `~/.vscode/extensions/redhat.java-0.0.13/server` folder.
 You should see a folder named `plugins`.
 
 2. Check the status of the language tools on the lower right corner (marked with A on image below).
