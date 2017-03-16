@@ -1,7 +1,9 @@
 # Change Log
 
-## 0.0.12 (TBD)
-...wait for it
+## 0.0.12 (March 16th, 2017)
+* enhancement - New `java.configuration.maven.userSettings` preference to set Maven's user settings.xml. See [JLS#184](https://github.com/eclipse/eclipse.jdt.ls/issues/184).
+* enhancement - Adopt new VS Code SnippetString API. See [#99](https://github.com/redhat-developer/vscode-java/issues/99).
+* bug fix - Saving a file doesn't update compilation errors on dependent classes. See [JLS#187](https://github.com/eclipse/eclipse.jdt.ls/issues/187).
 
 ## 0.0.11 (March 2nd, 2017)
 * build - Now uses [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls) under the hood. See [#152](https://github.com/redhat-developer/vscode-java/issues/152).

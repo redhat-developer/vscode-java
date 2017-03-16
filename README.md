@@ -62,6 +62,10 @@ The following settings are supported:
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
 * `java.referencesCodeLens.enabled` : Enable/disable the references code lens.
 
+Since 0.0.12
+* `java.configuration.maven.userSettings` : Absolute path to Maven's settings.xml.
+
+
 Troubleshooting
 ===============
 1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
