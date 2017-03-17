@@ -101,7 +101,7 @@ export function downloadAndInstallServer() {
 		const SERVER_FOLDER = path.resolve(__dirname, '../../server/');
 		// const SERVER_ARCHIVE = "https://dl.bintray.com/gorkem/java-language-server/jdt-language-server-<version>.tar.gz";
 		// Always use HTTPS download for http adresses may not work over proxies.
-		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/jdt-language-server-0.1.0-201703161606.tar.gz';
+		const SERVER_ARCHIVE = 'https://download.jboss.org/jbosstools/static/vscode/jdt-language-server-0.1.0-201703172148.tar.gz';
 
 		return download(SERVER_ARCHIVE, proxy, strictSSL).then(is => {
 			tmp.file((err, tmpPath, fd, cleanupCallback) => {

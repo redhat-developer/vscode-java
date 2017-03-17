@@ -1,7 +1,7 @@
 # Change Log
 
-## 0.0.13 (TBD)
-...
+## 0.0.13 (March 17th, 2017)
+* bug fix - Java projects are no longer imported. See [#167](https://github.com/redhat-developer/vscode-java/issues/167).
 
 ## 0.0.12 (March 16th, 2017)
 * enhancement - New `java.configuration.maven.userSettings` preference to set Maven's user settings.xml. See [JLS#184](https://github.com/eclipse/eclipse.jdt.ls/issues/184).
