@@ -1,0 +1,5 @@
+{
+	"production":{
+		"url": "https://download.jboss.org/jbosstools/static/vscode/jdt-language-server-0.1.0-201703172148.tar.gz"
+	}
+}
