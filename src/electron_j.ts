@@ -91,6 +91,12 @@ function fork(modulePath, args, options, callback) {
         env: newEnv,
         execArgv: options.execArgv
     });
+    childProcess.stdout.on('data', function(data) {
+        console.log('stdout: ' + data);
+    });
+    childProcess.stderr.on('data', function(data) {
+        console.log('stderr: ' + data);
+    });
     childProcess.once('error', function (err) {
         closeServer();
         reject(err);
