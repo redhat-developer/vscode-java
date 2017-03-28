@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.1.0 (March 30th, 2017)
+* enhancement - add support for build-helper-maven-plugin. See [JLS#198](https://github.com/eclipse/eclipse.jdt.ls/issues/198).
+* enhancement - add support for Maven compilerIds jdt, eclipse, javac-with-errorprone. See [JLS#196](https://github.com/eclipse/eclipse.jdt.ls/issues/196).
+* enhancement - log Server's stderr/sdout in VS Code's console, to help troubleshooting. See [#172](https://github.com/redhat-developer/vscode-java/pull/172/).
+* bug fix - [tentative] prevent workspace corruption on shutdown. See [JLS#199](https://github.com/eclipse/eclipse.jdt.ls/pull/199).
+* bug fix - Opening standalone Java files fails to initialize the server. See [JLS#194](https://github.com/eclipse/eclipse.jdt.ls/issues/194).
+* bug fix - Intellisense fails on package-less classes. See [#166](https://github.com/redhat-developer/vscode-java/issues/166).
+
 ## 0.0.13 (March 17th, 2017)
 * bug fix - Java projects are no longer imported. See [#167](https://github.com/redhat-developer/vscode-java/issues/167).
 
