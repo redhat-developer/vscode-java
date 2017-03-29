@@ -99,7 +99,7 @@ try{
 	   }//if publishMarketPlace
     }
 }catch(error){
-	(currentBuild.result != "ABORTED") && node("master") {
+	(currentBuild.result != "ABORTED") && node() {
         step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']])])
 		throw error
     }
