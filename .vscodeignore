@@ -9,5 +9,6 @@ images/**
 tsconfig.json
 vsc-extension-quickstart.md
 undefined/**
-CONTRIBUTING.md 
+CONTRIBUTING.md
 .vscode-test/**
+server/**
