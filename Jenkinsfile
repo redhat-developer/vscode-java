@@ -1,5 +1,6 @@
 #!/usr/bin/env groovy
 
+try{
     node('rhel7'){
         stage 'Build JDT LS'
         git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
@@ -62,12 +63,13 @@
     }
 
 
-if(params.publishToMarketPlace){
-    timeout(time:5, unit:'DAYS') {
-        input message:'Approve deployment?', submitter: 'bercan'
-    }
 
     node('rhel7'){
+
+		if(params.publishToMarketPlace){
+    		timeout(time:5, unit:'DAYS') {
+        		input message:'Approve deployment?', submitter: 'bercan'
+   			 }
         stage 'Upload Server to release'
         unstash 'server_distro'
         def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
@@ -96,5 +98,11 @@ if(params.publishToMarketPlace){
        withCredentials([string(credentialsId: 'vscode_marketplace', variable: 'TOKEN')]) {
             sh "vsce publish -p $TOKEN"
        }
+	   }//if publishMarketPlace
+    }
+}catch(error){
+	(currentBuild.result != "ABORTED") && node("master") {
+        step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: emailextrecipients([[$class: 'CulpritsRecipientProvider'], [$class: 'RequesterRecipientProvider']])])
+		throw error
     }
 }
