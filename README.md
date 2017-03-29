@@ -84,6 +84,8 @@ This is an open source project open to anyone. Contributions are extremely welco
 
 For information on getting started, refer to the [CONTRIBUTING.md instructions](CONTRIBUTING.md).
 
+Continuous Integration builds can be installed from http://download.jboss.org/jbosstools/jdt.ls/staging/. Download the most recent `vscode-java-<version>.vsix` file and install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
+
 Feedback
 ===============
 * File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-java/issues).
