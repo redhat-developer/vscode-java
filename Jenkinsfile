@@ -55,7 +55,7 @@ try{
 
         stage "Package vscode-java"
 		def packageJson = readJSON file: 'package.json'
-        sh "vsce package -o java-${packageJson.version}-${env.BUILD_TIMESTAMP}.vsix"
+        sh "vsce package -o java-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
 
         stage 'Upload vscode-java to staging'
         def vsix = findFiles(glob: '**.vsix')
