@@ -1,5 +1,23 @@
 #!/usr/bin/env groovy
 
+def installBuildRequirements(){
+	def nodeHome = tool 'nodejs-7.7.4'
+	env.PATH="${env.PATH}:${nodeHome}/bin"
+	sh "npm install -g typescript"
+	sh "npm install -g vsce"
+}
+
+def buildVscodeExtension(){
+	sh "npm install"
+	sh "npm run vscode:prepublish"
+}
+
+def updateArchiveDownloadUrl(url){
+	def downloadConfig = readJSON file: 'server_archive.json'
+	downloadConfig.production.url = url
+	writeJSON file:'server_archive.json', json: downloadConfig
+}
+
 try{
     node('rhel7'){
         stage 'Build JDT LS'
@@ -13,24 +31,6 @@ try{
         stash name: 'server_distro',includes :files[0].path
         env.stageUrl = 'http://download.jboss.org/jbosstools/jdt.ls/staging/' + files[0].name
 
-    }
-
-    def installBuildRequirements(){
-        def nodeHome = tool 'nodejs-7.7.4'
-        env.PATH="${env.PATH}:${nodeHome}/bin"
-        sh "npm install -g typescript"
-        sh "npm install -g vsce"
-    }
-
-    def buildVscodeExtension(){
-        sh "npm install"
-        sh "npm run vscode:prepublish"
-    }
-
-    def updateArchiveDownloadUrl(url){
-        def downloadConfig = readJSON file: 'server_archive.json'
-        downloadConfig.production.url = url
-        writeJSON file:'server_archive.json', json: downloadConfig
     }
 
     node('rhel7'){
@@ -61,8 +61,6 @@ try{
         def vsix = findFiles(glob: '**.vsix')
         sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
     }
-
-
 
     node('rhel7'){
 
