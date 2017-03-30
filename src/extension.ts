@@ -77,6 +77,8 @@ function runJavaServer() : Thenable<StreamInfo> {
 			params.push('-data'); params.push(workspacePath);
 
 			console.log('Executing '+ child + ' '+ params.join(' '));
+			console.log('View server logs at '+ workspacePath + '/.metadata/plugins/.log');
+
 			electron.fork(child, params, {}, function(err, result) {
 				if(err) { reject(err); }
 				if(result){ resolve(result); }

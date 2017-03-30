@@ -11,6 +11,7 @@
 2. [step 2]
 
 [attach a sample project reproducing the error]
+[attach logs](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting#enable-logging)
 
 ##### Current Result
 

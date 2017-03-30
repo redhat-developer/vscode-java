@@ -76,7 +76,9 @@ language tool logs for further information in case of a failure.
 
 ![ status indicator ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png)
 
-3. Report any problems you face to the [project](https://github.com/redhat-developer/vscode-java/issues).
+3. Read the [troubleshooting guide](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting) for more information on collecting informations about issues you might encounter. 
+
+4. Report any problems you face to the [project](https://github.com/redhat-developer/vscode-java/issues).
 
 Contributing
 ===============
