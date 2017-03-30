@@ -59,7 +59,7 @@ node('rhel7'){
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
 	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
-	stash excludes:'node_modules/, server/, .vscode-test/, out, **.vsix, target/' , name:'extension_source'
+	stash excludes:'server/, **.vsix, target/' , name:'extension_source'
 }
 
 node('rhel7'){
@@ -83,9 +83,6 @@ node('rhel7'){
 
 		stage 'install vscode-java build requirements'
 		installBuildRequirements()
-
-		stage 'Build vscode-java for release'
-		buildVscodeExtension()
 
 		stage 'Test vscode-java for release'
 		wrap([$class: 'Xvnc']) {
