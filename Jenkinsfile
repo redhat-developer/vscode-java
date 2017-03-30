@@ -59,6 +59,7 @@ node('rhel7'){
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
 	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
+	stash excludes:'node_modules/, server/, .vscode-test/, out, **.vsix, target/' name:'extension_source'
 }
 
 node('rhel7'){
@@ -74,7 +75,7 @@ node('rhel7'){
 
 		stage 'Checkout vscode-java for release build'
 		deleteDir()
-		git url: 'https://github.com/redhat-developer/vscode-java.git'
+		unstash 'extension_source'
 
 		stage 'Update server archive url to release'
 		updateArchiveDownloadUrl(prodUrl)
