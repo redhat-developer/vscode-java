@@ -55,3 +55,9 @@ You can create a binary that you can sideload to your VS Code installation.
 4. Optionally, follow the instruction to build the server.
 5. See documentation on [extension installation](https://github.com/Microsoft/vscode-docs/blob/master/docs/extensions/install-extension.md)
 on ways to sideload or share.
+
+# Reporting issues
+If you encounter a problem and know it is caused by eclipse.jdt.ls, then please open a bug report over [there](https://github.com/eclipse/eclipse.jdt.ls/issues).
+In doubt, you can report issues in the [vscode-java issue tracker](https://github.com/redhat-developer/vscode-java/issues).
+
+Try to collect as much informations as you can to describe the issue and help us reproduce the problem. Head over to the [troubleshooting page](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting#enable-logging) to see how to collect useful logging informations.
