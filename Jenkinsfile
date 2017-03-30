@@ -93,7 +93,7 @@ node('rhel7'){
 		}
 
 		"Publish to Marketplace"
-		withCredentials([string(credentialsId: 'vscode_marketplace', variable: 'TOKEN')]) {
+		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_marketplace', variable: 'TOKEN']]) {
 			sh "vsce publish -p $TOKEN"
 		}
 	}//if publishMarketPlace
