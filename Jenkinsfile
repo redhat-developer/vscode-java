@@ -91,7 +91,7 @@ node('rhel7'){
 
 		stage "Publish to Marketplace"
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			sh "vsce publish -p $TOKEN"
+			sh "vsce publish -p ${TOKEN}"
 		}
 		archive includes:"**.vsix"
 	}//if publishMarketPlace
