@@ -62,10 +62,7 @@ node('rhel7'){
 }
 
 node('rhel7'){
-	echo " env: ${env.publishToMarketPlace}"
-	echo " plain: ${publishToMarketPlace}"
-	echo "params: ${params.publishToMarketPlace}"
-	if(publishToMarketPlace){
+	if(publishToMarketPlace.equals('true')){
 		timeout(time:5, unit:'DAYS') {
 			input message:'Approve deployment?', submitter: 'bercan'
 		}
