@@ -63,7 +63,7 @@ node('rhel7'){
 
 node('rhel7'){
 
-	if(params.publishToMarketPlace){
+	if(publishToMarketPlace){
 		timeout(time:5, unit:'DAYS') {
 			input message:'Approve deployment?', submitter: 'bercan'
 		}
@@ -79,6 +79,7 @@ node('rhel7'){
 
 		stage 'Update server archive url to release'
 		updateArchiveDownloadUrl(prodUrl)
+		archive includes:"server_archive.json"
 
 		stage 'install vscode-java build requirements'
 		installBuildRequirements()
