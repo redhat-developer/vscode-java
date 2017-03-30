@@ -59,7 +59,7 @@ node('rhel7'){
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
 	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
-	stash excludes:'server/, **.vsix, target/' , name:'extension_source'
+	stash excludes:'server/, .vscode-test/, **.vsix, target/' , name:'extension_source'
 }
 
 node('rhel7'){
