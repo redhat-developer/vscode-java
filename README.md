@@ -35,7 +35,7 @@ Features
 
 Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
-See the [changelog](CHANGELOG.md) for the latest release.
+See the [changelog](CHANGELOG.md) for the latest release. You might also find useful information in the project [Wiki](https://github.com/redhat-developer/vscode-java/wiki).
 
 Setting the JDK
 ===============
