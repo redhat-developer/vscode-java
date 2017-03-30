@@ -41,6 +41,13 @@ function runJavaServer() : Thenable<StreamInfo> {
 				// suspend=y is the default. Use this form if you need to debug the server startup code:
 				//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 			}
+			if (requirements.java_version > 8) {
+				params.push('--add-modules=ALL-SYSTEM');
+				params.push('--add-opens');
+				params.push('java.base/java.util=ALL-UNNAMED');
+				params.push('--add-opens');
+				params.push('java.base/java.lang=ALL-UNNAMED');
+			}
 			params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1');
 			params.push('-Dosgi.bundles.defaultStartLevel=4');
 			params.push('-Declipse.product=org.eclipse.jdt.ls.core.product');

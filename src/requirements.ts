@@ -14,6 +14,7 @@ const JAVAC_FILENAME = 'javac' + (isWindows?'.exe':'');
 
 interface RequirementsData {
     java_home: string;
+    java_version: number;
 }
 
 interface ErrorData {
@@ -31,9 +32,9 @@ interface ErrorData {
  */
 export async function resolveRequirements(): Promise<RequirementsData> {
     let java_home = await checkJavaRuntime();
-    await checkJavaVersion(java_home);
+    let javaVersion = await checkJavaVersion(java_home);
     await checkServerInstalled();
-    return Promise.resolve({ 'java_home': java_home });
+    return Promise.resolve({ 'java_home': java_home, 'java_version': javaVersion});
 }
 
 function checkJavaRuntime(): Promise<any> {
@@ -81,11 +82,13 @@ function readJavaConfig() : string {
 function checkJavaVersion(java_home: string): Promise<any> {
     return new Promise((resolve, reject) => {
         cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
-            if (stderr.indexOf('1.8') < 0){
+            if (stderr.indexOf('version "9') > -1){
+                resolve(9);
+            } if (stderr.indexOf('1.8') < 0){
                 openJDKDownload(reject, 'Java 8 is required to run. Please download and install a JDK 8.');
             }
             else{
-                resolve(true);
+                resolve(8);
             }
         });
     });
