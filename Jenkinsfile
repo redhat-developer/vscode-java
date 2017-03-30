@@ -62,7 +62,9 @@ node('rhel7'){
 }
 
 node('rhel7'){
-
+	echo " env: ${env.publishToMarketPlace}"
+	echo " plain: ${publishToMarketPlace}"
+	echo "params: ${params.publishToMarketPlace}"
 	if(publishToMarketPlace){
 		timeout(time:5, unit:'DAYS') {
 			input message:'Approve deployment?', submitter: 'bercan'
@@ -92,10 +94,12 @@ node('rhel7'){
 			sh "npm test --silent"
 		}
 
-		"Publish to Marketplace"
-		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_marketplace', variable: 'TOKEN']]) {
-			sh "vsce publish -p $TOKEN"
-		}
+		stage "Publish to Marketplace"
+		sh "vsce package"
+		archive includes:"**.vsix"
+		// withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_marketplace', variable: 'TOKEN']]) {
+		// 	sh "vsce publish -p $TOKEN"
+		// }
 	}//if publishMarketPlace
 }
 
