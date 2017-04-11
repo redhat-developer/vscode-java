@@ -2,9 +2,7 @@
 
 import { workspace, Uri } from 'vscode';
 import * as cp from 'child_process';
-import * as fs from 'fs';
 import * as path from 'path';
-import * as downloadManager from './downloadManager';
 
 const pathExists = require('path-exists');
 const expandHomeDir = require('expand-home-dir');
@@ -24,16 +22,15 @@ interface ErrorData {
     replaceClose: boolean;
 }
 /**
- * Resolves the requirements needed to run the extension. 
- * Returns a promise that will resolve to a RequirementsData if 
- * all requirements are resolved, it will reject with ErrorData if 
+ * Resolves the requirements needed to run the extension.
+ * Returns a promise that will resolve to a RequirementsData if
+ * all requirements are resolved, it will reject with ErrorData if
  * if any of the requirements fails to resolve.
- *  
+ *
  */
 export async function resolveRequirements(): Promise<RequirementsData> {
     let java_home = await checkJavaRuntime();
     let javaVersion = await checkJavaVersion(java_home);
-    await checkServerInstalled();
     return Promise.resolve({ 'java_home': java_home, 'java_version': javaVersion});
 }
 
@@ -92,20 +89,6 @@ function checkJavaVersion(java_home: string): Promise<any> {
             }
         });
     });
-}
-
-function checkServerInstalled(): Promise<any> {
-    let pluginsPath = path.resolve(__dirname, '../../server/plugins');
-    try {
-        let isDirectory = fs.lstatSync(pluginsPath);
-        if (isDirectory) {
-            return Promise.resolve(true);
-        }
-    }
-    catch (err) {
-       // Directory does not exist 
-    }
-    return downloadManager.downloadAndInstallServer();
 }
 
 function openJDKDownload(reject, cause) {

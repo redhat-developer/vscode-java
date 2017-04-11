@@ -33,13 +33,16 @@ This assumes that you are starting on the `vscode-java` directory
 
 	```bash
 	$ cd ..\vscode-java
-	$ npm run-script build-server
+	$ npm run build-server
 	```
-You can run faster builds by calling the `build-server-mac`, `build-server-win` or `build-server-linux` script instead, depending on your OS. These commands run Maven in offline mode, so you might need to run `build-server` at least once, to fetch all the dependencies.
+You can run faster server builds during development by calling `./node_modules/.bin/gulp dev_server` script instead, this will build server binaries that are required by your host OS only. You can also use `npm run watch-server` which will build and place them on the extension for Java changes. These commands run Maven in offline mode, so you might need to run `build-server` at least once, to fetch all the dependencies.
 
-This will build and place the binaries under the `server` folder. Alternately you can download
-and unzip a pre-built server. For pre-built server information refer to eclipse.jdt.ls
-project.
+This will build and place the binaries under the `server` folder. Alternately you can download and use the latest snapshot build from [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls) project with the following
+
+	```bash
+	$ cd ..\vscode-java
+	$ ./node_modules/.bin/gulp download_server
+	```
 
 ## Sideloading
 
@@ -53,7 +56,7 @@ You can create a binary that you can sideload to your VS Code installation.
 	$ npm install
 	```
 4. Optionally, follow the instruction to build the server.
-5. See documentation on [extension installation](https://github.com/Microsoft/vscode-docs/blob/master/docs/extensions/install-extension.md)
+5. See documentation on [extension installation](https://github.com/Microsoft/vscode-docs/blob/master/docs/extensions/publish-extension.md)
 on ways to sideload or share.
 
 # Reporting issues

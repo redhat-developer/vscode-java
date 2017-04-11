@@ -66,19 +66,15 @@ The following settings are supported:
 
 Troubleshooting
 ===============
-1. Due to size restrictions on the marketplace extension downloads additional required parts check that they
-are downloaded under `~/.vscode/extensions/redhat.java-0.2.0/server` folder.
-You should see a folder named `plugins`.
-
-2. Check the status of the language tools on the lower right corner (marked with A on image below).
+1. Check the status of the language tools on the lower right corner (marked with A on image below).
 It should show ready (thumbs up) as on the image below. You can click on the status and open the
 language tool logs for further information in case of a failure.
 
 ![ status indicator ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png)
 
-3. Read the [troubleshooting guide](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting) for collecting informations about issues you might encounter. 
+2. Read the [troubleshooting guide](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting) for collecting informations about issues you might encounter.
 
-4. Report any problems you face to the [project](https://github.com/redhat-developer/vscode-java/issues).
+3. Report any problems you face to the [project](https://github.com/redhat-developer/vscode-java/issues).
 
 Contributing
 ===============

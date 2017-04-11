@@ -12,24 +12,14 @@ def buildVscodeExtension(){
 	sh "npm run vscode:prepublish"
 }
 
-def updateArchiveDownloadUrl(url){
-	def downloadConfig = readJSON file: 'server_archive.json'
-	downloadConfig.production.url = url
-	writeJSON file:'server_archive.json', json: downloadConfig
-}
-
 node('rhel7'){
 	stage 'Build JDT LS'
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
 	def mvnHome = tool 'maven-3.3.9'
 	sh "${mvnHome}/bin/mvn clean verify -B -U -fae -e -Pserver-distro"
 
-	stage 'Upload Server to staging'
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
-	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${files[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
 	stash name: 'server_distro',includes :files[0].path
-	env.stageUrl = 'http://download.jboss.org/jbosstools/jdt.ls/staging/' + files[0].name
-
 }
 
 node('rhel7'){
@@ -38,14 +28,15 @@ node('rhel7'){
 	deleteDir()
 	git url: 'https://github.com/redhat-developer/vscode-java.git'
 
-	stage 'Update server archive url to staging'
-	updateArchiveDownloadUrl(env.stageUrl)
-
 	stage 'install vscode-java build requirements'
 	installBuildRequirements()
 
 	stage 'Build vscode-java'
 	buildVscodeExtension()
+	unstash 'server_distro'
+	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
+	sh "mkdir ./server"
+	sh "tar -xvzf ${files[0].path} -C ./server"
 
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
@@ -59,7 +50,7 @@ node('rhel7'){
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
 	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
-	stash excludes:'server/, .vscode-test/, **.vsix, target/' , name:'extension_source'
+	stash name:'vsix', includes:files[0].path
 }
 
 node('rhel7'){
@@ -67,31 +58,12 @@ node('rhel7'){
 		timeout(time:5, unit:'DAYS') {
 			input message:'Approve deployment?', submitter: 'bercan'
 		}
-		stage 'Upload Server to release'
-		unstash 'server_distro'
-		def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
-		sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${files[0].path} tools@10.5.105.197:/downloads_htdocs/tools/static/vscode"
-		def prodUrl = 'http://download.jboss.org/jbosstools/static/vscode/' + files[0].name
-
-		stage 'Checkout vscode-java for release build'
-		deleteDir()
-		unstash 'extension_source'
-
-		stage 'Update server archive url to release'
-		updateArchiveDownloadUrl(prodUrl)
-		archive includes:"server_archive.json"
-
-		stage 'install vscode-java build requirements'
-		installBuildRequirements()
-
-		stage 'Test vscode-java for release'
-		wrap([$class: 'Xvnc']) {
-			sh "npm test --silent"
-		}
 
 		stage "Publish to Marketplace"
+		unstash vsix;
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			sh 'vsce publish -p ${TOKEN}'
+			def vsix = findFiles(glob: '**.vsix')
+			sh 'vsce publish -p ${TOKEN} --packagePath ${vsix[0].path}'
 		}
 		archive includes:"**.vsix"
 	}//if publishMarketPlace
