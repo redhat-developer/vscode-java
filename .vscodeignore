@@ -11,4 +11,4 @@ vsc-extension-quickstart.md
 undefined/**
 CONTRIBUTING.md
 .vscode-test/**
-server/**
+**/**.vsix

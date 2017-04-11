@@ -17,6 +17,10 @@ before_install:
 - npm install -g typescript
 
 install:
+- wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
+- mkdir server
+- tar -xvzf jdt-language-server-latest.tar.gz -C ./server
+- rm jdt-language-server-latest.tar.gz
 - npm install
 - npm run vscode:prepublish
 - npm install -g vsce

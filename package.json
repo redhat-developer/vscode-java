@@ -114,11 +114,9 @@
 		"compile": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "node ./node_modules/vscode/bin/test",
-		"build-server": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build clean package",
-		"build-server-mac": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build,fast -Denvironment.os=macosx -Denvironment.ws=cocoa -Denvironment.arch=x86_64 clean package -o",
-		"build-server-win": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build,fast  -Denvironment.os=win32 -Denvironment.ws=win32 -Denvironment.arch=x86_64 clean package -o",
-		"build-server-linux": "mvn -f ../eclipse.jdt.ls/pom.xml -Pvscode-build,fast -Denvironment.os=linux -Denvironment.ws=gtk -Denvironment.arch=x86_64 clean package -o",
-    "tslint": "gulp tslint"
+		"build-server": "./node_modules/.bin/gulp build_server",
+		"watch-server": "./node_modules/.bin/gulp watch_server",
+    "tslint": "./node_modules/.bin/gulp tslint"
 	},
 	"devDependencies": {
 		"typescript": "^2.2.1",
@@ -129,13 +127,13 @@
 		"@types/glob":"5.0.30",
 		"gulp" :"^3.9.1",
 		"gulp-tslint": "^7.1.0",
-		"tslint" : "^4.4.2"
+		"tslint" : "^4.4.2",
+    "gulp-decompress":"2.0.1",
+    "gulp-download":"0.0.1"
 	},
 	"dependencies": {
 		"vscode-languageclient": "^3.2.0",
 		"find-java-home": "0.1.4",
-		"http-proxy-agent": "^1.0.0",
-		"https-proxy-agent": "^1.0.0",
 		"tmp" : "^0.0.31",
 		"decompress": "^4.0.0",
 		"progress-stream": "^1.2.0",
