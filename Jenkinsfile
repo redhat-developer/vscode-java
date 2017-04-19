@@ -15,8 +15,7 @@ def buildVscodeExtension(){
 node('rhel7'){
 	stage 'Build JDT LS'
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
-	def mvnHome = tool 'maven-3.3.9'
-	sh "${mvnHome}/bin/mvn clean verify -B -U -fae -e -Pserver-distro"
+	sh "./mvnw clean verify -B -U -fae -e -Pserver-distro"
 
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
 	stash name: 'server_distro',includes :files[0].path
@@ -63,7 +62,7 @@ node('rhel7'){
 		unstash 'vsix';
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
 			def vsix = findFiles(glob: '**.vsix')
-			sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
+			sh 'vsce publish -p ${TOKEN} --packagePath ${vsix[0].path}'
 		}
 		archive includes:"**.vsix"
 	}//if publishMarketPlace

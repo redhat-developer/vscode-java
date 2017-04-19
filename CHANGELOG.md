@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.0 (April 18th, 2017)
+## 0.2.0 (April 19th, 2017)
 * enhancement - Extension now embeds the Java Language Server. See [#178](https://github.com/redhat-developer/vscode-java/issues/178).
 * bug - fixed Java Language Server status update on startup. See [#179](https://github.com/redhat-developer/vscode-java/issues/179).
 * bug - fixed detection of nested Gradle projects. See [#165](https://github.com/redhat-developer/vscode-java/issues/165).
