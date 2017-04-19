@@ -60,7 +60,7 @@ node('rhel7'){
 		}
 
 		stage "Publish to Marketplace"
-		unstash vsix;
+		unstash 'vsix';
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
 			def vsix = findFiles(glob: '**.vsix')
 			sh 'vsce publish -p ${TOKEN} --packagePath ${vsix[0].path}'
