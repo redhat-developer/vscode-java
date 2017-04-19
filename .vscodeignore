@@ -6,6 +6,7 @@ src/**
 images/**
 **/*.map
 .gitignore
+.github/**
 tsconfig.json
 vsc-extension-quickstart.md
 undefined/**
