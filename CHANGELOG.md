@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.1 (April 21st, 2017)
+* bug - fix excessive 'Unable to get documentation under 500ms' logging. See [#189](https://github.com/redhat-developer/vscode-java/issues/189).
+
 ## 0.2.0 (April 19th, 2017)
 * enhancement - Extension now embeds the Java Language Server. See [#178](https://github.com/redhat-developer/vscode-java/issues/178).
 * bug - fixed Java Language Server status update on startup. See [#179](https://github.com/redhat-developer/vscode-java/issues/179).
