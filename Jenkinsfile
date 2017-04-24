@@ -67,4 +67,3 @@ node('rhel7'){
 		archive includes:"**.vsix"
 	}//if publishMarketPlace
 }
-
