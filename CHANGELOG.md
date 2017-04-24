@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.2.1 (April 22st, 2017)
+## 0.2.1 (April 24th, 2017)
 * bug - fix excessive 'Unable to get documentation under 500ms' logging. See [#189](https://github.com/redhat-developer/vscode-java/issues/189).
 
 ## 0.2.0 (April 19th, 2017)
