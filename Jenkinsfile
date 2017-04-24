@@ -15,7 +15,7 @@ def buildVscodeExtension(){
 node('rhel7'){
 	stage 'Build JDT LS'
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
-	sh "./mvnw clean verify -B -U -fae -e -Pserver-distro"
+	sh "./mvnw clean verify -B -U -fae -e -Pserver-distro -DdisableP2Mirrors=true"
 
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
 	stash name: 'server_distro',includes :files[0].path
