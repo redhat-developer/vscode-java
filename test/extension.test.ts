@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as java from '../src/extension';
+import {Commands} from '../src/commands';
 
 suite('Java Language Extension', () => {
 
@@ -18,12 +19,13 @@ suite('Java Language Extension', () => {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const JAVA_COMMANDS = [
-				'java.open.output',
-				'java.show.references',
-				'java.projectConfiguration.update',
-				'java.ignoreIncompleteClasspath',
-				'java.projectConfiguration.status',
-				'java.apply.workspaceEdit',
+				Commands.OPEN_OUTPUT,
+				Commands.SHOW_JAVA_REFERENCES,
+				Commands.CONFIGURATION_UPDATE,
+				Commands.IGNORE_INCOMPLETE_CLASSPATH,
+				Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP,
+				Commands.PROJECT_CONFIGURATION_STATUS,
+				Commands.APPLY_WORKSPACE_EDIT,
 			];
 			let foundJavaCommands = commands.filter(function(value){
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
@@ -56,4 +58,5 @@ suite('Java Language Extension', () => {
 		assert.equal(vmArgs[1], '-Xbootclasspath/a:C:\\Program Files\\Java\\lombok.jar');
 		assert.equal(vmArgs[2], '-Dfoo=Some "crazy" stuff');
 	});
+
 });

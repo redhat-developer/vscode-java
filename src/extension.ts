@@ -10,7 +10,8 @@ var electron = require('./electron_j');
 var os = require('os');
 var glob = require('glob');
 import * as requirements from './requirements';
-import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest,MessageType,ActionableNotification,FeatureStatus } from './protocol';
+import {Commands} from './commands';
+import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateRequest,MessageType,ActionableNotification,FeatureStatus,ActionableMessage } from './protocol';
 
 
 declare var v8debug;
@@ -24,7 +25,7 @@ function runJavaServer() : Thenable<StreamInfo> {
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection )=>{
 			if(error.label && error.label === selection && error.openUrl){
-				commands.executeCommand('vscode.open', error.openUrl);
+				commands.executeCommand(Commands.OPEN_BROWSER, error.openUrl);
 			}
 		});
 		// rethrow to disrupt the chain.
@@ -172,7 +173,7 @@ export function activate(context: ExtensionContext) {
 					setTimeout(() => { item.text = lastStatus; }, 3000);
 					break;
 			}
-			item.command = 'java.open.output';
+			item.command = Commands.OPEN_OUTPUT;
 			item.tooltip = report.message;
 			toggleItem(window.activeTextEditor, item);
 		});
@@ -195,6 +196,7 @@ export function activate(context: ExtensionContext) {
 			if (!show) {
 				return;
 			}
+
 			const titles = notification.commands.map(a => a.title);
 
 			show(notification.message, ...titles).then((selection) => {
@@ -210,20 +212,24 @@ export function activate(context: ExtensionContext) {
 	});
 
 
-	commands.registerCommand('java.open.output', ()=>{
+	commands.registerCommand(Commands.OPEN_OUTPUT, ()=>{
 		languageClient.outputChannel.show(ViewColumn.Three);
 	});
-	commands.registerCommand('java.show.references', (uri:string, position: LSPosition, locations:LSLocation[])=>{
-		commands.executeCommand('editor.action.showReferences', Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+	commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri:string, position: LSPosition, locations:LSLocation[])=>{
+		commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
 	});
 
-	commands.registerCommand('java.projectConfiguration.update', uri => projectConfigurationUpdate(languageClient, uri));
+	commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri));
 
-	commands.registerCommand('java.ignoreIncompleteClasspath', (data?:any) => setIncompleteClasspathSeverity('ignore'));
+	commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?:any) => setIncompleteClasspathSeverity('ignore'));
 
-	commands.registerCommand('java.projectConfiguration.status', (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
+	commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?:any) => {
+		commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'))
+	});
 
-	commands.registerCommand('java.apply.workspaceEdit',(obj)=>{
+	commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
+
+	commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT,(obj)=>{
 		let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 		if(edit){
 			workspace.applyEdit(edit);
@@ -315,7 +321,7 @@ function onConfigurationChange() {
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
 		  let msg =	'Java Language Server configuration changed, please restart VS Code.';
 		  let action =	'Restart Now';
-		  let restartId = 'workbench.action.reloadWindow';
+		  let restartId = Commands.RELOAD_WINDOW;
 		  oldConfig = newConfig;
 		  window.showWarningMessage(msg,action).then((selection )=>{
 			  if(action === selection) {
