@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.3.0 (May 3rd, 2017)
+* enhancement - Add `Update project configuration` menus on build files. See [#159](https://github.com/redhat-developer/vscode-java/issues/159).
+* enhancement - Reduce confusion about "Classpath is incomplete" warning by providing a link to the wiki page. See [#193](https://github.com/redhat-developer/vscode-java/issues/193).
+* enhancement - Enable String deduplication on G1 Garbage collector by default, to improve memory footprint. See [#195](https://github.com/redhat-developer/vscode-java/issues/195).
+
 ## 0.2.1 (April 24th, 2017)
 * bug - fix excessive 'Unable to get documentation under 500ms' logging. See [#189](https://github.com/redhat-developer/vscode-java/issues/189).
 
