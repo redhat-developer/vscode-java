@@ -33,11 +33,45 @@
 			"id": "java",
 			"extensions": [ ".class" ],
 			"configuration": "./language-configuration.json"
+		},{
+			"id": "maven",
+			"filenames": ["pom.xml"]
+		},{
+			"id": "gradle",
+			"filenamePatterns": [
+				"**/*.gradle"
+			]
 		}],
 		"snippets": [{
 			"language": "java",
 			"path": "./snippets/java.json"
 		}],
+		"menus": {
+			"explorer/context": [
+				{
+					"when": "resourceLangId == maven",
+					"command": "java.projectConfiguration.update",
+					"group": "1_modification"
+				},
+				{
+					"when": "resourceLangId == gradle",
+					"command": "java.projectConfiguration.update",
+					"group": "1_modification"
+				}
+			],
+			"editor/context": [
+				{
+					"when": "resourceLangId == maven",
+					"command": "java.projectConfiguration.update",
+					"group": "1_modification"
+				},
+				{
+					"when": "resourceLangId == gradle",
+					"command": "java.projectConfiguration.update",
+					"group": "1_modification"
+				}
+			]
+		},
 		"configuration": {
 			"type": "object",
 			"title": "Java configuration",
