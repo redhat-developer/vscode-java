@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.3.0 (May 3rd, 2017)
+## 0.3.0 (May 4th, 2017)
 * enhancement - Reduce confusion about "Classpath is incomplete" warning by providing a link to the wiki page. See [#193](https://github.com/redhat-developer/vscode-java/issues/193).
 * enhancement - Enable String deduplication on G1 Garbage collector by default, to improve memory footprint. See [#195](https://github.com/redhat-developer/vscode-java/issues/195).
 
