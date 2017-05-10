@@ -127,7 +127,7 @@
 		"@types/glob":"5.0.30",
 		"gulp" :"^3.9.1",
 		"gulp-tslint": "^7.1.0",
-		"tslint" : "^4.4.2",
+		"tslint" : "^5.2.0",
     "gulp-decompress":"2.0.1",
     "gulp-download":"0.0.1"
 	},
@@ -135,8 +135,6 @@
 		"vscode-languageclient": "^3.2.0",
 		"find-java-home": "0.1.4",
 		"tmp" : "^0.0.31",
-		"decompress": "^4.0.0",
-		"progress-stream": "^1.2.0",
 		"path-exists":"^3.0.0",
 		"expand-home-dir":"^0.0.3",
 		"glob":"^7.1.1"
