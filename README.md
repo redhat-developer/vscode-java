@@ -48,7 +48,8 @@ The path to the Java Development Kit is searched in the following order:
 Available commands
 ==========================
 The following command is available:
-- Update Project configuration (`Ctrl+Alt+U` or `Cmd+Alt+U` on MacOS):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
+- `Java:Update Project configuration` (`Ctrl+Alt+U` or `Cmd+Alt+U` on MacOS):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
+- `Java:Open Java Language Server log file` (since 0.4.0): opens the Java Language Server log file, useful for troubleshooting problems.
 
 Supported VS Code settings
 ==========================

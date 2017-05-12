@@ -17,6 +17,7 @@ import { StatusNotification,ClassFileContentsRequest,ProjectConfigurationUpdateR
 declare var v8debug;
 const DEBUG = ( typeof v8debug === 'object') || startedInDebugMode();
 var storagePath;
+var serverLogFile: string | null = null;
 var oldConfig;
 
 var lastStatus;
@@ -78,7 +79,8 @@ function runJavaServer() : Thenable<StreamInfo> {
 			params.push('-data'); params.push(workspacePath);
 
 			console.log('Executing '+ child + ' '+ params.join(' '));
-			console.log('View server logs at '+ workspacePath + '/.metadata/plugins/.log');
+			serverLogFile = path.join(workspacePath, '.metadata', '.log');
+			console.log('View server logs at '+ serverLogFile);
 
 			electron.fork(child, params, {}, function(err, result) {
 				if(err) { reject(err); }
@@ -236,6 +238,8 @@ export function activate(context: ExtensionContext) {
 		}
 	});
 
+	commands.registerCommand(Commands.OPEN_SERVER_LOG,()=> openServerLogFile());
+
 	window.onDidChangeActiveTextEditor((editor) =>{
 		toggleItem(editor, item);
 	});
@@ -281,6 +285,9 @@ function projectConfigurationUpdate(languageClient:LanguageClient, uri?: Uri) {
 		if (window.activeTextEditor) {
 			resource = window.activeTextEditor.document.uri;
 		}
+	}
+	if (!resource) {
+		return window.showWarningMessage('No Java project to update!').then(() => false);
 	}
 	if (isJavaConfigFile(resource.path)){
 		languageClient.sendNotification(ProjectConfigurationUpdateRequest.type, {
@@ -384,4 +391,26 @@ function startedInDebugMode(): boolean {
 
 function getJavaConfiguration():WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
+}
+
+function openServerLogFile(): Thenable<boolean> {
+	if (!serverLogFile) {
+		return window.showWarningMessage('Java Language Server has not started logging.').then(() => false);
+	}
+
+	return workspace.openTextDocument(serverLogFile)
+		.then(doc => {
+			if (!doc) {
+				return false;
+			}
+			return window.showTextDocument(doc, window.activeTextEditor ?
+												window.activeTextEditor.viewColumn : undefined)
+				.then(editor => !!editor);
+		}, () => false)
+		.then(didOpen => {
+			if (!didOpen) {
+				window.showWarningMessage('Could not open Java Language Server log file');
+			}
+			return didOpen;
+		});
 }

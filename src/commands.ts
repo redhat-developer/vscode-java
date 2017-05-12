@@ -53,4 +53,9 @@ export namespace Commands {
      * Apply Workspace Edit
      */
     export const APPLY_WORKSPACE_EDIT = 'java.apply.workspaceEdit';
+
+	/**
+	 * Open Java Language Server Log file
+	 */
+	export const OPEN_SERVER_LOG = 'java.open.serverLog';
 }

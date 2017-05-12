@@ -24,6 +24,8 @@
 		"onLanguage:java",
 		"onCommand:java.show.references",
 		"onCommand:java.open.output",
+		"onCommand:java.open.serverLog",
+		"onCommand:java.projectConfiguration.update",
 		"workspaceContains:pom.xml",
 		"workspaceContains:build.gradle"
 	],
@@ -98,6 +100,11 @@
 		"commands": [{
 				"command": "java.projectConfiguration.update",
 				"title": "Update project configuration",
+				"category": "Java"
+			},
+			{
+				"command": "java.open.serverLog",
+				"title": "Open Java Language Server log file",
 				"category": "Java"
 			}
 		],
