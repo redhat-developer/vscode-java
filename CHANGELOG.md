@@ -1,7 +1,10 @@
 # Change Log
 
-## 0.4.0 (Mid-May, 2017)
+## 0.4.0 (May 15th, 2017)
 * enhancement - New `Open Java Language Server log file` command. See [#209](https://github.com/redhat-developer/vscode-java/issues/209).
+* enhancement - Expand workspace symbol search to all classes from classpath. See [#204](https://github.com/redhat-developer/vscode-java/issues/204).
+* bug - fixed outline for classes from classpath. See [#206](https://github.com/redhat-developer/vscode-java/issues/206).
+* bug - fixed ambiguous results from class outline. See [JLS#214](https://github.com/eclipse/eclipse.jdt.ls/issues/214).
 
 ## 0.3.0 (May 4th, 2017)
 * enhancement - Reduce confusion about "Classpath is incomplete" warning by providing a link to the wiki page. See [#193](https://github.com/redhat-developer/vscode-java/issues/193).
