@@ -25,8 +25,8 @@
   "foreach": {
     "prefix": "foreach",
     "body": [
-      "for (${type} ${var} : ${iterable}) {",
-      "\t$4",
+      "for (${0:type} ${1:var} : ${2:iterable}) {",
+      "\t$3",
       "}"
     ],
     "description": "Enhanced for loop"
@@ -34,7 +34,7 @@
   "Public constructor": {
     "prefix": "ctor",
     "body": [
-      "public ${name}($1) {",
+      "public ${1:name}($2) {",
       "\tsuper();",
       "\t$0",
       "}"
@@ -45,11 +45,11 @@
     "prefix": "class",
     "body": [
       "/**",
-      " * ${name}",
+      " * ${1:name}",
       " */",
-      "public class ${name} {",
+      "public class ${1:name} {",
       "",
-      "\tpublic ${name} (${parameters}) {",
+      "\tpublic ${1:name} (${2:parameters}) {",
       "\t\t$0",
       "\t}",
       "}"
@@ -60,9 +60,9 @@
     "prefix": "interface",
     "body": [
       "/**",
-      " * ${name}",
+      " * ${1:name}",
       " */",
-      "public interface ${name} {",
+      "public interface ${1:name} {",
       "\t$0",
       "}"
     ],
@@ -71,8 +71,8 @@
   "if": {
     "prefix": "if",
     "body": [
-      "if (${condition}) {",
-      "\t$2",
+      "if (${1:condition}) {",
+      "\t$0",
       "}"
     ],
     "description": "if statement"
@@ -80,7 +80,7 @@
   "ifelse": {
     "prefix": "ifelse",
     "body": [
-      "if (${condition}) {",
+      "if (${1:condition}) {",
       "\t$2",
       "} else {",
       "\t$3",
@@ -91,7 +91,7 @@
   "ifnull": {
     "prefix": "ifnull",
     "body": [
-      "if (${condition} == null) {",
+      "if (${1:condition} == null) {",
       "\t$2",
       "}"
     ],
@@ -100,7 +100,7 @@
   "ifnotnull": {
     "prefix": "ifnotnull",
     "body": [
-      "if (${condition} != null) {",
+      "if (${1:condition} != null) {",
       "\t$2",
       "}"
     ],
@@ -111,8 +111,8 @@
     "body": [
       "try {",
       "\t$1",
-      "} catch (${Exception} ${e}) {",
-      "\t$4//${TODO}: handle exception",
+      "} catch (${2:Exception} ${3:e}) {",
+      "\t$4//${5:TODO}: handle exception",
       "}"
     ],
     "description": "try/catch block"
@@ -120,7 +120,7 @@
   "private_method": {
     "prefix": "private_method",
     "body": [
-      "private ${Type} ${name}(${3}) {",
+      "private ${1:Type} ${2:name}($3) {",
       "\t$4",
       "}"
     ],
@@ -129,7 +129,7 @@
   "Public method": {
     "prefix": "public_method",
     "body": [
-      "public ${Type} ${name}(${3}) {",
+      "public ${1:Type} ${2:name}(${3}) {",
       "\t$4",
       "}"
     ],
@@ -138,7 +138,7 @@
   "Private static method": {
     "prefix": "private_static_method",
     "body": [
-      "private static ${Type} ${name}(${3}) {",
+      "private static ${1:Type} ${2:name}(${3}) {",
       "\t$4",
       "}"
     ],
@@ -147,7 +147,7 @@
   "Public static method": {
     "prefix": "public_static_method",
     "body": [
-      "public static ${Type} ${name}(${3}) {",
+      "public static ${1:Type} ${2:name}(${3}) {",
       "\t$4",
       "}"
     ],
@@ -156,7 +156,7 @@
   "Protected Method": {
     "prefix": "protected_method",
     "body": [
-      "protected ${Type} ${name}(${3}) {",
+      "protected ${1:Type} ${2:name}(${3}) {",
       "\t$4",
       "}"
     ],
@@ -165,8 +165,8 @@
   "Switch Statement": {
     "prefix": "switch",
     "body": [
-      "switch (${key}) {",
-      "\tcase ${value}:",
+      "switch (${1:key}) {",
+      "\tcase ${2:value}:",
       "\t\t$0",
       "\t\tbreak;",
       "",
@@ -179,7 +179,7 @@
   "While Statement": {
     "prefix": "while",
     "body": [
-      "while (${condition}) {",
+      "while (${1:condition}) {",
       "\t$0",
       "}"
     ],
@@ -190,7 +190,7 @@
     "body": [
       "do {",
       "\t$0",
-      "} while (${condition});"
+      "} while (${1:condition});"
     ],
     "description": "Do-While Statement"
   }
