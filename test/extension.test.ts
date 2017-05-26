@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import * as java from '../src/extension';
+import * as java from '../src/javaServerStarter';
 import {Commands} from '../src/commands';
 
 suite('Java Language Extension', () => {
