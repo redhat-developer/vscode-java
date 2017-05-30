@@ -25,6 +25,7 @@ Features
 * As you type reporting of parsing and compilation errors
 * Code completion
 * Javadoc hovers
+* Type search
 * Code outline
 * Code navigation
 * Code lens (references)
