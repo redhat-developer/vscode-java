@@ -8,6 +8,7 @@ import { runServer } from './javaServerStarter';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
 
+var os = require('os');
 let oldConfig;
 let lastStatus;
 
@@ -60,7 +61,7 @@ export function activate(context: ExtensionContext) {
 				storagePath = getTempWorkspace();
 			}
 			let workspacePath = path.resolve(storagePath + '/jdt_ws');
-			let serverOptions = runServer.bind(null, workspacePath, getJavaConfiguration() );
+			let serverOptions = runServer.bind(null, workspacePath, getJavaConfiguration());
 
 			// Options to control the language client
 			let clientOptions: LanguageClientOptions = {
@@ -78,7 +79,7 @@ export function activate(context: ExtensionContext) {
 			};
 
 			let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-			item.text='$(rocket)';
+			item.text = '$(rocket)';
 			item.command = Commands.OPEN_OUTPUT;
 
 			oldConfig = getJavaConfiguration();
