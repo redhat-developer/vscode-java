@@ -63,5 +63,5 @@ function isLinux() {
 }
 
 function mvnw() {
-	return "./mvnw"+(isWin()?".cmd":"");
+	return isWin()?"mvnw.cmd":"./mvnw";
 }
