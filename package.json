@@ -1,61 +1,75 @@
 {
-	"name": "java",
-	"displayName": "Language Support for Java(TM) by Red Hat",
-	"description": "Language Support for Java(TM) for Visual Studio Code provided by Red Hat",
-	"author": "Red Hat",
-	"icon": "icons/icon128.png",
-	"license": "SEE LICENSE IN LICENSE",
-	"version": "0.5.0",
-	"publisher": "redhat",
-	"bugs" : "https://github.com/redhat-developer/vscode-java/issues",
-	"preview": true,
-	"engines": {
-		"vscode": "^1.12.0"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/redhat-developer/vscode-java"
-	},
-	"categories": [
-		"Languages",
-		"Linters"
-	],
-	"activationEvents": [
-		"onLanguage:java",
-		"onCommand:java.show.references",
-		"onCommand:java.open.output",
-		"onCommand:java.open.serverLog",
-		"onCommand:java.projectConfiguration.update",
-		"workspaceContains:pom.xml",
-		"workspaceContains:build.gradle"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"languages": [{
-			"id": "java",
-			"extensions": [ ".class" ],
-			"configuration": "./language-configuration.json"
-		}],
-		"snippets": [{
-			"language": "java",
-			"path": "./snippets/java.json"
-		}],
-		"configuration": {
-			"type": "object",
-			"title": "Java configuration",
-			"properties": {
-				"java.home": {
-					"type": ["string", "null"],
-					"default": null,
-					"description": "Specifies the folder path to the JDK 8 used to launch the Java Language Server."
-				},
-				"java.jdt.ls.vmargs": {
-					"type": ["string", "null"],
-					"default": "-noverify -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication",
-					"description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G  -XX:+UseG1GC -XX:+UseStringDeduplication` to bypass class verification, increase the heap size to 1GB and enable String deduplication with the G1 Garbage collector"
-				},
+  "name": "java",
+  "displayName": "Language Support for Java(TM) by Red Hat",
+  "description": "Language Support for Java(TM) for Visual Studio Code provided by Red Hat",
+  "author": "Red Hat",
+  "icon": "icons/icon128.png",
+  "license": "See license in LICENSE file",
+  "version": "0.6.0",
+  "publisher": "redhat",
+  "bugs": "https://github.com/redhat-developer/vscode-java/issues",
+  "preview": true,
+  "engines": {
+    "vscode": "^1.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/redhat-developer/vscode-java"
+  },
+  "categories": [
+    "Languages",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:java",
+    "onCommand:java.show.references",
+    "onCommand:java.open.output",
+    "onCommand:java.open.serverLog",
+    "onCommand:java.projectConfiguration.update",
+    "workspaceContains:pom.xml",
+    "workspaceContains:build.gradle"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "languages": [
+      {
+        "id": "java",
+        "extensions": [
+          ".class"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "java",
+        "path": "./snippets/java.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Java configuration",
+      "properties": {
+        "java.home": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specifies the folder path to the JDK 8 used to launch the Java Language Server."
+        },
+        "java.jdt.ls.vmargs": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": "-noverify -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication",
+          "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G  -XX:+UseG1GC -XX:+UseStringDeduplication` to bypass class verification, increase the heap size to 1GB and enable String deduplication with the G1 Garbage collector"
+        },
         "java.errors.incompleteClasspath.severity": {
-          "type": ["string"],
+          "type": [
+            "string"
+          ],
           "enum": [
             "ignore",
             "info",
@@ -66,7 +80,9 @@
           "description": "Specifies the severity of the message when the classpath is incomplete for a Java file"
         },
         "java.configuration.updateBuildConfiguration": {
-          "type": ["string"],
+          "type": [
+            "string"
+          ],
           "enum": [
             "disabled",
             "interactive",
@@ -95,55 +111,57 @@
           "default": null,
           "description": "Absolute path to Maven's settings.xml"
         }
-			}
-		},
-		"commands": [{
-				"command": "java.projectConfiguration.update",
-				"title": "Update project configuration",
-				"category": "Java"
-			},
-			{
-				"command": "java.open.serverLog",
-				"title": "Open Java Language Server log file",
-				"category": "Java"
-			}
-		],
-		"keybindings": [{
-				"command": "java.projectConfiguration.update",
-				"key": "ctrl+alt+u",
-				"mac": "cmd+alt+u",
-				"when": "editorFocus"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test",
-		"build-server": "./node_modules/.bin/gulp build_server",
-		"watch-server": "./node_modules/.bin/gulp watch_server",
+      }
+    },
+    "commands": [
+      {
+        "command": "java.projectConfiguration.update",
+        "title": "Update project configuration",
+        "category": "Java"
+      },
+      {
+        "command": "java.open.serverLog",
+        "title": "Open Java Language Server log file",
+        "category": "Java"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "java.projectConfiguration.update",
+        "key": "ctrl+alt+u",
+        "mac": "cmd+alt+u",
+        "when": "editorFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test",
+    "build-server": "./node_modules/.bin/gulp build_server",
+    "watch-server": "./node_modules/.bin/gulp watch_server",
     "tslint": "./node_modules/.bin/gulp tslint"
-	},
-	"devDependencies": {
-		"typescript": "^2.2.2",
-		"vscode": "^1.1.0",
-		 "mocha": "^3.2.0",
-		"@types/node": "^6.0.40",
-		"@types/mocha": "^2.2.39",
-		"@types/glob":"5.0.30",
-		"gulp" :"^3.9.1",
-		"gulp-tslint": "^7.1.0",
-		"tslint" : "^5.2.0",
-    "gulp-decompress":"2.0.1",
-    "gulp-download":"0.0.1"
-	},
-	"dependencies": {
-		"vscode-languageclient": "^3.2.0",
-		"find-java-home": "0.1.4",
-		"tmp" : "^0.0.31",
-		"path-exists":"^3.0.0",
-		"expand-home-dir":"^0.0.3",
-		"glob":"^7.1.1"
-	}
+  },
+  "devDependencies": {
+    "typescript": "^2.2.2",
+    "vscode": "^1.1.0",
+    "mocha": "^3.2.0",
+    "@types/node": "^6.0.40",
+    "@types/mocha": "^2.2.39",
+    "@types/glob": "5.0.30",
+    "gulp": "^3.9.1",
+    "gulp-tslint": "^7.1.0",
+    "tslint": "^5.2.0",
+    "gulp-decompress": "2.0.1",
+    "gulp-download": "0.0.1"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^3.2.0",
+    "find-java-home": "0.1.4",
+    "tmp": "^0.0.31",
+    "path-exists": "^3.0.0",
+    "expand-home-dir": "^0.0.3",
+    "glob": "^7.1.1"
+  }
 }
