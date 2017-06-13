@@ -4,7 +4,7 @@
   "description": "Language Support for Java(TM) for Visual Studio Code provided by Red Hat",
   "author": "Red Hat",
   "icon": "icons/icon128.png",
-  "license": "See license in LICENSE file",
+  "license": "EPL-1.0",
   "version": "0.6.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
@@ -144,7 +144,7 @@
     "tslint": "./node_modules/.bin/gulp tslint"
   },
   "devDependencies": {
-    "typescript": "^2.2.2",
+    "typescript": "^2.3.4",
     "vscode": "^1.1.0",
     "mocha": "^3.2.0",
     "@types/node": "^6.0.40",
