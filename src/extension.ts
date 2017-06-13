@@ -69,11 +69,14 @@ export function activate(context: ExtensionContext) {
 				documentSelector: ['java'],
 				synchronize: {
 					configurationSection: 'java',
-					// Notify the server about file changes to .java files contain in the workspace
+					// Notify the server about file changes to .java and project/build files contained in the workspace
 					fileEvents: [
 						workspace.createFileSystemWatcher('**/*.java'),
 						workspace.createFileSystemWatcher('**/pom.xml'),
-						workspace.createFileSystemWatcher('**/*.gradle')
+						workspace.createFileSystemWatcher('**/*.gradle'),
+						workspace.createFileSystemWatcher('**/.project'),
+						workspace.createFileSystemWatcher('**/.classpath'),
+						workspace.createFileSystemWatcher('**/settings/*.prefs')
 					],
 				}
 			};
