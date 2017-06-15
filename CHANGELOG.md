@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.6.0 (June 15th, 2017)
+* enhancement - reduced extension size by ~25%. See [JLS#252](https://github.com/eclipse/eclipse.jdt.ls/issues/252).
+* bug - fixed OperationCanceledException during completion. See [JLS#240](https://github.com/eclipse/eclipse.jdt.ls/issues/240).
+* bug - fixed changes in Eclipse settings file are ignored. See [#239](https://github.com/redhat-developer/vscode-java/pull/239).
+* bug - `package` autocompletion should return only 1 package. See [#234](https://github.com/redhat-developer/vscode-java/pull/234).
+* bug - Autocompletion on overridden methods should create the method body. See [#85](https://github.com/redhat-developer/vscode-java/pull/85).
+
 ## 0.5.0 (May 31st, 2017)
 * enhancement - Enable support for CamelCase type search. See [JLS#219](https://github.com/eclipse/eclipse.jdt.ls/issues/219).
 * enhancement - Server startup now uses progress UI. See [#225](https://github.com/redhat-developer/vscode-java/pull/225).
