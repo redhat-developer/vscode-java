@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.7.0 (TBD)
+
 ## 0.6.0 (June 15th, 2017)
 * enhancement - reduced extension size by ~25%. See [JLS#252](https://github.com/eclipse/eclipse.jdt.ls/issues/252).
 * bug - fixed OperationCanceledException during completion. See [JLS#240](https://github.com/eclipse/eclipse.jdt.ls/issues/240).
