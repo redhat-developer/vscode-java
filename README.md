@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/redhat-developer/vscode-java.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/redhat-developer/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/redhat-developer/vscode-java) [![Marketplace Version](http://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[![Build Status](https://travis-ci.org/redhat-developer/vscode-java.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/redhat-developer/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/redhat-developer/vscode-java) [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 Language support for Java &trade; for Visual Studio Code
 =====================
 
