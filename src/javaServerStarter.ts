@@ -19,7 +19,11 @@ export function attachServer(pipeName): Thenable<StreamInfo> {
 		pipePath = '\\\\.\\pipe\\' + pipeName;
 	} else {
 		pipePath = '/tmp/' + pipeName + '.sock';
-		fs.unlinkSync(pipePath);
+		try {
+			fs.unlinkSync(pipePath);
+		} catch (e) {
+			//ignore, likely file does not exist
+		}
 	}
 	return new Promise((res, rej) => {
 		let server = net.createServer(stream => {
