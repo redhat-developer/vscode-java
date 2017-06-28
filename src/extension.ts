@@ -4,7 +4,7 @@
 import * as path from 'path';
 import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
-import { runServer } from './javaServerStarter';
+import { runServer, attachServer } from './javaServerStarter';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
 
@@ -61,7 +61,13 @@ export function activate(context: ExtensionContext) {
 				storagePath = getTempWorkspace();
 			}
 			let workspacePath = path.resolve(storagePath + '/jdt_ws');
-			let serverOptions = runServer.bind(null, workspacePath, getJavaConfiguration());
+			let serverOptions
+			let remoteNamedPipe = process.env['JAVA_LS_NAMED_PIPE'];
+			if (!remoteNamedPipe) {
+				serverOptions = runServer.bind(null, workspacePath, getJavaConfiguration());
+			} else {
+				serverOptions = attachServer.bind(null, remoteNamedPipe);
+			}
 
 			// Options to control the language client
 			let clientOptions: LanguageClientOptions = {

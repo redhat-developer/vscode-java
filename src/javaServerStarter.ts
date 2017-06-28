@@ -1,15 +1,42 @@
 
 import { window, commands, WorkspaceConfiguration, workspace } from 'vscode'
 import { StreamInfo } from 'vscode-languageclient';
+import { createClientPipeTransport } from 'vscode-jsonrpc';
 import * as requirements from './requirements';
 import * as path from 'path';
+import * as fs from 'fs';
+import * as net from 'net';
 import { Commands } from './commands';
 const glob = require('glob');
+
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 let electron = require('./electron_j');
 
-export function runServer(workspacePath, javaConfig): Thenable < StreamInfo > {
+export function attachServer(pipeName): Thenable<StreamInfo> {
+	let pipePath;
+	if (process.platform === 'win32') {
+		pipePath = '\\\\.\\pipe\\' + pipeName;
+	} else {
+		pipePath = '/tmp/' + pipeName + '.sock';
+		fs.unlinkSync(pipePath);
+	}
+	return new Promise((res, rej) => {
+		let server = net.createServer(stream => {
+			console.log('Connection established on ' + pipePath);
+			res({ reader: stream, writer: stream });
+		});
+		server.on('error', function (e) {
+			rej(e);
+		});
+		server.listen(pipePath, () => {
+			console.log('Opened server on ' + pipePath);
+		});
+		return server;
+	});
+}
+
+export function runServer(workspacePath, javaConfig): Thenable<StreamInfo> {
 	return requirements.resolveRequirements().catch(error => {
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -23,7 +50,7 @@ export function runServer(workspacePath, javaConfig): Thenable < StreamInfo > {
 		return new Promise<StreamInfo>(function (resolve, reject) {
 
 			let child = path.resolve(requirements.java_home + '/bin/java');
-			let params = prepareParams(requirements,javaConfig, workspacePath);
+			let params = prepareParams(requirements, javaConfig, workspacePath);
 			if (!params) {
 				return reject('Can not determine Java launch parameters for server');
 			}
