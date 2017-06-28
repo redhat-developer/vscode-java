@@ -44,6 +44,20 @@ This will build and place the binaries under the `server` folder. Alternately yo
 	$ ./node_modules/.bin/gulp download_server
 	```
 
+## Connect to a remote JDT language server
+
+While developping the language server and the extension, you don't need to deploy the server every time to try out a change. Instead you can run the language server out of its Eclipse workspace:
+
+- Open VSCOde on the vscode-java folder
+- In the debug viewlet, tun the launch 'Launch Extension - Remote Server'
+- The extension will open a named pipe with the name `javals` and wait for the JavaLS to connect
+- In Eclipse run the JDT language server as an Eclipse application:
+   - in the main tab set the product to `org.eclipse.jdt.ls.core.product`
+   - in the environment, define a variable `INOUT_PIPE_NAME` with value `javals` 
+   - in the plug-ins tab make sure that 'org.eclipse.jdt.ui' is not part of the plugins. Otherwise the the java.ui will be loaded throigh some extension points and will replace the primary buffer provider
+- In the debug cosole of VSCode you will see if the connection was sucessful
+- Hot code replace lets you make simple fixes without restarting the server
+
 ## Sideloading
 
 You can create a binary that you can sideload to your VS Code installation.
