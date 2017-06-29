@@ -13,35 +13,18 @@ declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 let electron = require('./electron_j');
 
-export function awaitServerConnection(pipeName, port): Thenable<StreamInfo> {
-	let addr : string | number;
-	let connectionType;
-	if (port) {
-		addr = parseInt(port);
-		connectionType = 'port';
-	} else {
-		if (process.platform === 'win32') {
-			addr = '\\\\.\\pipe\\' + pipeName;
-		} else {
-			addr = '/tmp/' + pipeName + '.sock';
-			try {
-				fs.unlinkSync(addr);
-			} catch (e) {
-				//ignore, likely file does not exist
-			}
-		}
-		connectionType = 'named pipe';
-	}
+export function awaitServerConnection(port): Thenable<StreamInfo> {
+	let addr = parseInt(port);
 	return new Promise((res, rej) => {
 		let server = net.createServer(stream => {
 			server.close();
-			console.log('JDT LS connection established on ' + connectionType + ' ' + addr);
+			console.log('JDT LS connection established on port ' + addr);
 			res({ reader: stream, writer: stream });
 		});
 		server.on('error', rej);
 		server.listen(addr, () => {
 			server.removeListener('error', rej);
-			console.log('Awaiting JDT LS connection on ' + connectionType + ' ' + addr);
+			console.log('Awaiting JDT LS connection on port ' + addr);
 		});
 		return server;
 	});

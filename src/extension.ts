@@ -62,12 +62,11 @@ export function activate(context: ExtensionContext) {
 			}
 			let workspacePath = path.resolve(storagePath + '/jdt_ws');
 			let serverOptions;
-			let namedPipe = process.env['SERVER_PIPE'];
 			let port = process.env['SERVER_PORT'];
-			if (!namedPipe && !port) {
+			if (!port) {
 				serverOptions = runServer.bind(null, workspacePath, getJavaConfiguration());
 			} else {
-				serverOptions = awaitServerConnection.bind(null, namedPipe, port);
+				serverOptions = awaitServerConnection.bind(null, port);
 			}
 
 			// Options to control the language client

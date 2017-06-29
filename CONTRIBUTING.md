@@ -58,9 +58,8 @@ While developping the language server and the extension, you don't need to deplo
    - if your workspace contains 'org.eclipse.jdt.ui', use the Plug-Ins tab in the debug configuration to exclude the plug-in. The presence of 'org.eclipse.jdt.ui' will cause the language server to hang. 
 - In the debug console of VSCode you can see if the connection was sucessful.
 - When the server is running breakpoints can be reached and hot code replace can be used to make fixes without restarting the server.
-- You can modify `launch.json` to use a different port or switch to a named pipe instead:
-    - Use `SERVER_PORT` to specify the port the JST LS server should connect to.
-    - Alternativly, use `SERVER_PIPE` to specify the named pipe the JST LS server should connect to.
+- You can modify `launch.json` to use a different port:
+    - Modify `SERVER_PORT` to specify the port the JST LS server should connect to.
 
 ## Sideloading
 
