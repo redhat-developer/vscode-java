@@ -13,32 +13,40 @@ declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 let electron = require('./electron_j');
 
-export function attachServer(pipeName): Thenable<StreamInfo> {
-	let pipePath;
-	if (process.platform === 'win32') {
-		pipePath = '\\\\.\\pipe\\' + pipeName;
+export function awaitServerConnection(pipeName, port): Thenable<StreamInfo> {
+	let addr : string | number;
+	let connectionType;
+	if (port) {
+		addr = parseInt(port);
+		connectionType = 'port';
 	} else {
-		pipePath = '/tmp/' + pipeName + '.sock';
-		try {
-			fs.unlinkSync(pipePath);
-		} catch (e) {
-			//ignore, likely file does not exist
+		if (process.platform === 'win32') {
+			addr = '\\\\.\\pipe\\' + pipeName;
+		} else {
+			addr = '/tmp/' + pipeName + '.sock';
+			try {
+				fs.unlinkSync(addr);
+			} catch (e) {
+				//ignore, likely file does not exist
+			}
 		}
+		connectionType = 'named pipe';
 	}
 	return new Promise((res, rej) => {
 		let server = net.createServer(stream => {
-			console.log('Connection established on ' + pipePath);
+			server.close();
+			console.log('JDT LS connection established on ' + connectionType + ' ' + addr);
 			res({ reader: stream, writer: stream });
 		});
-		server.on('error', function (e) {
-			rej(e);
-		});
-		server.listen(pipePath, () => {
-			console.log('Opened server on ' + pipePath);
+		server.on('error', rej);
+		server.listen(addr, () => {
+			server.removeListener('error', rej);
+			console.log('Awaiting JDT LS connection on ' + connectionType + ' ' + addr);
 		});
 		return server;
 	});
 }
+	
 
 export function runServer(workspacePath, javaConfig): Thenable<StreamInfo> {
 	return requirements.resolveRequirements().catch(error => {

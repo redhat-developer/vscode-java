@@ -44,19 +44,23 @@ This will build and place the binaries under the `server` folder. Alternately yo
 	$ ./node_modules/.bin/gulp download_server
 	```
 
-## Connect to a remote JDT language server
+## Run with a remote JDT language server
 
-While developping the language server and the extension, you don't need to deploy the server every time to try out a change. Instead you can run the language server out of its Eclipse workspace:
+While developping the language server and the extension, you don't need to deploy the server every time to try out changes. Instead you can run the language server out of its Eclipse workspace:
 
-- Open VSCOde on the vscode-java folder
-- In the debug viewlet, tun the launch 'Launch Extension - Remote Server'
-- The extension will open a named pipe with the name `javals` and wait for the JavaLS to connect
-- In Eclipse run the JDT language server as an Eclipse application:
-   - in the main tab set the product to `org.eclipse.jdt.ls.core.product`
-   - in the environment, define a variable `INOUT_PIPE_NAME` with value `javals` 
-   - in the plug-ins tab make sure that 'org.eclipse.jdt.ui' is not part of the plugins. Otherwise the the java.ui will be loaded throigh some extension points and will replace the primary buffer provider
-- In the debug cosole of VSCode you will see if the connection was sucessful
-- Hot code replace lets you make simple fixes without restarting the server
+- Open VSCode on the `vscode-java` folder
+- In the debug viewlet, run the launch _Launch Extension - Remote Server_
+- The extension will open a socket on port 3333 and will wait for the JDT language server to connect
+- In Eclipse, run the JDT language server as an Eclipse application. 
+    - Create a debug configuration of type _Eclipse Application_.
+   - in the main tab of the debug configuration set the product to `org.eclipse.jdt.ls.core.product`.
+   - in the Environment tab, define a variable `CLIENT_PORT` with value `3333`.
+   - if your workspace contains 'org.eclipse.jdt.ui', use the Plug-Ins tab in the debug configuration to exclude the plug-in. The presence of 'org.eclipse.jdt.ui' will cause the language server to hang. 
+- In the debug console of VSCode you can see if the connection was sucessful.
+- When the server is running breakpoints can be reached and hot code replace can be used to make fixes without restarting the server.
+- You can modify `launch.json` to use a different port or switch to a named pipe instead:
+    - Use `SERVER_PORT` to specify the port the JST LS server should connect to.
+    - Alternativly, use `SERVER_PIPE` to specify the named pipe the JST LS server should connect to.
 
 ## Sideloading
 

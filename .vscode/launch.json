@@ -23,7 +23,7 @@
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/out/src/**" ],
 			"env": {
-				"JAVA_LS_NAMED_PIPE": "javals"
+				"SERVER_PORT": "3333"
 			},
 			"preLaunchTask": "compile"
 		},
