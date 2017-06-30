@@ -1,6 +1,23 @@
 # Change Log
 
-## 0.7.0 (TBD)
+## 0.7.0 (June 30th, 2017)
+* enhancement - enabled @formatter:on/off tags in source. See [#236](https://github.com/redhat-developer/vscode-java/issues/236).
+* enhancement - improved error reporting in standalone java files. See [#242](https://github.com/redhat-developer/vscode-java/issues/242).
+* enhancement - hover should show element signature. See [JLS#259](https://github.com/eclipse/eclipse.jdt.ls/issues/259).
+* enhancement - code-action: add missing methods. See [JLS#177](https://github.com/eclipse/eclipse.jdt.ls/issues/177).
+* enhancement - code-action: missing variables, fields, params. See [JLS#178](https://github.com/eclipse/eclipse.jdt.ls/issues/178).
+* enhancement - code-action: organize imports. See [JLS#164](https://github.com/eclipse/eclipse.jdt.ls/issues/164).
+* enhancement - code-action: rename type. See [JLS#264](https://github.com/eclipse/eclipse.jdt.ls/issues/264).
+* enhancement - code-action: fix package declaration. See [JLS#265](https://github.com/eclipse/eclipse.jdt.ls/issues/265).
+* enhancement - code-action: remove unnecessary Javadoc param. See [JLS#274](https://github.com/eclipse/eclipse.jdt.ls/issues/274).
+* enhancement - code-action: add missing Javadoc params. See [JLS#275](https://github.com/eclipse/eclipse.jdt.ls/issues/275).
+* enhancement - code-action: add missing Javadoc params. See [JLS#275](https://github.com/eclipse/eclipse.jdt.ls/issues/275).
+* enhancement - code-action: fix type mismatch. See [JLS#276](https://github.com/eclipse/eclipse.jdt.ls/issues/276).
+* enhancement - code-action: fix missing attribute in annotation. See [JLS#277](https://github.com/eclipse/eclipse.jdt.ls/issues/277).
+* bug - fixed wrong URI set for diagnostics of standalone java files. See [JLS#268](https://github.com/eclipse/eclipse.jdt.ls/issues/268).
+* bug - fixed `Error computing hover: **/package-summary.html not found in JavaDoc jar`. See [#248](https://github.com/redhat-developer/vscode-java/issues/248).
+* bug - fixed `Invalid project description` thrown when reopening Eclipse projects. See [#244](https://github.com/redhat-developer/vscode-java/issues/244).
+
 
 ## 0.6.0 (June 15th, 2017)
 * enhancement - reduced extension size by ~25%. See [JLS#252](https://github.com/eclipse/eclipse.jdt.ls/issues/252).
