@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.7.0 (June 30th, 2017)
+## 0.7.0 (July 4th, 2017)
 * enhancement - enabled @formatter:on/off tags in source. See [#236](https://github.com/redhat-developer/vscode-java/issues/236).
 * enhancement - improved error reporting in standalone java files. See [#242](https://github.com/redhat-developer/vscode-java/issues/242).
 * enhancement - hover should show element signature. See [JLS#259](https://github.com/eclipse/eclipse.jdt.ls/issues/259).
