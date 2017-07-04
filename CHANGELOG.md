@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.8.0 (TBD)
+
 ## 0.7.0 (July 4th, 2017)
 * enhancement - enabled @formatter:on/off tags in source. See [#236](https://github.com/redhat-developer/vscode-java/issues/236).
 * enhancement - improved error reporting in standalone java files. See [#242](https://github.com/redhat-developer/vscode-java/issues/242).
