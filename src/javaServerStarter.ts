@@ -1,15 +1,37 @@
 
 import { window, commands, WorkspaceConfiguration, workspace } from 'vscode'
 import { StreamInfo } from 'vscode-languageclient';
+import { createClientPipeTransport } from 'vscode-jsonrpc';
 import * as requirements from './requirements';
 import * as path from 'path';
+import * as fs from 'fs';
+import * as net from 'net';
 import { Commands } from './commands';
 const glob = require('glob');
+
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 let electron = require('./electron_j');
 
-export function runServer(workspacePath, javaConfig): Thenable < StreamInfo > {
+export function awaitServerConnection(port): Thenable<StreamInfo> {
+	let addr = parseInt(port);
+	return new Promise((res, rej) => {
+		let server = net.createServer(stream => {
+			server.close();
+			console.log('JDT LS connection established on port ' + addr);
+			res({ reader: stream, writer: stream });
+		});
+		server.on('error', rej);
+		server.listen(addr, () => {
+			server.removeListener('error', rej);
+			console.log('Awaiting JDT LS connection on port ' + addr);
+		});
+		return server;
+	});
+}
+	
+
+export function runServer(workspacePath, javaConfig): Thenable<StreamInfo> {
 	return requirements.resolveRequirements().catch(error => {
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -23,7 +45,7 @@ export function runServer(workspacePath, javaConfig): Thenable < StreamInfo > {
 		return new Promise<StreamInfo>(function (resolve, reject) {
 
 			let child = path.resolve(requirements.java_home + '/bin/java');
-			let params = prepareParams(requirements,javaConfig, workspacePath);
+			let params = prepareParams(requirements, javaConfig, workspacePath);
 			if (!params) {
 				return reject('Can not determine Java launch parameters for server');
 			}
