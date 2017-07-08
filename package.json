@@ -115,6 +115,11 @@
           "type": "boolean",
           "default": true,
           "description": "Enable/disable default Java formatter"
+        },
+        "java.import.exclusions": {
+          "type": "array",
+          "description": "Configure glob patterns for excluding folders",
+          "default": "['**/node_modules', '**/.metadata']"
         }
       }
     },
