@@ -63,7 +63,10 @@ The following settings are supported:
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
 * `java.referencesCodeLens.enabled` : Enable/disable the references code lens.
 * `java.signatureHelp.enabled` : Enable/disable the signature help.
+* `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lens.
 * `java.configuration.maven.userSettings` : Absolute path to Maven's settings.xml.
+* `java.format.enabled` : Enable/disable default Java formatter.
+* `java.import.exclusions` : Exclude folders from import via glob patterns.
 
 
 Troubleshooting
