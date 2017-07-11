@@ -20,6 +20,11 @@ export namespace Commands {
     export const SHOW_JAVA_REFERENCES = 'java.show.references';
 
     /**
+     * Show Java implementations
+     */
+    export const SHOW_JAVA_IMPLEMENTATIONS = 'java.show.implementations';
+
+    /**
      * Show editor references
      */
     export const SHOW_REFERENCES = 'editor.action.showReferences';

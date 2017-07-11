@@ -21,6 +21,7 @@ suite('Java Language Extension', () => {
 			const JAVA_COMMANDS = [
 				Commands.OPEN_OUTPUT,
 				Commands.SHOW_JAVA_REFERENCES,
+				Commands.SHOW_JAVA_IMPLEMENTATIONS,
 				Commands.CONFIGURATION_UPDATE,
 				Commands.IGNORE_INCOMPLETE_CLASSPATH,
 				Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP,

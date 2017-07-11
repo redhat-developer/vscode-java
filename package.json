@@ -23,6 +23,7 @@
   "activationEvents": [
     "onLanguage:java",
     "onCommand:java.show.references",
+    "onCommand:java.show.implementations",
     "onCommand:java.open.output",
     "onCommand:java.open.serverLog",
     "onCommand:java.projectConfiguration.update",
@@ -110,6 +111,11 @@
           "type": "boolean",
           "default": false,
           "description": "Enable/disable the signature help."
+        },
+        "java.implementationsCodeLens.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable the implementations code lens."
         },
         "java.configuration.maven.userSettings": {
           "type": "string",
