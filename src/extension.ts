@@ -14,7 +14,7 @@ let lastStatus;
 
 export function activate(context: ExtensionContext) {
 
-	window.withProgress({ location: ProgressLocation.Window, title: 'Starting Java Language Server' }, p => {
+	window.withProgress({ location: ProgressLocation.Window }, p => {
 		return new Promise((resolve, reject) => {
 			// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
 			// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
