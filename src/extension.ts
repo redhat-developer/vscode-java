@@ -8,7 +8,7 @@ import { runServer, awaitServerConnection } from './javaServerStarter';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
 
-var os = require('os');
+let os = require('os');
 let oldConfig;
 let lastStatus;
 
@@ -299,10 +299,10 @@ function getTempWorkspace() {
 }
 
 function makeRandomHexString(length) {
-	var chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-	var result = '';
-	for (var i = 0; i < length; i++) {
-		var idx = Math.floor(chars.length * Math.random());
+	let chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+	let result = '';
+	for (let i = 0; i < length; i++) {
+		let idx = Math.floor(chars.length * Math.random());
 		result += chars[idx];
 	}
 	return result;

@@ -2,12 +2,16 @@
 	"rules": {
 		"no-unused-expression": true,
 		"no-duplicate-variable": true,
-		"no-duplicate-key": true,
 		"no-unused-variable": true,
 		"curly": true,
 		"class-name": true,
 		"semicolon": ["always"],
 		"triple-equals": true,
-		"quotemark": [true, "single", "avoid-escape"]
+		"quotemark": [true, "single", "avoid-escape"],
+		"no-console": ["log","error"],
+		"no-debugger": true,
+		"no-empty": true,
+		"no-var-keyword": true,
+		"no-unsafe-finally": true
 	}
 }

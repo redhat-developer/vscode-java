@@ -12,6 +12,7 @@ suite('Java Language Extension', () => {
 	test('should activate', function () {
 		this.timeout(1 * 60 * 1000);
 		return vscode.extensions.getExtension('redhat.java').activate().then((api) => {
+			assert.ok(true);
 		});
 	});
 

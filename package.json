@@ -166,14 +166,14 @@
   },
   "devDependencies": {
     "typescript": "^2.3.4",
-    "vscode": "^1.1.0",
+    "vscode": "^1.1.4",
     "mocha": "^3.2.0",
     "@types/node": "^6.0.40",
     "@types/mocha": "^2.2.39",
     "@types/glob": "5.0.30",
     "gulp": "^3.9.1",
-    "gulp-tslint": "^7.1.0",
-    "tslint": "^5.2.0",
+    "gulp-tslint": "^8.1.1",
+    "tslint": "^5.5.0",
     "gulp-decompress": "2.0.1",
     "gulp-download": "0.0.1"
   },
