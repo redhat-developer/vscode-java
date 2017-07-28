@@ -1,6 +1,6 @@
 
 import { window, commands, WorkspaceConfiguration, workspace } from 'vscode'
-import { StreamInfo } from 'vscode-languageclient';
+import { StreamInfo, Executable,ExecutableOptions } from 'vscode-languageclient';
 import { createClientPipeTransport } from 'vscode-jsonrpc';
 import * as requirements from './requirements';
 import * as path from 'path';
@@ -11,27 +11,8 @@ const glob = require('glob');
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
-let electron = require('./electron_j');
 
-export function awaitServerConnection(port): Thenable<StreamInfo> {
-	let addr = parseInt(port);
-	return new Promise((res, rej) => {
-		let server = net.createServer(stream => {
-			server.close();
-			console.log('JDT LS connection established on port ' + addr);
-			res({ reader: stream, writer: stream });
-		});
-		server.on('error', rej);
-		server.listen(addr, () => {
-			server.removeListener('error', rej);
-			console.log('Awaiting JDT LS connection on port ' + addr);
-		});
-		return server;
-	});
-}
-	
-
-export function runServer(workspacePath, javaConfig): Thenable<StreamInfo> {
+export function prepareExecutable(workspacePath, javaConfig): Thenable<Executable>{
 	return requirements.resolveRequirements().catch(error => {
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -42,27 +23,21 @@ export function runServer(workspacePath, javaConfig): Thenable<StreamInfo> {
 		// rethrow to disrupt the chain.
 		throw error;
 	}).then(requirements => {
-		return new Promise<StreamInfo>(function (resolve, reject) {
-
-			let child = path.resolve(requirements.java_home + '/bin/java');
-			let params = prepareParams(requirements, javaConfig, workspacePath);
-			if (!params) {
-				return reject('Can not determine Java launch parameters for server');
-			}
-			console.log('Executing ' + child + ' ' + params.join(' '));
-
-			electron.fork(child, params, {}, function (err, result) {
-				if (err) { return reject(err); }
-				if (result) { return resolve(result); }
-			});
-		});
+		let executable:Executable = Object.create(null);
+		let options:ExecutableOptions = Object.create(null);
+		options.env = process.env;
+		options.stdio= 'pipe';
+		executable.options = options;
+		executable.command = path.resolve(requirements.java_home + '/bin/java');
+		executable.args =  prepareParams(requirements, javaConfig, workspacePath);
+		return executable;
 	});
 }
 
-function prepareParams(requirements, javaConfiguration, workspacePath) {
-	let params = [];
+function prepareParams(requirements, javaConfiguration, workspacePath):string[] {
+	let params:string[] = [];
 	if (DEBUG) {
-		params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044');
+		params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y');
 		// suspend=y is the default. Use this form if you need to debug the server startup code:
 		//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 	}
