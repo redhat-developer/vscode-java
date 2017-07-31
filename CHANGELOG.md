@@ -1,6 +1,17 @@
 # Change Log
 
-## 0.8.0 (TBD)
+## 0.8.0 (July 31st, 2017)
+* enhancement - generate getters and setters from autocompletion. See [#100](https://github.com/redhat-developer/vscode-java/issues/100).
+* enhancement - Enable/disable default Java formatter with the `java.format.enabled` preference. See [#186](https://github.com/redhat-developer/vscode-java/issues/186).
+* enhancement - Exclude folders from Java project detection via glob patterns with the `java.import.exclusions` preference. See [#229](https://github.com/redhat-developer/vscode-java/issues/229).
+* enhancement - Enable/disable signature help with the `java.signatureHelp.enabled` preference. See [#252](https://github.com/redhat-developer/vscode-java/issues/252).
+* enhancement - Enable/disable the implementations code lens with the `java.implementationsCodeLens.enabled` preference. See [#257](https://github.com/redhat-developer/vscode-java/issues/257	).
+* bug fix - Gracefully handle deleted required eclipse settings files. See [#132](https://github.com/redhat-developer/vscode-java/issues/132).
+* bug fix - Properly render documentation during code completion. See [#215](https://github.com/redhat-developer/vscode-java/issues/215).
+* bug fix - fixed opening network folders on Windows. See [#259](https://github.com/redhat-developer/vscode-java/issues/259).
+* bug fix - Diagnostics mismatch after applying code actions. See [JLS#279](https://github.com/eclipse/eclipse.jdt.ls/issues/279).
+* bug fix - fixed Maven support running on JDK 9 and IBM JDK. See [JLS#315](https://github.com/eclipse/eclipse.jdt.ls/issues/315).
+* bug fix - Keep logs clean from OperationCanceledException during code assist. See [JLS#317](https://github.com/eclipse/eclipse.jdt.ls/issues/317).
 
 ## 0.7.0 (July 4th, 2017)
 * enhancement - enabled @formatter:on/off tags in source. See [#236](https://github.com/redhat-developer/vscode-java/issues/236).
@@ -19,7 +30,6 @@
 * bug - fixed wrong URI set for diagnostics of standalone java files. See [JLS#268](https://github.com/eclipse/eclipse.jdt.ls/issues/268).
 * bug - fixed `Error computing hover: **/package-summary.html not found in JavaDoc jar`. See [#248](https://github.com/redhat-developer/vscode-java/issues/248).
 * bug - fixed `Invalid project description` thrown when reopening Eclipse projects. See [#244](https://github.com/redhat-developer/vscode-java/issues/244).
-
 
 ## 0.6.0 (June 15th, 2017)
 * enhancement - reduced extension size by ~25%. See [JLS#252](https://github.com/eclipse/eclipse.jdt.ls/issues/252).
@@ -61,7 +71,6 @@
 * enhancement - Extension now embeds the Java Language Server. See [#178](https://github.com/redhat-developer/vscode-java/issues/178).
 * bug - fixed Java Language Server status update on startup. See [#179](https://github.com/redhat-developer/vscode-java/issues/179).
 * bug - fixed detection of nested Gradle projects. See [#165](https://github.com/redhat-developer/vscode-java/issues/165).
-
 
 ## 0.1.0 (March 30th, 2017)
 * enhancement - Support starting the Java Language Server with JDK 9. See [#43](https://github.com/redhat-developer/vscode-java/issues/43).
@@ -129,7 +138,6 @@
 * enhancement - add Java code snippets. See [#83](https://github.com/redhat-developer/vscode-java/issues/83).
 * bug fix - fix errors thrown when opening a standalone file. See [#55](https://github.com/redhat-developer/vscode-java/issues/55), [#67](https://github.com/redhat-developer/vscode-java/issues/67).
 * bug fix - fix JAVA_HOME detection mechanism. See [#74](https://github.com/redhat-developer/vscode-java/issues/74).
-
 
 ## 0.0.5 (October 13th, 2016)
 * enhancement - configure extra VM arguments in VS Code settings, used to launch the Java Language Server. See [#25](https://github.com/redhat-developer/vscode-java/issues/25).

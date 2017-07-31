@@ -61,12 +61,12 @@ The following settings are supported:
 * `java.configuration.updateBuildConfiguration` : Specifies how modifications on build files update the Java classpath/configuration. Supported values are `disabled` (nothing happens), `interactive` (asks about updating on every modification), `automatic` (updating is automatically triggered).
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
-* `java.referencesCodeLens.enabled` : Enable/disable the references code lens.
-* `java.signatureHelp.enabled` : Enable/disable the signature help.
-* `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lens.
 * `java.configuration.maven.userSettings` : Absolute path to Maven's settings.xml.
-* `java.format.enabled` : Enable/disable default Java formatter.
 * `java.import.exclusions` : Exclude folders from import via glob patterns.
+* `java.referencesCodeLens.enabled` : Enable/disable the references code lenses.
+* `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
+* `java.signatureHelp.enabled` : Enable/disable signature help support (triggered on `(`).
+* `java.format.enabled` : Enable/disable the default Java formatter.
 
 
 Troubleshooting
