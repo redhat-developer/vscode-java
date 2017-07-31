@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.9.0 (August 31st, 2017 - Tentative)
+
 ## 0.8.0 (July 31st, 2017)
 * enhancement - generate getters and setters from autocompletion. See [#100](https://github.com/redhat-developer/vscode-java/issues/100).
 * enhancement - Enable/disable default Java formatter with the `java.format.enabled` preference. See [#186](https://github.com/redhat-developer/vscode-java/issues/186).
