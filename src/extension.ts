@@ -147,59 +147,58 @@ export function activate(context: ExtensionContext) {
 							}
 						});
 					});
+
+					commands.registerCommand(Commands.OPEN_OUTPUT, () => {
+						languageClient.outputChannel.show(ViewColumn.Three);
+					});
+					commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+					});
+					commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+					});
+
+					commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri));
+
+					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore'));
+
+					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
+						commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'))
+					});
+
+					commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
+
+					commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
+						let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
+						if (edit) {
+							workspace.applyEdit(edit);
+						}
+					});
+
+					window.onDidChangeActiveTextEditor((editor) => {
+						toggleItem(editor, item);
+					});
+
+					let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
+						onDidChange: null,
+						provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
+							return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
+								return v || '';
+							});
+						}
+					};
+					workspace.registerTextDocumentContentProvider('jdt', provider);
 				});
-
-
-				commands.registerCommand(Commands.OPEN_OUTPUT, () => {
-					languageClient.outputChannel.show(ViewColumn.Three);
-				});
-				commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
-					commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-				});
-				commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
-					commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-				});
-
-				commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri));
-
-				commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore'));
-
-				commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
-					commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'))
-				});
-
-				commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
-
-				commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
-					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
-					if (edit) {
-						workspace.applyEdit(edit);
-					}
-				});
-
-				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
-
-				window.onDidChangeActiveTextEditor((editor) => {
-					toggleItem(editor, item);
-				});
-
-				let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
-					onDidChange: null,
-					provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
-						return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
-							return v || '';
-						});
-					}
-				};
-				workspace.registerTextDocumentContentProvider('jdt', provider);
 				let disposable = languageClient.start();
+
+				// Register commands here to make it available even when the language client fails
+				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
 
 				// Push the disposable to the context's subscriptions so that the
 				// client can be deactivated on extension deactivation
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
-
 			});
 
 		});
