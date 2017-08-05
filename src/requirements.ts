@@ -10,7 +10,7 @@ const findJavaHome = require('find-java-home');
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows?'.exe':'');
 
-interface RequirementsData {
+export interface RequirementsData {
     java_home: string;
     java_version: number;
 }
@@ -34,7 +34,7 @@ export async function resolveRequirements(): Promise<RequirementsData> {
     return Promise.resolve({ 'java_home': java_home, 'java_version': javaVersion});
 }
 
-function checkJavaRuntime(): Promise<any> {
+function checkJavaRuntime(): Promise<string> {
     return new Promise((resolve, reject) => {
         let source : string;
         let javaHome : string = readJavaConfig();
@@ -76,7 +76,7 @@ function readJavaConfig() : string {
     return config.get<string>('java.home',null);
 }
 
-function checkJavaVersion(java_home: string): Promise<any> {
+function checkJavaVersion(java_home: string): Promise<number> {
     return new Promise((resolve, reject) => {
         cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
             if (stderr.indexOf('version "9') > -1){

@@ -4,7 +4,8 @@
 import * as path from 'path';
 import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
-import { prepareExecutable } from './javaServerStarter';
+import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
+import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
 
@@ -14,80 +15,60 @@ let lastStatus;
 
 export function activate(context: ExtensionContext) {
 
-	window.withProgress({ location: ProgressLocation.Window }, p => {
-		return new Promise((resolve, reject) => {
-			// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
-			// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
-			languages.setLanguageConfiguration('java', {
-				indentationRules: {
-					// ^(.*\*/)?\s*\}.*$
-					decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
-					// ^.*\{[^}"']*$
-					increaseIndentPattern: /^.*\{[^}"']*$/
-				},
-				wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
-				onEnterRules: [
-					{
-						// e.g. /** | */
-						beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
-						afterText: /^\s*\*\/$/,
-						action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
-					},
-					{
-						// e.g. /** ...|
-						beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
-						action: { indentAction: IndentAction.None, appendText: ' * ' }
-					},
-					{
-						// e.g.  * ...|
-						beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
-						action: { indentAction: IndentAction.None, appendText: '* ' }
-					},
-					{
-						// e.g.  */|
-						beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
-						action: { indentAction: IndentAction.None, removeText: 1 }
-					},
-					{
-						// e.g.  *-----*/|
-						beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
-						action: { indentAction: IndentAction.None, removeText: 1 }
-					}
-				]
-			});
+	enableJavadocSymbols();
 
-			let storagePath = context.storagePath;
-			if (!storagePath) {
-				storagePath = getTempWorkspace();
+	return requirements.resolveRequirements().catch(error => {
+		//show error
+		window.showErrorMessage(error.message, error.label).then((selection) => {
+			if (error.label && error.label === selection && error.openUrl) {
+				commands.executeCommand(Commands.OPEN_BROWSER, error.openUrl);
 			}
-			let workspacePath = path.resolve(storagePath + '/jdt_ws');
-
-			// Options to control the language client
-			let clientOptions: LanguageClientOptions = {
-				// Register the server for java
-				documentSelector: ['java'],
-				synchronize: {
-					configurationSection: 'java',
-					// Notify the server about file changes to .java and project/build files contained in the workspace
-					fileEvents: [
-						workspace.createFileSystemWatcher('**/*.java'),
-						workspace.createFileSystemWatcher('**/pom.xml'),
-						workspace.createFileSystemWatcher('**/*.gradle'),
-						workspace.createFileSystemWatcher('**/.project'),
-						workspace.createFileSystemWatcher('**/.classpath'),
-						workspace.createFileSystemWatcher('**/settings/*.prefs')
-					],
+		});
+		// rethrow to disrupt the chain.
+		throw error;
+	}).then(requirements => {
+		return window.withProgress({ location: ProgressLocation.Window }, p => {
+			return new Promise((resolve, reject) => {
+				let storagePath = context.storagePath;
+				if (!storagePath) {
+					storagePath = getTempWorkspace();
 				}
-			};
+				let workspacePath = path.resolve(storagePath + '/jdt_ws');
 
-			let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-			item.text = '$(rocket)';
-			item.command = Commands.OPEN_OUTPUT;
+				// Options to control the language client
+				let clientOptions: LanguageClientOptions = {
+					// Register the server for java
+					documentSelector: ['java'],
+					synchronize: {
+						configurationSection: 'java',
+						// Notify the server about file changes to .java and project/build files contained in the workspace
+						fileEvents: [
+							workspace.createFileSystemWatcher('**/*.java'),
+							workspace.createFileSystemWatcher('**/pom.xml'),
+							workspace.createFileSystemWatcher('**/*.gradle'),
+							workspace.createFileSystemWatcher('**/.project'),
+							workspace.createFileSystemWatcher('**/.classpath'),
+							workspace.createFileSystemWatcher('**/settings/*.prefs')
+						],
+					}
+				};
 
-			oldConfig = getJavaConfiguration();
-			prepareExecutable(workspacePath, getJavaConfiguration()).then((executable) => {
+				let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
+				item.text = '$(rocket)';
+				item.command = Commands.OPEN_OUTPUT;
+
+				oldConfig = getJavaConfiguration();
+				let serverOptions;
+				let port = process.env['SERVER_PORT'];
+				if (!port) {
+					serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+				} else {
+					// used during development
+					serverOptions = awaitServerConnection.bind(null, port);
+				}
+
 				// Create the language client and start the client.
-				let languageClient = new LanguageClient('java', 'Language Support for Java', executable, clientOptions);
+				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
@@ -147,7 +128,6 @@ export function activate(context: ExtensionContext) {
 							}
 						});
 					});
-
 					commands.registerCommand(Commands.OPEN_OUTPUT, () => {
 						languageClient.outputChannel.show(ViewColumn.Three);
 					});
@@ -190,7 +170,6 @@ export function activate(context: ExtensionContext) {
 					workspace.registerTextDocumentContentProvider('jdt', provider);
 				});
 				let disposable = languageClient.start();
-
 				// Register commands here to make it available even when the language client fails
 				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
 
@@ -202,6 +181,48 @@ export function activate(context: ExtensionContext) {
 			});
 
 		});
+	});
+}
+
+function enableJavadocSymbols() {
+	// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
+	// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
+	languages.setLanguageConfiguration('java', {
+		indentationRules: {
+			// ^(.*\*/)?\s*\}.*$
+			decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
+			// ^.*\{[^}"']*$
+			increaseIndentPattern: /^.*\{[^}"']*$/
+		},
+		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+		onEnterRules: [
+			{
+				// e.g. /** | */
+				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				afterText: /^\s*\*\/$/,
+				action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
+			},
+			{
+				// e.g. /** ...|
+				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				action: { indentAction: IndentAction.None, appendText: ' * ' }
+			},
+			{
+				// e.g.  * ...|
+				beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
+				action: { indentAction: IndentAction.None, appendText: '* ' }
+			},
+			{
+				// e.g.  */|
+				beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
+				action: { indentAction: IndentAction.None, removeText: 1 }
+			},
+			{
+				// e.g.  *-----*/|
+				beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
+				action: { indentAction: IndentAction.None, removeText: 1 }
+			}
+		]
 	});
 }
 
