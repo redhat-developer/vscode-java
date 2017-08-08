@@ -3,8 +3,9 @@
 
 import * as path from 'path';
 import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
-import { LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
-import { runServer, awaitServerConnection } from './javaServerStarter';
+import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
+import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
+import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
 
@@ -14,198 +15,214 @@ let lastStatus;
 
 export function activate(context: ExtensionContext) {
 
-	window.withProgress({ location: ProgressLocation.Window }, p => {
-		return new Promise((resolve, reject) => {
-			// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
-			// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
-			languages.setLanguageConfiguration('java', {
-				indentationRules: {
-					// ^(.*\*/)?\s*\}.*$
-					decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
-					// ^.*\{[^}"']*$
-					increaseIndentPattern: /^.*\{[^}"']*$/
-				},
-				wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
-				onEnterRules: [
-					{
-						// e.g. /** | */
-						beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
-						afterText: /^\s*\*\/$/,
-						action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
-					},
-					{
-						// e.g. /** ...|
-						beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
-						action: { indentAction: IndentAction.None, appendText: ' * ' }
-					},
-					{
-						// e.g.  * ...|
-						beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
-						action: { indentAction: IndentAction.None, appendText: '* ' }
-					},
-					{
-						// e.g.  */|
-						beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
-						action: { indentAction: IndentAction.None, removeText: 1 }
-					},
-					{
-						// e.g.  *-----*/|
-						beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
-						action: { indentAction: IndentAction.None, removeText: 1 }
-					}
-				]
-			});
+	enableJavadocSymbols();
 
-			let storagePath = context.storagePath;
-			if (!storagePath) {
-				storagePath = getTempWorkspace();
+	return requirements.resolveRequirements().catch(error => {
+		//show error
+		window.showErrorMessage(error.message, error.label).then((selection) => {
+			if (error.label && error.label === selection && error.openUrl) {
+				commands.executeCommand(Commands.OPEN_BROWSER, error.openUrl);
 			}
-			let workspacePath = path.resolve(storagePath + '/jdt_ws');
-			let serverOptions;
-			let port = process.env['SERVER_PORT'];
-			if (!port) {
-				serverOptions = runServer.bind(null, workspacePath, getJavaConfiguration());
-			} else {
-				serverOptions = awaitServerConnection.bind(null, port);
-			}
-
-			// Options to control the language client
-			let clientOptions: LanguageClientOptions = {
-				// Register the server for java
-				documentSelector: ['java'],
-				synchronize: {
-					configurationSection: 'java',
-					// Notify the server about file changes to .java and project/build files contained in the workspace
-					fileEvents: [
-						workspace.createFileSystemWatcher('**/*.java'),
-						workspace.createFileSystemWatcher('**/pom.xml'),
-						workspace.createFileSystemWatcher('**/*.gradle'),
-						workspace.createFileSystemWatcher('**/.project'),
-						workspace.createFileSystemWatcher('**/.classpath'),
-						workspace.createFileSystemWatcher('**/settings/*.prefs')
-					],
+		});
+		// rethrow to disrupt the chain.
+		throw error;
+	}).then(requirements => {
+		return window.withProgress({ location: ProgressLocation.Window }, p => {
+			return new Promise((resolve, reject) => {
+				let storagePath = context.storagePath;
+				if (!storagePath) {
+					storagePath = getTempWorkspace();
 				}
-			};
+				let workspacePath = path.resolve(storagePath + '/jdt_ws');
 
-			let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-			item.text = '$(rocket)';
-			item.command = Commands.OPEN_OUTPUT;
+				// Options to control the language client
+				let clientOptions: LanguageClientOptions = {
+					// Register the server for java
+					documentSelector: ['java'],
+					synchronize: {
+						configurationSection: 'java',
+						// Notify the server about file changes to .java and project/build files contained in the workspace
+						fileEvents: [
+							workspace.createFileSystemWatcher('**/*.java'),
+							workspace.createFileSystemWatcher('**/pom.xml'),
+							workspace.createFileSystemWatcher('**/*.gradle'),
+							workspace.createFileSystemWatcher('**/.project'),
+							workspace.createFileSystemWatcher('**/.classpath'),
+							workspace.createFileSystemWatcher('**/settings/*.prefs')
+						],
+					}
+				};
 
-			oldConfig = getJavaConfiguration();
-			// Create the language client and start the client.
-			let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
-			languageClient.onReady().then(() => {
-				languageClient.onNotification(StatusNotification.type, (report) => {
-					switch (report.type) {
-						case 'Started':
-							item.text = '$(thumbsup)';
-							p.report({ message: 'Finished' });
-							lastStatus = item.text;
-							resolve();
-							break;
-						case 'Error':
-							item.text = '$(thumbsdown)';
-							lastStatus = item.text;
-							p.report({ message: 'Finished with Error' });
-							item.tooltip = report.message;
-							toggleItem(window.activeTextEditor, item);
-							resolve();
-							break;
-						case 'Starting':
-							p.report({ message: report.message });
-							item.tooltip = report.message;
-							break;
-						case 'Message':
-							item.text = report.message;
-							setTimeout(() => { item.text = lastStatus; }, 3000);
-							break;
-					}
-					item.tooltip = report.message;
-					toggleItem(window.activeTextEditor, item);
-				});
-				languageClient.onNotification(ActionableNotification.type, (notification) => {
-					let show = null;
-					switch (notification.severity) {
-						case MessageType.Log:
-							show = logNotification;
-							break;
-						case MessageType.Info:
-							show = window.showInformationMessage;
-							break;
-						case MessageType.Warning:
-							show = window.showWarningMessage;
-							break;
-						case MessageType.Error:
-							show = window.showErrorMessage;
-							break;
-					}
-					if (!show) {
-						return;
-					}
-					const titles = notification.commands.map(a => a.title);
-					show(notification.message, ...titles).then((selection) => {
-						for (let action of notification.commands) {
-							if (action.title === selection) {
-								let args: any[] = (action.arguments) ? action.arguments : [];
-								commands.executeCommand(action.command, ...args);
+				let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
+				item.text = '$(rocket)';
+				item.command = Commands.OPEN_OUTPUT;
+
+				oldConfig = getJavaConfiguration();
+				let serverOptions;
+				let port = process.env['SERVER_PORT'];
+				if (!port) {
+					serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+				} else {
+					// used during development
+					serverOptions = awaitServerConnection.bind(null, port);
+				}
+
+				// Create the language client and start the client.
+				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
+				languageClient.onReady().then(() => {
+					languageClient.onNotification(StatusNotification.type, (report) => {
+						switch (report.type) {
+							case 'Started':
+								item.text = '$(thumbsup)';
+								p.report({ message: 'Finished' });
+								lastStatus = item.text;
+								resolve();
 								break;
+							case 'Error':
+								item.text = '$(thumbsdown)';
+								lastStatus = item.text;
+								p.report({ message: 'Finished with Error' });
+								item.tooltip = report.message;
+								toggleItem(window.activeTextEditor, item);
+								resolve();
+								break;
+							case 'Starting':
+								p.report({ message: report.message });
+								item.tooltip = report.message;
+								break;
+							case 'Message':
+								item.text = report.message;
+								setTimeout(() => { item.text = lastStatus; }, 3000);
+								break;
+						}
+						item.tooltip = report.message;
+						toggleItem(window.activeTextEditor, item);
+					});
+					languageClient.onNotification(ActionableNotification.type, (notification) => {
+						let show = null;
+						switch (notification.severity) {
+							case MessageType.Log:
+								show = logNotification;
+								break;
+							case MessageType.Info:
+								show = window.showInformationMessage;
+								break;
+							case MessageType.Warning:
+								show = window.showWarningMessage;
+								break;
+							case MessageType.Error:
+								show = window.showErrorMessage;
+								break;
+						}
+						if (!show) {
+							return;
+						}
+						const titles = notification.commands.map(a => a.title);
+						show(notification.message, ...titles).then((selection) => {
+							for (let action of notification.commands) {
+								if (action.title === selection) {
+									let args: any[] = (action.arguments) ? action.arguments : [];
+									commands.executeCommand(action.command, ...args);
+									break;
+								}
 							}
+						});
+					});
+					commands.registerCommand(Commands.OPEN_OUTPUT, () => {
+						languageClient.outputChannel.show(ViewColumn.Three);
+					});
+					commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+					});
+					commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+					});
+
+					commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri));
+
+					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore'));
+
+					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
+						commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'))
+					});
+
+					commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
+
+					commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
+						let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
+						if (edit) {
+							workspace.applyEdit(edit);
 						}
 					});
-				});
-			});
 
-
-			commands.registerCommand(Commands.OPEN_OUTPUT, () => {
-				languageClient.outputChannel.show(ViewColumn.Three);
-			});
-			commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
-				commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-			});
-			commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
-				commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-			});
-
-			commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri));
-
-			commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore'));
-
-			commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
-				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'))
-			});
-
-			commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
-
-			commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
-				let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
-				if (edit) {
-					workspace.applyEdit(edit);
-				}
-			});
-
-			commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
-
-			window.onDidChangeActiveTextEditor((editor) => {
-				toggleItem(editor, item);
-			});
-
-			let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
-				onDidChange: null,
-				provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
-					return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
-						return v || '';
+					window.onDidChangeActiveTextEditor((editor) => {
+						toggleItem(editor, item);
 					});
-				}
-			};
-			workspace.registerTextDocumentContentProvider('jdt', provider);
-			let disposable = languageClient.start();
 
-			// Push the disposable to the context's subscriptions so that the
-			// client can be deactivated on extension deactivation
-			context.subscriptions.push(disposable);
-			context.subscriptions.push(onConfigurationChange());
-			toggleItem(window.activeTextEditor, item);
+					let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
+						onDidChange: null,
+						provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
+							return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
+								return v || '';
+							});
+						}
+					};
+					workspace.registerTextDocumentContentProvider('jdt', provider);
+				});
+				let disposable = languageClient.start();
+				// Register commands here to make it available even when the language client fails
+				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
+
+				// Push the disposable to the context's subscriptions so that the
+				// client can be deactivated on extension deactivation
+				context.subscriptions.push(disposable);
+				context.subscriptions.push(onConfigurationChange());
+				toggleItem(window.activeTextEditor, item);
+			});
+
 		});
+	});
+}
+
+function enableJavadocSymbols() {
+	// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
+	// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
+	languages.setLanguageConfiguration('java', {
+		indentationRules: {
+			// ^(.*\*/)?\s*\}.*$
+			decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
+			// ^.*\{[^}"']*$
+			increaseIndentPattern: /^.*\{[^}"']*$/
+		},
+		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+		onEnterRules: [
+			{
+				// e.g. /** | */
+				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				afterText: /^\s*\*\/$/,
+				action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
+			},
+			{
+				// e.g. /** ...|
+				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				action: { indentAction: IndentAction.None, appendText: ' * ' }
+			},
+			{
+				// e.g.  * ...|
+				beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
+				action: { indentAction: IndentAction.None, appendText: '* ' }
+			},
+			{
+				// e.g.  */|
+				beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
+				action: { indentAction: IndentAction.None, removeText: 1 }
+			},
+			{
+				// e.g.  *-----*/|
+				beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
+				action: { indentAction: IndentAction.None, removeText: 1 }
+			}
+		]
 	});
 }
 
