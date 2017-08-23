@@ -55,6 +55,10 @@ export interface ActionableMessage {
 	commands?: Command[];
 }
 
+export interface BundleRequestParams {
+    params: string[];
+}
+
 export namespace StatusNotification {
 	export const type = new NotificationType<StatusReport,void >('language/status');
 }
@@ -69,4 +73,8 @@ export namespace ProjectConfigurationUpdateRequest {
 
 export namespace ActionableNotification {
     export const type = new NotificationType<ActionableMessage, void>('language/actionableNotification');
+}
+
+export namespace BundleRequest {
+    export const type = new RequestType<BundleRequestParams, string, void, void>('java/bundle');
 }

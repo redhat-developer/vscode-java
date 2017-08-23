@@ -7,7 +7,9 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPos
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
+import { loadPlugins }  from './plugin';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
+
 
 let os = require('os');
 let oldConfig;
@@ -168,6 +170,8 @@ export function activate(context: ExtensionContext) {
 						}
 					};
 					workspace.registerTextDocumentContentProvider('jdt', provider);
+
+					loadPlugins(languageClient);
 				});
 				let disposable = languageClient.start();
 				// Register commands here to make it available even when the language client fails
