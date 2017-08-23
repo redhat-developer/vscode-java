@@ -2,12 +2,11 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { loadPlugins }  from './plugin';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
 
 
@@ -52,6 +51,9 @@ export function activate(context: ExtensionContext) {
 							workspace.createFileSystemWatcher('**/.classpath'),
 							workspace.createFileSystemWatcher('**/settings/*.prefs')
 						],
+					},
+					initializationOptions: {
+						bundles: collectionExtensions()
 					}
 				};
 
@@ -170,8 +172,6 @@ export function activate(context: ExtensionContext) {
 						}
 					};
 					workspace.registerTextDocumentContentProvider('jdt', provider);
-
-					loadPlugins(languageClient);
 				});
 				let disposable = languageClient.start();
 				// Register commands here to make it available even when the language client fails
@@ -354,4 +354,20 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 			}
 			return didOpen;
 		});
+}
+
+function collectionExtensions(): string[] {
+	let result = [];
+	for (let extension of extensions.all) {
+		let contributesSection = extension.packageJSON['contributes'];
+		if (contributesSection) {
+			let javaExtensions = contributesSection['javaExtensions'];
+			if (Array.isArray(javaExtensions) && javaExtensions.length) {
+				for (let javaExtensionPath of javaExtensions) {
+					result.push(path.resolve(extension.extensionPath, javaExtensionPath));
+				}
+			}
+		}
+	}
+	return result;
 }
