@@ -4,10 +4,11 @@ language: node_js
 node_js:
 - "6"
 
-os:
-- osx
-- linux
-  dist: trusty
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+    - os: osx
 
 before_install:
 - if [ $TRAVIS_OS_NAME == "linux" ]; then
