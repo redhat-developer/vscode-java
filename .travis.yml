@@ -7,6 +7,7 @@ node_js:
 os:
 - osx
 - linux
+  dist: trusty
 
 before_install:
 - if [ $TRAVIS_OS_NAME == "linux" ]; then
