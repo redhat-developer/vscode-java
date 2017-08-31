@@ -6,8 +6,8 @@
 * enhancement - code action: generate getters and setters. See [#263](https://github.com/redhat-developer/vscode-java/issues/263).
 * enhancement - code action: add unimplemented methods. See [#270](https://github.com/redhat-developer/vscode-java/issues/270).
 * bug fix - support 32-bit platforms. See [#201](https://github.com/redhat-developer/vscode-java/issues/201).
-* bug fix - fixed implementor codelens showing <<MISSING COMMAND>> when typing. See [#266](https://github.com/redhat-developer/vscode-java/issues/266).
-* bug fix - fixed <<MISSING COMMAND>> when invoking code actions. See [#288](https://github.com/redhat-developer/vscode-java/issues/288).
+* bug fix - fixed implementor codelens showing `<<MISSING COMMAND>>` when typing. See [#266](https://github.com/redhat-developer/vscode-java/issues/266).
+* bug fix - fixed `<<MISSING COMMAND>>` when invoking code actions. See [#288](https://github.com/redhat-developer/vscode-java/issues/288).
 * bug fix - fixed `Index out of bounds` exceptions during code lens resolution, after document changes. See [JLS#340](https://github.com/eclipse/eclipse.jdt.ls/issues/340).
 
 ## 0.8.0 (July 31st, 2017)
