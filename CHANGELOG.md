@@ -1,6 +1,14 @@
 # Change Log
 
-## 0.9.0 (August 31st, 2017 - Tentative)
+## 0.9.0 (August 31st, 2017)
+* enhancement - rename symbols support (Doesn't rename files at the moment). See [#71](https://github.com/redhat-developer/vscode-java/issues/71).
+* enhancement - use system's Gradle runtime when no wrapper found. See [#232](https://github.com/redhat-developer/vscode-java/issues/232).
+* enhancement - code action: generate getters and setters. See [#263](https://github.com/redhat-developer/vscode-java/issues/263).
+* enhancement - code action: add unimplemented methods. See [#270](https://github.com/redhat-developer/vscode-java/issues/270).
+* bug fix - support 32-bit platforms. See [#201](https://github.com/redhat-developer/vscode-java/issues/201).
+* bug fix - fixed implementor codelens showing <<MISSING COMMAND>> when typing. See [#266](https://github.com/redhat-developer/vscode-java/issues/266).
+* bug fix - fixed <<MISSING COMMAND>> when invoking code actions. See [#288](https://github.com/redhat-developer/vscode-java/issues/288).
+* bug fix - fixed `Index out of bounds` exceptions during code lens resolution, after document changes. See [JLS#340](https://github.com/eclipse/eclipse.jdt.ls/issues/340).
 
 ## 0.8.0 (July 31st, 2017)
 * enhancement - generate getters and setters from autocompletion. See [#100](https://github.com/redhat-developer/vscode-java/issues/100).
