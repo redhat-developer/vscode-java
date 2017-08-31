@@ -12,7 +12,7 @@ const glob = require('glob');
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 
-export function prepareExecutable(requirements:RequirementsData, workspacePath, javaConfig): Executable {
+export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig): Executable {
 	let executable: Executable = Object.create(null);
 	let options: ExecutableOptions = Object.create(null);
 	options.env = process.env;
@@ -40,7 +40,7 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 }
 
 
-function prepareParams(requirements:RequirementsData, javaConfiguration, workspacePath): string[] {
+function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath): string[] {
 	let params: string[] = [];
 	if (DEBUG) {
 		params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y');
@@ -88,7 +88,7 @@ function prepareParams(requirements:RequirementsData, javaConfiguration, workspa
 function startedInDebugMode(): boolean {
 	let args = (process as any).execArgv;
 	if (args) {
-		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg));
+		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg) || /^--inspect-brk=?/.test(arg));
 	};
 	return false;
 }
