@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.10.0 (TBD)
+
 ## 0.9.0 (August 31st, 2017)
 * enhancement - rename symbols support (Doesn't rename files at the moment). See [#71](https://github.com/redhat-developer/vscode-java/issues/71).
 * enhancement - use system's Gradle runtime when no wrapper found. See [#232](https://github.com/redhat-developer/vscode-java/issues/232).
