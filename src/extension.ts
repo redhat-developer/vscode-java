@@ -4,11 +4,11 @@
 import * as path from 'path';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
+import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
-
 
 let os = require('os');
 let oldConfig;
@@ -53,7 +53,7 @@ export function activate(context: ExtensionContext) {
 						],
 					},
 					initializationOptions: {
-						bundles: collectionExtensions()
+						bundles: collectionJavaExtensions(extensions.all)
 					}
 				};
 
@@ -354,20 +354,4 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 			}
 			return didOpen;
 		});
-}
-
-function collectionExtensions(): string[] {
-	let result = [];
-	for (let extension of extensions.all) {
-		let contributesSection = extension.packageJSON['contributes'];
-		if (contributesSection) {
-			let javaExtensions = contributesSection['javaExtensions'];
-			if (Array.isArray(javaExtensions) && javaExtensions.length) {
-				for (let javaExtensionPath of javaExtensions) {
-					result.push(path.resolve(extension.extensionPath, javaExtensionPath));
-				}
-			}
-		}
-	}
-	return result;
 }
