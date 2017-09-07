@@ -3,7 +3,7 @@
 
 import * as path from 'path';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
-import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
@@ -157,6 +157,14 @@ export function activate(context: ExtensionContext) {
 						if (edit) {
 							workspace.applyEdit(edit);
 						}
+					});
+
+					commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
+						const params: ExecuteCommandParams = {
+							command,
+							arguments: rest
+						}
+						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
 
 					window.onDidChangeActiveTextEditor((editor) => {

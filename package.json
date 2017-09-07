@@ -26,6 +26,7 @@
     "onCommand:java.show.implementations",
     "onCommand:java.open.output",
     "onCommand:java.open.serverLog",
+    "onCommand:java.execute.workspaceCommand",
     "onCommand:java.projectConfiguration.update",
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle"

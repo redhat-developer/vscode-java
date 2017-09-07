@@ -59,7 +59,12 @@ export namespace Commands {
      */
     export const APPLY_WORKSPACE_EDIT = 'java.apply.workspaceEdit';
 
-	/**
+    /**
+     * Execute Workspace Command
+     */
+    export const EXECUTE_WORKSPACE_COMMAND = 'java.execute.workspaceCommand';
+
+	 /**
 	 * Open Java Language Server Log file
 	 */
 	export const OPEN_SERVER_LOG = 'java.open.serverLog';

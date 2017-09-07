@@ -31,6 +31,7 @@ suite('Java Language Extension', () => {
 				Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP,
 				Commands.PROJECT_CONFIGURATION_STATUS,
 				Commands.APPLY_WORKSPACE_EDIT,
+				Commands.EXECUTE_WORKSPACE_COMMAND,
 				Commands.OPEN_SERVER_LOG
 			];
 			let foundJavaCommands = commands.filter(function(value){
