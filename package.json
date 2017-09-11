@@ -10,7 +10,7 @@
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
   "engines": {
-    "vscode": "^1.12.0"
+    "vscode": "^1.15.0"
   },
   "repository": {
     "type": "git",
