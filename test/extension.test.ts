@@ -1,5 +1,8 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as plugin from '../src/plugin';
 import * as java from '../src/javaServerStarter';
 import {Commands} from '../src/commands';
 
@@ -62,4 +65,20 @@ suite('Java Language Extension', () => {
 		assert.equal(vmArgs[2], '-Dfoo=Some "crazy" stuff');
 	});
 
+	test('should collect java extensions', function () {
+		const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../../test/resources/packageExample.json'), 'utf8'));
+		const fakedExtension = {
+			id: 'test',
+			extensionPath: '',
+			isActive: true,
+			packageJSON,
+			exports: '',
+			activate: null
+		};
+
+		const extensions = [fakedExtension];
+		const result = plugin.collectionJavaExtensions(extensions);
+		assert(result.length === 1);
+		assert(result[0].endsWith(path.normalize('./bin/java.extend.jar')));
+	});
 });

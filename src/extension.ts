@@ -2,8 +2,9 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
+import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
@@ -50,6 +51,9 @@ export function activate(context: ExtensionContext) {
 							workspace.createFileSystemWatcher('**/.classpath'),
 							workspace.createFileSystemWatcher('**/settings/*.prefs')
 						],
+					},
+					initializationOptions: {
+						bundles: collectionJavaExtensions(extensions.all)
 					}
 				};
 
