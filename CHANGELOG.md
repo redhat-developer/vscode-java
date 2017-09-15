@@ -1,6 +1,13 @@
 # Change Log
 
-## 0.10.0 (TBD)
+## 0.10.0 (September 15th, 2017)
+* enhancement - enable 3rd party VS Code extensions to extend the JDT Language Server. See [#282](https://github.com/redhat-developer/vscode-java/issues/282).
+* enhancement - add new `java.execute.workspaceCommand` command, for 3rd party VS Code extensions. See [#292](https://github.com/redhat-developer/vscode-java/issues/292).
+* enhancement - References CodeLens disabled by default. See [#293](https://github.com/redhat-developer/vscode-java/issues/293).
+* enhancement - add Types to symbols outline, to work with the [Code Outline](https://github.com/patrys/vscode-code-outline) extension. See [#294](https://github.com/redhat-developer/vscode-java/issues/294).
+* bug fix - fixed content assist for Anonymous class creation. See [JLS#57](https://github.com/eclipse/eclipse.jdt.ls/issues/57).
+* bug fix - fixed incorrect hover for unresolved types. See [JLS#333](https://github.com/eclipse/eclipse.jdt.ls/issues/333).
+
 
 ## 0.9.0 (August 31st, 2017)
 * enhancement - rename symbols support (Doesn't rename files at the moment). See [#71](https://github.com/redhat-developer/vscode-java/issues/71).
