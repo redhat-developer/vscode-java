@@ -8,7 +8,6 @@
 * bug fix - fixed content assist for Anonymous class creation. See [JLS#57](https://github.com/eclipse/eclipse.jdt.ls/issues/57).
 * bug fix - fixed incorrect hover for unresolved types. See [JLS#333](https://github.com/eclipse/eclipse.jdt.ls/issues/333).
 
-
 ## 0.9.0 (August 31st, 2017)
 * enhancement - rename symbols support (Doesn't rename files at the moment). See [#71](https://github.com/redhat-developer/vscode-java/issues/71).
 * enhancement - use system's Gradle runtime when no wrapper found. See [#232](https://github.com/redhat-developer/vscode-java/issues/232).
