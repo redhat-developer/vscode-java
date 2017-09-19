@@ -64,6 +64,8 @@ export namespace Commands {
      */
     export const EXECUTE_WORKSPACE_COMMAND = 'java.execute.workspaceCommand';
 
+    export const COMPILE_WORKSPACE = 'java.workspace.compile';
+
 	 /**
 	 * Open Java Language Server Log file
 	 */
