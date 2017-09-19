@@ -8,7 +8,7 @@ import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus } from './protocol';
 
 let os = require('os');
 let oldConfig;
@@ -167,6 +167,35 @@ export function activate(context: ExtensionContext) {
 						}
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
+
+					commands.registerCommand(Commands.COMPILE_WORKSPACE, () => {
+						window.withProgress({ location: ProgressLocation.Window }, p => {
+							return new Promise((resolve, reject) => {
+								p.report({ message: 'Compiling workspace...' });
+								const start = new Date().getTime();
+								languageClient.sendRequest(CompileWorkspaceRequest.type, true).then((s: CompileWorkspaceStatus) => {
+									const elapsed = new Date().getTime() - start;
+									const humanVisibleDelay = elapsed < 1000? 1000:0;
+									setTimeout(function () { // set a timeout so user would still see the message when build time is short
+										switch (s) {
+											case CompileWorkspaceStatus.CANCELLED:
+												reject(s);
+												break;
+											case CompileWorkspaceStatus.FAILED:
+												reject(s);
+												break;
+											case CompileWorkspaceStatus.WITHERROR:
+												reject(s);
+												break;
+											case CompileWorkspaceStatus.SUCCEED:
+												resolve(s);
+												break;
+										}
+									}, humanVisibleDelay);
+								});
+							});
+						});
+					})
 
 					window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);

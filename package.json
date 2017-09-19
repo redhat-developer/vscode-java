@@ -150,6 +150,11 @@
         "command": "java.open.serverLog",
         "title": "Open Java Language Server log file",
         "category": "Java"
+      },
+      {
+        "command": "java.workspace.compile",
+        "title": "Force Java compilation",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -157,6 +162,10 @@
         "command": "java.projectConfiguration.update",
         "key": "shift+alt+u",
         "when": "editorFocus"
+      },
+      {
+        "command": "java.workspace.compile",
+        "key": "shift+alt+b"
       }
     ]
   },
