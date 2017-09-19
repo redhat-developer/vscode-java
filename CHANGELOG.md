@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.11.0 (TBD)
+
 ## 0.10.0 (September 15th, 2017)
 * enhancement - enable 3rd party VS Code extensions to extend the JDT Language Server. See [#282](https://github.com/redhat-developer/vscode-java/issues/282).
 * enhancement - add new `java.execute.workspaceCommand` command, for 3rd party VS Code extensions. See [#292](https://github.com/redhat-developer/vscode-java/issues/292).
