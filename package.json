@@ -145,6 +145,11 @@
         "command": "java.open.serverLog",
         "title": "Open Java Language Server log file",
         "category": "Java"
+      },
+      {
+        "command": "java.build.workspace",
+        "title": "Build workspace manually",
+        "category": "Java"
       }
     ],
     "keybindings": [

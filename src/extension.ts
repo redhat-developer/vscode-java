@@ -8,7 +8,7 @@ import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage } from './protocol';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, BuildWorkspaceRequest, BuildWorkspaceStatus } from './protocol';
 
 let os = require('os');
 let oldConfig;
@@ -166,6 +166,16 @@ export function activate(context: ExtensionContext) {
 						}
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
+
+					let status = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE);
+					commands.registerCommand(Commands.BUILD_WORKSPACE, () => {
+						status.text = 'Building...';
+						status.show();
+						return languageClient.sendRequest(BuildWorkspaceRequest.type).then((s: BuildWorkspaceStatus) => {
+							status.hide();
+							return s;
+						});
+					})
 
 					window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
