@@ -171,26 +171,24 @@ export function activate(context: ExtensionContext) {
 						window.withProgress({ location: ProgressLocation.Window }, p => {
 							return new Promise((resolve, reject) => {
 								p.report({ message: 'Building workspace...' });
-								languageClient.sendRequest(BuildWorkspaceRequest.type).then((s: BuildWorkspaceStatus) => {
-									switch (s) {
-										case BuildWorkspaceStatus.CANCELLED:
-											p.report({ message: 'Build cancelled' });
-											reject(s);
-											break;
-										case BuildWorkspaceStatus.FAILED:
-										    p.report({ message: 'Build failed' });
-										    reject(s);
-											break;
-										case BuildWorkspaceStatus.WITHERROR:
-										    p.report({ message: 'Build has error' });
-										    reject(s);
-											break;
-										case BuildWorkspaceStatus.SUCCEED:
-											p.report({ message: 'Build completed' });
-										    resolve(s);
-										    break;
-									}
-								});
+								setTimeout(function() { // set a timeout so user would still see the message when build time is short
+									languageClient.sendRequest(BuildWorkspaceRequest.type).then((s: BuildWorkspaceStatus) => {
+										switch (s) {
+											case BuildWorkspaceStatus.CANCELLED:
+												reject(s);
+												break;
+											case BuildWorkspaceStatus.FAILED:											
+												reject(s);
+												break;
+											case BuildWorkspaceStatus.WITHERROR:										
+												reject(s);
+												break;
+											case BuildWorkspaceStatus.SUCCEED:
+												resolve(s);
+												break;
+										}
+									});
+								}, 1000);
 							});
 						});
 					})
