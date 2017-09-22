@@ -167,13 +167,31 @@ export function activate(context: ExtensionContext) {
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
 
-					let status = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE);
 					commands.registerCommand(Commands.BUILD_WORKSPACE, () => {
-						status.text = 'Building...';
-						status.show();
-						return languageClient.sendRequest(BuildWorkspaceRequest.type).then((s: BuildWorkspaceStatus) => {
-							status.hide();
-							return s;
+						window.withProgress({ location: ProgressLocation.Window }, p => {
+							return new Promise((resolve, reject) => {
+								p.report({ message: 'Building workspace...' });
+								languageClient.sendRequest(BuildWorkspaceRequest.type).then((s: BuildWorkspaceStatus) => {
+									switch (s) {
+										case BuildWorkspaceStatus.CANCELLED:
+											p.report({ message: 'Build cancelled' });
+											reject(s);
+											break;
+										case BuildWorkspaceStatus.FAILED:
+										    p.report({ message: 'Build failed' });
+										    reject(s);
+											break;
+										case BuildWorkspaceStatus.WITHERROR:
+										    p.report({ message: 'Build has error' });
+										    reject(s);
+											break;
+										case BuildWorkspaceStatus.SUCCEED:
+											p.report({ message: 'Build completed' });
+										    resolve(s);
+										    break;
+									}
+								});
+							});
 						});
 					})
 
