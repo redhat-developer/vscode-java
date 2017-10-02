@@ -22,17 +22,19 @@ Features
 * Basic Gradle Java project support
 * As you type reporting of parsing and compilation errors
 * Code completion
+* Code actions
 * Javadoc hovers
 * Type search
 * Code outline
 * Code navigation
-* Code lens (references)
-* Code lens (implementation)
+* Code lens (references/implementations)
 * Highlights
 * Code formatting
 * Code snippets
 
 Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
+
+To launch and debug your Java programs, it's recommended you install *[Java Debug Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)*.
 
 See the [changelog](CHANGELOG.md) for the latest release. You might also find useful information in the project [Wiki](https://github.com/redhat-developer/vscode-java/wiki).
 

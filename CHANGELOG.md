@@ -1,6 +1,12 @@
 # Change Log
 
-## 0.11.0 (TBD)
+## 0.11.0 (October 2nd, 2017)
+* enhancement - external debugger now supported. See [#9](https://github.com/redhat-developer/vscode-java/issues/9).
+* enhancement - code-action: handle exceptions with try/catch block or throws statement. See [#300](https://github.com/redhat-developer/vscode-java/issues/300).
+* bug fix - fixed failing autocompletion when class name contains `$`. See [#301](https://github.com/redhat-developer/vscode-java/issues/301).
+* bug fix - fixed OperationCanceledException on hover. See [#302](https://github.com/redhat-developer/vscode-java/issues/302).
+* bug fix - fixed Index Out Of Bounds Exceptions during completion. See [#306](https://github.com/redhat-developer/vscode-java/issues/306).
+* bug fix - fixed NPE in completion for package-less standalone classes. See [#312](https://github.com/redhat-developer/vscode-java/issues/312).
 
 ## 0.10.0 (September 15th, 2017)
 * enhancement - enable 3rd party VS Code extensions to extend the JDT Language Server. See [#282](https://github.com/redhat-developer/vscode-java/issues/282).
