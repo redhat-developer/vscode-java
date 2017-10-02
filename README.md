@@ -1,6 +1,6 @@
 Language support for Java &trade; for Visual Studio Code
 =====================
-[![Build Status](https://travis-ci.org/redhat-developer/vscode-java.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-java) [![Waffle.io](https://img.shields.io/waffle/label/redhat-developer/vscode-java/in%20progress.svg?maxAge=2592000?style=plastic)](https://waffle.io/redhat-developer/vscode-java) [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[![Build Status](https://travis-ci.org/redhat-developer/vscode-java.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-java) [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 
 Provides Java &trade; language support via
 [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls), which utilizes
@@ -12,14 +12,13 @@ Quick Start
 2. If you do not have a _Java 8_ Development Kit correctly [set](#setting-the-jdk)
     * Download and install a Java 8 compatible development kit.
 3. Extension is activated when you first access a Java file
-    * Recognizes projects with *maven* or *gradle* build files in the directory hierarchy, or to a lesser extent, simple Eclipse projects, i.e. containing .project and .classpath files.
+    * Recognizes projects with *maven* or *gradle* build files in the directory hierarchy.
 
 Features
 =========
 ![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/vscode-java.0.0.1.gif)
 
 * Maven pom.xml project support
-* Basic Eclipse Java project support
 * Basic Gradle Java project support
 * As you type reporting of parsing and compilation errors
 * Code completion
@@ -28,6 +27,7 @@ Features
 * Code outline
 * Code navigation
 * Code lens (references)
+* Code lens (implementation)
 * Highlights
 * Code formatting
 * Code snippets
@@ -84,7 +84,7 @@ Contributing
 ===============
 This is an open source project open to anyone. Contributions are extremely welcome!
 
-For information on getting started, refer to the [CONTRIBUTING.md instructions](CONTRIBUTING.md).
+For information on getting started, refer to the [CONTRIBUTING instructions](CONTRIBUTING.md).
 
 Continuous Integration builds can be installed from http://download.jboss.org/jbosstools/jdt.ls/staging/. Download the most recent `java-<version>.vsix` file and install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
 
