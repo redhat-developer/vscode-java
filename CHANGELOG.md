@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.12.0 (TBD)
+
 ## 0.11.0 (October 2nd, 2017)
 * enhancement - external debugger now supported. See [#9](https://github.com/redhat-developer/vscode-java/issues/9).
 * enhancement - code-action: handle exceptions with try/catch block or throws statement. See [#300](https://github.com/redhat-developer/vscode-java/issues/300).
