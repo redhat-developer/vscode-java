@@ -34,9 +34,8 @@
 	"Public constructor": {
 		"prefix": "ctor",
 		"body": [
-			"public ${1:name}($2) {",
-			"\tsuper();",
-			"\t$0",
+			"public ${1:${TM_FILENAME_BASE}}($2) {",
+			"\t${0:super();}",
 			"}"
 		],
 		"description": "Public constructor"
@@ -45,13 +44,11 @@
 		"prefix": "class",
 		"body": [
 			"/**",
-			" * ${1:name}",
+			" * ${1}",
 			" */",
-			"public class ${1:name} {",
+			"public class ${1:${TM_FILENAME_BASE}} {",
 			"",
-			"\tpublic ${1:name} (${2:parameters}) {",
-			"\t\t$0",
-			"\t}",
+			"\t$0",
 			"}"
 		],
 		"description": "Class Definition"
@@ -60,9 +57,9 @@
 		"prefix": "interface",
 		"body": [
 			"/**",
-			" * ${1:name}",
+			" * ${1}",
 			" */",
-			"public interface ${1:name} {",
+			"public interface ${1:${TM_FILENAME_BASE}} {",
 			"\t$0",
 			"}"
 		],
