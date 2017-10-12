@@ -3,7 +3,7 @@
 
 import * as path from 'path';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
@@ -54,7 +54,8 @@ export function activate(context: ExtensionContext) {
 					},
 					initializationOptions: {
 						bundles: collectionJavaExtensions(extensions.all)
-					}
+					},
+					revealOutputChannelOn: RevealOutputChannelOn.Never
 				};
 
 				let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
