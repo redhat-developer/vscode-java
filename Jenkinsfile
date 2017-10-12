@@ -13,12 +13,36 @@ def buildVscodeExtension(){
 }
 
 node('rhel7'){
+	when {
+		expression {
+			return !publishToMarketPlace.equals('true')
+		}
+	}
 	stage 'Build JDT LS'
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
 	sh "./mvnw clean verify -B -U -fae -e -Pserver-distro -DdisableP2Mirrors=true"
 
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
 	stash name: 'server_distro',includes :files[0].path
+}
+
+node('rhel7'){
+	when {
+		expression {
+			return publishToMarketPlace.equals('true')
+		}
+	}
+	stage 'Fetch latest JDT LS'
+	def serverRepo = "http://download.eclipse.org/jdtls/snapshots"
+	def server = new URL ("$serverRepo/latest.txt").getText()
+
+	File binary = new File(server);
+	if (!binary.exists()) {
+		binary.withOutputStream { out ->
+			new URL("$serverRepo/$server").withInputStream { from ->  out << from }
+		}
+	}
+	stash name: 'server_distro',includes :binary.path
 }
 
 node('rhel7'){
