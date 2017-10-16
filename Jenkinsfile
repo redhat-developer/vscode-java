@@ -21,15 +21,11 @@ node('rhel7'){
 		stash name: 'server_distro',includes :files[0].path
 	} else {
 		def serverRepo = "http://download.eclipse.org/jdtls/snapshots"
-		sh """
-		rm -rf downloads;
-		mkdir downloads;
-		curl `${serverRepo}/latest.txt` -o downloads/latest.txt;
-		"""
+		sh "rm -rf downloads; mkdir downloads"
+		sh "curl ${serverRepo}/latest.txt -o downloads/latest.txt"
 		def version = new File("downloads/latest.txt").text
-		sh """
-		curl `${serverRepo}/${version}` -o downloads/${version};
-		"""
+		sh "curl ${serverRepo}/${version} -o downloads/${version};"
+
 		def files = findFiles(glob: 'downloads/**.tar.gz')
 		stash name: 'server_distro',includes :files[0].path
 	}
