@@ -21,15 +21,14 @@ node('rhel7'){
 		stash name: 'server_distro',includes :files[0].path
 	} else {
 		def serverRepo = "http://download.eclipse.org/jdtls/snapshots"
-		def server = new URL ("$serverRepo/latest.txt").getText()
-
-		File binary = new File(server);
-		if (!binary.exists()) {
-			binary.withOutputStream { out ->
-				new URL("$serverRepo/$server").withInputStream { from ->  out << from }
-			}
-		}
-		stash name: 'server_distro',includes :binary.path
+		sh """
+		v=curl `${serverRepo}/latest.txt`;
+		rm -rf downloads;
+		mkdir downloads;
+		curl `${serverRepo}/$v` -o downloads/$v;
+		"""
+		def files = findFiles(glob: 'downloads/**.tar.gz')
+		stash name: 'server_distro',includes :files[0].path
 	}
 }
 
