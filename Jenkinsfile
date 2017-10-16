@@ -15,7 +15,7 @@ def buildVscodeExtension(){
 node('rhel7'){
 	when {
 		expression {
-			return !publishToMarketPlace.equals('true')
+			return publishToMarketPlace.equals('true')
 		}
 	}
 	stage 'Build JDT LS'
@@ -29,7 +29,7 @@ node('rhel7'){
 node('rhel7'){
 	when {
 		expression {
-			return publishToMarketPlace.equals('true')
+			return !publishToMarketPlace.equals('true')
 		}
 	}
 	stage 'Fetch latest JDT LS'
