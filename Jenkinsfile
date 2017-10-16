@@ -23,7 +23,7 @@ node('rhel7'){
 		def serverRepo = "http://download.eclipse.org/jdtls/snapshots"
 		sh "rm -rf downloads; mkdir downloads"
 		sh "curl ${serverRepo}/latest.txt -o downloads/latest.txt"
-		def version = new File("downloads/latest.txt").text
+		def version = readFile('downloads/latest.txt')
 		sh "curl ${serverRepo}/${version} -o downloads/${version};"
 
 		def files = findFiles(glob: 'downloads/**.tar.gz')
