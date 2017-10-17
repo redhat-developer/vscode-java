@@ -132,6 +132,11 @@
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
           "default": "['**/node_modules', '**/.metadata']"
+        },
+        "java.contentProvider.preferred": {
+          "type": "string",
+          "description": "Preferred content provider (a 3rd party decompiler id, usually)",
+          "default": null
         }
       }
     },

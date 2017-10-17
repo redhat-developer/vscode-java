@@ -68,7 +68,7 @@ The following settings are supported:
 * `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
 * `java.signatureHelp.enabled` : Enable/disable signature help support (triggered on `(`).
 * `java.format.enabled` : Enable/disable the default Java formatter.
-
+* `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).
 
 Troubleshooting
 ===============
