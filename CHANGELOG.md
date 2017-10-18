@@ -1,6 +1,15 @@
 # Change Log
 
-## 0.12.0 (TBD)
+## 0.12.0 (October 17th, 2017)
+* enhancement - experimental Java 9 support (for Maven and Eclipse projects). See [JLS#185](https://github.com/eclipse/eclipse.jdt.ls/issues/185).
+* enhancement - add `Extract to method` refactoring. See [#303](https://github.com/redhat-developer/vscode-java/issues/303).
+* enhancement - add region folding support. See [#316](https://github.com/redhat-developer/vscode-java/issues/316).
+* enhancement - improved Java snippets with transformations. See [#317](https://github.com/redhat-developer/vscode-java/issues/317).
+* enhancement - made Java language server output less intrusive. See [#326](https://github.com/redhat-developer/vscode-java/pull/326).
+* enhancement - add 3rd party decompiler support. See [#334](https://github.com/redhat-developer/vscode-java/pull/334).
+* bug fix - fixed inconsistent package error on standalone java files. See [#274](https://github.com/redhat-developer/vscode-java/issues/274).
+* bug fix - fixed Javadoc not shown on hover, after saving a file. See [JLS#375](https://github.com/eclipse/eclipse.jdt.ls/issues/375).
+* bug fix - fixed conflicts caused by 3rd party extensions updates. See [JLS#385](https://github.com/eclipse/eclipse.jdt.ls/pull/385);
 
 ## 0.11.0 (October 2nd, 2017)
 * enhancement - external debugger now supported. See [#9](https://github.com/redhat-developer/vscode-java/issues/9).
