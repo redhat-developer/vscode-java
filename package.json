@@ -150,6 +150,11 @@
         "command": "java.open.serverLog",
         "title": "Open Java Language Server log file",
         "category": "Java"
+      },
+      {
+        "command": "java.edit.organizeImports",
+        "title": "Organize Imports",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -159,7 +164,16 @@
         "mac": "cmd+alt+u",
         "when": "editorFocus"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "java.edit.organizeImports",
+          "when": "resourceLangId == java",
+          "group": "1_modification"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

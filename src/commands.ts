@@ -64,8 +64,13 @@ export namespace Commands {
      */
     export const EXECUTE_WORKSPACE_COMMAND = 'java.execute.workspaceCommand';
 
-	 /**
-	 * Open Java Language Server Log file
-	 */
-	export const OPEN_SERVER_LOG = 'java.open.serverLog';
+    /**
+    * Open Java Language Server Log file
+    */
+    export const OPEN_SERVER_LOG = 'java.open.serverLog';
+
+    /**
+     * Organize Java file imports command from language server
+     */
+    export const EDIT_ORGANIZE_IMPORTS = 'java.edit.organizeImports';
 }
