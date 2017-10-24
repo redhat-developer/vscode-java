@@ -155,6 +155,11 @@
         "command": "java.workspace.compile",
         "title": "Force Java compilation",
         "category": "Java"
+      },
+      {
+        "command": "java.edit.organizeImports",
+        "title": "Organize Imports",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -164,10 +169,24 @@
         "when": "editorFocus"
       },
       {
+        "command": "java.edit.organizeImports",
+        "key": "shift+alt+o",
+        "when": "editorTextFocus && !editorReadnly"
+      },
+      {
         "command": "java.workspace.compile",
         "key": "shift+alt+b"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "java.edit.organizeImports",
+          "when": "resourceLangId == java",
+          "group": "1_modification"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
