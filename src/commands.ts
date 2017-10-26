@@ -64,7 +64,7 @@ export namespace Commands {
      */
     export const EXECUTE_WORKSPACE_COMMAND = 'java.execute.workspaceCommand';
 
-    export const BUILD_WORKSPACE = 'java.build.workspace';
+    export const RECOMPILE_WORKSPACE = 'java.recompile.workspace';
 
 	 /**
 	 * Open Java Language Server Log file

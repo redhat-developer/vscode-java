@@ -1,6 +1,6 @@
 'use strict';
 
-import { RequestType, RequestType0, NotificationType, TextDocumentIdentifier} from 'vscode-languageclient';
+import { RequestType, NotificationType, TextDocumentIdentifier} from 'vscode-languageclient';
 import { Command } from 'vscode';
 
 /**
@@ -43,7 +43,7 @@ export enum FeatureStatus {
     automatic = 2,
 }
 
-export enum BuildWorkspaceStatus {
+export enum CompileWorkspaceStatus {
     FAILED = 0, 
     SUCCEED = 1, 
     WITHERROR = 2, 
@@ -78,6 +78,6 @@ export namespace ActionableNotification {
     export const type = new NotificationType<ActionableMessage, void>('language/actionableNotification');
 }
 
-export namespace BuildWorkspaceRequest {
-    export const type = new RequestType0<BuildWorkspaceStatus, void, void>('java/buildWorkspace');
+export namespace CompileWorkspaceRequest {
+    export const type = new RequestType<boolean, CompileWorkspaceStatus, void, void>('java/buildWorkspace');
 }

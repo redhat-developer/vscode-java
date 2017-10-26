@@ -147,8 +147,8 @@
         "category": "Java"
       },
       {
-        "command": "java.build.workspace",
-        "title": "Build workspace manually",
+        "command": "java.recompile.workspace",
+        "title": "Force Java compilation",
         "category": "Java"
       }
     ],
