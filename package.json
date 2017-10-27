@@ -158,6 +158,12 @@
         "key": "ctrl+alt+u",
         "mac": "cmd+alt+u",
         "when": "editorFocus"
+      },
+      {
+        "command": "java.recompile.workspace",
+        "key": "alt+ctrl+b",
+        "mac": "alt+cmd+b",
+        "when": "editorFocus"
       }
     ]
   },

@@ -170,7 +170,7 @@ export function activate(context: ExtensionContext) {
 					commands.registerCommand(Commands.RECOMPILE_WORKSPACE, () => {
 						window.withProgress({ location: ProgressLocation.Window }, p => {
 							return new Promise((resolve, reject) => {
-								p.report({ message: 'ReCompiling workspace...' });
+								p.report({ message: 'Compiling workspace...' });
 								const start = new Date().getTime();
 								languageClient.sendRequest(CompileWorkspaceRequest.type, true).then((s: CompileWorkspaceStatus) => {
 									const elapsed = new Date().getTime() - start;
