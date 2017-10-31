@@ -155,8 +155,7 @@
     "keybindings": [
       {
         "command": "java.projectConfiguration.update",
-        "key": "ctrl+alt+u",
-        "mac": "cmd+alt+u",
+        "key": "shift+alt+u",
         "when": "editorFocus"
       }
     ]
