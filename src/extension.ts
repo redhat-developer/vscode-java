@@ -2,7 +2,7 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
+import { workspace, WorkspaceEdit, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, Range, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -154,9 +154,18 @@ export function activate(context: ExtensionContext) {
 					commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
 
 					commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
-						let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
-						if (edit) {
-							workspace.applyEdit(edit);
+						applyWorkspaceEdit(obj);
+					});
+
+					commands.registerCommand(Commands.EDIT_ORGANIZE_IMPORTS, async () => {
+						let activeEditor = window.activeTextEditor;
+						if (!activeEditor || !activeEditor.document || activeEditor.document.languageId !== 'java') {
+							return;
+						}
+
+						if (activeEditor.document.uri instanceof Uri) {
+							const obj = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.EDIT_ORGANIZE_IMPORTS, activeEditor.document.uri.toString());
+							applyWorkspaceEdit(obj);
 						}
 					});
 
@@ -191,6 +200,13 @@ export function activate(context: ExtensionContext) {
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
+
+				function applyWorkspaceEdit(obj) {
+					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
+					if (edit) {
+						workspace.applyEdit(edit);
+					}
+				}
 			});
 
 		});
@@ -364,3 +380,5 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 			return didOpen;
 		});
 }
+
+
