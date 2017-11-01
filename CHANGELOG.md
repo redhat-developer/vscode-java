@@ -1,8 +1,16 @@
 # Change Log
 
 
-## 0.13.0 (TBD)
-
+## 0.13.0 (November 2nd, 2017)
+* enhancement - New `Force Java compilation` command (`Shift+Alt+b`). See [#277](https://github.com/redhat-developer/vscode-java/issues/277).
+* enhancement - **significantly faster** startup for existing workspaces. See [#336](https://github.com/redhat-developer/vscode-java/issues/336).
+* enhancement - New `Organize Imports` command (`Shift+Alt+o`). See [#341](https://github.com/redhat-developer/vscode-java/pull/341).
+* bug fix - fixed highlight support in `module-info.java`. See [#256](https://github.com/redhat-developer/vscode-java/issues/256).
+* bug fix - fixed inner pom.xml changes causing infinite update project loop. See [#331](https://github.com/redhat-developer/vscode-java/issues/331).
+* bug fix - fixed keybinding for "Update project configuration" command conflicting with `AltGr+u` (now `Shift+Alt+u`). See [#348](https://github.com/redhat-developer/vscode-java/issues/348).
+* bug fix - fixed autocompletion overwritting following characters. See [#352](https://github.com/redhat-developer/vscode-java/issues/352).
+* bug fix - fixed hover not working when browsing *.class files. See [JLS#390](https://github.com/eclipse/eclipse.jdt.ls/issues/390).
+* bug fix - fixed Java Model Exception when changing class name. See [JLS#400](https://github.com/eclipse/eclipse.jdt.ls/issues/400).
 
 ## 0.12.0 (October 17th, 2017)
 * enhancement - experimental Java 9 support (for Maven and Eclipse projects). See [JLS#185](https://github.com/eclipse/eclipse.jdt.ls/issues/185).
