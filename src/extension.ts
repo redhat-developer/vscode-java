@@ -53,7 +53,8 @@ export function activate(context: ExtensionContext) {
 						],
 					},
 					initializationOptions: {
-						bundles: collectionJavaExtensions(extensions.all)
+						bundles: collectionJavaExtensions(extensions.all),
+						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null
 					},
 					revealOutputChannelOn: RevealOutputChannelOn.Never
 				};
@@ -74,6 +75,7 @@ export function activate(context: ExtensionContext) {
 
 				// Create the language client and start the client.
 				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
+				languageClient.registerProposedFeatures();
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
