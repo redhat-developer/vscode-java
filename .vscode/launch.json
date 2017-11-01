@@ -11,7 +11,7 @@
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/out/src/**" ],
-			"preLaunchTask": "compile"
+			"preLaunchTask": "npm: watch"
 		},
 		{
 			"name": "Launch Extension - Remote Server",
@@ -25,7 +25,7 @@
 			"env": {
 				"SERVER_PORT": "3333"
 			},
-			"preLaunchTask": "compile"
+			"preLaunchTask": "npm: watch"
 		},
 		{
 			"name": "Launch Tests",
@@ -36,7 +36,7 @@
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/out/test/**"],
-			"preLaunchTask": "compile"
+			"preLaunchTask": "npm: watch"
 		}
 	]
 }
