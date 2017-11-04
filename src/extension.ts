@@ -178,7 +178,7 @@ export function activate(context: ExtensionContext) {
 					});
 
 					commands.registerCommand(Commands.COMPILE_WORKSPACE, () => {
-						window.withProgress({ location: ProgressLocation.Window }, p => {
+						return window.withProgress({ location: ProgressLocation.Window }, p => {
 							return new Promise((resolve, reject) => {
 								p.report({ message: 'Compiling workspace...' });
 								const start = new Date().getTime();
