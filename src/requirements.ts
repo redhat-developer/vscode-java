@@ -79,16 +79,36 @@ function readJavaConfig() : string {
 function checkJavaVersion(java_home: string): Promise<number> {
     return new Promise((resolve, reject) => {
         cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
-            if (stderr.indexOf('version "9') > -1){
-                resolve(9);
-            } if (stderr.indexOf('1.8') < 0){
-                openJDKDownload(reject, 'Java 8 is required to run. Please download and install a JDK 8.');
-            }
-            else{
-                resolve(8);
+            let javaVersion = parseMajorVersion(stderr);
+            if (javaVersion < 8){
+                openJDKDownload(reject, 'Java 8 or more recent is required to run. Please download and install a recent JDK');
+            } else{
+                resolve(javaVersion);
             }
         });
     });
+}
+
+export function parseMajorVersion(content:string):number {
+    let regexp = /version "(.*)"/g
+    let match = regexp.exec(content);
+    if (!match) {
+        return 0;
+    }
+    let version = match[1];
+    //Ignore '1.' prefix for legacy Java versions
+    if (version.startsWith('1.')) {
+        version = version.substring(2);
+    }
+
+    //look into the interesting bits now
+    regexp = /\d+/g
+    match = regexp.exec(version);
+    let javaVersion = 0;
+    if (match) {
+        javaVersion = parseInt(match[0]);
+    }
+    return javaVersion;
 }
 
 function openJDKDownload(reject, cause) {
