@@ -20,6 +20,9 @@
     "Languages",
     "Linters"
   ],
+  "keywords": [
+    "multi-root ready"
+  ],
   "activationEvents": [
     "onLanguage:java",
     "onCommand:java.show.references",
@@ -58,7 +61,8 @@
             "null"
           ],
           "default": null,
-          "description": "Specifies the folder path to the JDK 8 used to launch the Java Language Server."
+          "description": "Specifies the folder path to the JDK 8 used to launch the Java Language Server.",
+          "scope": "window"
         },
         "java.jdt.ls.vmargs": {
           "type": [
@@ -66,7 +70,8 @@
             "null"
           ],
           "default": "-noverify -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication",
-          "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G  -XX:+UseG1GC -XX:+UseStringDeduplication` to bypass class verification, increase the heap size to 1GB and enable String deduplication with the G1 Garbage collector"
+          "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G  -XX:+UseG1GC -XX:+UseStringDeduplication` to bypass class verification, increase the heap size to 1GB and enable String deduplication with the G1 Garbage collector",
+          "scope": "window"
         },
         "java.errors.incompleteClasspath.severity": {
           "type": [
@@ -79,7 +84,8 @@
             "error"
           ],
           "default": "warning",
-          "description": "Specifies the severity of the message when the classpath is incomplete for a Java file"
+          "description": "Specifies the severity of the message when the classpath is incomplete for a Java file",
+          "scope": "window"
         },
         "java.configuration.updateBuildConfiguration": {
           "type": [
@@ -91,7 +97,8 @@
             "automatic"
           ],
           "default": "interactive",
-          "description": "Specifies how modifications on build files update the Java classpath/configuration"
+          "description": "Specifies how modifications on build files update the Java classpath/configuration",
+          "scope": "window"
         },
         "java.trace.server": {
           "type": "string",
@@ -101,42 +108,50 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VS Code and the Java language server."
+          "description": "Traces the communication between VS Code and the Java language server.",
+          "scope": "window"
         },
         "java.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable/disable the references code lens."
+          "description": "Enable/disable the references code lens.",
+          "scope": "window"
         },
         "java.signatureHelp.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable/disable the signature help."
+          "description": "Enable/disable the signature help.",
+          "scope": "window"
         },
         "java.implementationsCodeLens.enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable/disable the implementations code lens."
+          "description": "Enable/disable the implementations code lens.",
+          "scope": "window"
         },
         "java.configuration.maven.userSettings": {
           "type": "string",
           "default": null,
-          "description": "Absolute path to Maven's settings.xml"
+          "description": "Absolute path to Maven's settings.xml",
+          "scope": "window"
         },
         "java.format.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable/disable default Java formatter"
+          "description": "Enable/disable default Java formatter",
+          "scope": "window"
         },
         "java.import.exclusions": {
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
-          "default": "['**/node_modules', '**/.metadata', '**/archetype-resources']"
+          "default": "['**/node_modules', '**/.metadata', '**/archetype-resources']",
+          "scope": "window"
         },
         "java.contentProvider.preferred": {
           "type": "string",
           "description": "Preferred content provider (a 3rd party decompiler id, usually)",
-          "default": null
+          "default": null,
+          "scope": "window"
         }
       }
     },
@@ -190,7 +205,7 @@
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
+    "watch": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test",
     "build-server": "./node_modules/.bin/gulp build_server",
@@ -211,7 +226,7 @@
     "gulp-download": "0.0.1"
   },
   "dependencies": {
-    "vscode-languageclient": "^3.2.0",
+    "vscode-languageclient": "^3.4.5",
     "find-java-home": "0.1.4",
     "tmp": "^0.0.31",
     "path-exists": "^3.0.0",
