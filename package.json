@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-1.0",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
@@ -144,7 +144,7 @@
         "java.import.exclusions": {
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
-          "default": "['**/node_modules', '**/.metadata']",
+          "default": "['**/node_modules', '**/.metadata', '**/archetype-resources']"
           "scope": "window"
         },
         "java.contentProvider.preferred": {
@@ -165,16 +165,43 @@
         "command": "java.open.serverLog",
         "title": "Open Java Language Server log file",
         "category": "Java"
+      },
+      {
+        "command": "java.workspace.compile",
+        "title": "Force Java compilation",
+        "category": "Java"
+      },
+      {
+        "command": "java.edit.organizeImports",
+        "title": "Organize Imports",
+        "category": "Java"
       }
     ],
     "keybindings": [
       {
         "command": "java.projectConfiguration.update",
-        "key": "ctrl+alt+u",
-        "mac": "cmd+alt+u",
+        "key": "shift+alt+u",
         "when": "editorFocus"
+      },
+      {
+        "command": "java.edit.organizeImports",
+        "key": "shift+alt+o",
+        "when": "editorTextFocus && !editorReadnly"
+      },
+      {
+        "command": "java.workspace.compile",
+        "key": "shift+alt+b"
       }
-    ]
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "java.edit.organizeImports",
+          "when": "resourceLangId == java",
+          "group": "1_modification"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "tsc -p ./",

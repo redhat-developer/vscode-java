@@ -43,6 +43,13 @@ export enum FeatureStatus {
     automatic = 2,
 }
 
+export enum CompileWorkspaceStatus {
+    FAILED = 0, 
+    SUCCEED = 1, 
+    WITHERROR = 2, 
+    CANCELLED = 3,
+}
+
 export interface StatusReport {
 	message: string;
 	type: string;
@@ -69,4 +76,8 @@ export namespace ProjectConfigurationUpdateRequest {
 
 export namespace ActionableNotification {
     export const type = new NotificationType<ActionableMessage, void>('language/actionableNotification');
+}
+
+export namespace CompileWorkspaceRequest {
+    export const type = new RequestType<boolean, CompileWorkspaceStatus, void, void>('java/buildWorkspace');
 }

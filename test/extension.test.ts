@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as plugin from '../src/plugin';
 import * as java from '../src/javaServerStarter';
+import * as requirements from '../src/requirements';
 import {Commands} from '../src/commands';
 
 suite('Java Language Extension', () => {
@@ -32,7 +33,9 @@ suite('Java Language Extension', () => {
 				Commands.PROJECT_CONFIGURATION_STATUS,
 				Commands.APPLY_WORKSPACE_EDIT,
 				Commands.EXECUTE_WORKSPACE_COMMAND,
-				Commands.OPEN_SERVER_LOG
+				Commands.OPEN_SERVER_LOG,
+				Commands.COMPILE_WORKSPACE,
+				Commands.EDIT_ORGANIZE_IMPORTS
 			];
 			let foundJavaCommands = commands.filter(function(value){
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
@@ -81,5 +84,22 @@ suite('Java Language Extension', () => {
 		const result = plugin.collectionJavaExtensions(extensions);
 		assert(result.length === 1);
 		assert(result[0].endsWith(path.normalize('./bin/java.extend.jar')));
+	});
+
+	test('should parse Java version', function () {
+		//Test boundaries
+		assert.equal(requirements.parseMajorVersion(null), 0);
+		assert.equal(requirements.parseMajorVersion(''), 0);
+		assert.equal(requirements.parseMajorVersion('foo'), 0);
+		assert.equal(requirements.parseMajorVersion('version'), 0);
+		assert.equal(requirements.parseMajorVersion('version ""'), 0);
+		assert.equal(requirements.parseMajorVersion('version "NaN"'), 0);
+
+		//Test the real stuff
+		assert.equal(requirements.parseMajorVersion('version "1.7"'), 7);
+		assert.equal(requirements.parseMajorVersion('version "1.8.0_151"'), 8);
+		assert.equal(requirements.parseMajorVersion('version "9"'), 9);
+		assert.equal(requirements.parseMajorVersion('version "9.0.1"'), 9);
+		assert.equal(requirements.parseMajorVersion('version "10-ea"'), 10);
 	});
 });
