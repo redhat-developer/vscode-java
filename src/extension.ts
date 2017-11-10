@@ -179,14 +179,23 @@ export function activate(context: ExtensionContext) {
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
 
-					commands.registerCommand(Commands.COMPILE_WORKSPACE, () => {
-						return window.withProgress({ location: ProgressLocation.Window }, p => {
-							return new Promise((resolve, reject) => {
-								p.report({ message: 'Compiling workspace...' });
-								const start = new Date().getTime();
-								languageClient.sendRequest(CompileWorkspaceRequest.type, true).then((s: CompileWorkspaceStatus) => {
-									const elapsed = new Date().getTime() - start;
-									const humanVisibleDelay = elapsed < 1000? 1000:0;
+					commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile) => {
+						return window.withProgress({ location: ProgressLocation.Window }, async p => {
+							if (isFullCompile === undefined) {
+								const selection = await window.showQuickPick(['Incremental', 'Full'], {'placeHolder' : 'please choose compile type:'});
+								if (selection === 'Incremental') {
+									isFullCompile = false;
+								} else {
+									isFullCompile = true;
+								}
+							}
+							p.report({ message: 'Compiling workspace...' });
+							const start = new Date().getTime();
+							return languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile).then((s: CompileWorkspaceStatus) => {
+								const elapsed = new Date().getTime() - start;
+								const humanVisibleDelay = elapsed < 1000? 1000:0;
+								return new Promise((resolve, reject) =>
+								{
 									setTimeout(function () { // set a timeout so user would still see the message when build time is short
 										switch (s) {
 											case CompileWorkspaceStatus.CANCELLED:
