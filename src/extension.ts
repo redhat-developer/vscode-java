@@ -181,38 +181,23 @@ export function activate(context: ExtensionContext) {
 
 					commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile) => {
 						return window.withProgress({ location: ProgressLocation.Window }, async p => {
-							if (isFullCompile === undefined) {
+							if (typeof isFullCompile === 'undefined') {
 								const selection = await window.showQuickPick(['Incremental', 'Full'], {'placeHolder' : 'please choose compile type:'});
-								if (selection === 'Incremental') {
-									isFullCompile = false;
-								} else {
-									isFullCompile = true;
-								}
+								isFullCompile = selection !== 'Incremental';
 							}
 							p.report({ message: 'Compiling workspace...' });
 							const start = new Date().getTime();
-							return languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile).then((s: CompileWorkspaceStatus) => {
-								const elapsed = new Date().getTime() - start;
-								const humanVisibleDelay = elapsed < 1000? 1000:0;
-								return new Promise((resolve, reject) =>
-								{
-									setTimeout(function () { // set a timeout so user would still see the message when build time is short
-										switch (s) {
-											case CompileWorkspaceStatus.CANCELLED:
-												reject(s);
-												break;
-											case CompileWorkspaceStatus.FAILED:
-												reject(s);
-												break;
-											case CompileWorkspaceStatus.WITHERROR:
-												reject(s);
-												break;
-											case CompileWorkspaceStatus.SUCCEED:
-												resolve(s);
-												break;
-										}
-									}, humanVisibleDelay);
-								});
+							const res = await languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
+							const elapsed = new Date().getTime() - start;
+							const humanVisibleDelay = elapsed < 1000? 1000:0;
+							return new Promise((resolve, reject) => {
+								setTimeout(() => { // set a timeout so user would still see the message when build time is short
+									if (res === CompileWorkspaceStatus.SUCCEED) {
+										resolve(res);
+									} else {
+										reject(res);
+									}
+								}, humanVisibleDelay);
 							});
 						});
 					})
