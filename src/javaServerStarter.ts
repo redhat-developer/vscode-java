@@ -6,7 +6,6 @@ import { RequirementsData } from './requirements';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as net from 'net';
-import { Commands } from './commands';
 const glob = require('glob');
 
 declare var v8debug;

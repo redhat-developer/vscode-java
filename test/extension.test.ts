@@ -9,7 +9,7 @@ import {Commands} from '../src/commands';
 
 suite('Java Language Extension', () => {
 
-	test('Extension should be present', () => {
+	test('should be present', () => {
 		assert.ok(vscode.extensions.getExtension('redhat.java'));
 	});
 
@@ -35,7 +35,8 @@ suite('Java Language Extension', () => {
 				Commands.EXECUTE_WORKSPACE_COMMAND,
 				Commands.OPEN_SERVER_LOG,
 				Commands.COMPILE_WORKSPACE,
-				Commands.EDIT_ORGANIZE_IMPORTS
+				Commands.EDIT_ORGANIZE_IMPORTS,
+				Commands.START_RENAME
 			];
 			let foundJavaCommands = commands.filter(function(value){
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');

@@ -15,6 +15,16 @@
 				"kind": "build",
 				"isDefault": true
 			}
+		},{
+			"label": "watch-server",
+			"type": "process",
+			"command": "npm",
+			"args": [
+				"run","watch-server"
+			],
+			"problemMatcher": [],
+			"isBackground": true
+
 		}
 	]
 }

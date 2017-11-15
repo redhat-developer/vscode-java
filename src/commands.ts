@@ -77,5 +77,10 @@ export namespace Commands {
     /**
      * Organize Java file imports command from language server
      */
-    export const EDIT_ORGANIZE_IMPORTS = 'java.edit.organizeImports';
+	export const EDIT_ORGANIZE_IMPORTS = 'java.edit.organizeImports';
+
+	/**
+	 * Invokes a rename action
+	 */
+	export const START_RENAME = 'java.execute.rename';
 }
