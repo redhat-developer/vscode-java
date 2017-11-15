@@ -2,7 +2,7 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress, Selection } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin'
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -157,6 +157,12 @@ export function activate(context: ExtensionContext) {
 
 					commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
 						applyWorkspaceEdit(obj);
+					});
+
+					commands.registerCommand(Commands.START_RENAME, (position: LSPosition, suggestedName:string)=>{
+						let pos = languageClient.protocol2CodeConverter.asPosition(position);
+						window.activeTextEditor.selection = new Selection(pos, pos);
+						commands.executeCommand('editor.action.rename',suggestedName);
 					});
 
 					commands.registerCommand(Commands.EDIT_ORGANIZE_IMPORTS, async () => {
