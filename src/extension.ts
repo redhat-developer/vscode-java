@@ -179,31 +179,25 @@ export function activate(context: ExtensionContext) {
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
 
-					commands.registerCommand(Commands.COMPILE_WORKSPACE, () => {
-						return window.withProgress({ location: ProgressLocation.Window }, p => {
+					commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile : boolean) => {
+						return window.withProgress({ location: ProgressLocation.Window }, async p => {
+							if (typeof isFullCompile !== 'boolean') {
+								const selection = await window.showQuickPick(['Incremental', 'Full'], {'placeHolder' : 'please choose compile type:'});
+								isFullCompile = selection !== 'Incremental';
+							}
+							p.report({ message: 'Compiling workspace...' });
+							const start = new Date().getTime();
+							const res = await languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
+							const elapsed = new Date().getTime() - start;
+							const humanVisibleDelay = elapsed < 1000? 1000:0;
 							return new Promise((resolve, reject) => {
-								p.report({ message: 'Compiling workspace...' });
-								const start = new Date().getTime();
-								languageClient.sendRequest(CompileWorkspaceRequest.type, true).then((s: CompileWorkspaceStatus) => {
-									const elapsed = new Date().getTime() - start;
-									const humanVisibleDelay = elapsed < 1000? 1000:0;
-									setTimeout(function () { // set a timeout so user would still see the message when build time is short
-										switch (s) {
-											case CompileWorkspaceStatus.CANCELLED:
-												reject(s);
-												break;
-											case CompileWorkspaceStatus.FAILED:
-												reject(s);
-												break;
-											case CompileWorkspaceStatus.WITHERROR:
-												reject(s);
-												break;
-											case CompileWorkspaceStatus.SUCCEED:
-												resolve(s);
-												break;
-										}
-									}, humanVisibleDelay);
-								});
+								setTimeout(() => { // set a timeout so user would still see the message when build time is short
+									if (res === CompileWorkspaceStatus.SUCCEED) {
+										resolve(res);
+									} else {
+										reject(res);
+									}
+								}, humanVisibleDelay);
 							});
 						});
 					})
