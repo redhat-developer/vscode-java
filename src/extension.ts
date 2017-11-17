@@ -179,9 +179,9 @@ export function activate(context: ExtensionContext) {
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
 
-					commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile) => {
+					commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile : boolean) => {
 						return window.withProgress({ location: ProgressLocation.Window }, async p => {
-							if (typeof isFullCompile === 'undefined') {
+							if (typeof isFullCompile !== 'boolean') {
 								const selection = await window.showQuickPick(['Incremental', 'Full'], {'placeHolder' : 'please choose compile type:'});
 								isFullCompile = selection !== 'Incremental';
 							}
