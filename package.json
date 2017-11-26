@@ -144,7 +144,7 @@
         "java.import.exclusions": {
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
-          "default": "['**/node_modules', '**/.metadata', '**/archetype-resources']",
+          "default": ["**/node_modules", "**/.metadata", "**/archetype-resources"],
           "scope": "window"
         },
         "java.contentProvider.preferred": {
