@@ -1,5 +1,22 @@
 # Change Log
 
+## 0.15.0 (November 30th, 2017)
+* enhancement - add Java 9 support for Gradle projects. See [#321](https://github.com/redhat-developer/vscode-java/issues/321).
+* enhancement - add option to choose between full and incremental compilation. See [#364](https://github.com/redhat-developer/vscode-java/pull/364).
+* enhancement - improve code completion/diagnostic reports performance. See [#381](https://github.com/redhat-developer/vscode-java/issues/381).
+* enhancement - log errors when compiling standalone java files. See [#462](https://github.com/eclipse/eclipse.jdt.ls/pull/462).
+* enhancement - code action: remove unused code. See [JLS#448](https://github.com/eclipse/eclipse.jdt.ls/issues/448).
+* enhancement - code action: change return type of a method. See [JLS#435](https://github.com/eclipse/eclipse.jdt.ls/issues/435).
+* enhancement - **significantly faster** startup for existing workspaces with Gradle projects. See[JLS#451](https://github.com/eclipse/eclipse.jdt.ls/issues/451).
+* enhancement - delay symbols queries until server is ready. See [JLS#452](https://github.com/eclipse/eclipse.jdt.ls/issues/452).
+* bug fix - fixed duplicate imports on "Organize imports" action. See [#253](https://github.com/redhat-developer/vscode-java/issues/253).
+* bug fix - fixed autocompletion overwriting the following characters. See [#352](https://github.com/redhat-developer/vscode-java/issues/352).
+* bug fix - do not report errors for Java files outside their project's classpath. See [#456](https://github.com/eclipse/eclipse.jdt.ls/pull/456).
+* bug fix - fixed high CPU usage on Windows. See [JLS#378](https://github.com/eclipse/eclipse.jdt.ls/issues/378).
+* bug fix - return SymbolKind.Method instead of SymbolKind.Function for methods. See [JLS#422](https://github.com/eclipse/eclipse.jdt.ls/issues/422).
+* bug fix - fixed java extensions started twice. See [JLS#450](https://github.com/eclipse/eclipse.jdt.ls/issues/450).
+* bug fix - fixed NPEs occurring during code action computation. See [JLS#453](https://github.com/eclipse/eclipse.jdt.ls/issues/453) and [JLS#470](https://github.com/eclipse/eclipse.jdt.ls/issues/470) .
+
 ## 0.14.0 (November 9th, 2017)
 * enhancement - add CodeLens support from .class files. See [#343](https://github.com/redhat-developer/vscode-java/issues/343).
 * enhancement - new multi-root support. See [#347](https://github.com/redhat-developer/vscode-java/pull/347).
@@ -8,7 +25,7 @@
 
 ## 0.13.0 (November 2nd, 2017)
 * enhancement - new `Force Java compilation` command (`Shift+Alt+b`). See [#277](https://github.com/redhat-developer/vscode-java/issues/277).
-* enhancement - **significantly faster** startup for existing workspaces. See [#336](https://github.com/redhat-developer/vscode-java/issues/336).
+* enhancement - **significantly faster** startup for existing workspaces with Maven projects. See [#336](https://github.com/redhat-developer/vscode-java/issues/336).
 * enhancement - new `Organize Imports` command (`Shift+Alt+o`). See [#341](https://github.com/redhat-developer/vscode-java/pull/341).
 * bug fix - fixed highlight support in `module-info.java`. See [#256](https://github.com/redhat-developer/vscode-java/issues/256).
 * bug fix - fixed inner pom.xml changes causing infinite update project loop. See [#331](https://github.com/redhat-developer/vscode-java/issues/331).
