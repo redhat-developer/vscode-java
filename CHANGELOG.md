@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.16.0 (TBD)
+
 ## 0.15.0 (November 30th, 2017)
 * enhancement - add Java 9 support for Gradle projects. See [#321](https://github.com/redhat-developer/vscode-java/issues/321).
 * enhancement - add option to choose between full and incremental compilation. See [#364](https://github.com/redhat-developer/vscode-java/pull/364).
