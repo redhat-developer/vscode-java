@@ -190,19 +190,5 @@
 			"} while (${1:condition});"
 		],
 		"description": "Do-While Statement"
-	},
-	"Region Start": {
-		"prefix": "#region",
-		"body": [
-			"//#region $0"
-		],
-		"description": "Folding Region Start"
-	},
-	"Region End": {
-		"prefix": "#endregion",
-		"body": [
-			"//#endregion"
-		],
-		"description": "Folding Region End"
 	}
 }
