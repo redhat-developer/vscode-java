@@ -44,15 +44,25 @@ export enum FeatureStatus {
 }
 
 export enum CompileWorkspaceStatus {
-    FAILED = 0, 
-    SUCCEED = 1, 
-    WITHERROR = 2, 
+    FAILED = 0,
+    SUCCEED = 1,
+    WITHERROR = 2,
     CANCELLED = 3,
 }
 
 export interface StatusReport {
 	message: string;
 	type: string;
+}
+
+export interface ProgressReport {
+	id: string;
+	task: string;
+	subTask: string;
+	status: string;
+	workDone: number;
+	totalWork: number;
+	complete: boolean;
 }
 
 export interface ActionableMessage {
@@ -64,6 +74,10 @@ export interface ActionableMessage {
 
 export namespace StatusNotification {
 	export const type = new NotificationType<StatusReport,void >('language/status');
+}
+
+export namespace ProgressReportNotification {
+	export const type = new NotificationType<ProgressReport,void >('language/progressReport');
 }
 
 export namespace ClassFileContentsRequest {
