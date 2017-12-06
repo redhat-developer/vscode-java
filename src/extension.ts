@@ -8,7 +8,7 @@ import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus } from './protocol';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification } from './protocol';
 
 let oldConfig;
 let lastStatus;
@@ -55,7 +55,10 @@ export function activate(context: ExtensionContext) {
 					initializationOptions: {
 						bundles: collectionJavaExtensions(extensions.all),
 						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-						settings: { java: getJavaConfiguration() }
+						settings: { java: getJavaConfiguration() },
+						extendedClientCapabilities:{
+							progressReportProvider:getJavaConfiguration().get('progressReports.enabled')
+						}
 					},
 					revealOutputChannelOn: RevealOutputChannelOn.Never
 				};
@@ -63,6 +66,7 @@ export function activate(context: ExtensionContext) {
 				let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
 				item.text = '$(rocket)';
 				item.command = Commands.OPEN_OUTPUT;
+				let progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE+1);
 
 				oldConfig = getJavaConfiguration();
 				let serverOptions;
@@ -105,6 +109,13 @@ export function activate(context: ExtensionContext) {
 						}
 						item.tooltip = report.message;
 						toggleItem(window.activeTextEditor, item);
+					});
+					languageClient.onNotification(ProgressReportNotification.type, (progress) => {
+						progressBar.show();
+						progressBar.text = progress.status;
+						if (progress.complete) {
+							setTimeout(() => { progressBar.hide(); }, 500);
+						}
 					});
 					languageClient.onNotification(ActionableNotification.type, (notification) => {
 						let show = null;
@@ -356,7 +367,8 @@ function onConfigurationChange() {
 
 function hasJavaConfigChanged(oldConfig, newConfig) {
 	return hasConfigKeyChanged('home', oldConfig, newConfig)
-		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig);
+		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
+		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig);
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {

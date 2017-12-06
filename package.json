@@ -205,6 +205,12 @@
             "org"
           ],
           "scope": "window"
+        },
+        "java.progressReports.enabled": {
+          "type": "boolean",
+          "description": "[Experimental] Enable/disable progress reports from background processes on the server.",
+          "default": true,
+          "scope": "window"
         }
       }
     },
