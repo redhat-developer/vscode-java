@@ -5,13 +5,18 @@
 		"no-unused-variable": true,
 		"curly": true,
 		"class-name": true,
-		"semicolon": ["always"],
+		"semicolon": true,
 		"triple-equals": true,
 		"quotemark": [true, "single", "avoid-escape"],
-		"no-console": ["log","error"],
 		"no-debugger": true,
 		"no-empty": true,
 		"no-var-keyword": true,
-		"no-unsafe-finally": true
+		"no-unsafe-finally": true,
+		"new-parens":true,
+		"no-duplicate-imports": true,
+		"deprecation":true,
+		"no-unsafe-any":true,
+		"no-string-throw":true,
+		"no-require-imports": true
 	}
 }
