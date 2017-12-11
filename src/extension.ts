@@ -1,16 +1,15 @@
-
 'use strict';
 
 import * as path from 'path';
+import * as os from 'os';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
-import { collectionJavaExtensions } from './plugin'
+import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus } from './protocol';
 
-let os = require('os');
 let oldConfig;
 let lastStatus;
 
@@ -150,7 +149,7 @@ export function activate(context: ExtensionContext) {
 					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore'));
 
 					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
-						commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'))
+						commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'));
 					});
 
 					commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
@@ -175,7 +174,7 @@ export function activate(context: ExtensionContext) {
 						const params: ExecuteCommandParams = {
 							command,
 							arguments: rest
-						}
+						};
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					});
 
@@ -200,7 +199,7 @@ export function activate(context: ExtensionContext) {
 								}, humanVisibleDelay);
 							});
 						});
-					})
+					});
 
 					window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);

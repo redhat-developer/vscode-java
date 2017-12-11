@@ -3,10 +3,10 @@
 import { workspace, Uri } from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
+import * as pathExists from 'path-exists';
+import * as expandHomeDir from 'expand-home-dir';
+import * as findJavaHome from 'find-java-home';
 
-const pathExists = require('path-exists');
-const expandHomeDir = require('expand-home-dir');
-const findJavaHome = require('find-java-home');
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows?'.exe':'');
 
@@ -90,7 +90,7 @@ function checkJavaVersion(java_home: string): Promise<number> {
 }
 
 export function parseMajorVersion(content:string):number {
-    let regexp = /version "(.*)"/g
+    let regexp = /version "(.*)"/g;
     let match = regexp.exec(content);
     if (!match) {
         return 0;
@@ -102,7 +102,7 @@ export function parseMajorVersion(content:string):number {
     }
 
     //look into the interesting bits now
-    regexp = /\d+/g
+    regexp = /\d+/g;
     match = regexp.exec(version);
     let javaVersion = 0;
     if (match) {

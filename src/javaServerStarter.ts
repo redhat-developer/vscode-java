@@ -1,13 +1,13 @@
 
-import { window, commands, WorkspaceConfiguration, workspace } from 'vscode'
-import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
-import { createClientPipeTransport } from 'vscode-jsonrpc';
-import { RequirementsData } from './requirements';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as net from 'net';
+import * as glob from 'glob';
+import { window, commands, WorkspaceConfiguration, workspace } from 'vscode';
+import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
+import { createClientPipeTransport } from 'vscode-jsonrpc';
+import { RequirementsData } from './requirements';
 import { Commands } from './commands';
-const glob = require('glob');
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
@@ -89,7 +89,7 @@ function startedInDebugMode(): boolean {
 	let args = (process as any).execArgv;
 	if (args) {
 		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg) || /^--inspect-brk=?/.test(arg));
-	};
+	}
 	return false;
 }
 
