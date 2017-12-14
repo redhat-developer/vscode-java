@@ -78,4 +78,20 @@ export namespace Commands {
      * Organize Java file imports command from language server
      */
     export const EDIT_ORGANIZE_IMPORTS = 'java.edit.organizeImports';
+
+    /**
+     * Get the reference libraries for the Java project
+     */
+    export const VIEW_CLASSPATH_FETCH = 'java.view.classpath.fetch';
+
+
+    /**
+     * Refresh the dependency view
+     */
+    export const VIEW_CLASSPATH_REFRESH = 'java.view.classpath.refresh';
+
+    /**
+     * Open .class from dependency view
+     */
+    export const VIEW_CLASSPATH_OPEN_FILE = 'java.view.classpath.openFile';
 }
