@@ -1,8 +1,10 @@
 # Change Log
 
 ## 0.16.0 (December 15th, 2017)
-* bug fix - fixed renaming/creating java files requireing a restart. See [#380](https://github.com/redhat-developer/vscode-java/issues/380).
-* bug fix - fixed `-DGRADLE_HOME` parameter being ignored by jdt.ls. See [#383](https://github.com/redhat-developer/vscode-java/issues/383).
+* enhancement - add preferences to disable Maven (`java.import.maven.enabled`) and Gradle (`java.import.gradle.enabled`) imports (import as Eclipse instead). See [#388](https://github.com/redhat-developer/vscode-java/pull/388).
+* bug fix - fixed `java.import.exclusions` preference should be a real array. See [#371](https://github.com/redhat-developer/vscode-java/issues/371).
+* bug fix - fixed renaming/creating java files requiring a restart. See [#380](https://github.com/redhat-developer/vscode-java/issues/380).
+* bug fix - fixed `-DGRADLE_HOME` parameter in `java.jdt.ls.vmargs` being ignored by jdt.ls. See [#383](https://github.com/redhat-developer/vscode-java/issues/383).
 * task - removed region folding support as it's now provided by VS Code directly. See [#369](https://github.com/redhat-developer/vscode-java/issues/369).
 
 ## 0.15.0 (November 30th, 2017)

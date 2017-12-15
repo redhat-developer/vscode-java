@@ -11,8 +11,8 @@ Provides Java &trade; language support via
 Quick Start
 ============
 1. Install the Extension
-2. If you do not have a _Java 8_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a Java 8 compatible development kit.
+2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
+    * Download and install a Java 8 or 9 compatible development kit.
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *maven* or *gradle* build files in the directory hierarchy.
 
