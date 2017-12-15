@@ -2,6 +2,8 @@
 
 ## 0.16.0 (December 15th, 2017)
 * enhancement - add preferences to disable Maven (`java.import.maven.enabled`) and Gradle (`java.import.gradle.enabled`) imports (import as Eclipse instead). See [#388](https://github.com/redhat-developer/vscode-java/pull/388).
+* enhancement - remove redundant diagnostics reports. See [JLS#468](https://github.com/eclipse/eclipse.jdt.ls/issues/468).
+* enhancement - code action: handle unreachable catch blocks. See [JLS#381](https://github.com/eclipse/eclipse.jdt.ls/pull/481).
 * bug fix - fixed `java.import.exclusions` preference should be a real array. See [#371](https://github.com/redhat-developer/vscode-java/issues/371).
 * bug fix - fixed renaming/creating java files requiring a restart. See [#380](https://github.com/redhat-developer/vscode-java/issues/380).
 * bug fix - fixed `-DGRADLE_HOME` parameter in `java.jdt.ls.vmargs` being ignored by jdt.ls. See [#383](https://github.com/redhat-developer/vscode-java/issues/383).
