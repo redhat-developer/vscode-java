@@ -1,6 +1,9 @@
 # Change Log
 
-## 0.16.0 (TBD)
+## 0.16.0 (December 15th, 2017)
+* bug fix - fixed renaming/creating java files requireing a restart. See [#380](https://github.com/redhat-developer/vscode-java/issues/380).
+* bug fix - fixed `-DGRADLE_HOME` parameter being ignored by jdt.ls. See [#383](https://github.com/redhat-developer/vscode-java/issues/383).
+* task - removed region folding support as it's now provided by VS Code directly. See [#369](https://github.com/redhat-developer/vscode-java/issues/369).
 
 ## 0.15.0 (November 30th, 2017)
 * enhancement - add Java 9 support for Gradle projects. See [#321](https://github.com/redhat-developer/vscode-java/issues/321).
