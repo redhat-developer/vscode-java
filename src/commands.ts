@@ -82,7 +82,12 @@ export namespace Commands {
     /**
      * Get the reference libraries for the Java project
      */
-    export const VIEW_CLASSPATH_FETCH = 'java.view.classpath.fetch';
+    export const VIEW_CLASSPATH_GETCHILDREN = 'java.classpath.getChildren';
+
+    /**
+     * Get the source file content from a Java file based on its URI
+     */
+    export const VIEW_CLASSPATH_SOURCE = 'java.classpath.getSource';
 
 
     /**

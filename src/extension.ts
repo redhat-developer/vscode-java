@@ -227,7 +227,7 @@ export function activate(context: ExtensionContext) {
 				toggleItem(window.activeTextEditor, item);
 
 				const referenceProvider = new ClasspathExplorer(context);
-				context.subscriptions.push(window.registerTreeDataProvider('classpathExplorer', referenceProvider))
+				context.subscriptions.push(window.registerTreeDataProvider('classpathExplorer', referenceProvider));
 
 				function applyWorkspaceEdit(obj) {
 					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
