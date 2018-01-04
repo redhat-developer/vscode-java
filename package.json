@@ -153,6 +153,12 @@
           "description": "Enable/disable default Java formatter",
           "scope": "window"
         },
+        "java.saveAction.autoOrganizeImports": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable auto organize imports on save action",
+          "scope": "window"
+        },
         "java.import.exclusions": {
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
