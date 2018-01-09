@@ -190,5 +190,12 @@
 			"} while (${1:condition});"
 		],
 		"description": "Do-While Statement"
+	},
+	"newObject": {
+		"prefix": "new",
+		"body": [
+			"${1:Object} ${2:foo} = new ${1:Object}();"
+		],
+		"description": "Create new Object"
 	}
 }
