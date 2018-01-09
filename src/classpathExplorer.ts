@@ -7,8 +7,8 @@ enum NodeKind {
     Jar = 3,
     Package = 4,
     Classfile = 5,
-    File = 6,
-    Folder = 7
+    Folder = 6, 
+    File = 7
 }
 
 interface IClasspathNode {
@@ -41,9 +41,7 @@ export class ClasspathExplorer implements vscode.TreeDataProvider<ClasspathItem>
             this._projectItems = this.getRootProjects();
             return this._projectItems;
         } else {
-            return element.getChildren().then((children) => {
-                return children.sort((a, b) => a.name > b.name ? 1 : -1);
-            });
+            return element.getChildren();
         }
     }
 
