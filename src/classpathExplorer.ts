@@ -13,6 +13,7 @@ enum NodeKind {
 
 interface IClasspathNode {
     name: string;
+    moduleName?: string;
     path?: string;
     uri?: string;
     kind: number;
@@ -86,10 +87,14 @@ abstract class ClasspathItem extends vscode.TreeItem {
         return this._classpath.name;
     }
 
+    public get moduleName() {
+        return this._classpath.moduleName;
+    }
+
     public get path() {
         return this._classpath.path;
     }
-
+    
     public get uri() {
         return this._classpath.uri;
     }
@@ -176,7 +181,7 @@ class JarItem extends ClasspathItem {
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
             Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Package,
-            { projectUri: this.project.uri, path: this.path });
+            { projectUri: this.project.uri, rootPath: this.path, moduleName: this.moduleName});
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -189,6 +194,8 @@ class JarItem extends ClasspathItem {
                     result.push(new FileItem(classpathNode, this.project, this, this.context));
                 } else if (classpathNode.kind === NodeKind.Folder) {
                     result.push(new FolderItem(classpathNode, this.project, this, this.context));
+                } else if (classpathNode.kind === NodeKind.Classfile) {
+                    result.push(new ClassfileItem(classpathNode, this.project, this.context));
                 }
             });
         }
@@ -205,7 +212,7 @@ class PackageItem extends ClasspathItem {
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
             Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Classfile,
-            { projectUri: this.project.uri, path: this.name, rootPath: this.rootItem.path });
+            { projectUri: this.project.uri, path: this.name, rootPath: this.rootItem.path, moduleName: this.rootItem.moduleName});
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -246,7 +253,7 @@ class FileItem extends ClasspathItem {
         this.command = {
             title: 'Open .class file',
             command: Commands.VIEW_CLASSPATH_OPEN_FILE,
-            arguments: [{ projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path }]
+            arguments: [{ projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path, moduleName: this.rootItem.moduleName }]
         };
         this.iconPath = context.asAbsolutePath('./images/file.png');
 
@@ -270,7 +277,7 @@ class FolderItem extends ClasspathItem {
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
             Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Folder,
-            { projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path });
+            { projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path, moduleName: this.rootItem.moduleName});
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -287,3 +294,4 @@ class FolderItem extends ClasspathItem {
         return result;
     }
 }
+
