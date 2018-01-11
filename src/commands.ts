@@ -85,12 +85,6 @@ export namespace Commands {
     export const VIEW_CLASSPATH_GETCHILDREN = 'java.classpath.getChildren';
 
     /**
-     * Get the source file content from a Java file based on its URI
-     */
-    export const VIEW_CLASSPATH_SOURCE = 'java.classpath.getSource';
-
-
-    /**
      * Refresh the dependency view
      */
     export const VIEW_CLASSPATH_REFRESH = 'java.view.classpath.refresh';

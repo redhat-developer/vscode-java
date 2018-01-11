@@ -7,7 +7,7 @@ enum NodeKind {
     Jar = 3,
     Package = 4,
     Classfile = 5,
-    Folder = 6, 
+    Folder = 6,
     File = 7
 }
 
@@ -52,16 +52,9 @@ export class ClasspathExplorer implements vscode.TreeDataProvider<ClasspathItem>
     }
 
     public openFile(query) {
-        return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.VIEW_CLASSPATH_SOURCE, query)
-            .then((content: string) => {
-                if (!content) {
-                    vscode.window.showWarningMessage('Source code is not available for the selected file');
-                } else {
-                    vscode.workspace.openTextDocument({ language: query.rootPath ? 'plaintext' : 'java', content }).then((res) => {
-                        vscode.window.showTextDocument(res);
-                    });
-                }
-            });
+        vscode.workspace.openTextDocument(vscode.Uri.parse(query.path)).then((res) => {
+            vscode.window.showTextDocument(res);
+        });
     }
 
     private getRootProjects() {
@@ -94,7 +87,7 @@ abstract class ClasspathItem extends vscode.TreeItem {
     public get path() {
         return this._classpath.path;
     }
-    
+
     public get uri() {
         return this._classpath.uri;
     }
@@ -181,7 +174,7 @@ class JarItem extends ClasspathItem {
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
             Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Package,
-            { projectUri: this.project.uri, rootPath: this.path, moduleName: this.moduleName});
+            { projectUri: this.project.uri, rootPath: this.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -212,7 +205,7 @@ class PackageItem extends ClasspathItem {
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
             Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Classfile,
-            { projectUri: this.project.uri, path: this.name, rootPath: this.rootItem.path, moduleName: this.rootItem.moduleName});
+            { projectUri: this.project.uri, path: this.name, rootPath: this.rootItem.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -253,7 +246,7 @@ class FileItem extends ClasspathItem {
         this.command = {
             title: 'Open .class file',
             command: Commands.VIEW_CLASSPATH_OPEN_FILE,
-            arguments: [{ projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path, moduleName: this.rootItem.moduleName }]
+            arguments: [{ path: this.uri }]
         };
         this.iconPath = context.asAbsolutePath('./images/file.png');
 
@@ -277,7 +270,7 @@ class FolderItem extends ClasspathItem {
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
             Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Folder,
-            { projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path, moduleName: this.rootItem.moduleName});
+            { projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
