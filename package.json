@@ -164,6 +164,12 @@
           "description": "Preferred content provider (a 3rd party decompiler id, usually)",
           "default": null,
           "scope": "window"
+        },
+        "java.codeAssist.timeout": {
+          "type": "number",
+          "description": "Code Assist timeout (in millisecond)",
+          "default": 1000,
+          "scope": "window"
         }
       }
     },
