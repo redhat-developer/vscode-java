@@ -75,6 +75,8 @@ The following settings are supported:
 * `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
 * `java.import.maven.enabled` : Enable/disable the Maven importer.
+* `java.codeAssist.timeout` : Code Assist timeout (in millisecond).
+
 
 Troubleshooting
 ===============
