@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.17.0 (January 16th, 2018)
+* enhancement - code-action: add missing serialVersionUID field. See [#401](https://github.com/redhat-developer/vscode-java/issues/401).
+* enhancement - add `new` template to create a new Object. See [#407](https://github.com/redhat-developer/vscode-java/pull/407).
+* bug fix - fixed autocompletion issues caused by changing the JDK used to run the server. See [#392](https://github.com/redhat-developer/vscode-java/issues/392).
+* bug fix - fixed encoding issues when saving UTF-8 files containing Chinese characters. See [#394](https://github.com/redhat-developer/vscode-java/issues/394).
+* bug fix - fixed server startup status never ending after an error. See [#403](https://github.com/redhat-developer/vscode-java/issues/403).
+
+
 ## 0.16.0 (December 15th, 2017)
 * enhancement - add preferences to disable Maven (`java.import.maven.enabled`) and Gradle (`java.import.gradle.enabled`) imports (import as Eclipse instead). See [#388](https://github.com/redhat-developer/vscode-java/pull/388).
 * enhancement - remove redundant diagnostics reports. See [JLS#468](https://github.com/eclipse/eclipse.jdt.ls/issues/468).
