@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.18.0 (TBD)
+
 ## 0.17.0 (January 16th, 2018)
 * enhancement - code-action: add missing serialVersionUID field. See [#401](https://github.com/redhat-developer/vscode-java/issues/401).
 * enhancement - add `new` template to create a new Object. See [#407](https://github.com/redhat-developer/vscode-java/pull/407).
