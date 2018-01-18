@@ -170,6 +170,12 @@
           "description": "Preferred content provider (a 3rd party decompiler id, usually)",
           "default": null,
           "scope": "window"
+        },
+        "java.autobuild.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the 'auto build'",
+          "scope": "window"
         }
       }
     },
