@@ -124,8 +124,8 @@ class ProjectItem extends ClasspathItem {
 
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
-            Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Container,
-            { projectUri: this.uri });
+            Commands.VIEW_CLASSPATH_GETCHILDREN,
+            { kind: NodeKind.Project, projectUri: this.uri });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -149,8 +149,8 @@ class LibraryItem extends ClasspathItem {
 
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
-            Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Jar,
-            { projectUri: this.project.uri, path: this.path });
+            Commands.VIEW_CLASSPATH_GETCHILDREN,
+            { kind: NodeKind.Container, projectUri: this.project.uri, path: this.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -173,8 +173,8 @@ class JarItem extends ClasspathItem {
 
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
-            Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Package,
-            { projectUri: this.project.uri, rootPath: this.path });
+            Commands.VIEW_CLASSPATH_GETCHILDREN,
+            { kind: NodeKind.Jar, projectUri: this.project.uri, rootPath: this.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -204,8 +204,8 @@ class PackageItem extends ClasspathItem {
 
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
-            Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Classfile,
-            { projectUri: this.project.uri, path: this.name, rootPath: this.rootItem.path });
+            Commands.VIEW_CLASSPATH_GETCHILDREN,
+            { kind: NodeKind.Package, projectUri: this.project.uri, path: this.name, rootPath: this.rootItem.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
@@ -269,8 +269,8 @@ class FolderItem extends ClasspathItem {
 
     protected loadData(): Thenable<IClasspathNode[]> {
         return vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND,
-            Commands.VIEW_CLASSPATH_GETCHILDREN, NodeKind.Folder,
-            { projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path });
+            Commands.VIEW_CLASSPATH_GETCHILDREN,
+            { kind: NodeKind.Folder, projectUri: this.project.uri, path: this.path, rootPath: this.rootItem.path });
     }
 
     protected createClasspathItemList(): ClasspathItem[] {
