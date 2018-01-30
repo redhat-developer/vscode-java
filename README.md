@@ -76,7 +76,8 @@ The following settings are supported:
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
 * `java.import.maven.enabled` : Enable/disable the Maven importer.
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
-* `java.completion.favoriteStaticMembers` : Define a list of static members or types with static members.
+* `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
+* `java.completion.importOrder` : Defines the sorting order of import statements.
 
 Troubleshooting
 ===============

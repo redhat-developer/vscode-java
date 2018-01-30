@@ -179,7 +179,7 @@
         },
         "java.completion.favoriteStaticMembers": {
           "type": "array",
-          "description": "Define a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",
+          "description": "Defines a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",
           "default": [
             "org.junit.Assert.*",
             "org.junit.Assume.*",
@@ -188,6 +188,12 @@
             "org.junit.jupiter.api.DynamicContainer.*",
             "org.junit.jupiter.api.DynamicTest.*"
           ],
+          "scope": "window"
+        },
+        "java.completion.importOrder": {
+          "type": "array",
+          "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group.",
+          "default": ["java", "javax", "com", "org"],
           "scope": "window"
         }
       }
