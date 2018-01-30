@@ -176,6 +176,19 @@
           "default": true,
           "description": "Enable/disable the 'auto build'",
           "scope": "window"
+        },
+        "java.completion.favoriteStaticMembers": {
+          "type": "array",
+          "description": "Define a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",
+          "default": [
+            "org.junit.Assert.*",
+            "org.junit.Assume.*",
+            "org.junit.jupiter.api.Assertions.*",
+            "org.junit.jupiter.api.Assumptions.*",
+            "org.junit.jupiter.api.DynamicContainer.*",
+            "org.junit.jupiter.api.DynamicTest.*"
+          ],
+          "scope": "window"
         }
       }
     },
