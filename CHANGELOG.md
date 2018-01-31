@@ -1,6 +1,14 @@
 # Change Log
 
-## 0.18.0 (TBD)
+## 0.18.0 (January 31st, 2018)
+* enhancement - New `java.completion.favoriteStaticMembers` preference to define static members to be automatically imported. See [#368](https://github.com/redhat-developer/vscode-java/issues/368).
+* enhancement - Store method parameters in compiled classes, for Maven projects configured with the `-parameters` compiler parameter. See [#391](https://github.com/redhat-developer/vscode-java/issues/391).
+* enhancement - New `java.saveActions.organizeImports` preference to enable `Organize imports` as a save action. See [#402](https://github.com/redhat-developer/vscode-java/pull/402).
+* enhancement - New `java.autobuild.enabled` preference to enable/disable the 'auto build'. See [#406](https://github.com/redhat-developer/vscode-java/issues/406).
+* enhancement - New `java.completion.importOrder` preference to customize imports order. See [#420](https://github.com/redhat-developer/vscode-java/issues/420).
+* bug - fix hover/navigation for types in module-info.java. See [JLS#397](https://github.com/eclipse/eclipse.jdt.ls/issues/397).
+* bug - **fix proper test classpath isolation**. Test classes are no longer available to main code for Maven and pure Eclipse projects. See [JLS#526](https://github.com/eclipse/eclipse.jdt.ls/issues/526).
+* bug - fix autocompletion/hover performance for Java 9 projects. See [#398](https://github.com/redhat-developer/vscode-java/issues/398).
 
 ## 0.17.0 (January 16th, 2018)
 * enhancement - code-action: add missing serialVersionUID field. See [#401](https://github.com/redhat-developer/vscode-java/issues/401).
