@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.18.1 (January 31st, 2018)
+* bug - Restore missing "Add unimplemented methods" code action. See [#426](https://github.com/redhat-developer/vscode-java/issues/426).
+
 ## 0.18.0 (January 31st, 2018)
 * enhancement - New `java.completion.favoriteStaticMembers` preference to define static members to be automatically imported. See [#368](https://github.com/redhat-developer/vscode-java/issues/368).
 * enhancement - Store method parameters in compiled classes, for Maven projects configured with the `-parameters` compiler parameter. See [#391](https://github.com/redhat-developer/vscode-java/issues/391).
