@@ -117,7 +117,7 @@
 	"private_method": {
 		"prefix": "private_method",
 		"body": [
-			"private ${1:Type} ${2:name}($3) {",
+			"private ${1:void} ${2:name}($3) {",
 			"\t$4",
 			"}"
 		],
@@ -126,7 +126,7 @@
 	"Public method": {
 		"prefix": "public_method",
 		"body": [
-			"public ${1:Type} ${2:name}(${3}) {",
+			"public ${1:void} ${2:name}(${3}) {",
 			"\t$4",
 			"}"
 		],
@@ -144,7 +144,7 @@
 	"Public static method": {
 		"prefix": "public_static_method",
 		"body": [
-			"public static ${1:Type} ${2:name}(${3}) {",
+			"public static ${1:void} ${2:name}(${3}) {",
 			"\t$4",
 			"}"
 		],
@@ -153,7 +153,7 @@
 	"Protected Method": {
 		"prefix": "protected_method",
 		"body": [
-			"protected ${1:Type} ${2:name}(${3}) {",
+			"protected ${1:void} ${2:name}(${3}) {",
 			"\t$4",
 			"}"
 		],
