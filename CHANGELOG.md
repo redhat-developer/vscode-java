@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.19.0 (TBD)
+
+
 ## 0.18.1 (January 31st, 2018)
 * bug - Restore missing "Add unimplemented methods" code action. See [#426](https://github.com/redhat-developer/vscode-java/issues/426).
 
