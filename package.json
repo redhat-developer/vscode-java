@@ -237,11 +237,23 @@
       }
     ],
     "menus": {
+      "explorer/context": [
+        {
+          "command": "java.projectConfiguration.update",
+          "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
+          "group": "1_javaactions"
+        }
+      ],
       "editor/context": [
         {
           "command": "java.edit.organizeImports",
           "when": "resourceLangId == java",
-          "group": "1_modification"
+          "group": "1_javaactions"
+        },
+        {
+          "command": "java.projectConfiguration.update",
+          "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
+          "group": "1_javaactions"
         }
       ]
     }
