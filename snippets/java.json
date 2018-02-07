@@ -22,6 +22,15 @@
 		],
 		"description": "Print to standard err"
 	},
+	"fori": {
+		"prefix": "fori",
+		"body": [
+			"for (${1:type} ${2:var} = ${3:lo}; $2 < ${4:hi}; $2++) {",
+			"\t$5",
+			"}"
+		],
+		"description": "For loop"
+	},
 	"foreach": {
 		"prefix": "foreach",
 		"body": [
