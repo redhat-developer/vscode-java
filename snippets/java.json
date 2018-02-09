@@ -22,6 +22,15 @@
 		],
 		"description": "Print to standard err"
 	},
+	"fori": {
+		"prefix": "fori",
+		"body": [
+			"for (${1:int} ${2:i} = ${3:0}; $2 < ${4:max}; $2++) {",
+			"\t$5",
+			"}"
+		],
+		"description": "Indexed for loop"
+	},
 	"foreach": {
 		"prefix": "foreach",
 		"body": [
