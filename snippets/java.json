@@ -29,7 +29,7 @@
 			"\t$5",
 			"}"
 		],
-		"description": "For loop"
+		"description": "Indexed for loop"
 	},
 	"foreach": {
 		"prefix": "foreach",
