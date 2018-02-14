@@ -37,15 +37,15 @@ node('rhel7'){
 	sh "mkdir ./server"
 	sh "tar -xvzf ${files[0].path} -C ./server"
 
-	stage 'Test vscode-java for staging'
-	wrap([$class: 'Xvnc']) {
-		sh "npm test --silent"
-	}
-
 	stage "Package vscode-java"
 	def packageJson = readJSON file: 'package.json'
 	sh "vsce package -o java-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
 
+	stage 'Test vscode-java for staging'
+	wrap([$class: 'Xvnc']) {
+		sh "npm test --silent"
+	}
+	
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
 	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
