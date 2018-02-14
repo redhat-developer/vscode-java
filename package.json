@@ -291,7 +291,7 @@
     "gulp-download": "0.0.1"
   },
   "dependencies": {
-    "vscode-languageclient": "^3.4.5",
+    "vscode-languageclient": "^3.5.0",
     "find-java-home": "0.1.4",
     "tmp": "^0.0.31",
     "path-exists": "^3.0.0",

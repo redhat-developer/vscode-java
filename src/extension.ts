@@ -164,10 +164,8 @@ export function activate(context: ExtensionContext) {
 						if (!activeEditor || !activeEditor.document || activeEditor.document.languageId !== 'java') {
 							return;
 						}
-
 						if (activeEditor.document.uri instanceof Uri) {
-							const obj = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.EDIT_ORGANIZE_IMPORTS, activeEditor.document.uri.toString());
-							applyWorkspaceEdit(obj);
+							await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.EDIT_ORGANIZE_IMPORTS, activeEditor.document.uri.toString());
 						}
 					});
 
