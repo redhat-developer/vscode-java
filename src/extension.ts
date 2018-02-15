@@ -9,6 +9,7 @@ import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus } from './protocol';
+import { ClasspathExplorer } from './classpathExplorer';
 
 let oldConfig;
 let lastStatus;
@@ -224,6 +225,9 @@ export function activate(context: ExtensionContext) {
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
+
+				const referenceProvider = new ClasspathExplorer(context);
+				context.subscriptions.push(window.registerTreeDataProvider('classpathExplorer', referenceProvider));
 
 				function applyWorkspaceEdit(obj) {
 					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);

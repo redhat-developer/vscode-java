@@ -227,6 +227,15 @@
         "command": "java.edit.organizeImports",
         "title": "Organize Imports",
         "category": "Java"
+      },
+      {
+        "command": "java.view.classpath.refresh",
+        "title": "Refresh",
+        "category": "Java",
+        "icon": {
+          "dark": "images/dark/icon-refresh.svg",
+          "light": "images/light/icon-refresh.svg"
+        }
       }
     ],
     "keybindings": [
@@ -263,6 +272,21 @@
           "command": "java.projectConfiguration.update",
           "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
           "group": "1_javaactions"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "java.view.classpath.refresh",
+          "when": "view == classpathExplorer",
+          "group": "navigation@1"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "classpathExplorer",
+          "name": "Java Dependencies"
         }
       ]
     }
