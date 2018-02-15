@@ -163,9 +163,10 @@
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
           "default": [
-            "**/node_modules",
-            "**/.metadata",
-            "**/archetype-resources"
+            "**/node_modules/**",
+            "**/.metadata/**",
+            "**/archetype-resources/**",
+            "**/META-INF/maven/**"
           ],
           "scope": "window"
         },
