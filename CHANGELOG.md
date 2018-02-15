@@ -1,10 +1,17 @@
 # Change Log
 
-## 0.19.0 (TBD)
-
+## 0.19.0 (February 15th, 2018)
+* enhancement - added `java.projectConfiguration.update` command to the explorer menu, for build files. See [#159](https://github.com/redhat-developer/vscode-java/issues/159).
+* enhancement - use `void` as default return value for method templates. See [#429](https://github.com/redhat-developer/vscode-java/pull/429).
+* enhancement - new "Indexed for loop" template, triggered by the `fori` keyword. See [#434](https://github.com/redhat-developer/vscode-java/pull/434).
+* enhancement - during import, only trigger "update project configuration" on Maven projects if necessary. See [JLS#544](https://github.com/eclipse/eclipse.jdt.ls/issues/544).
+* bug fix - removed unnecessary files from the vscode-java distribution, reducing its size from 45MB to 34MB. See [#438](https://github.com/redhat-developer/vscode-java/issues/438).
+* bug fix - fixed `Organize imports` command removing all imports in module-info.java. See [#430](https://github.com/redhat-developer/vscode-java/issues/430).
+* bug fix - fixed flaky reporting of test imports in main code. See [JLS#528](https://github.com/eclipse/eclipse.jdt.ls/issues/528).
+* bug fix - ignore `**/META-INF/maven/**` paths during import. See [JLS#539](https://github.com/eclipse/eclipse.jdt.ls/issues/539).
 
 ## 0.18.1 (January 31st, 2018)
-* bug - Restore missing "Add unimplemented methods" code action. See [#426](https://github.com/redhat-developer/vscode-java/issues/426).
+* bug fix - Restore missing "Add unimplemented methods" code action. See [#426](https://github.com/redhat-developer/vscode-java/issues/426).
 
 ## 0.18.0 (January 31st, 2018)
 * enhancement - New `java.completion.favoriteStaticMembers` preference to define static members to be automatically imported. See [#368](https://github.com/redhat-developer/vscode-java/issues/368).
@@ -12,9 +19,9 @@
 * enhancement - New `java.saveActions.organizeImports` preference to enable `Organize imports` as a save action. See [#402](https://github.com/redhat-developer/vscode-java/pull/402).
 * enhancement - New `java.autobuild.enabled` preference to enable/disable the 'auto build'. See [#406](https://github.com/redhat-developer/vscode-java/issues/406).
 * enhancement - New `java.completion.importOrder` preference to customize imports order. See [#420](https://github.com/redhat-developer/vscode-java/issues/420).
-* bug - fix hover/navigation for types in module-info.java. See [JLS#397](https://github.com/eclipse/eclipse.jdt.ls/issues/397).
-* bug - **fix proper test classpath isolation**. Test classes are no longer available to main code for Maven and pure Eclipse projects. See [JLS#526](https://github.com/eclipse/eclipse.jdt.ls/issues/526).
-* bug - fix autocompletion/hover performance for Java 9 projects. See [#398](https://github.com/redhat-developer/vscode-java/issues/398).
+* bug fix - fixed hover/navigation for types in module-info.java. See [JLS#397](https://github.com/eclipse/eclipse.jdt.ls/issues/397).
+* bug fix - **fixed proper test classpath isolation**. Test classes are no longer available to main code for Maven and pure Eclipse projects. See [JLS#526](https://github.com/eclipse/eclipse.jdt.ls/issues/526).
+* bug fix - fixed autocompletion/hover performance for Java 9 projects. See [#398](https://github.com/redhat-developer/vscode-java/issues/398).
 
 ## 0.17.0 (January 16th, 2018)
 * enhancement - code-action: add missing serialVersionUID field. See [#401](https://github.com/redhat-developer/vscode-java/issues/401).
@@ -131,50 +138,50 @@
 * enhancement - code-action: add missing Javadoc params. See [JLS#275](https://github.com/eclipse/eclipse.jdt.ls/issues/275).
 * enhancement - code-action: fix type mismatch. See [JLS#276](https://github.com/eclipse/eclipse.jdt.ls/issues/276).
 * enhancement - code-action: fix missing attribute in annotation. See [JLS#277](https://github.com/eclipse/eclipse.jdt.ls/issues/277).
-* bug - fixed wrong URI set for diagnostics of standalone java files. See [JLS#268](https://github.com/eclipse/eclipse.jdt.ls/issues/268).
-* bug - fixed `Error computing hover: **/package-summary.html not found in JavaDoc jar`. See [#248](https://github.com/redhat-developer/vscode-java/issues/248).
-* bug - fixed `Invalid project description` thrown when reopening Eclipse projects. See [#244](https://github.com/redhat-developer/vscode-java/issues/244).
+* bug fix - fixed wrong URI set for diagnostics of standalone java files. See [JLS#268](https://github.com/eclipse/eclipse.jdt.ls/issues/268).
+* bug fix - fixed `Error computing hover: **/package-summary.html not found in JavaDoc jar`. See [#248](https://github.com/redhat-developer/vscode-java/issues/248).
+* bug fix - fixed `Invalid project description` thrown when reopening Eclipse projects. See [#244](https://github.com/redhat-developer/vscode-java/issues/244).
 
 ## 0.6.0 (June 15th, 2017)
 * enhancement - reduced extension size by ~25%. See [JLS#252](https://github.com/eclipse/eclipse.jdt.ls/issues/252).
-* bug - fixed OperationCanceledException during completion. See [JLS#240](https://github.com/eclipse/eclipse.jdt.ls/issues/240).
-* bug - fixed changes in Eclipse settings file are ignored. See [#239](https://github.com/redhat-developer/vscode-java/pull/239).
-* bug - `package` autocompletion should return only 1 package. See [#234](https://github.com/redhat-developer/vscode-java/pull/234).
-* bug - autocompletion on overridden methods should create the method body. See [#85](https://github.com/redhat-developer/vscode-java/pull/85).
+* bug fix - fixed OperationCanceledException during completion. See [JLS#240](https://github.com/eclipse/eclipse.jdt.ls/issues/240).
+* bug fix - fixed changes in Eclipse settings file are ignored. See [#239](https://github.com/redhat-developer/vscode-java/pull/239).
+* bug fix - `package` autocompletion should return only 1 package. See [#234](https://github.com/redhat-developer/vscode-java/pull/234).
+* bug fix - autocompletion on overridden methods should create the method body. See [#85](https://github.com/redhat-developer/vscode-java/pull/85).
 
 ## 0.5.0 (May 31st, 2017)
 * enhancement - enable support for CamelCase type search. See [JLS#219](https://github.com/eclipse/eclipse.jdt.ls/issues/219).
 * enhancement - server startup now uses progress UI. See [#225](https://github.com/redhat-developer/vscode-java/pull/225).
-* bug - fixed autocomplete inserting classname+package text instead of classname. See [#175](https://github.com/redhat-developer/vscode-java/issues/175).
-* bug - fixed `Timed out while retrieving the attached javadoc.` error. See [#176](https://github.com/redhat-developer/vscode-java/issues/176).
-* bug - fixed autocompletion not cancelled on space. See [#187](https://github.com/redhat-developer/vscode-java/issues/187).
-* bug - fixed Gradle import failing behind corporate proxy with authentication. See [#211](https://github.com/redhat-developer/vscode-java/issues/211).
-* bug - fixed `Unable to locate secure storage module` error. See [#212](https://github.com/redhat-developer/vscode-java/issues/212).
-* bug - fixed CancellationException in output log. See [#213](https://github.com/redhat-developer/vscode-java/issues/213).
-* bug - fixed `Illegal argument, contents must be defined` error on hover. See [#214](https://github.com/redhat-developer/vscode-java/issues/214).
-* bug - fixed code snippet appearing before completion results. See [#216](https://github.com/redhat-developer/vscode-java/issues/216).
-* bug - fixed code snippet using deprecated syntax. See [#217](https://github.com/redhat-developer/vscode-java/issues/217).
-* bug - fixed navigation from disassembled source code. See [#222](https://github.com/redhat-developer/vscode-java/issues/222).
-* bug - fixed Javadoc missing from inherited methods. See [#226](https://github.com/redhat-developer/vscode-java/issues/226).
-* bug - fixed `Problems encountered while copying resources. Resource '/jdt.ls-java-project/src/pom.xml' does not exist` error. See [#244](https://github.com/eclipse/eclipse.jdt.ls/issues/244).
+* bug fix - fixed autocomplete inserting classname+package text instead of classname. See [#175](https://github.com/redhat-developer/vscode-java/issues/175).
+* bug fix - fixed `Timed out while retrieving the attached javadoc.` error. See [#176](https://github.com/redhat-developer/vscode-java/issues/176).
+* bug fix - fixed autocompletion not cancelled on space. See [#187](https://github.com/redhat-developer/vscode-java/issues/187).
+* bug fix - fixed Gradle import failing behind corporate proxy with authentication. See [#211](https://github.com/redhat-developer/vscode-java/issues/211).
+* bug fix - fixed `Unable to locate secure storage module` error. See [#212](https://github.com/redhat-developer/vscode-java/issues/212).
+* bug fix - fixed CancellationException in output log. See [#213](https://github.com/redhat-developer/vscode-java/issues/213).
+* bug fix - fixed `Illegal argument, contents must be defined` error on hover. See [#214](https://github.com/redhat-developer/vscode-java/issues/214).
+* bug fix - fixed code snippet appearing before completion results. See [#216](https://github.com/redhat-developer/vscode-java/issues/216).
+* bug fix - fixed code snippet using deprecated syntax. See [#217](https://github.com/redhat-developer/vscode-java/issues/217).
+* bug fix - fixed navigation from disassembled source code. See [#222](https://github.com/redhat-developer/vscode-java/issues/222).
+* bug fix - fixed Javadoc missing from inherited methods. See [#226](https://github.com/redhat-developer/vscode-java/issues/226).
+* bug fix - fixed `Problems encountered while copying resources. Resource '/jdt.ls-java-project/src/pom.xml' does not exist` error. See [#244](https://github.com/eclipse/eclipse.jdt.ls/issues/244).
 
 ## 0.4.0 (May 15th, 2017)
 * enhancement - new `Open Java Language Server log file` command. See [#209](https://github.com/redhat-developer/vscode-java/issues/209).
 * enhancement - expand workspace symbol search to all classes from classpath. See [#204](https://github.com/redhat-developer/vscode-java/issues/204).
-* bug - fixed outline for classes from classpath. See [#206](https://github.com/redhat-developer/vscode-java/issues/206).
-* bug - fixed ambiguous results from class outline. See [JLS#214](https://github.com/eclipse/eclipse.jdt.ls/issues/214).
+* bug fix - fixed outline for classes from classpath. See [#206](https://github.com/redhat-developer/vscode-java/issues/206).
+* bug fix - fixed ambiguous results from class outline. See [JLS#214](https://github.com/eclipse/eclipse.jdt.ls/issues/214).
 
 ## 0.3.0 (May 4th, 2017)
 * enhancement - reduce confusion about "Classpath is incomplete" warning by providing a link to the wiki page. See [#193](https://github.com/redhat-developer/vscode-java/issues/193).
 * enhancement - enable String deduplication on G1 Garbage collector by default, to improve memory footprint. See [#195](https://github.com/redhat-developer/vscode-java/issues/195).
 
 ## 0.2.1 (April 24th, 2017)
-* bug - fix excessive 'Unable to get documentation under 500ms' logging. See [#189](https://github.com/redhat-developer/vscode-java/issues/189).
+* bug fix - fix excessive 'Unable to get documentation under 500ms' logging. See [#189](https://github.com/redhat-developer/vscode-java/issues/189).
 
 ## 0.2.0 (April 19th, 2017)
 * enhancement - extension now embeds the Java Language Server. See [#178](https://github.com/redhat-developer/vscode-java/issues/178).
-* bug - fixed Java Language Server status update on startup. See [#179](https://github.com/redhat-developer/vscode-java/issues/179).
-* bug - fixed detection of nested Gradle projects. See [#165](https://github.com/redhat-developer/vscode-java/issues/165).
+* bug fix - fixed Java Language Server status update on startup. See [#179](https://github.com/redhat-developer/vscode-java/issues/179).
+* bug fix - fixed detection of nested Gradle projects. See [#165](https://github.com/redhat-developer/vscode-java/issues/165).
 
 ## 0.1.0 (March 30th, 2017)
 * enhancement - support starting the Java Language Server with JDK 9. See [#43](https://github.com/redhat-developer/vscode-java/issues/43).
