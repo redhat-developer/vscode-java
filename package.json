@@ -61,7 +61,7 @@
             "null"
           ],
           "default": null,
-          "description": "Specifies the folder path to the JDK (8 or more recent) used to launch the Java Language Server.",
+          "description": "Specifies the folder path to the JDK (8 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"",
           "scope": "window"
         },
         "java.jdt.ls.vmargs": {
@@ -162,7 +162,11 @@
         "java.import.exclusions": {
           "type": "array",
           "description": "Configure glob patterns for excluding folders",
-          "default": ["**/node_modules", "**/.metadata", "**/archetype-resources"],
+          "default": [
+            "**/node_modules",
+            "**/.metadata",
+            "**/archetype-resources"
+          ],
           "scope": "window"
         },
         "java.contentProvider.preferred": {
@@ -193,7 +197,12 @@
         "java.completion.importOrder": {
           "type": "array",
           "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group.",
-          "default": ["java", "javax", "com", "org"],
+          "default": [
+            "java",
+            "javax",
+            "com",
+            "org"
+          ],
           "scope": "window"
         }
       }
