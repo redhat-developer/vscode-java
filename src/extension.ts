@@ -53,7 +53,8 @@ export function activate(context: ExtensionContext) {
 					},
 					initializationOptions: {
 						bundles: collectionJavaExtensions(extensions.all),
-						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null
+						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
+						settings: getJavaConfiguration()
 					},
 					revealOutputChannelOn: RevealOutputChannelOn.Never
 				};
