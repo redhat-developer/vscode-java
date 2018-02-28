@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.20.0 (February 28th, 2018)
+* enhancement - incremental (i.e. faster) build triggered on startup, instead of a clean (i.e. slower) build. See [#451](https://github.com/redhat-developer/vscode-java/issues/451).
+* enhancement - code action: remove unreachable code. See [JLS#437](https://github.com/eclipse/eclipse.jdt.ls/issues/437).
+* bug fix - fixed `java.import.exclusions` preference being ignored during server startup. See [#444](https://github.com/redhat-developer/vscode-java/issues/444).
+* bug fix - fixed stub sources being returned even though proper sources were downloaded. See [#447](https://github.com/redhat-developer/vscode-java/issues/447).
+* bug fix - fixed attached javadoc being ignored on hover. See [JLS#517](https://github.com/eclipse/eclipse.jdt.ls/issues/517).
+* bug fix - fixed broken `Organize imports` in module-info.java. See [JLS#549](https://github.com/eclipse/eclipse.jdt.ls/issues/549).
+* bug fix - fixed multiline errors. See [JLS#567](https://github.com/eclipse/eclipse.jdt.ls/pull/567).
+
 ## 0.19.0 (February 15th, 2018)
 * enhancement - added `java.projectConfiguration.update` command to the explorer menu, for build files. See [#159](https://github.com/redhat-developer/vscode-java/issues/159).
 * enhancement - use `void` as default return value for method templates. See [#429](https://github.com/redhat-developer/vscode-java/pull/429).
