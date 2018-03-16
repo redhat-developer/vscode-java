@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.21.0 (March 15th, 2018)
+* enhancement - process non-java resources. See [#400](https://github.com/redhat-developer/vscode-java/issues/400).
+* enhancement - code action: extract variables. See [#459](https://github.com/redhat-developer/vscode-java/issues/459).
+* enhancement - [Maven] automatically update module path when required modules changes in module-info.java. See [#465](https://github.com/redhat-developer/vscode-java/issues/465).
+* enhancement - should warn about unstable automatic module name in module-info.java. See [#467](https://github.com/redhat-developer/vscode-java/issues/467).
+* bug fix - fixed organize import ignoring certain classes. See [JLS#552](https://github.com/eclipse/eclipse.jdt.ls/issues/552).
+
 ## 0.20.0 (February 28th, 2018)
 * enhancement - incremental (i.e. faster) build triggered on startup, instead of a clean (i.e. slower) build. See [#451](https://github.com/redhat-developer/vscode-java/issues/451).
 * enhancement - code action: remove unreachable code. See [JLS#437](https://github.com/eclipse/eclipse.jdt.ls/issues/437).
