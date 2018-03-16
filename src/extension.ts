@@ -48,7 +48,8 @@ export function activate(context: ExtensionContext) {
 							workspace.createFileSystemWatcher('**/*.gradle'),
 							workspace.createFileSystemWatcher('**/.project'),
 							workspace.createFileSystemWatcher('**/.classpath'),
-							workspace.createFileSystemWatcher('**/settings/*.prefs')
+							workspace.createFileSystemWatcher('**/settings/*.prefs'),
+							workspace.createFileSystemWatcher('**/src/**')
 						],
 					},
 					initializationOptions: {
