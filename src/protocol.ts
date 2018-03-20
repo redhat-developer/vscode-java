@@ -1,6 +1,6 @@
 'use strict';
 
-import { RequestType, NotificationType, TextDocumentIdentifier} from 'vscode-languageclient';
+import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams } from 'vscode-languageclient';
 import { Command } from 'vscode';
 
 /**
@@ -94,4 +94,8 @@ export namespace ActionableNotification {
 
 export namespace CompileWorkspaceRequest {
     export const type = new RequestType<boolean, CompileWorkspaceStatus, void, void>('java/buildWorkspace');
+}
+
+export namespace ExecuteClientCommandRequest {
+    export const type = new RequestType<ExecuteCommandParams, any, void, void>("workspace/executeClientCommand");
 }
