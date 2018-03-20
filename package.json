@@ -239,7 +239,7 @@
       {
         "command": "java.edit.organizeImports",
         "key": "shift+alt+o",
-        "when": "editorTextFocus && !editorReadnly"
+        "when": "editorTextFocus && !editorReadonly && editorLangId == java"
       },
       {
         "command": "java.workspace.compile",
@@ -264,6 +264,12 @@
           "command": "java.projectConfiguration.update",
           "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
           "group": "1_javaactions"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "java.edit.organizeImports",
+          "when": "!editorReadonly && editorLangId == java"
         }
       ]
     }
