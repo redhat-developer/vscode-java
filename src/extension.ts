@@ -8,7 +8,7 @@ import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification } from './protocol';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest } from './protocol';
 
 let oldConfig;
 let lastStatus;
@@ -146,6 +146,9 @@ export function activate(context: ExtensionContext) {
 								}
 							}
 						});
+					});
+					languageClient.onRequest(ExecuteClientCommandRequest.type, (params) => {
+						return commands.executeCommand(params.command, ...params.arguments);
 					});
 					commands.registerCommand(Commands.OPEN_OUTPUT, () => {
 						languageClient.outputChannel.show(ViewColumn.Three);
