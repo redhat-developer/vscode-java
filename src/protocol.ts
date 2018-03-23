@@ -97,5 +97,5 @@ export namespace CompileWorkspaceRequest {
 }
 
 export namespace ExecuteClientCommandRequest {
-    export const type = new RequestType<ExecuteCommandParams, any, void, void>("workspace/executeClientCommand");
+    export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/executeClientCommand');
 }
