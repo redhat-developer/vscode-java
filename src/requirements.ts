@@ -112,7 +112,7 @@ export function parseMajorVersion(content:string):number {
 }
 
 function openJDKDownload(reject, cause) {
-    let jdkUrl = 'http://developers.redhat.com/products/openjdk/overview/';
+    let jdkUrl = 'http://developers.redhat.com/products/openjdk/overview/?from=vscode';
     if (process.platform === 'darwin') {
         jdkUrl = 'http://www.oracle.com/technetwork/java/javase/downloads/index.html';
     }
