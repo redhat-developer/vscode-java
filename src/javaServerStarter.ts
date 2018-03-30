@@ -44,17 +44,16 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 	}
 	if (requirements.java_version > 8) {
-		params.push('--add-modules=ALL-SYSTEM');
-		params.push('--add-opens');
-		params.push('java.base/java.util=ALL-UNNAMED');
-		params.push('--add-opens');
-		params.push('java.base/java.lang=ALL-UNNAMED');
+		params.push('--add-modules=ALL-SYSTEM',
+					'--add-opens',
+					'java.base/java.util=ALL-UNNAMED',
+					'--add-opens',
+					'java.base/java.lang=ALL-UNNAMED');
 	}
-	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1');
-	params.push('-Dosgi.bundles.defaultStartLevel=4');
-	params.push('-Declipse.product=org.eclipse.jdt.ls.core.product');
+	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1',
+				'-Dosgi.bundles.defaultStartLevel=4',
+				'-Declipse.product=org.eclipse.jdt.ls.core.product');
 	if (DEBUG) {
-		params.push('-Dlog.protocol=true');
 		params.push('-Dlog.level=ALL');
 	}
 
