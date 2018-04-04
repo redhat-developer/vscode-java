@@ -38,7 +38,10 @@ export function activate(context: ExtensionContext) {
 				// Options to control the language client
 				let clientOptions: LanguageClientOptions = {
 					// Register the server for java
-					documentSelector: ['java'],
+					documentSelector: [
+						{ scheme: 'file', language: 'java' },
+						{ scheme: 'untitled', language: 'java' }
+					],
 					synchronize: {
 						configurationSection: 'java',
 						// Notify the server about file changes to .java and project/build files contained in the workspace
@@ -82,6 +85,8 @@ export function activate(context: ExtensionContext) {
 				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 				languageClient.onReady().then(() => {
+					toggleItem(window.activeTextEditor, item);
+
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
 							case 'Started':
@@ -237,7 +242,6 @@ export function activate(context: ExtensionContext) {
 				// client can be deactivated on extension deactivation
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
-				toggleItem(window.activeTextEditor, item);
 
 				function applyWorkspaceEdit(obj) {
 					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
