@@ -79,6 +79,7 @@ The following settings are supported:
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
 * `java.completion.importOrder` : Defines the sorting order of import statements.
+* `java.progressReports.enabled` : [Experimental] Enable/disable progress reports from background processes on the server.
 
 Troubleshooting
 ===============

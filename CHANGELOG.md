@@ -1,4 +1,15 @@
 # Change Log
+## 0.21.0 (April 4th, 2018)
+* enhancement - add progress report for background tasks. Controlled with the `java.progressReports.enabled` preference. See [#488](https://github.com/redhat-developer/vscode-java/issues/484).
+* enhancement - add experimental Java 10 support. See [#489](https://github.com/redhat-developer/vscode-java/issues/489).
+* enhancement - notification mechanism for 3rd party extensions. See [JLS#595](https://github.com/eclipse/eclipse.jdt.ls/issues/595).
+* enhancement - Javadoc {@links} should be functional. See [JLS#76](https://github.com/eclipse/eclipse.jdt.ls/issues/76).
+* enhancement - code action: abstract classes/methods fixes. See [JLS#447](https://github.com/eclipse/eclipse.jdt.ls/issues/447).
+* enhancement - watch files from all source folders. See [JLS#583](https://github.com/eclipse/eclipse.jdt.ls/issues/583).
+* bug fix - fixed "Organize Import" command should not be active on non-java files. See [#489](https://github.com/redhat-developer/vscode-java/issues/473).
+* bug fix - fixed test imports should not be proposed in main code. See [JLS#529](https://github.com/eclipse/eclipse.jdt.ls/issues/529).
+* bug fix - fixed broken package Javadoc on Java 9/10. See [JLS#612](https://github.com/eclipse/eclipse.jdt.ls/issues/612).
+
 
 ## 0.21.0 (March 15th, 2018)
 * enhancement - process non-java resources. See [#400](https://github.com/redhat-developer/vscode-java/issues/400).
