@@ -242,7 +242,7 @@ export function activate(context: ExtensionContext) {
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
-				
+
 				function applyWorkspaceEdit(obj) {
 					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 					if (edit) {
