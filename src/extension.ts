@@ -38,7 +38,11 @@ export function activate(context: ExtensionContext) {
 				// Options to control the language client
 				let clientOptions: LanguageClientOptions = {
 					// Register the server for java
-					documentSelector: ['java'],
+					documentSelector: [
+						{ scheme: 'file', language: 'java' },
+						{ scheme: 'jdt', language: 'java' },
+						{ scheme: 'untitled', language: 'java' }
+					],
 					synchronize: {
 						configurationSection: 'java',
 						// Notify the server about file changes to .java and project/build files contained in the workspace
