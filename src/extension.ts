@@ -40,6 +40,7 @@ export function activate(context: ExtensionContext) {
 					// Register the server for java
 					documentSelector: [
 						{ scheme: 'file', language: 'java' },
+						{ scheme: 'jdt', language: 'java' },
 						{ scheme: 'untitled', language: 'java' }
 					],
 					synchronize: {
