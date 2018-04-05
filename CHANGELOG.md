@@ -1,4 +1,7 @@
 # Change Log
+
+## 0.23.0 (TBD)
+
 ## 0.22.0 (April 4th, 2018)
 * enhancement - add progress report for background tasks. Controlled with the `java.progressReports.enabled` preference. See [#488](https://github.com/redhat-developer/vscode-java/issues/484).
 * enhancement - add experimental Java 10 support. See [#489](https://github.com/redhat-developer/vscode-java/issues/489).
