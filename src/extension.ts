@@ -86,7 +86,6 @@ export function activate(context: ExtensionContext) {
 				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 				languageClient.onReady().then(() => {
-					toggleItem(window.activeTextEditor, item);
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
 							case 'Started':
@@ -242,7 +241,8 @@ export function activate(context: ExtensionContext) {
 				// client can be deactivated on extension deactivation
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
-
+				toggleItem(window.activeTextEditor, item);
+				
 				function applyWorkspaceEdit(obj) {
 					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 					if (edit) {
