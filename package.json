@@ -182,6 +182,12 @@
           "description": "Enable/disable the 'auto build'",
           "scope": "window"
         },
+        "java.completion.overwrite": {
+          "type": "boolean",
+          "default": true,
+          "description": "When set to true, code completion overwrites the current text. When set to false, code is simply added instead.",
+          "scope": "window"
+        },
         "java.completion.favoriteStaticMembers": {
           "type": "array",
           "description": "Defines a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",

@@ -80,6 +80,7 @@ The following settings are supported:
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
 * `java.completion.importOrder` : Defines the sorting order of import statements.
 * `java.progressReports.enabled` : [Experimental] Enable/disable progress reports from background processes on the server.
+* `java.completion.overwrite` : When set to true, code completion overwrites the current text. When set to false, code is simply added instead.
 
 Troubleshooting
 ===============
