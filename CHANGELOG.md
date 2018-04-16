@@ -1,6 +1,13 @@
 # Change Log
 
-## 0.23.0 (TBD)
+## 0.23.0 (April 16th, 2018)
+* enhancement - added `java.completion.overwrite` preference. When set to true, code completion overwrites the current text. Else, code is simply added instead. See [#462](https://github.com/redhat-developer/vscode-java/issues/462).
+* enhancement - restricted language service on file scheme, for [Live Share](https://code.visualstudio.com/visual-studio-live-share) compatibility. See [#492](https://github.com/redhat-developer/vscode-java/pull/492).
+* enhancement - code actions: invalid modifiers. See [JLS#445](https://github.com/eclipse/eclipse.jdt.ls/issues/445).
+* enhancement - improve build file change detection. See [JLS#547](https://github.com/eclipse/eclipse.jdt.ls/pull/547).
+* enhancement - do not refresh workspace before build. See [JLS#627](https://github.com/eclipse/eclipse.jdt.ls/pull/627).
+* bug fix - fixed potential NPE during completion resolution. See [JLS#629](https://github.com/eclipse/eclipse.jdt.ls/issues/629).
+
 
 ## 0.22.0 (April 4th, 2018)
 * enhancement - add progress report for background tasks. Controlled with the `java.progressReports.enabled` preference. See [#488](https://github.com/redhat-developer/vscode-java/issues/484).
