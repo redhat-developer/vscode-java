@@ -217,6 +217,24 @@
           "description": "[Experimental] Enable/disable progress reports from background processes on the server.",
           "default": true,
           "scope": "window"
+        },
+        "java.format.settings.url": {
+          "type": "string",
+          "description": "Specifies the url or file path to the formatter xml file.",
+          "default": null,
+          "scope": "window"
+        },
+        "java.format.settings.profile": {
+          "type": "string",
+          "description": "Specifies the formatter profile name.",
+          "default": null,
+          "scope": "window"
+        },
+        "java.format.comments.enabled": {
+          "type": "boolean",
+          "description": "Includes the comments during the formatting.",
+          "default": true,
+          "scope": "window"
         }
       }
     },
