@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.24.0 (April 30th, 2018)
+* enhancement - added support for external Eclipse formatter settings. See [#2](https://github.com/redhat-developer/vscode-java/issues/2);
+* enhancement - code action: override static method from an instance method. See [JLS#444](https://github.com/eclipse/eclipse.jdt.ls/issues/444).
+* enhancement - code action: override final methods. See [JLS#639](https://github.com/eclipse/eclipse.jdt.ls/pull/639).
+* bug fix - fixed flaky diagnostics for TODO markers. See [#457](https://github.com/redhat-developer/vscode-java/issues/457).
+* bug fix - fixed Java 10's `var`'s inferred type not shown in enhanced for-loops. See [#515](https://github.com/redhat-developer/vscode-java/issues/515).
+* bug fix - fixed random exception thrown during _Code Actions_ resolution. See [JLS#642](https://github.com/eclipse/eclipse.jdt.ls/issues/642).
+
 ## 0.23.0 (April 16th, 2018)
 * enhancement - added `java.completion.overwrite` preference. When set to true, code completion overwrites the current text. Else, code is simply added instead. See [#462](https://github.com/redhat-developer/vscode-java/issues/462).
 * enhancement - restricted language service on file scheme, for [Live Share](https://code.visualstudio.com/visual-studio-live-share) compatibility. See [#492](https://github.com/redhat-developer/vscode-java/pull/492).
