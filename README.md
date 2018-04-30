@@ -24,7 +24,7 @@ Features
 * Basic Gradle Java project support
 * As you type reporting of parsing and compilation errors
 * Code completion
-* Code actions
+* Code actions / Refactoring
 * Javadoc hovers
 * Organize imports
 * Type search
@@ -81,9 +81,12 @@ The following settings are supported:
 * `java.completion.importOrder` : Defines the sorting order of import statements.
 * `java.progressReports.enabled` : [Experimental] Enable/disable progress reports from background processes on the server.
 * `java.completion.overwrite` : When set to true, code completion overwrites the current text. When set to false, code is simply added instead.
-* `java.format.settings.url` : Specifies the url or file path to the formatter xml file.
-* `java.format.settings.profile` : Specifies the formatter profile name.
-* `java.format.comments.enabled` : Includes the comments during the formatting.
+
+*New in 0.24.0:*
+
+* `java.format.settings.url` : Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).
+* `java.format.settings.profile` : Optional formatter profile name from the Eclipse formatter settings.
+* `java.format.comments.enabled` : Includes the comments during code formatting.
 
 Troubleshooting
 ===============

@@ -220,19 +220,19 @@
         },
         "java.format.settings.url": {
           "type": "string",
-          "description": "Specifies the url or file path to the formatter xml file.",
+          "description": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
           "default": null,
           "scope": "window"
         },
         "java.format.settings.profile": {
           "type": "string",
-          "description": "Specifies the formatter profile name.",
+          "description": "Optional formatter profile name from the Eclipse formatter settings.",
           "default": null,
           "scope": "window"
         },
         "java.format.comments.enabled": {
           "type": "boolean",
-          "description": "Includes the comments during the formatting.",
+          "description": "Includes the comments during code formatting.",
           "default": true,
           "scope": "window"
         }
