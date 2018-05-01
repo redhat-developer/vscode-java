@@ -1,7 +1,7 @@
 {
   "name": "java",
   "displayName": "Language Support for Java(TM) by Red Hat",
-  "description": "Language Support for Java(TM) for Visual Studio Code provided by Red Hat",
+  "description": "Java Linting, Intellisense, formatting, refactoring, Maven/Gradle support and more...",
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-1.0",
