@@ -1,5 +1,7 @@
 # Change Log
 
+## 0.25.0 (TBD)
+
 ## 0.24.0 (April 30th, 2018)
 * enhancement - added support for external Eclipse formatter settings. See [#2](https://github.com/redhat-developer/vscode-java/issues/2);
 * enhancement - code action: override static method from an instance method. See [JLS#444](https://github.com/eclipse/eclipse.jdt.ls/issues/444).
