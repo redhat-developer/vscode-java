@@ -266,6 +266,11 @@
         "command": "java.edit.organizeImports",
         "title": "Organize Imports",
         "category": "Java"
+      },
+      {
+        "command": "java.open.formatter.settings",
+        "title": "Open Java formatter settings",
+        "category": "Java"
       }
     ],
     "keybindings": [
