@@ -2,7 +2,8 @@
 
 import * as path from 'path';
 import * as os from 'os';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
+import * as fs from 'fs';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress, Position, Range, InputBoxOptions } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -238,6 +239,9 @@ export function activate(context: ExtensionContext) {
 				// Register commands here to make it available even when the language client fails
 				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
 
+				let extensionPath = context.extensionPath;
+				commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath));
+
 				// Push the disposable to the context's subscriptions so that the
 				// client can be deactivated on extension deactivation
 				context.subscriptions.push(disposable);
@@ -424,5 +428,128 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 			return didOpen;
 		});
 }
+
+async function openFormatter(extensionPath) {
+	let defaultFormatter = extensionPath + '/formatters/eclipse-formatter.xml';
+	let formatterUrl: string = getJavaConfiguration().get('format.settings.url');
+	if (formatterUrl && formatterUrl.length > 0) {
+		if (isRemote(formatterUrl)) {
+			commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(formatterUrl));
+		} else {
+			let document = getPath(formatterUrl);
+			if (document && fs.existsSync(document)) {
+				return openDocument(extensionPath, document, defaultFormatter, null);
+			}
+		}
+	}
+	let global = workspace.workspaceFolders === undefined;
+	let fileName = formatterUrl || 'eclipse-formatter.xml';
+	let file;
+	let relativePath;
+	if (!global) {
+		file = path.join(workspace.workspaceFolders[0].uri.path, fileName);
+		relativePath = fileName;
+	} else {
+		let root = path.join(extensionPath, '..', 'redhat.java');
+		if (!fs.existsSync(root)) {
+			fs.mkdirSync(root);
+		}
+		file = path.join(root, fileName);
+	}
+	if (!fs.existsSync(file)) {
+		addFormatter(extensionPath, file, defaultFormatter, relativePath);
+	} else {
+		if (formatterUrl) {
+			getJavaConfiguration().update('format.settings.url', (relativePath !== null ? relativePath : file), global);
+			openDocument(extensionPath, file, file, defaultFormatter);
+		} else {
+			addFormatter(extensionPath, file, defaultFormatter, relativePath);
+		}
+	}
+}
+
+function getPath(f) {
+	if (workspace.workspaceFolders && !path.isAbsolute(f)) {
+		workspace.workspaceFolders.forEach(wf => {
+			let file = path.resolve(wf.uri.path, f);
+			if (fs.existsSync(file)) {
+				return file;
+			}
+		});
+	} else {
+		return path.resolve(f);
+	}
+	return null;
+}
+
+function openDocument(extensionPath, formatterUrl, defaultFormatter, relativePath) {
+	return workspace.openTextDocument(formatterUrl)
+		.then(doc => {
+			if (!doc) {
+				addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath);
+			}
+			return window.showTextDocument(doc, window.activeTextEditor ?
+				window.activeTextEditor.viewColumn : undefined)
+				.then(editor => !!editor);
+		}, () => false)
+		.then(didOpen => {
+			if (!didOpen) {
+				window.showWarningMessage('Could not open Formatter Settings file');
+				addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath);
+			} else {
+				return didOpen;
+			}
+		});
+}
+
+function isRemote(f) {
+	return f !== null && f.startsWith('http:/') || f.startsWith('https:/');
+}
+
+async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath) {
+	const options: InputBoxOptions = {
+		value: (relativePath ? relativePath : formatterUrl),
+		prompt: 'please enter URL or Path:',
+		ignoreFocusOut: true
+	};
+	await window.showInputBox(options).then(f => {
+		if (f) {
+			let global = workspace.workspaceFolders === undefined;
+			if (isRemote(f)) {
+				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(f));
+				getJavaConfiguration().update('format.settings.url', f, global);
+			} else {
+				if (!path.isAbsolute(f)) {
+					let fileName = f;
+					if (!global) {
+						f = path.join(workspace.workspaceFolders[0].uri.path, fileName);
+						relativePath = fileName;
+					} else {
+						let root = path.join(extensionPath, '..', 'redhat.java');
+						if (!fs.existsSync(root)) {
+							fs.mkdirSync(root);
+						}
+						f = path.join(root, fileName);
+					}
+				}
+				getJavaConfiguration().update('format.settings.url', (relativePath !== null ? relativePath : f), global);
+				if (!fs.existsSync(f)) {
+					let name = relativePath !== null ? relativePath : f;
+					let msg = '\'' + name + '\' does not exist. Do you want to create it?';
+					let action = 'Yes';
+					window.showWarningMessage(msg, action, 'No').then((selection) => {
+						if (action === selection) {
+							fs.createReadStream(defaultFormatter).pipe(fs.createWriteStream(f));
+							openDocument(extensionPath, formatterUrl, defaultFormatter, relativePath);
+						}
+					});
+				} else {
+					openDocument(extensionPath, formatterUrl, defaultFormatter, relativePath);
+				}
+			}
+		}
+	});
+}
+
 
 
