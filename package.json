@@ -235,6 +235,12 @@
           "description": "Includes the comments during code formatting.",
           "default": true,
           "scope": "window"
+        },
+        "java.format.onType.enabled": {
+          "type": "boolean",
+          "description": "Enable/disable automatic block formatting when typing `;`, `<enter>` or `}`",
+          "default": true,
+          "scope": "window"
         }
       }
     },
