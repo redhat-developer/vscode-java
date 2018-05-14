@@ -51,6 +51,11 @@
         "path": "./snippets/java.json"
       }
     ],
+    "grammars": [{
+			"language": "java",
+			"scopeName": "source.java",
+			"path": "./syntaxes/java.tmLanguage.json"
+		}],
     "configuration": {
       "type": "object",
       "title": "Java configuration",
