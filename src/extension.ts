@@ -61,7 +61,8 @@ export function activate(context: ExtensionContext) {
 						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
 						settings: { java: getJavaConfiguration() },
 						extendedClientCapabilities:{
-							progressReportProvider:getJavaConfiguration().get('progressReports.enabled')
+							progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
+							classFileContentsSupport:true
 						}
 					},
 					revealOutputChannelOn: RevealOutputChannelOn.Never
