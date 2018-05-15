@@ -12,9 +12,9 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a Java 8 or 9 compatible development kit.
+    * Download and install a Java 8, 9, 10 compatible development kit.
 3. Extension is activated when you first access a Java file
-    * Recognizes projects with *maven* or *gradle* build files in the directory hierarchy.
+    * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
 Features
 =========
@@ -32,8 +32,9 @@ Features
 * Code navigation
 * Code lens (references/implementations)
 * Highlights
-* Code formatting
+* Code formatting (on-type/selection/file)
 * Code snippets
+* Annotation processing support (automatic for Maven projects)
 
 Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
@@ -81,12 +82,13 @@ The following settings are supported:
 * `java.completion.importOrder` : Defines the sorting order of import statements.
 * `java.progressReports.enabled` : [Experimental] Enable/disable progress reports from background processes on the server.
 * `java.completion.overwrite` : When set to true, code completion overwrites the current text. When set to false, code is simply added instead.
-
-*New in 0.24.0:*
-
 * `java.format.settings.url` : Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).
 * `java.format.settings.profile` : Optional formatter profile name from the Eclipse formatter settings.
 * `java.format.comments.enabled` : Includes the comments during code formatting.
+
+*New in 0.25.0:*
+* `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
+
 
 Troubleshooting
 ===============

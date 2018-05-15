@@ -1,6 +1,9 @@
 # Change Log
 
-## 0.25.0 (TBD)
+## 0.25.0 (May 15th, 2018)
+* enhancement - automatically enable Annotation Processing for Maven projects, based on [m2e-apt](https://github.com/jbosstools/m2e-apt). See [#339](https://github.com/redhat-developer/vscode-java/issues/339).
+* enhancement - adds support for on-type formatting. See [#530](https://github.com/redhat-developer/vscode-java/pull/530)
+* bug fix - improve JAVA_HOME detection on Windows. See [#524](https://github.com/redhat-developer/vscode-java/pull/524/).
 
 ## 0.24.0 (April 30th, 2018)
 * enhancement - added support for external Eclipse formatter settings. See [#2](https://github.com/redhat-developer/vscode-java/issues/2);
