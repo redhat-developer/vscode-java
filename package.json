@@ -243,6 +243,12 @@
           "description": "Enable/disable automatic block formatting when typing `;`, `<enter>` or `}`",
           "default": true,
           "scope": "window"
+        },
+        "java.completion.documentation.markdown" : {
+          "type": "boolean",
+          "description": "Returns javadoc in Markdown during autocompletion.",
+          "default": true,
+          "scope": "window"
         }
       }
     },
