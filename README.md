@@ -88,6 +88,7 @@ The following settings are supported:
 
 *New in 0.25.0:*
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
+* `java.completion.documentation.markdown` : Returns javadoc in Markdown during autocompletion.
 
 
 Troubleshooting
