@@ -76,6 +76,38 @@ You can create a binary that you can sideload to your VS Code installation.
 5. See documentation on [extension installation](https://github.com/Microsoft/vscode-docs/blob/master/docs/extensions/publish-extension.md)
 on ways to sideload or share.
 
+## Run TCP JDT Language Server
+
+1. Fork and clone this repository
+2. `cd vscode-java`
+3. Install the dependencies:
+
+	```bash
+	$ npm install
+	```
+4. `cd ..`
+5. Fork and clone the [eclipse.jdt.ls](https://github.com/eclipse/eclipse.jdt.ls) repository
+
+6. Build server
+
+	```bash
+	$ cd ..\vscode-java
+	$ npm run build-server
+	```
+7. Compile runServer.ts
+
+	```bash
+	$ tsc --outDir out src/runServer.ts
+	```
+8. Start server
+
+	```bash
+	$ cd server
+	$ node ..\out\src\runServer.js
+	```
+9. In Eclipse launch the "Remote Java Application" debug configuration using the 1044 port (optionally)
+10. start the VS Code language client using the "Launch Extension - JDTLS TCP Client" launch configuration.
+
 # Reporting issues
 If you encounter a problem and know it is caused by eclipse.jdt.ls, then please open a bug report over [there](https://github.com/eclipse/eclipse.jdt.ls/issues).
 In doubt, you can report issues in the [vscode-java issue tracker](https://github.com/redhat-developer/vscode-java/issues).
