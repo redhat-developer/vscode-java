@@ -300,7 +300,7 @@
       "editor/context": [
         {
           "command": "java.edit.organizeImports",
-          "when": "resourceLangId == java",
+          "when": "editorLangId == java",
           "group": "1_javaactions"
         },
         {
