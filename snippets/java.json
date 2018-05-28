@@ -49,31 +49,6 @@
 		],
 		"description": "Public constructor"
 	},
-	"Class Definition": {
-		"prefix": "class",
-		"body": [
-			"/**",
-			" * ${1}",
-			" */",
-			"public class ${1:${TM_FILENAME_BASE}} {",
-			"",
-			"\t$0",
-			"}"
-		],
-		"description": "Class Definition"
-	},
-	"Interface Definition": {
-		"prefix": "interface",
-		"body": [
-			"/**",
-			" * ${1}",
-			" */",
-			"public interface ${1:${TM_FILENAME_BASE}} {",
-			"\t$0",
-			"}"
-		],
-		"description": "Interface Definition"
-	},
 	"if": {
 		"prefix": "if",
 		"body": [
