@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.26.0 (May 31th, 2018)
+* enhancement - now returns documentation as Markdown during completion. See [#318](https://github.com/redhat-developer/vscode-java/issues/318).
+* enhancement - improved class/interface snippets, now adding the package, if necessary. See [#505](https://github.com/redhat-developer/vscode-java/issues/505).
+* enhancement - added command to open/create Eclipse formatter settings. See [#521](https://github.com/redhat-developer/vscode-java/issues/521).
+* bug fix - fixed `Organize imports` menu showing in the output panel. See [#539](https://github.com/redhat-developer/vscode-java/issues/539).
+* bug fix - fixed missing documentation for methods with parameters, during completion. See [JLS#669](https://github.com/eclipse/eclipse.jdt.ls/issues/669).
+
 ## 0.25.0 (May 15th, 2018)
 * enhancement - automatically enable Annotation Processing for Maven projects, based on [m2e-apt](https://github.com/jbosstools/m2e-apt). See [#339](https://github.com/redhat-developer/vscode-java/issues/339).
 * enhancement - adds support for on-type formatting. See [#530](https://github.com/redhat-developer/vscode-java/pull/530)
