@@ -18,11 +18,10 @@ node('rhel7'){
 	sh "./mvnw clean verify -B -U -fae -e -Pserver-distro -DdisableP2Mirrors=true"
 
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
-	stash name: 'server_distro',includes :files[0].path
+	stash name: 'server_distro', includes :files[0].path
 }
 
 node('rhel7'){
-
 	stage 'Checkout vscode-java code'
 	deleteDir()
 	git url: 'https://github.com/redhat-developer/vscode-java.git'
@@ -48,7 +47,7 @@ node('rhel7'){
 	
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
-	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} tools@10.5.105.197:/downloads_htdocs/jbosstools/jdt.ls/staging"
+	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/jdt.ls/staging"
 	stash name:'vsix', includes:files[0].path
 }
 
@@ -59,11 +58,16 @@ node('rhel7'){
 		}
 
 		stage "Publish to Marketplace"
-		unstash 'vsix';
+		unstash 'vsix'
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
 			def vsix = findFiles(glob: '**.vsix')
 			sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
 		}
 		archive includes:"**.vsix"
-	}//if publishMarketPlace
+
+		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
+		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
+		def vsix = findFiles(glob: '**.vsix')
+		sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
+	}// if publishToMarketPlace
 }
