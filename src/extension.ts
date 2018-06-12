@@ -531,6 +531,8 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 						}
 						f = path.join(root, fileName);
 					}
+				} else {
+					relativePath = null;
 				}
 				getJavaConfiguration().update('format.settings.url', (relativePath !== null ? relativePath : f), global);
 				if (!fs.existsSync(f)) {
@@ -540,11 +542,11 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 					window.showWarningMessage(msg, action, 'No').then((selection) => {
 						if (action === selection) {
 							fs.createReadStream(defaultFormatter).pipe(fs.createWriteStream(f));
-							openDocument(extensionPath, formatterUrl, defaultFormatter, relativePath);
+							openDocument(extensionPath, f, defaultFormatter, relativePath);
 						}
 					});
 				} else {
-					openDocument(extensionPath, formatterUrl, defaultFormatter, relativePath);
+					openDocument(extensionPath, f, defaultFormatter, relativePath);
 				}
 			}
 		}
