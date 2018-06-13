@@ -112,13 +112,13 @@ export function parseMajorVersion(content:string):number {
 }
 
 function openJDKDownload(reject, cause) {
-    let jdkUrl = 'http://developers.redhat.com/products/openjdk/overview/?from=vscode';
+    let jdkUrl = 'https://developers.redhat.com/products/openjdk/download/?sc_cid=701f2000000RWTnAAO';
     if (process.platform === 'darwin') {
         jdkUrl = 'http://www.oracle.com/technetwork/java/javase/downloads/index.html';
     }
     reject({
         message: cause,
-        label: 'Get Java Development Kit',
+        label: 'Get the Java Development Kit',
         openUrl: Uri.parse(jdkUrl),
         replaceClose: false
     });
