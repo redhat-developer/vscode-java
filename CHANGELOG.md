@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.27.0 (June 18th, 2018)
+* enhancement - use more direct OpenJDK download link. See [#564](https://github.com/redhat-developer/vscode-java/issues/564).
+* enhancement - code action: access non visible references by changing modifiers or through accessors. See [JLS#446](https://github.com/eclipse/eclipse.jdt.ls/issues/446).
+* bug fix - fixed formatter file failing to open. See [#548](https://github.com/redhat-developer/vscode-java/issues/548).
+* bug fix - fixed `class` and `interface` snippets should be proposed according to context. See [JLS#681](https://github.com/eclipse/eclipse.jdt.ls/issues/681).
+* build - vscode-java-*vsix releases are now archived to http://download.jboss.org/jbosstools/static/jdt.ls/stable/. See [#552](https://github.com/redhat-developer/vscode-java/pull/552).
+
 ## 0.26.0 (May 31th, 2018)
 * enhancement - now returns documentation as Markdown during completion. See [#318](https://github.com/redhat-developer/vscode-java/issues/318).
 * enhancement - improved class/interface snippets, now adding the package, if necessary. See [#505](https://github.com/redhat-developer/vscode-java/issues/505).
