@@ -90,6 +90,9 @@ The following settings are supported:
 *New in 0.25.0:*
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 
+*New in 0.28.0:*
+* `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
+
 
 Troubleshooting
 ===============
