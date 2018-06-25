@@ -190,6 +190,12 @@
           "description": "When set to true, code completion overwrites the current text. When set to false, code is simply added instead.",
           "scope": "window"
         },
+        "java.completion.guessMethodArguments": {
+          "type": "boolean",
+          "default": false,
+          "description": "When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.",
+          "scope": "window"
+        },
         "java.completion.favoriteStaticMembers": {
           "type": "array",
           "description": "Defines a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",
