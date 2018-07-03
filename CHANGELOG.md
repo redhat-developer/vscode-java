@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.28.0 (July 3rd, 2018)
+* enhancement - new `java.completion.guessMethodArguments` preference to insert best guessed arguments during method completion. See [#569](https://github.com/redhat-developer/vscode-java/pull/569).
+
+
 ## 0.27.0 (June 18th, 2018)
 * enhancement - use more direct OpenJDK download link. See [#564](https://github.com/redhat-developer/vscode-java/issues/564).
 * enhancement - code action: access non visible references by changing modifiers or through accessors. See [JLS#446](https://github.com/eclipse/eclipse.jdt.ls/issues/446).

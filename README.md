@@ -86,8 +86,6 @@ The following settings are supported:
 * `java.format.settings.url` : Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).
 * `java.format.settings.profile` : Optional formatter profile name from the Eclipse formatter settings.
 * `java.format.comments.enabled` : Includes the comments during code formatting.
-
-*New in 0.25.0:*
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 
 *New in 0.28.0:*
