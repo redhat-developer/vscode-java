@@ -333,17 +333,17 @@
     "tslint": "./node_modules/.bin/gulp tslint"
   },
   "devDependencies": {
-    "typescript": "^2.3.4",
-    "vscode": "^1.1.17",
-    "mocha": "^3.2.0",
-    "@types/node": "^6.0.40",
-    "@types/mocha": "^2.2.39",
     "@types/glob": "5.0.30",
-    "gulp": "^3.9.1",
-    "gulp-tslint": "^8.1.3",
-    "tslint": "^5.9.1",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^6.0.40",
+    "gulp": "^4.0.0",
     "gulp-decompress": "2.0.1",
-    "gulp-download": "0.0.1"
+    "gulp-download": "0.0.1",
+    "gulp-tslint": "^8.1.3",
+    "mocha": "^5.2.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.3.4",
+    "vscode": "^1.1.18"
   },
   "dependencies": {
     "vscode-languageclient": "~4.1.3",
