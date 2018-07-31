@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.29.0 (July 31rd, 2018)
+* enhancement - code action: convert from `var` to the appropriate type (Java 10+). See [JLS#696](https://github.com/eclipse/eclipse.jdt.ls/issues/696).
+* enhancement - code action: convert from type to `var` (Java 10+). See [JLS#697](https://github.com/eclipse/eclipse.jdt.ls/issues/697).
+* enhancement - Java 9+ versions no longer leak their API by default. See [JLS#620](https://github.com/eclipse/eclipse.jdt.ls/issues/620).
+* enhancement - add links to completion items' documentation. See [JLS#731](https://github.com/eclipse/eclipse.jdt.ls/issues/731).
+* bug fix - fix build errors after renaming standalone Java files. See [#578](https://github.com/redhat-developer/vscode-java/issues/578).
+* bug fix - fixed extracting to method incorrectly adding the `static` keyword in nested classes. See [JLS#709](https://github.com/eclipse/eclipse.jdt.ls/issues/709).
+
+
 ## 0.28.0 (July 3rd, 2018)
 * enhancement - new `java.completion.guessMethodArguments` preference to insert best guessed arguments during method completion. See [#569](https://github.com/redhat-developer/vscode-java/pull/569).
 
