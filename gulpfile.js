@@ -12,23 +12,22 @@ gulp.task('tslint', () => {
       .pipe(gulp_tslint.report());
 });
 
-gulp.task('download_server', ()=>
-{
+gulp.task('download_server', function(done) {
 	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
 		.pipe(decompress())
-		.pipe(gulp.dest('./server'))
+		.pipe(gulp.dest('./server'));
+	done();
 });
 
-gulp.task('build_server', ()=>
-{
+gulp.task('build_server', function(done) {
 	cp.execSync(mvnw()+ ' -Pserver-distro clean package', {cwd:server_dir, stdio:[0,1,2]} );
 	gulp.src(server_dir + '/org.eclipse.jdt.ls.product/distro/*.tar.gz')
 		.pipe(decompress())
-		.pipe(gulp.dest('./server'))
+		.pipe(gulp.dest('./server'));
+	done();
 });
 
-gulp.task('dev_server', ()=>
-{
+gulp.task('dev_server', function(done) {
 	let command = mvnw() +' -Pserver-distro,fast -o clean package ';
 	if(isLinux()){
 		command +='-Denvironment.os=linux -Denvironment.ws=gtk -Denvironment.arch=x86_64';
@@ -44,10 +43,12 @@ gulp.task('dev_server', ()=>
 	gulp.src(server_dir +'/org.eclipse.jdt.ls.product/distro/*.tar.gz')
 		.pipe(decompress())
 		.pipe(gulp.dest('./server'))
+	done();
 });
 
-gulp.task('watch_server',()=>{
+gulp.task('watch_server',function(done) {
 	gulp.watch(server_dir+'/org.eclipse.jdt.ls.core/**/*.java',['dev_server']);
+	done();
 });
 
 function isWin() {
