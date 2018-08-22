@@ -430,7 +430,7 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 }
 
 async function openFormatter(extensionPath) {
-	let defaultFormatter = extensionPath + '/formatters/eclipse-formatter.xml';
+	let defaultFormatter = path.join(extensionPath, 'formatters', 'eclipse-formatter.xml');
 	let formatterUrl: string = getJavaConfiguration().get('format.settings.url');
 	if (formatterUrl && formatterUrl.length > 0) {
 		if (isRemote(formatterUrl)) {
@@ -447,7 +447,7 @@ async function openFormatter(extensionPath) {
 	let file;
 	let relativePath;
 	if (!global) {
-		file = path.join(workspace.workspaceFolders[0].uri.path, fileName);
+		file = path.join(workspace.workspaceFolders[0].uri.fsPath, fileName);
 		relativePath = fileName;
 	} else {
 		let root = path.join(extensionPath, '..', 'redhat.java');
@@ -522,7 +522,7 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 				if (!path.isAbsolute(f)) {
 					let fileName = f;
 					if (!global) {
-						f = path.join(workspace.workspaceFolders[0].uri.path, fileName);
+						f = path.join(workspace.workspaceFolders[0].uri.fsPath, fileName);
 						relativePath = fileName;
 					} else {
 						let root = path.join(extensionPath, '..', 'redhat.java');
@@ -541,8 +541,9 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 					let action = 'Yes';
 					window.showWarningMessage(msg, action, 'No').then((selection) => {
 						if (action === selection) {
-							fs.createReadStream(defaultFormatter).pipe(fs.createWriteStream(f));
-							openDocument(extensionPath, f, defaultFormatter, relativePath);
+							fs.createReadStream(defaultFormatter)
+							.pipe(fs.createWriteStream(f))
+							.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
 						}
 					});
 				} else {
