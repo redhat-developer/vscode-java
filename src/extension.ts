@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress, Position, Range, InputBoxOptions } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -248,10 +248,30 @@ export function activate(context: ExtensionContext) {
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
 
-				function applyWorkspaceEdit(obj) {
+				async function applyWorkspaceEdit(obj) {
 					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 					if (edit) {
-						workspace.applyEdit(edit);
+						await workspace.applyEdit(edit);
+						// By executing the range formatting command to correct the indention according to the VS Code editor settings.
+						try {
+							let currentEditor = window.activeTextEditor;
+							if (currentEditor.document.uri.fsPath !== edit.entries()[0][0].fsPath) {
+								return;
+							}
+							let lastPosition = currentEditor.selection.active;
+							let changes = edit.entries()[0][1];
+							let startLineNum = changes[0].range.start.line;
+							let startCharacterNum = changes[0].range.start.character;
+							let endLineNum = startLineNum;
+							for (let newText of changes) {
+								endLineNum += newText.newText.split('\n').length - 1;
+							}
+							currentEditor.selection = new Selection(startLineNum, startCharacterNum, endLineNum + 1, 0);
+							await commands.executeCommand('editor.action.formatSelection');
+							currentEditor.selection = new Selection(lastPosition, lastPosition);
+						} catch (error) {
+							languageClient.error(error);
+						}
 					}
 				}
 			});
@@ -553,6 +573,3 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 		}
 	});
 }
-
-
-
