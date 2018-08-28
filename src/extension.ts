@@ -253,18 +253,22 @@ export function activate(context: ExtensionContext) {
 					if (edit) {
 						await workspace.applyEdit(edit);
 						// By executing the range formatting command to correct the indention according to the VS Code editor settings.
+						// More details, see: https://github.com/redhat-developer/vscode-java/issues/557
 						try {
 							let currentEditor = window.activeTextEditor;
+							// If the Uri path of the edit change is not equal to that of the active editor, we will skip the range formatting
 							if (currentEditor.document.uri.fsPath !== edit.entries()[0][0].fsPath) {
 								return;
 							}
 							let lastPosition = currentEditor.selection.active;
+							// Get the array of all the changes
 							let changes = edit.entries()[0][1];
+							// Get the position of the first change
 							let startLineNum = changes[0].range.start.line;
 							let startCharacterNum = changes[0].range.start.character;
 							let endLineNum = startLineNum;
 							for (let newText of changes) {
-								endLineNum += newText.newText.split('\n').length - 1;
+								endLineNum += newText.newText.split(/\r?\n/).length - 1;
 							}
 							currentEditor.selection = new Selection(startLineNum, startCharacterNum, endLineNum + 1, 0);
 							await commands.executeCommand('editor.action.formatSelection');
