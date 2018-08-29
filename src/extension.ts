@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress, Position, Range, InputBoxOptions } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -177,7 +177,7 @@ export function activate(context: ExtensionContext) {
 					commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
 
 					commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
-						applyWorkspaceEdit(obj);
+						applyWorkspaceEdit(obj, languageClient);
 					});
 
 					commands.registerCommand(Commands.EDIT_ORGANIZE_IMPORTS, async () => {
@@ -247,15 +247,7 @@ export function activate(context: ExtensionContext) {
 				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
-
-				function applyWorkspaceEdit(obj) {
-					let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
-					if (edit) {
-						workspace.applyEdit(edit);
-					}
-				}
 			});
-
 		});
 	});
 }
@@ -554,5 +546,44 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 	});
 }
 
+async function applyWorkspaceEdit(obj, languageClient) {
+	let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
+	if (edit) {
+		await workspace.applyEdit(edit);
+		// By executing the range formatting command to correct the indention according to the VS Code editor settings.
+		// More details, see: https://github.com/redhat-developer/vscode-java/issues/557
+		try {
+			let currentEditor = window.activeTextEditor;
+			// If the Uri path of the edit change is not equal to that of the active editor, we will skip the range formatting
+			if (currentEditor.document.uri.fsPath !== edit.entries()[0][0].fsPath) {
+				return;
+			}
+			let cursorPostion = currentEditor.selection.active;
+			// Get the array of all the changes
+			let changes = edit.entries()[0][1];
+			// Get the position information of the first change
+			let startPosition = new Position(changes[0].range.start.line, changes[0].range.start.character);
+			let lineOffsets = changes[0].newText.split(/\r?\n/).length - 1;
+			for (let i = 1; i < changes.length; i++) {
+				// When it comes to a discontinuous range, execute the range formatting and record the new start position
+				if (changes[i].range.start.line !== startPosition.line) {
+					await executeRangeFormat(currentEditor, startPosition, lineOffsets);
+					startPosition = new Position(changes[i].range.start.line, changes[i].range.start.character);
+					lineOffsets = 0;
+				}
+				lineOffsets += changes[i].newText.split(/\r?\n/).length - 1;
+			}
+			await executeRangeFormat(currentEditor, startPosition, lineOffsets);
+			// Recover the cursor's original position
+			currentEditor.selection = new Selection(cursorPostion, cursorPostion);
+		} catch (error) {
+			languageClient.error(error);
+		}
+	}
+}
 
-
+async function executeRangeFormat(editor, startPosition, lineOffset) {
+	let endPosition = editor.document.positionAt(editor.document.offsetAt(new Position(startPosition.line + lineOffset + 1, 0)) - 1);
+	editor.selection = new Selection(startPosition, endPosition);
+	await commands.executeCommand('editor.action.formatSelection');
+}
