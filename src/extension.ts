@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -558,21 +558,32 @@ async function applyWorkspaceEdit(obj, languageClient) {
 			if (currentEditor.document.uri.fsPath !== edit.entries()[0][0].fsPath) {
 				return;
 			}
-			let lastPosition = currentEditor.selection.active;
+			let cursorPostion = currentEditor.selection.active;
 			// Get the array of all the changes
 			let changes = edit.entries()[0][1];
-			// Get the position of the first change
-			let startLineNum = changes[0].range.start.line;
-			let startCharacterNum = changes[0].range.start.character;
-			let endLineNum = startLineNum;
-			for (let newText of changes) {
-				endLineNum += newText.newText.split(/\r?\n/).length - 1;
+			// Get the position information of the first change
+			let startPosition = new Position(changes[0].range.start.line, changes[0].range.start.character);
+			let lineOffsets = changes[0].newText.split(/\r?\n/).length - 1;
+			for (let i = 1; i < changes.length; i++) {
+				// When it comes to a discontinuous range, execute the range formatting and record the new start position
+				if (changes[i].range.start.line !== startPosition.line) {
+					await executeRangeFormat(currentEditor, startPosition, lineOffsets);
+					startPosition = new Position(changes[i].range.start.line, changes[i].range.start.character);
+					lineOffsets = 0;
+				}
+				lineOffsets += changes[i].newText.split(/\r?\n/).length - 1;
 			}
-			currentEditor.selection = new Selection(startLineNum, startCharacterNum, endLineNum + 1, 0);
-			await commands.executeCommand('editor.action.formatSelection');
-			currentEditor.selection = new Selection(lastPosition, lastPosition);
+			await executeRangeFormat(currentEditor, startPosition, lineOffsets);
+			// Recover the cursor's original position
+			currentEditor.selection = new Selection(cursorPostion, cursorPostion);
 		} catch (error) {
 			languageClient.error(error);
 		}
 	}
+}
+
+async function executeRangeFormat(editor, startPosition, lineOffset) {
+	let endPosition = editor.document.positionAt(editor.document.offsetAt(new Position(startPosition.line + lineOffset + 1, 0)) - 1);
+	editor.selection = new Selection(startPosition, endPosition);
+	await commands.executeCommand('editor.action.formatSelection');
 }
