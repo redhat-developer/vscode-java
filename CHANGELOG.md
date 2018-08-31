@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.30.0 (August 31rd, 2018)
+* enhancement - add support for `Go to implementation`. See [#446](https://github.com/redhat-developer/vscode-java/issues/446).
+* enhancement - automatically generate params in Javadoc. See [#228](https://github.com/redhat-developer/vscode-java/issues/228).
+* enhancement - publish diagnostic information at the project level. See [#608](https://github.com/redhat-developer/vscode-java/issues/608).
+* enhancement - prevent unnecessary build when reopening workspace. See [JLS#756](https://github.com/eclipse/eclipse.jdt.ls/pull/756).
+* enhancement - update m2e to 1.9.1 See [JLS#761](https://github.com/eclipse/eclipse.jdt.ls/issues/761).
+* enhancement - lower severity of m2e's `Project configuration is not up-to-date...` diagnostics. See [JLS#763](https://github.com/eclipse/eclipse.jdt.ls/issues/763).
+* enhancement - add quickfix for removing unused local var and all assignments. See [JLS#769](https://github.com/eclipse/eclipse.jdt.ls/issues/769).
+* bug fix - fixed indentation preferences being ignored after completions/refactoring. See [557](https://github.com/redhat-developer/vscode-java/issues/557).
+* bug fix - fixed timestamps in logs. See [JLS#742](https://github.com/eclipse/eclipse.jdt.ls/issues/742).
+* bug fix - don't send notifications for gradle files modified under the build directory. See [JLS#768](https://github.com/eclipse/eclipse.jdt.ls/issues/768).
+* bug fix - fixed Tabs being ignored during formatting requests. See [JLS#775](https://github.com/eclipse/eclipse.jdt.ls/issues/775).
+
 ## 0.29.0 (July 31rd, 2018)
 * enhancement - code action: convert from `var` to the appropriate type (Java 10+). See [JLS#696](https://github.com/eclipse/eclipse.jdt.ls/issues/696).
 * enhancement - code action: convert from type to `var` (Java 10+). See [JLS#697](https://github.com/eclipse/eclipse.jdt.ls/issues/697).
