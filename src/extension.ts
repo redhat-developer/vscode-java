@@ -13,6 +13,7 @@ import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdat
 
 let oldConfig;
 let lastStatus;
+let languageClient : LanguageClient;
 
 export function activate(context: ExtensionContext) {
 
@@ -85,7 +86,7 @@ export function activate(context: ExtensionContext) {
 				}
 
 				// Create the language client and start the client.
-				let languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
+				languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
@@ -235,21 +236,25 @@ export function activate(context: ExtensionContext) {
 					};
 					workspace.registerTextDocumentContentProvider('jdt', provider);
 				});
-				let disposable = languageClient.start();
+				languageClient.start();
 				// Register commands here to make it available even when the language client fails
 				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
 
 				let extensionPath = context.extensionPath;
 				commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath));
 
-				// Push the disposable to the context's subscriptions so that the
-				// client can be deactivated on extension deactivation
-				context.subscriptions.push(disposable);
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
 			});
 		});
 	});
+}
+
+export function deactivate(): Thenable<void> {
+	if (!languageClient) {
+		return undefined;
+	}
+	return languageClient.stop();
 }
 
 function enableJavadocSymbols() {
