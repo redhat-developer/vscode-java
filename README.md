@@ -87,9 +87,10 @@ The following settings are supported:
 * `java.format.settings.profile` : Optional formatter profile name from the Eclipse formatter settings.
 * `java.format.comments.enabled` : Includes the comments during code formatting.
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
-
-*New in 0.28.0:*
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
+
+*New in 0.31.0:*
+* `java.completion.enabled` : Enable/disable code completion support.
 
 
 Troubleshooting
@@ -110,7 +111,7 @@ This is an open source project open to anyone. Contributions are extremely welco
 
 For information on getting started, refer to the [CONTRIBUTING instructions](CONTRIBUTING.md).
 
-Continuous Integration builds can be installed from http://download.jboss.org/jbosstools/jdt.ls/staging/. Download the most recent `java-<version>.vsix` file and install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix). 
+Continuous Integration builds can be installed from http://download.jboss.org/jbosstools/jdt.ls/staging/. Download the most recent `java-<version>.vsix` file and install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
 Stable releases are archived under http://download.jboss.org/jbosstools/static/jdt.ls/stable/.
 
 Also, you can contribute your own VSCode extension to enhance the existing features by following the instructions [here](https://github.com/redhat-developer/vscode-java/wiki/Contribute-a-Java-Extension).
