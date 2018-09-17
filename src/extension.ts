@@ -10,12 +10,13 @@ import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest } from './protocol';
+import { ExtensionAPI } from './extension.api';
 
 let oldConfig;
 let lastStatus;
 let languageClient : LanguageClient;
 
-export function activate(context: ExtensionContext) {
+export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	enableJavadocSymbols();
 
@@ -29,7 +30,7 @@ export function activate(context: ExtensionContext) {
 		// rethrow to disrupt the chain.
 		throw error;
 	}).then(requirements => {
-		return window.withProgress({ location: ProgressLocation.Window }, p => {
+		return window.withProgress<ExtensionAPI>({ location: ProgressLocation.Window }, p => {
 			return new Promise((resolve, reject) => {
 				let storagePath = context.storagePath;
 				if (!storagePath) {
@@ -95,7 +96,10 @@ export function activate(context: ExtensionContext) {
 								item.text = '$(thumbsup)';
 								p.report({ message: 'Finished' });
 								lastStatus = item.text;
-								resolve();
+								resolve({
+									apiVersion: '0.1',
+									javaRequirement: requirements,
+								});
 								break;
 							case 'Error':
 								item.text = '$(thumbsdown)';
@@ -103,7 +107,10 @@ export function activate(context: ExtensionContext) {
 								p.report({ message: 'Finished with Error' });
 								item.tooltip = report.message;
 								toggleItem(window.activeTextEditor, item);
-								resolve();
+								resolve({
+									apiVersion: '0.1',
+									javaRequirement: requirements,
+								});
 								break;
 							case 'Starting':
 								p.report({ message: report.message });
