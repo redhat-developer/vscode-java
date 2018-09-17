@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.31.0 (September 16th, 2018)
+* enhancement - added Outline support. See [#586](https://github.com/redhat-developer/vscode-java/issues/586).
+* enhancement - new `java.completion.enabled` preference to disable auto-completion. See [#631](https://github.com/redhat-developer/vscode-java/pull/631).
+* enhancement - export the utility method requirements.resolveRequirements() as extension API. See [#639](https://github.com/redhat-developer/vscode-java/issues/639).
+* enhancement - new code-action: Convert anonymous class to lambda expression. See [JLS#658](https://github.com/eclipse/eclipse.jdt.ls/issues/658).
+* bug fix - fixed 'Updating Maven projects' showing progress above 100%. See [#605](https://github.com/redhat-developer/vscode-java/issues/605).
+* bug fix - give more time to shut down the server properly. See [#628](https://github.com/redhat-developer/vscode-java/pull/628).
+* bug fix - fixed BadLocationExceptions thrown during `textDocument/documentSymbol` invocations. See [JLS#794](https://github.com/eclipse/eclipse.jdt.ls/issues/794).
+
 ## 0.30.0 (August 31rd, 2018)
 * enhancement - add support for `Go to implementation`. See [#446](https://github.com/redhat-developer/vscode-java/issues/446).
 * enhancement - automatically generate params in Javadoc. See [#228](https://github.com/redhat-developer/vscode-java/issues/228).
