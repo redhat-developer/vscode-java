@@ -4,13 +4,14 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation, StreamInfo } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest } from './protocol';
 import { ExtensionAPI } from './extension.api';
+import * as net from 'net';
 
 let oldConfig;
 let lastStatus;
@@ -80,7 +81,22 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				let serverOptions;
 				let port = process.env['SERVER_PORT'];
 				if (!port) {
-					serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+					let lsPort = process.env['JDTLS_CLIENT_PORT'];
+					if (!lsPort) {
+						serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+					} else {
+						let connectionInfo = {
+							port: lsPort
+						};
+						serverOptions = () => {
+							let socket = net.connect(connectionInfo);
+							let result: StreamInfo = {
+								writer: socket,
+								reader: socket
+							};
+							return Promise.resolve(result);
+						};
+					}
 				} else {
 					// used during development
 					serverOptions = awaitServerConnection.bind(null, port);
