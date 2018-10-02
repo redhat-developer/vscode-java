@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.32.0 (October 2nd, 2018)
+* enhancement - new Java 11 support for Maven, Gradle and Eclipse projects. See [#625](https://github.com/redhat-developer/vscode-java/issues/625) and [#653](https://github.com/redhat-developer/vscode-java/issues/653).
+* enhancement - cascade "Update project configuration" command to child Maven projects. See [#638](https://github.com/redhat-developer/vscode-java/issues/638).
+* enhancement - bind `Project configuration is not up-to-date with pom.xml` diagnostics to pom.xml. See [JLS#797](https://github.com/eclipse/eclipse.jdt.ls/issues/797).
+* enhancement - ignore `Unknown referenced nature` warnings. See [JLS#812](https://github.com/eclipse/eclipse.jdt.ls/issues/812).
+* bug fix - fixed `Force Java Compilation` command failing due to `Project configuration is not up-to-date with pom.xml` errors. See [JLS#813](https://github.com/eclipse/eclipse.jdt.ls/issues/813).
+
 ## 0.31.0 (September 16th, 2018)
 * enhancement - added Outline support. See [#586](https://github.com/redhat-developer/vscode-java/issues/586).
 * enhancement - new `java.completion.enabled` preference to disable auto-completion. See [#631](https://github.com/redhat-developer/vscode-java/pull/631).

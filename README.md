@@ -12,7 +12,7 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a Java 8, 9, 10 compatible development kit.
+    * Download and install a Java 8, 9, 10 or 11 compatible development kit.
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
@@ -88,8 +88,6 @@ The following settings are supported:
 * `java.format.comments.enabled` : Includes the comments during code formatting.
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
-
-*New in 0.31.0:*
 * `java.completion.enabled` : Enable/disable code completion support.
 
 
