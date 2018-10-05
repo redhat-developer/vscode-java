@@ -82,4 +82,8 @@ export namespace Commands {
      * Open Java formatter settings
      */
     export const OPEN_FORMATTER = 'java.open.formatter.settings';
+    /**
+     * Clean the Java language server workspace
+     */
+    export const CLEAN_WORKSPACE = 'java.clean.workspace';
 }

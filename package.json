@@ -283,6 +283,11 @@
         "command": "java.open.formatter.settings",
         "title": "Open Java formatter settings",
         "category": "Java"
+      },
+      {
+        "command": "java.clean.workspace",
+        "title": "Clean the Java language server workspace",
+        "category": "Java"
       }
     ],
     "keybindings": [

@@ -15,7 +15,8 @@ import * as net from 'net';
 
 let oldConfig;
 let lastStatus;
-let languageClient : LanguageClient;
+let languageClient: LanguageClient;
+const cleanWorkspaceFileName = '.cleanWorkspace';
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
@@ -264,12 +265,24 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					};
 					workspace.registerTextDocumentContentProvider('jdt', provider);
 				});
+
+				let cleanWorkspaceExists = fs.existsSync( path.join(workspacePath,  cleanWorkspaceFileName));
+				if (cleanWorkspaceExists) {
+					try {
+						deleteDirectory(workspacePath);
+					} catch (error) {
+						window.showErrorMessage('Failed to delete ' + workspacePath + ': ' + error);
+					}
+				}
+
 				languageClient.start();
 				// Register commands here to make it available even when the language client fails
 				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
 
 				let extensionPath = context.extensionPath;
 				commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath));
+
+				commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath));
 
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
@@ -429,6 +442,31 @@ function makeRandomHexString(length) {
 
 function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
+}
+
+async function cleanWorkspace(workspacePath) {
+	const doIt = 'Restart and delete';
+	window.showWarningMessage('Are you sure you want to clean the Java language server workspace?', 'Cancel', doIt).then(selection => {
+		if (selection === doIt) {
+			const file = path.join(workspacePath, cleanWorkspaceFileName);
+			fs.closeSync(fs.openSync(file, 'w'));
+			commands.executeCommand(Commands.RELOAD_WINDOW);
+		}
+	});
+}
+
+function deleteDirectory(dir) {
+	if (fs.existsSync(dir)) {
+		fs.readdirSync(dir).forEach(function (child) {
+			let entry = path.join(dir, child);
+			if (fs.lstatSync(entry).isDirectory()) {
+				deleteDirectory(entry);
+			} else {
+				fs.unlinkSync(entry);
+			}
+		});
+		fs.rmdirSync(dir);
+	}
 }
 
 function openServerLogFile(workspacePath): Thenable<boolean> {
