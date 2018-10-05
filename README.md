@@ -59,6 +59,7 @@ The following commands are available:
 - `Java:Force Java compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
 - `Java:Organize imports` (`Shift+Alt+O`): Organize imports in the currently opened Java file.
 - `Java:Open Java formatter settings`: Open the Eclipse formatter settings. Creates a new settings file if none exists.
+- `Java:Clean the Java language server workspace`: Clean the Java language server workspace.
 
 Supported VS Code settings
 ==========================
@@ -89,6 +90,9 @@ The following settings are supported:
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
+
+*New in 0.33.0:*
+* `java.clean.workspace` : Clean the Java language server workspace.
 
 
 Troubleshooting
