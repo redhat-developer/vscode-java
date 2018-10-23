@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.33.0 (October 23rd, 2018)
+* enhancement - add new command to clean the server workspace. See [#655](https://github.com/redhat-developer/vscode-java/issues/655).
+* enhancement - add Mockito static imports by default. See [#679](https://github.com/redhat-developer/vscode-java/pull/679).
+* bug fix - fixed "Busy loop " when running Java 11. See [#664](https://github.com/redhat-developer/vscode-java/issues/664).
+* bug fix - fixed Maven diagnostics showing up and disappearing on save. See [#669](https://github.com/redhat-developer/vscode-java/issues/669).
+* bug fix - ignore multiple code lenses for lombok generated methods. See [#674](https://github.com/redhat-developer/vscode-java/issues/674).
+
+
 ## 0.32.0 (October 2nd, 2018)
 * enhancement - new Java 11 support for Maven, Gradle and Eclipse projects. See [#625](https://github.com/redhat-developer/vscode-java/issues/625) and [#653](https://github.com/redhat-developer/vscode-java/issues/653).
 * enhancement - cascade "Update project configuration" command to child Maven projects. See [#638](https://github.com/redhat-developer/vscode-java/issues/638).
