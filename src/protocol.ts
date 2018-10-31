@@ -104,3 +104,20 @@ export namespace ExecuteClientCommandRequest {
 export namespace SendNotificationRequest {
     export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/notify');
 }
+
+export interface SourceAttachmentRequest {
+    classFileUri: string;
+    attributes?: SourceAttachmentAttribute;
+}
+
+export interface SourceAttachmentResult {
+    errorMessage?: string;
+    attributes?: SourceAttachmentAttribute;
+}
+
+export interface SourceAttachmentAttribute {
+    jarPath?: string;
+    sourceAttachmentPath?: string;
+    sourceAttachmentEncoding?: string;
+    canEditEncoding?: boolean;
+}

@@ -291,6 +291,11 @@
         "command": "java.clean.workspace",
         "title": "Clean the Java language server workspace",
         "category": "Java"
+      },
+      {
+        "command": "java.project.updateSourceAttachment",
+        "title": "Update Source Attachment",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -324,6 +329,11 @@
           "group": "1_javaactions"
         },
         {
+          "command": "java.project.updateSourceAttachment",
+          "when": "editorReadonly && editorLangId == java",
+          "group": "1_javaactions"
+        },
+        {
           "command": "java.projectConfiguration.update",
           "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
           "group": "1_javaactions"
@@ -333,6 +343,10 @@
         {
           "command": "java.edit.organizeImports",
           "when": "!editorReadonly && editorLangId == java"
+        },
+        {
+          "command": "java.project.updateSourceAttachment",
+          "when": "false == true"
         }
       ]
     }

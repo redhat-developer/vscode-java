@@ -3,19 +3,21 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation, StreamInfo } from 'vscode-languageclient';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter } from 'vscode';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest } from './protocol';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
+SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute } from './protocol';
 import { ExtensionAPI } from './extension.api';
 import * as net from 'net';
 
 let oldConfig;
 let lastStatus;
 let languageClient: LanguageClient;
+let jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
@@ -251,12 +253,55 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						});
 					});
 
+					commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT, async (classFileUri: Uri): Promise<boolean> => {
+						const resolveRequest: SourceAttachmentRequest = {
+							classFileUri: classFileUri.toString(),
+						};
+						const resolveResult: SourceAttachmentResult = await <SourceAttachmentResult>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.RESOLVE_SOURCE_ATTACHMENT, JSON.stringify(resolveRequest));
+						if (resolveResult.errorMessage) {
+							window.showErrorMessage(resolveResult.errorMessage);
+							return false;
+						}
+
+						const attributes: SourceAttachmentAttribute = resolveResult.attributes || {};
+						const defaultPath = attributes.sourceAttachmentPath || attributes.jarPath;
+						const sourceFileUris: Uri[] = await window.showOpenDialog({
+							defaultUri: defaultPath ? Uri.file(defaultPath) : null,
+							openLabel: "Select Source File",
+							canSelectFiles: true,
+							canSelectFolders: false,
+							canSelectMany: false,
+							filters: {
+								"Source files": ["jar", "zip"]
+							},
+						});
+
+						if (sourceFileUris && sourceFileUris.length) {
+							const updateRequest: SourceAttachmentRequest = {
+								classFileUri: classFileUri.toString(),
+								attributes: {
+									...attributes, 
+									sourceAttachmentPath: sourceFileUris[0].fsPath
+								},
+							};
+							const updateResult: SourceAttachmentResult = await <SourceAttachmentResult>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_SOURCE_ATTACHMENT, JSON.stringify(updateRequest));
+							if (updateResult.errorMessage) {
+								window.showErrorMessage(updateResult.errorMessage);
+								return false;
+							}
+
+							// Notify jdt content provider to rerender the classfile contents.
+							jdtEventEmitter.fire(classFileUri);
+							return true;
+						}
+					});
+
 					window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
 					});
 
 					let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
-						onDidChange: null,
+						onDidChange: jdtEventEmitter.event,
 						provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
 							return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
 								return v || '';

@@ -86,4 +86,12 @@ export namespace Commands {
      * Clean the Java language server workspace
      */
     export const CLEAN_WORKSPACE = 'java.clean.workspace';
+    /**
+     * Update the source attachment for the selected class file
+     */
+    export const UPDATE_SOURCE_ATTACHMENT = 'java.project.updateSourceAttachment';
+    /**
+     * Resolve the source attachment information for the selected class file
+     */
+    export const RESOLVE_SOURCE_ATTACHMENT = 'java.project.resolveSourceAttachment';
 }
