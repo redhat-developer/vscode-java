@@ -346,7 +346,7 @@
         },
         {
           "command": "java.project.updateSourceAttachment",
-          "when": "false == true"
+          "when": "false"
         }
       ]
     }
