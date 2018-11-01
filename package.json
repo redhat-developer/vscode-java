@@ -294,7 +294,7 @@
       },
       {
         "command": "java.project.updateSourceAttachment",
-        "title": "Update Source Attachment",
+        "title": "Attach Source",
         "category": "Java"
       }
     ],
