@@ -59,8 +59,6 @@ The following commands are available:
 - `Java:Force Java compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
 - `Java:Organize imports` (`Shift+Alt+O`): Organize imports in the currently opened Java file.
 - `Java:Open Java formatter settings`: Open the Eclipse formatter settings. Creates a new settings file if none exists.
-
-*New in 0.33.0:*
 - `Java:Clean the Java language server workspace`: Clean the Java language server workspace.
 
 *New in 0.34.0:*
