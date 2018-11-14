@@ -37,7 +37,8 @@ suite('Java Language Extension', () => {
 				Commands.COMPILE_WORKSPACE,
 				Commands.EDIT_ORGANIZE_IMPORTS,
 				Commands.OPEN_FORMATTER,
-				Commands.CLEAN_WORKSPACE
+				Commands.CLEAN_WORKSPACE,
+				Commands.UPDATE_SOURCE_ATTACHMENT
 			];
 			let foundJavaCommands = commands.filter(function(value){
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
