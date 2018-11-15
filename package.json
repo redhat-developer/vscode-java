@@ -146,7 +146,7 @@
         "java.configuration.maven.userSettings": {
           "type": "string",
           "default": null,
-          "description": "Absolute path to Maven's settings.xml",
+          "description": "Path to Maven's settings.xml",
           "scope": "window"
         },
         "java.format.enabled": {
