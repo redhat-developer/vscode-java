@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.34.0 (November 16th, 2018)
+* enhancement - add ability to attach missing sources. See [#837](https://github.com/redhat-developer/vscode-java/issues/233).
+* enhancement - adopt new CodeAction and CodeActionKind. See [JLS#800](https://github.com/eclipse/eclipse.jdt.ls/pull/800).
+* enhancement - resolve `~/` paths for `java.configuration.maven.userSettings`. See [JLS#848](https://github.com/eclipse/eclipse.jdt.ls/issues/848).
+* bug fix - fixed import failure when parent project is missing. See [#702](https://github.com/redhat-developer/vscode-java/issues/702).
+* bug fix - fixed NPE in Outline view when no source is attached. See [JLS#851](https://github.com/eclipse/eclipse.jdt.ls/pull/851).
+* bug fix - fixed detection of projects under linked folders. See [JLS#831](https://github.com/eclipse/eclipse.jdt.ls/pull/836).
+
 ## 0.33.0 (October 23rd, 2018)
 * enhancement - add new command to clean the server workspace. See [#655](https://github.com/redhat-developer/vscode-java/issues/655).
 * enhancement - add Mockito static imports by default. See [#679](https://github.com/redhat-developer/vscode-java/pull/679).
