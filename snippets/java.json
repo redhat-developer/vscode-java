@@ -181,5 +181,12 @@
 			"${1:Object} ${2:foo} = new ${1:Object}();"
 		],
 		"description": "Create new Object"
+	},
+	"Scanner": {
+		"prefix": "scanner",
+		"body": [
+			"Scanner $1var = new Scanner(System.in);"
+		],
+		"description": "Create a Scanner Object to read from keyboard"
 	}
 }
