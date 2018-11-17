@@ -185,7 +185,7 @@
 	"Scanner": {
 		"prefix": "scanner",
 		"body": [
-			"Scanner $1var = new Scanner(System.in);"
+			"Scanner ${1:var} = new Scanner(System.in);"
 		],
 		"description": "Create a Scanner Object to read from keyboard"
 	}
