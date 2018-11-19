@@ -278,11 +278,6 @@
         "category": "Java"
       },
       {
-        "command": "java.edit.organizeImports",
-        "title": "Organize Imports",
-        "category": "Java"
-      },
-      {
         "command": "java.open.formatter.settings",
         "title": "Open Java formatter settings",
         "category": "Java"
@@ -305,11 +300,6 @@
         "when": "editorFocus"
       },
       {
-        "command": "java.edit.organizeImports",
-        "key": "shift+alt+o",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == java"
-      },
-      {
         "command": "java.workspace.compile",
         "key": "shift+alt+b"
       }
@@ -324,11 +314,6 @@
       ],
       "editor/context": [
         {
-          "command": "java.edit.organizeImports",
-          "when": "editorLangId == java",
-          "group": "1_javaactions"
-        },
-        {
           "command": "java.project.updateSourceAttachment",
           "when": "editorReadonly && editorLangId == java",
           "group": "1_javaactions"
@@ -340,10 +325,6 @@
         }
       ],
       "commandPalette": [
-        {
-          "command": "java.edit.organizeImports",
-          "when": "!editorReadonly && editorLangId == java"
-        },
         {
           "command": "java.project.updateSourceAttachment",
           "when": "false"
