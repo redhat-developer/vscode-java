@@ -12,6 +12,7 @@ import { Commands } from './commands';
 import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
 SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute } from './protocol';
 import { ExtensionAPI } from './extension.api';
+import * as buildpath from './buildpath';
 import * as net from 'net';
 
 let oldConfig;
@@ -113,6 +114,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								item.text = '$(thumbsup)';
 								p.report({ message: 'Finished' });
 								lastStatus = item.text;
+								commands.executeCommand('setContext', 'javaLSReady', true);
 								resolve({
 									apiVersion: '0.1',
 									javaRequirement: requirements,
@@ -283,6 +285,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							return true;
 						}
 					});
+
+					buildpath.registerCommands();
 
 					window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);

@@ -90,4 +90,16 @@ export namespace Commands {
      * Resolve the source attachment information for the selected class file
      */
     export const RESOLVE_SOURCE_ATTACHMENT = 'java.project.resolveSourceAttachment';
+    /**
+     * Mark the folder as the source root of the closest project.
+     */
+    export const ADD_TO_SOURCEPATH = 'java.project.addToSourcePath';
+    /**
+     * Unmark the folder as the source root of the project.
+     */
+    export const REMOVE_FROM_SOURCEPATH = 'java.project.removeFromSourcePath';
+    /**
+     * List all recognized source roots in the workspace.
+     */
+    export const LIST_SOURCEPATHS = 'java.project.listSourcePaths';
 }
