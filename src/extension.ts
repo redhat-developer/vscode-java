@@ -212,16 +212,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						applyWorkspaceEdit(obj, languageClient);
 					});
 
-					commands.registerCommand(Commands.EDIT_ORGANIZE_IMPORTS, async () => {
-						let activeEditor = window.activeTextEditor;
-						if (!activeEditor || !activeEditor.document || activeEditor.document.languageId !== 'java') {
-							return;
-						}
-						if (activeEditor.document.uri instanceof Uri) {
-							await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.EDIT_ORGANIZE_IMPORTS, activeEditor.document.uri.toString());
-						}
-					});
-
 					commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
 						const params: ExecuteCommandParams = {
 							command,

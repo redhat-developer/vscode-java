@@ -75,10 +75,6 @@ export namespace Commands {
     export const OPEN_SERVER_LOG = 'java.open.serverLog';
 
     /**
-     * Organize Java file imports command from language server
-     */
-    export const EDIT_ORGANIZE_IMPORTS = 'java.edit.organizeImports';
-    /**
      * Open Java formatter settings
      */
     export const OPEN_FORMATTER = 'java.open.formatter.settings';

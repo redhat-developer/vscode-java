@@ -57,12 +57,13 @@ The following commands are available:
 - `Java:Update Project configuration` (`Shift+Alt+U`):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
 - `Java:Open Java Language Server log file`: opens the Java Language Server log file, useful for troubleshooting problems.
 - `Java:Force Java compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
-- `Java:Organize imports` (`Shift+Alt+O`): Organize imports in the currently opened Java file.
 - `Java:Open Java formatter settings`: Open the Eclipse formatter settings. Creates a new settings file if none exists.
 - `Java:Clean the Java language server workspace`: Clean the Java language server workspace.
-
-*New in 0.34.0:*
 - `Java:Attach Source`: Attach a jar/zip source to the currently opened binary class file. This command is only available in the editor context menu.
+
+*Changes in 0.35.0:*
+- `Java:Organize imports` command has been removed from the editor context menu. It is now a code action item of the standard context menu `Source Action...`. Its default shortcut (`Shift+Alt+O`) is unchanged. See this [link](https://code.visualstudio.com/docs/editor/refactoring#_keybindings-for-code-actions) about how to customize keybindings for code actions.
+
 
 Supported VS Code settings
 ==========================
