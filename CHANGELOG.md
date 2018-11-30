@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.35.0 (November 30th, 2018)
+* enhancement - `Organize imports` moved to `Source Action...` menu. See [#513](https://github.com/redhat-developer/vscode-java/issues/513).
+* enhancement - rename refactoring now supports file operations (rename/move file). See [JLS#43](https://github.com/eclipse/eclipse.jdt.ls/issues/43).
+* bug fix - fixed broken import autocompletion. See [JLS#591](https://github.com/eclipse/eclipse.jdt.ls/issues/591).
+* bug fix - fixed diagnostics not being reset after closing a file. See [JLS#867](https://github.com/eclipse/eclipse.jdt.ls/issues/867).
+
 ## 0.34.0 (November 16th, 2018)
 * enhancement - add ability to attach missing sources. See [#837](https://github.com/redhat-developer/vscode-java/issues/233).
 * enhancement - adopt new CodeAction and CodeActionKind. See [JLS#800](https://github.com/eclipse/eclipse.jdt.ls/pull/800).
