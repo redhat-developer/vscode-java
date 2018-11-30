@@ -88,11 +88,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					if (!lsPort) {
 						serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
 					} else {
-						let connectionInfo = {
-							port: lsPort
-						};
 						serverOptions = () => {
-							let socket = net.connect(connectionInfo);
+							let socket = net.connect(lsPort);
 							let result: StreamInfo = {
 								writer: socket,
 								reader: socket
@@ -270,7 +267,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							const updateRequest: SourceAttachmentRequest = {
 								classFileUri: classFileUri.toString(),
 								attributes: {
-									...attributes, 
+									...attributes,
 									sourceAttachmentPath: sourceFileUris[0].fsPath
 								},
 							};
