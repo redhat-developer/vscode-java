@@ -70,7 +70,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						extendedClientCapabilities:{
 							progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 							classFileContentsSupport:true
-						}
+						},
+						triggerFiles: getTriggerFiles()
 					},
 					revealOutputChannelOn: RevealOutputChannelOn.Never
 				};
@@ -689,4 +690,56 @@ async function executeRangeFormat(editor, startPosition, lineOffset) {
 	let endPosition = editor.document.positionAt(editor.document.offsetAt(new Position(startPosition.line + lineOffset + 1, 0)) - 1);
 	editor.selection = new Selection(startPosition, endPosition);
 	await commands.executeCommand('editor.action.formatSelection');
+}
+
+function getTriggerFiles(): string[] {
+	const openedJavaFiles = [];
+	const activeJavaFile = getJavaFilePathOfTextEditor(window.activeTextEditor);
+	if (activeJavaFile) {
+		openedJavaFiles.push(Uri.file(activeJavaFile).toString());
+	}
+
+	if (!workspace.workspaceFolders) {
+		return openedJavaFiles;
+	}
+
+	for (const rootFolder of workspace.workspaceFolders) {
+		if (rootFolder.uri.scheme !== "file") {
+			continue;
+		}
+
+		const rootPath = path.normalize(rootFolder.uri.fsPath);
+		if (isPrefix(rootPath, activeJavaFile)) {
+			continue;
+		}
+
+		for (const textEditor of window.visibleTextEditors) {
+			const javaFileInTextEditor = getJavaFilePathOfTextEditor(textEditor);
+			if (isPrefix(rootPath, javaFileInTextEditor)) {
+				openedJavaFiles.push(Uri.file(javaFileInTextEditor).toString());
+				break;
+			}
+		}
+	}
+
+	return openedJavaFiles;
+}
+
+function getJavaFilePathOfTextEditor(editor: TextEditor): string | undefined {
+	if (editor) {
+		const resource = editor.document.uri;
+		if (resource.scheme === "file" && resource.fsPath.endsWith(".java")) {
+			return path.normalize(resource.fsPath);
+		}
+	}
+
+	return undefined;
+}
+
+function isPrefix(parentPath: string, childPath: string): boolean {
+	if (!childPath) {
+		return false;
+	}
+	const relative = path.relative(parentPath, childPath);
+	return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
 }
