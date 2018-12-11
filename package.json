@@ -184,6 +184,13 @@
           "description": "Enable/disable the 'auto build'",
           "scope": "window"
         },
+        "java.maxConcurrentBuilds": {
+          "type": "integer",
+          "default": 1,
+          "description": "Max simultaneous project builds",
+          "scope": "window",
+          "minimum": 1
+        },
         "java.completion.enabled": {
           "type": "boolean",
           "default": true,

@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.36.0 (TBD)
+* enhancement - new `java.maxConcurrentBuilds` preference to set max simultaneous project builds. See [#741](https://github.com/redhat-developer/vscode-java/pull/741).
+
 ## 0.35.0 (November 30th, 2018)
 * enhancement - `Organize imports` moved to `Source Action...` menu. See [#513](https://github.com/redhat-developer/vscode-java/issues/513).
 * enhancement - rename refactoring now supports file operations (rename/move file). See [JLS#43](https://github.com/eclipse/eclipse.jdt.ls/issues/43).
