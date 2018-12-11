@@ -61,10 +61,6 @@ The following commands are available:
 - `Java:Clean the Java language server workspace`: Clean the Java language server workspace.
 - `Java:Attach Source`: Attach a jar/zip source to the currently opened binary class file. This command is only available in the editor context menu.
 
-*Changes in 0.35.0:*
-- `Java:Organize imports` command has been removed from the editor context menu. It is now a code action item of the standard context menu `Source Action...`. Its default shortcut (`Shift+Alt+O`) is unchanged. See this [link](https://code.visualstudio.com/docs/editor/refactoring#_keybindings-for-code-actions) about how to customize keybindings for code actions.
-
-
 Supported VS Code settings
 ==========================
 The following settings are supported:
@@ -94,6 +90,10 @@ The following settings are supported:
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
+
+*New in 0.36.0:*
+* `java.maxConcurrentBuilds`: Set max simultaneous project builds.
+
 
 Troubleshooting
 ===============
