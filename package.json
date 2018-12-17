@@ -298,6 +298,21 @@
         "command": "java.project.updateSourceAttachment",
         "title": "Attach Source",
         "category": "Java"
+      },
+      {
+        "command": "java.project.addToSourcePath",
+        "title": "Add Folder to Java Source Path",
+        "category": "Java"
+      },
+      {
+        "command": "java.project.removeFromSourcePath",
+        "title": "Remove Folder from Java Source Path",
+        "category": "Java"
+      },
+      {
+        "command": "java.project.listSourcePaths",
+        "title": "List all Java source paths",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -317,6 +332,16 @@
           "command": "java.projectConfiguration.update",
           "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
           "group": "1_javaactions"
+        },
+        {
+          "when": "explorerResourceIsFolder&&javaLSReady",
+          "command": "java.project.addToSourcePath",
+          "group": "1_javaactions@1"
+        },
+        {
+          "when": "explorerResourceIsFolder&&javaLSReady",
+          "command": "java.project.removeFromSourcePath",
+          "group": "1_javaactions@2"
         }
       ],
       "editor/context": [
@@ -334,6 +359,14 @@
       "commandPalette": [
         {
           "command": "java.project.updateSourceAttachment",
+          "when": "false"
+        },
+        {
+          "command": "java.project.addToSourcePath",
+          "when": "false"
+        },
+        {
+          "command": "java.project.removeFromSourcePath",
           "when": "false"
         }
       ]
