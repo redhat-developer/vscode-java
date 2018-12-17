@@ -7,3 +7,4 @@ node_modules
 undefined
 target
 dist
+bin/
