@@ -1,7 +1,16 @@
 # Change Log
 
-## 0.36.0 (TBD)
+## 0.36.0 (December 18th, 2018)
+* enhancement - reworked standalone files support. Now maps root folders to an invisible project under the hood. See [#508](https://github.com/redhat-developer/vscode-java/issues/508), [#620](https://github.com/redhat-developer/vscode-java/issues/620), [#739](https://github.com/redhat-developer/vscode-java/issues/739).
+* enhancement - added commands to add/remove/list source folders of Eclipse projects. See [#619](https://github.com/redhat-developer/vscode-java/issues/619).
+* enhancement - mapped `extract` refactorings to new code action kinds (helps with key mapping). See [#714](https://github.com/redhat-developer/vscode-java/issues/714).
 * enhancement - new `java.maxConcurrentBuilds` preference to set max simultaneous project builds. See [#741](https://github.com/redhat-developer/vscode-java/pull/741).
+* enhancement - source action to generate Getters/Setters for all fields. See [JLS#163](https://github.com/eclipse/eclipse.jdt.ls/issues/163).
+* bug fix - fixed project reference when navigating to JDK classes. See [JLS#842](https://github.com/eclipse/eclipse.jdt.ls/issues/842).
+* bug fix - fixed potential NPE on hover. See [#723](https://github.com/redhat-developer/vscode-java/issues/723).
+* bug fix - don't display unnecessary code actions. See [JLS#894](https://github.com/eclipse/eclipse.jdt.ls/issues/894).
+* build - removed Guava 15 from the distribution, saving 2MB. See [JLS#484](https://github.com/eclipse/eclipse.jdt.ls/issues/484).
+* build - migrated to Buildship 3.0. See [JLS#875](https://github.com/eclipse/eclipse.jdt.ls/issues/875).
 
 ## 0.35.0 (November 30th, 2018)
 * enhancement - `Organize imports` moved to `Source Action...` menu. See [#513](https://github.com/redhat-developer/vscode-java/issues/513).
