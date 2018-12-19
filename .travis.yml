@@ -24,6 +24,7 @@ install:
 - tar -xvzf jdt-language-server-latest.tar.gz -C ./server
 - rm jdt-language-server-latest.tar.gz
 - npm install
+- npm run compile
 - npm run vscode:prepublish
 - npm install -g vsce
 - vsce package

@@ -1,8 +1,8 @@
 {
+	"defaultSeverity": "error",
 	"rules": {
 		"no-unused-expression": true,
 		"no-duplicate-variable": true,
-		"no-unused-variable": true,
 		"curly": true,
 		"class-name": true,
 		"semicolon": true,
@@ -16,7 +16,6 @@
 		"no-duplicate-imports": true,
 		"deprecation":true,
 		"no-unsafe-any":true,
-		"no-string-throw":true,
-		"no-require-imports": true
+		"no-string-throw":true
 	}
 }

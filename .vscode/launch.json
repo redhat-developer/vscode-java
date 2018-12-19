@@ -10,7 +10,7 @@
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": [ "${workspaceRoot}/out/src/**" ],
+			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"preLaunchTask": "npm: watch"
 		},
 		{
@@ -21,7 +21,7 @@
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": [ "${workspaceRoot}/out/src/**" ],
+			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
 				"SERVER_PORT": "3333"
 			},
@@ -35,7 +35,7 @@
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			"outFiles": [ "${workspaceRoot}/out/src/**" ],
+			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
 				"JDTLS_CLIENT_PORT": "5036"
 			},
@@ -50,7 +50,7 @@
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/out/test/**"],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: compile"
 		}
 	]
 }

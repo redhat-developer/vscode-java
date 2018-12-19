@@ -23,7 +23,7 @@ export function registerCommands() {
     commands.registerCommand(Commands.ADD_TO_SOURCEPATH, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.ADD_TO_SOURCEPATH, uri.toString());
         if (result.status) {
-            window.showInformationMessage(result.message ? result.message : "Successfully added the folder to the source path.");
+            window.showInformationMessage(result.message ? result.message : 'Successfully added the folder to the source path.');
         } else {
             window.showErrorMessage(result.message);
         }
@@ -32,7 +32,7 @@ export function registerCommands() {
     commands.registerCommand(Commands.REMOVE_FROM_SOURCEPATH, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.REMOVE_FROM_SOURCEPATH, uri.toString());
         if (result.status) {
-            window.showInformationMessage(result.message ? result.message : "Successfully removed the folder from the source path.");
+            window.showInformationMessage(result.message ? result.message : 'Successfully removed the folder from the source path.');
         } else {
             window.showErrorMessage(result.message);
         }
@@ -49,7 +49,7 @@ export function registerCommands() {
                         label: sourcePath.displayPath,
                         detail: `$(file-directory) ${sourcePath.projectType} Project: ${sourcePath.projectName}`, 
                     };
-                }), { placeHolder: "All Java source directories recognized by the workspace."});
+                }), { placeHolder: 'All Java source directories recognized by the workspace.'});
             }
         } else {
             window.showErrorMessage(result.message);

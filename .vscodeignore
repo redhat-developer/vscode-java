@@ -1,6 +1,6 @@
 .vscode/**
 typings/**
-out/test/**
+out/**
 test/**
 src/**
 images/**
@@ -14,3 +14,11 @@ CONTRIBUTING.md
 .vscode-test/**
 **/**.vsix
 **/**.tar.gz
+dist/**/*.map
+webpack.*.json
+node_modules
+.editorconfig
+.travis.yml
+gulpfile.jsonJenkinsfile
+tslint.json
+webpack.config.js
