@@ -375,7 +375,7 @@
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
     "compile": "tsc -p ./",
-    "watch": "webpack --mode development --waatch --info-verbosity verbose",
+    "watch": "webpack --mode development --watch --info-verbosity verbose",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "node ./node_modules/vscode/bin/test",
     "build-server": "./node_modules/.bin/gulp build_server",

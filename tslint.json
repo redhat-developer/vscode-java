@@ -16,6 +16,7 @@
 		"no-duplicate-imports": true,
 		"deprecation":true,
 		"no-unsafe-any":true,
-		"no-string-throw":true
+		"no-string-throw":true,
+		"no-require-imports": true
 	}
 }
