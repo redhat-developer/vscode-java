@@ -59,7 +59,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 
 	let vmargs = javaConfiguration.get('jdt.ls.vmargs', '');
 	parseVMargs(params, vmargs);
-	let server_home: string = path.resolve(__dirname, '../../server');
+	let server_home: string = path.resolve(__dirname, '../server');
 	let launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: server_home });
 	if (launchersFound.length) {
 		params.push('-jar'); params.push(path.resolve(server_home, launchersFound[0]));
@@ -74,7 +74,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	} else if (process.platform === 'linux') {
 		configDir = 'config_linux';
 	}
-	params.push('-configuration'); params.push(path.resolve(__dirname, '../../server', configDir));
+	params.push('-configuration'); params.push(path.resolve(__dirname, '../server', configDir));
 	params.push('-data'); params.push(workspacePath);
 	return params;
 }

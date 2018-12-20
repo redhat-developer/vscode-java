@@ -257,12 +257,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						const defaultPath = attributes.sourceAttachmentPath || attributes.jarPath;
 						const sourceFileUris: Uri[] = await window.showOpenDialog({
 							defaultUri: defaultPath ? Uri.file(defaultPath) : null,
-							openLabel: "Select Source File",
+							openLabel: 'Select Source File',
 							canSelectFiles: true,
 							canSelectFolders: false,
 							canSelectMany: false,
 							filters: {
-								"Source files": ["jar", "zip"]
+								'Source files': ['jar', 'zip']
 							},
 						});
 
@@ -708,7 +708,7 @@ function getTriggerFiles(): string[] {
 	}
 
 	for (const rootFolder of workspace.workspaceFolders) {
-		if (rootFolder.uri.scheme !== "file") {
+		if (rootFolder.uri.scheme !== 'file') {
 			continue;
 		}
 
@@ -732,7 +732,7 @@ function getTriggerFiles(): string[] {
 function getJavaFilePathOfTextEditor(editor: TextEditor): string | undefined {
 	if (editor) {
 		const resource = editor.document.uri;
-		if (resource.scheme === "file" && resource.fsPath.endsWith(".java")) {
+		if (resource.scheme === 'file' && resource.fsPath.endsWith('.java')) {
 			return path.normalize(resource.fsPath);
 		}
 	}
