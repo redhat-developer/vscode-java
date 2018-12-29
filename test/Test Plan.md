@@ -29,26 +29,26 @@
 
 ## Maven
  1. Open .\resources\maven\salut. After the language server is initialized, check the status bar icon is :thumbsup:, and the problems views has several warnings but without errors.
- 2. Editing experience is correctly working including diagnostics, code ompletion and code actions.
+ 2. Editing experience is correctly working including diagnostics, code completion and code actions.
 
 ## Maven - Multimodule
 1. Open .\resources\maven\multimodule. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no errors/warning in the problems view.
 2. Open Foo.java file, make sure the editing experience is correctly working including diagnostics, code completion and code action on both modules.
 	- module1\Foo.java
-	- module1\Foo.java
+	- module2\Foo.java
 
 ## Gradle
- 1. Open .\resources\maven\simple-gradle. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no erros/problems in the problems view.
+ 1. Open .\resources\gradle\simple-gradle. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no errors/problems in the problems view.
  2. Open Foo.java file, make sure the editing experience is correctly working including diagnostics, code completion and code action
 
 ## Maven - Java 11
 1. Install JDK  11, and change the VSCode java.home to the JDK 11 path.
-2. Open .\resources\maven\salut-java11. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no erros/problems in the problems view.
+2. Open .\resources\maven\salut-java11. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no errors/problems in the problems view.
 3. Open Bar.java, make sure the editing experience is correctly working including diagnostics, code completion and code action
 
 ## Gradle - Java 11
 1. Install JDK  11.
-2. Open .\resources\maven\salut-java11. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no erros/problems in the problems view.
+2. Open .\resources\gradle\gradle-11. After the language server is initialized, check the status bar icon is :thumbsup:, and there should be no errors/problems in the problems view.
 2. Open Foo.java file, make sure the editing experience is correctly working including diagnostics, code completion and code action.
 
 ## Single file

@@ -13,7 +13,7 @@ public class Foo {
     }
 
     public static void main(String[] args) {
-        Bar bar = (var i, var j) -> System.out.println(i.bar() + j.toString());
+        Bar bar = (Foo i, Bar j) -> System.out.println(i.bar() + j.toString());
         System.out.print(bar);
     }
 
