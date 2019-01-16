@@ -33,6 +33,7 @@ node('rhel7'){
 	buildVscodeExtension()
 	unstash 'server_distro'
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
+	sh "rm -rf ./out"
 	sh "mkdir ./server"
 	sh "tar -xvzf ${files[0].path} -C ./server"
 
