@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.37.0 (January 16th, 2018)
+* enhancement - improve extension loading time by using webpack. See [#732](https://github.com/redhat-developer/vscode-java/issues/732).
+* bug fix - fixed annotation processing for Micronaut projects. See [#693](https://github.com/redhat-developer/vscode-java/issues/693).
+* bug fix - fixed regression with "Add parentheses around cast" code action. See [JLS#907](https://github.com/eclipse/eclipse.jdt.ls/issues/907).
+* bug fix - ignore circular links during project import. See [JLS#911](https://github.com/eclipse/eclipse.jdt.ls/pull/911).
+* documentation - Changing "JDK 8" to just "JDK" in README.md. See [#763](https://github.com/redhat-developer/vscode-java/pull/763).
+* build - adopt test plan. See [#748](https://github.com/redhat-developer/vscode-java/pull/748).
+
+
 ## 0.36.0 (December 18th, 2018)
 * enhancement - reworked standalone files support. Now maps root folders to an invisible project under the hood. See [#508](https://github.com/redhat-developer/vscode-java/issues/508), [#620](https://github.com/redhat-developer/vscode-java/issues/620), [#739](https://github.com/redhat-developer/vscode-java/issues/739).
 * enhancement - added commands to add/remove/list source folders of Eclipse projects. See [#619](https://github.com/redhat-developer/vscode-java/issues/619).
