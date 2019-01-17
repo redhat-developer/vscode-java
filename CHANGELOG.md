@@ -2,7 +2,7 @@
 
 ## 0.38.0 (TBD)
 
-## 0.37.0 (January 17th, 2018)
+## 0.37.0 (January 17th, 2019)
 * enhancement - improve extension loading time by using webpack. See [#732](https://github.com/redhat-developer/vscode-java/issues/732).
 * bug fix - fixed annotation processing for Micronaut projects. See [#693](https://github.com/redhat-developer/vscode-java/issues/693).
 * bug fix - fixed regression with "Add parentheses around cast" code action. See [JLS#907](https://github.com/eclipse/eclipse.jdt.ls/issues/907).
