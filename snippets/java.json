@@ -3,7 +3,7 @@
 		"prefix": "main",
 		"body": [
 			"public static void main(String[] args) {",
-			"\t$1",
+			"\t$0",
 			"}"
 		],
 		"description": "Public static main method"
@@ -11,14 +11,14 @@
 	"sysout": {
 		"prefix": "sysout",
 		"body": [
-			"System.out.println($1);"
+			"System.out.println($0);"
 		],
 		"description": "Print to standard out"
 	},
 	"syserr": {
 		"prefix": "syserr",
 		"body": [
-			"System.err.println($1);"
+			"System.err.println($0);"
 		],
 		"description": "Print to standard err"
 	},
@@ -26,7 +26,7 @@
 		"prefix": "fori",
 		"body": [
 			"for (${1:int} ${2:i} = ${3:0}; $2 < ${4:max}; $2++) {",
-			"\t$5",
+			"\t$0",
 			"}"
 		],
 		"description": "Indexed for loop"
@@ -35,7 +35,7 @@
 		"prefix": "foreach",
 		"body": [
 			"for (${1:type} ${2:var} : ${3:iterable}) {",
-			"\t$4",
+			"\t$0",
 			"}"
 		],
 		"description": "Enhanced for loop"
@@ -64,7 +64,7 @@
 			"if (${1:condition}) {",
 			"\t$2",
 			"} else {",
-			"\t$3",
+			"\t$0",
 			"}"
 		],
 		"description": "if/else statement"
@@ -73,7 +73,7 @@
 		"prefix": "ifnull",
 		"body": [
 			"if (${1:condition} == null) {",
-			"\t$2",
+			"\t$0",
 			"}"
 		],
 		"description": "if statement checking for null"
@@ -82,7 +82,7 @@
 		"prefix": "ifnotnull",
 		"body": [
 			"if (${1:condition} != null) {",
-			"\t$2",
+			"\t$0",
 			"}"
 		],
 		"description": "if statement checking for not null"
@@ -93,7 +93,7 @@
 			"try {",
 			"\t$1",
 			"} catch (${2:Exception} ${3:e}) {",
-			"\t$4//${5:TODO}: handle exception",
+			"\t$4//${0:TODO}: handle exception",
 			"}"
 		],
 		"description": "try/catch block"
@@ -102,7 +102,7 @@
 		"prefix": "private_method",
 		"body": [
 			"private ${1:void} ${2:name}($3) {",
-			"\t$4",
+			"\t$0",
 			"}"
 		],
 		"description": "private method"
@@ -111,7 +111,7 @@
 		"prefix": "public_method",
 		"body": [
 			"public ${1:void} ${2:name}(${3}) {",
-			"\t$4",
+			"\t$0",
 			"}"
 		],
 		"description": "public method"
@@ -120,7 +120,7 @@
 		"prefix": "private_static_method",
 		"body": [
 			"private static ${1:Type} ${2:name}(${3}) {",
-			"\t$4",
+			"\t$0",
 			"}"
 		],
 		"description": "private static method"
@@ -129,7 +129,7 @@
 		"prefix": "public_static_method",
 		"body": [
 			"public static ${1:void} ${2:name}(${3}) {",
-			"\t$4",
+			"\t$0",
 			"}"
 		],
 		"description": "public static method"
@@ -138,7 +138,7 @@
 		"prefix": "protected_method",
 		"body": [
 			"protected ${1:void} ${2:name}(${3}) {",
-			"\t$4",
+			"\t$0",
 			"}"
 		],
 		"description": "Protected method"
@@ -178,7 +178,7 @@
 	"newObject": {
 		"prefix": "new",
 		"body": [
-			"${1:Object} ${2:foo} = new ${1:Object}();"
+			"${0:Object} ${1:foo} = new ${0:Object}();"
 		],
 		"description": "Create new Object"
 	}
