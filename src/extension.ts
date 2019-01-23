@@ -58,6 +58,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							workspace.createFileSystemWatcher('**/*.java'),
 							workspace.createFileSystemWatcher('**/pom.xml'),
 							workspace.createFileSystemWatcher('**/*.gradle'),
+							workspace.createFileSystemWatcher('**/gradle.properties'),
 							workspace.createFileSystemWatcher('**/.project'),
 							workspace.createFileSystemWatcher('**/.classpath'),
 							workspace.createFileSystemWatcher('**/settings/*.prefs'),
