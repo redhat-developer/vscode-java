@@ -4,12 +4,12 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier } from 'vscode-languageclient';
 import { collectionJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
 SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute } from './protocol';
 import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
@@ -125,7 +125,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								item.text = '$(thumbsdown)';
 								lastStatus = item.text;
 								p.report({ message: 'Finished with Error' });
-								item.tooltip = report.message;
 								toggleItem(window.activeTextEditor, item);
 								resolve({
 									apiVersion: '0.1',
@@ -134,7 +133,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								break;
 							case 'Starting':
 								p.report({ message: report.message });
-								item.tooltip = report.message;
 								break;
 							case 'Message':
 								item.text = report.message;
