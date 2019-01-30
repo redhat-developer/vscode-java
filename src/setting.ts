@@ -1,17 +1,20 @@
 'use strict';
 
-import { window, Uri, workspace, WorkspaceConfiguration, commands } from 'vscode';
+import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
 
 
-const DEFAULT_HIIDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings'];
+const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings'];
 
-let oldConfig = getJavaConfiguration();
+let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 
 export function onConfigurationChange() {
 	return workspace.onDidChangeConfiguration(params => {
+		if (!params.affectsConfiguration('java')) {
+			return;
+		}
 		let newConfig = getJavaConfiguration();
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
 			let msg = 'Java Language Server configuration changed, please restart VS Code.';
@@ -27,22 +30,35 @@ export function onConfigurationChange() {
 	});
 }
 
-export function excludeProjectSettingFiles(workspaceUri: Uri) {
-	if (getJavaConfiguration().get<Boolean>('configuration.excludeProjectSettingFiles')) {
+export function excludeProjectSettingsFiles(workspaceUri: Uri) {
+	const excudedConfig = getJavaConfiguration().get('configuration.excludeProjectSettingsFiles');
+	if (excudedConfig) {
 		const config = workspace.getConfiguration('files', workspaceUri);
-		const excludeValue: Object = config.get('exclude');
+		const excludedValue: Object = config.get('exclude');
+		const needExcludeFiles: Object = {};
 
-		for (const hiddenFiles of DEFAULT_HIIDEN_FILES) {
-			if (!excludeValue.hasOwnProperty(hiddenFiles)) {
-				excludeValue[hiddenFiles] = true;
+		let needUpdate = false;
+		for (const hiddenFiles of DEFAULT_HIDDEN_FILES) {
+			if (!excludedValue.hasOwnProperty(hiddenFiles)) {
+				needExcludeFiles[hiddenFiles] = true;
+				needUpdate = true;
 			}
-
 		}
-		config.update('exclude', excludeValue);
+		if (needUpdate) {
+			window.showInformationMessage('Do you want to exclude the VSCode Java project settings files(.classpath, .project. .settings) from the file explorer.', 'Always', 'Workspace', 'Never').then((result) => {
+				if (result === 'Always') {
+					config.update('exclude', needExcludeFiles, ConfigurationTarget.Global);
+				} if (result === 'Workspace') {
+					config.update('exclude', needExcludeFiles, ConfigurationTarget.Workspace);
+				} else if (result === 'Never') {
+					getJavaConfiguration().update('configuration.excludeProjectSettingsFiles', false, ConfigurationTarget.Global);
+				}
+			});
+		}
 	}
 }
 
-function hasJavaConfigChanged(oldConfig, newConfig) {
+function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: WorkspaceConfiguration) {
 	return hasConfigKeyChanged('home', oldConfig, newConfig)
 		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
 		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig);

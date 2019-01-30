@@ -80,6 +80,7 @@ The following settings are supported:
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
 * `java.import.maven.enabled` : Enable/disable the Maven importer.
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
+* `java.maxConcurrentBuilds`: Set max simultaneous project builds.
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
 * `java.completion.importOrder` : Defines the sorting order of import statements.
 * `java.progressReports.enabled` : [Experimental] Enable/disable progress reports from background processes on the server.
@@ -91,8 +92,8 @@ The following settings are supported:
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
 
-*New in 0.36.0:*
-* `java.maxConcurrentBuilds`: Set max simultaneous project builds.
+*New in 0.38.0:*
+* `java.configuration.excludeProjectSettingsFiles`: Exclude the extension generated project setting files(.classpath, .project, .settings) from the file explorer. When set to false, it will not revert the changes made on the setting.json file(s).
 
 
 Troubleshooting

@@ -15,7 +15,7 @@ import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import {  onConfigurationChange, excludeProjectSettingFiles } from './setting';
+import { onConfigurationChange, excludeProjectSettingsFiles } from './setting';
 
 let lastStatus;
 let languageClient: LanguageClient;
@@ -303,7 +303,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					workspace.registerTextDocumentContentProvider('jdt', provider);
 					if (workspace.workspaceFolders) {
 						workspace.workspaceFolders.map((folder) => {
-							excludeProjectSettingFiles(folder.uri);
+							excludeProjectSettingsFiles(folder.uri);
 						});
 					}
 				});
