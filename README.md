@@ -93,7 +93,7 @@ The following settings are supported:
 * `java.completion.enabled` : Enable/disable code completion support.
 
 *New in 0.38.0:*
-* `java.configuration.excludeProjectSettingsFiles`: Exclude the extension generated project setting files(.classpath, .project, .settings) from the file explorer. When set to false, it will not revert the changes made on the setting.json file(s).
+* `java.configuration.excludeProjectSettingsFiles`: Exclude the extension generated project setting files(.classpath, .project, .settings, .factorypath) from the file explorer. When set to false, it will not revert the changes made on the setting.json file(s).
 
 
 Troubleshooting

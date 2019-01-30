@@ -15,7 +15,7 @@ import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles } from './setting';
+import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 
 let lastStatus;
 let languageClient: LanguageClient;

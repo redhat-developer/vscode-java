@@ -6,7 +6,7 @@ import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
 
 
-const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings'];
+const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 
@@ -45,7 +45,7 @@ export function excludeProjectSettingsFiles(workspaceUri: Uri) {
 			}
 		}
 		if (needUpdate) {
-			window.showInformationMessage('Do you want to exclude the VSCode Java project settings files(.classpath, .project. .settings) from the file explorer.', 'Always', 'Workspace', 'Never').then((result) => {
+			window.showInformationMessage('Do you want to exclude the VSCode Java project settings files(.classpath, .project. .settings, .factorypath) from the file explorer.', 'Always', 'Workspace', 'Never').then((result) => {
 				if (result === 'Always') {
 					config.update('exclude', needExcludeFiles, ConfigurationTarget.Global);
 				} if (result === 'Workspace') {
