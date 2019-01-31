@@ -1,6 +1,7 @@
 # Change Log
 
-## 0.38.0 (January 30th, 2019)
+## 0.38.0 (January 31st, 2019)
+* enhancement - new dialog asking to hide java project settings files on startup. See [#776](https://github.com/redhat-developer/vscode-java/pull/776).
 * bug fix - pick up gradle properties updates when doing full build. See [#758](https://github.com/redhat-developer/vscode-java/issues/758).
 * bug fix - fixed inactive autocompletion after inserting a snippet in some cases. See [#768](https://github.com/redhat-developer/vscode-java/issues/768).
 

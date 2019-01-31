@@ -8,6 +8,14 @@ import { getJavaConfiguration } from './utils';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 
+const changeItem = {
+	global: 'Exclude globally',
+	workspace: 'Exclude in workspace',
+	never: 'Never'
+};
+
+const EXCLUDE_FILE_CONFIG = 'configuration.checkProjectSettingsExclusions';
+
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 
 export function onConfigurationChange() {
@@ -16,6 +24,9 @@ export function onConfigurationChange() {
 			return;
 		}
 		let newConfig = getJavaConfiguration();
+		if (newConfig.get(EXCLUDE_FILE_CONFIG)) {
+			excludeProjectSettingsFiles();
+		}
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
 			let msg = 'Java Language Server configuration changed, please restart VS Code.';
 			let action = 'Restart Now';
@@ -30,28 +41,52 @@ export function onConfigurationChange() {
 	});
 }
 
-export function excludeProjectSettingsFiles(workspaceUri: Uri) {
-	const excudedConfig = getJavaConfiguration().get('configuration.excludeProjectSettingsFiles');
+export function excludeProjectSettingsFiles() {
+	if (workspace.workspaceFolders && workspace.workspaceFolders.length) {
+		workspace.workspaceFolders.forEach((folder) => {
+			excludeProjectSettingsFilesForWorkspace(folder.uri);
+		});
+	}
+}
+
+function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
+	const excudedConfig = getJavaConfiguration().get(EXCLUDE_FILE_CONFIG);
 	if (excudedConfig) {
 		const config = workspace.getConfiguration('files', workspaceUri);
 		const excludedValue: Object = config.get('exclude');
-		const needExcludeFiles: Object = {};
+		const needExcludeFiles: string[] = [];
 
 		let needUpdate = false;
-		for (const hiddenFiles of DEFAULT_HIDDEN_FILES) {
-			if (!excludedValue.hasOwnProperty(hiddenFiles)) {
-				needExcludeFiles[hiddenFiles] = true;
+		for (const hiddenFile of DEFAULT_HIDDEN_FILES) {
+			if (!excludedValue.hasOwnProperty(hiddenFile)) {
+				needExcludeFiles.push(hiddenFile);
 				needUpdate = true;
 			}
 		}
 		if (needUpdate) {
-			window.showInformationMessage('Do you want to exclude the VSCode Java project settings files(.classpath, .project. .settings, .factorypath) from the file explorer.', 'Always', 'Workspace', 'Never').then((result) => {
-				if (result === 'Always') {
-					config.update('exclude', needExcludeFiles, ConfigurationTarget.Global);
-				} if (result === 'Workspace') {
-					config.update('exclude', needExcludeFiles, ConfigurationTarget.Workspace);
-				} else if (result === 'Never') {
-					getJavaConfiguration().update('configuration.excludeProjectSettingsFiles', false, ConfigurationTarget.Global);
+			const excludedInspectedValue = config.inspect('exclude');
+			const items = [changeItem.workspace, changeItem.never];
+			// Workspace file.exclude is undefined
+			if (!excludedInspectedValue.workspaceValue) {
+				items.unshift(changeItem.global);
+			}
+
+			window.showInformationMessage('Do you want to exclude the VS Code Java project settings files (.classpath, .project. .settings, .factorypath) from the file explorer?', ...items).then((result) => {
+				if (result === changeItem.global) {
+					excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
+					for (const hiddenFile of needExcludeFiles) {
+						excludedInspectedValue.globalValue[hiddenFile] = true;
+					}
+					config.update('exclude', excludedInspectedValue.globalValue, ConfigurationTarget.Global);
+				} if (result === changeItem.workspace) {
+					excludedInspectedValue.workspaceValue = excludedInspectedValue.workspaceValue || {};
+					for (const hiddenFile of needExcludeFiles) {
+						excludedInspectedValue.workspaceValue[hiddenFile] = true;
+					}
+					config.update('exclude', excludedInspectedValue.workspaceValue, ConfigurationTarget.Workspace);
+				} else if (result === changeItem.never) {
+					const storeInWorkspace = getJavaConfiguration().inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
+					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace?ConfigurationTarget.Workspace:ConfigurationTarget.Global);
 				}
 			});
 		}

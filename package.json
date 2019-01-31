@@ -89,10 +89,10 @@
           "description": "Specifies the severity of the message when the classpath is incomplete for a Java file",
           "scope": "window"
         },
-        "java.configuration.excludeProjectSettingsFiles": {
+        "java.configuration.checkProjectSettingsExclusions": {
           "type": "boolean",
           "default": true,
-          "description": "Exclude the extension generated project setting files from the file explorer. When set false, it will not revert the changes made on the setting.json file(s).",
+          "description": "Checks if the extension-generated project settings files (.project, .classpath, .factorypath, .settings/) should be excluded from the file explorer.",
           "scope": "window"
         },
         "java.configuration.updateBuildConfiguration": {

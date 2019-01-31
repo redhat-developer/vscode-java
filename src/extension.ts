@@ -300,11 +300,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						}
 					};
 					workspace.registerTextDocumentContentProvider('jdt', provider);
-					if (workspace.workspaceFolders) {
-						workspace.workspaceFolders.map((folder) => {
-							excludeProjectSettingsFiles(folder.uri);
-						});
-					}
+					excludeProjectSettingsFiles();
 				});
 
 				let cleanWorkspaceExists = fs.existsSync( path.join(workspacePath,  cleanWorkspaceFileName));
