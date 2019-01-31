@@ -14,8 +14,9 @@ SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute } fro
 import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
 import * as net from 'net';
+import { getJavaConfiguration } from './utils';
+import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 
-let oldConfig;
 let lastStatus;
 let languageClient: LanguageClient;
 let jdtEventEmitter = new EventEmitter<Uri>();
@@ -83,7 +84,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				item.command = Commands.OPEN_OUTPUT;
 				let progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE+1);
 
-				oldConfig = getJavaConfiguration();
 				let serverOptions;
 				let port = process.env['SERVER_PORT'];
 				if (!port) {
@@ -300,6 +300,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						}
 					};
 					workspace.registerTextDocumentContentProvider('jdt', provider);
+					excludeProjectSettingsFiles();
 				});
 
 				let cleanWorkspaceExists = fs.existsSync( path.join(workspacePath,  cleanWorkspaceFileName));
@@ -434,34 +435,6 @@ function isJavaConfigFile(path: String) {
 	return path.endsWith('pom.xml') || path.endsWith('.gradle');
 }
 
-function onConfigurationChange() {
-	return workspace.onDidChangeConfiguration(params => {
-		let newConfig = getJavaConfiguration();
-		if (hasJavaConfigChanged(oldConfig, newConfig)) {
-			let msg = 'Java Language Server configuration changed, please restart VS Code.';
-			let action = 'Restart Now';
-			let restartId = Commands.RELOAD_WINDOW;
-			oldConfig = newConfig;
-			window.showWarningMessage(msg, action).then((selection) => {
-				if (action === selection) {
-					commands.executeCommand(restartId);
-				}
-			});
-		}
-	});
-}
-
-function hasJavaConfigChanged(oldConfig, newConfig) {
-	return hasConfigKeyChanged('home', oldConfig, newConfig)
-		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
-		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig);
-}
-
-function hasConfigKeyChanged(key, oldConfig, newConfig) {
-	return oldConfig.get(key) !== newConfig.get(key);
-}
-
-
 function getTempWorkspace() {
 	return path.resolve(os.tmpdir(), 'vscodesws_' + makeRandomHexString(5));
 }
@@ -476,9 +449,6 @@ function makeRandomHexString(length) {
 	return result;
 }
 
-function getJavaConfiguration(): WorkspaceConfiguration {
-	return workspace.getConfiguration('java');
-}
 
 async function cleanWorkspace(workspacePath) {
 	const doIt = 'Restart and delete';
