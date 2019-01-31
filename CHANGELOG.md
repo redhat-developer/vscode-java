@@ -1,6 +1,9 @@
 # Change Log
 
-## 0.38.0 (TBD)
+## 0.38.0 (January 30th, 2019)
+* bug fix - pick up gradle properties updates when doing full build. See [#758](https://github.com/redhat-developer/vscode-java/issues/758).
+* bug fix - fixed inactive autocompletion after inserting a snippet in some cases. See [#768](https://github.com/redhat-developer/vscode-java/issues/768).
+
 
 ## 0.37.0 (January 17th, 2019)
 * enhancement - improve extension loading time by using webpack. See [#732](https://github.com/redhat-developer/vscode-java/issues/732).
