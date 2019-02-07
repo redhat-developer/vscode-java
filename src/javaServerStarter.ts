@@ -4,6 +4,7 @@ import * as net from 'net';
 import * as glob from 'glob';
 import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
 import { RequirementsData } from './requirements';
+import { getJavaEncoding } from './settings';
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
@@ -50,6 +51,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 					'--add-opens',
 					'java.base/java.lang=ALL-UNNAMED');
 	}
+
 	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1',
 				'-Dosgi.bundles.defaultStartLevel=4',
 				'-Declipse.product=org.eclipse.jdt.ls.core.product');
@@ -58,6 +60,11 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 
 	let vmargs = javaConfiguration.get('jdt.ls.vmargs', '');
+	const encodingKey = '-Dfile.encoding=';
+	if (vmargs.indexOf(encodingKey) < 0) {
+		params.push(encodingKey + getJavaEncoding());
+	}
+
 	parseVMargs(params, vmargs);
 	let server_home: string = path.resolve(__dirname, '../server');
 	let launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: server_home });
