@@ -13,6 +13,7 @@ import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdat
 SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute } from './protocol';
 import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
+import * as sourceAction from './sourceAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
@@ -72,7 +73,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						settings: { java: getJavaConfiguration() },
 						extendedClientCapabilities:{
 							progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
-							classFileContentsSupport:true
+							classFileContentsSupport:true,
+							overrideMethodsPromptSupport:true
 						},
 						triggerFiles: getTriggerFiles()
 					},
@@ -286,6 +288,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					});
 
 					buildpath.registerCommands();
+					sourceAction.registerCommands(languageClient);
 
 					window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
@@ -623,7 +626,7 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 	});
 }
 
-async function applyWorkspaceEdit(obj, languageClient) {
+export async function applyWorkspaceEdit(obj, languageClient) {
 	let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 	if (edit) {
 		await workspace.applyEdit(edit);

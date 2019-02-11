@@ -102,4 +102,8 @@ export namespace Commands {
      * List all recognized source roots in the workspace.
      */
     export const LIST_SOURCEPATHS = 'java.project.listSourcePaths';
+    /**
+     * Override or implements the methods from the supertypes.
+     */
+    export const OVERRIDE_METHODS_PROMPT = 'java.action.overrideMethodsPrompt';
 }
