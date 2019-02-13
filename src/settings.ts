@@ -102,3 +102,16 @@ function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: Work
 function hasConfigKeyChanged(key, oldConfig, newConfig) {
 	return oldConfig.get(key) !== newConfig.get(key);
 }
+
+export function getJavaEncoding(): string {
+	const config = workspace.getConfiguration();
+	const languageConfig = config.get('[java]')
+	let javaEncoding = null;
+	if (languageConfig != null) {
+		javaEncoding = languageConfig['files.encoding'];
+	}
+	if (javaEncoding == null) {
+		javaEncoding = config.get<string>('files.encoding', 'UTF-8');
+	}
+	return javaEncoding;
+}
