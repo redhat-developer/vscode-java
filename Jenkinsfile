@@ -15,7 +15,7 @@ def buildVscodeExtension(){
 node('rhel7'){
 	stage 'Build JDT LS'
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
-	sh "./mvnw clean verify -B -U -e -Pserver-distro -DdisableP2Mirrors=true"
+	sh "./mvnw clean verify -B -U -e -Pserver-distro -Dtycho.disableP2Mirrors=true"
 
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
 	stash name: 'server_distro', includes :files[0].path
@@ -46,7 +46,7 @@ node('rhel7'){
 		sh "npm run compile" //compile the test code too
 		sh "npm test --silent"
 	}
-	
+
 	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
 	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/jdt.ls/staging"
