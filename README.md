@@ -22,9 +22,10 @@ Features
 
 * Maven pom.xml project support
 * Basic Gradle Java project support
-* As you type reporting of parsing and compilation errors
+* Standalone Java files support
+* As-you-type reporting of parsing and compilation errors
 * Code completion
-* Code actions / Refactoring
+* Code/Source actions / Refactoring
 * Javadoc hovers
 * Organize imports
 * Type search
@@ -91,8 +92,6 @@ The following settings are supported:
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
-
-*New in 0.38.0:*
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
 
 

@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.39.0 (February 21st, 2019)
+* enhancement - automatically detect jars in `lib/` folder next to standalone Java files. See [#501](https://github.com/redhat-developer/vscode-java/issues/501).
+* bug fix - fixed default hover/source encoding. See [#788](https://github.com/redhat-developer/vscode-java/issues/788).
+* bug fix - fixed file handle/memory leak on Windows when idling. See [#789](https://github.com/redhat-developer/vscode-java/issues/789).
+* build - use Eclipse 2019-03 M2 bits. See [JLS#934](https://github.com/eclipse/eclipse.jdt.ls/pull/934).
+
 ## 0.38.0 (January 31st, 2019)
 * enhancement - new dialog asking to hide java project settings files on startup. See [#776](https://github.com/redhat-developer/vscode-java/pull/776).
 * bug fix - pick up gradle properties updates when doing full build. See [#758](https://github.com/redhat-developer/vscode-java/issues/758).
