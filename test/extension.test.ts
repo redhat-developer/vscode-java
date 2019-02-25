@@ -41,6 +41,7 @@ suite('Java Language Extension', () => {
 				Commands.ADD_TO_SOURCEPATH,
 				Commands.REMOVE_FROM_SOURCEPATH,
 				Commands.LIST_SOURCEPATHS,
+				Commands.OVERRIDE_METHODS_PROMPT,
 			];
 			let foundJavaCommands = commands.filter(function(value){
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');

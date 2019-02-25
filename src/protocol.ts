@@ -1,6 +1,6 @@
 'use strict';
 
-import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams } from 'vscode-languageclient';
+import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
 import { Command } from 'vscode';
 
 /**
@@ -120,4 +120,31 @@ export interface SourceAttachmentAttribute {
     sourceAttachmentPath?: string;
     sourceAttachmentEncoding?: string;
     canEditEncoding?: boolean;
+}
+
+export interface OverridableMethod {
+    key: string;
+    name: string;
+    parameters: string[];
+    unimplemented: boolean;
+    declaringClass: string;
+    declaringClassType: string;
+}
+
+export interface OverridableMethodsResponse {
+	type: string;
+	methods: OverridableMethod[];
+}
+
+export namespace ListOverridableMethodsRequest {
+    export const type = new RequestType<CodeActionParams, OverridableMethodsResponse, void, void>('java/listOverridableMethods');
+}
+
+export interface AddOverridableMethodParams {
+    context: CodeActionParams;
+    overridableMethods: OverridableMethod[];
+}
+
+export namespace AddOverridableMethodsRequest {
+    export const type = new RequestType<AddOverridableMethodParams, WorkspaceEdit, void, void>('java/addOverridableMethods');
 }
