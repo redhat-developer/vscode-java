@@ -136,8 +136,8 @@ export interface OverridableMethodsResponse {
 	methods: OverridableMethod[];
 }
 
-export namespace OverridableMethodsRequest {
-    export const type = new RequestType<CodeActionParams, OverridableMethodsResponse, void, void>('java/overridableMethods');
+export namespace ListOverridableMethodsRequest {
+    export const type = new RequestType<CodeActionParams, OverridableMethodsResponse, void, void>('java/listOverridableMethods');
 }
 
 export interface AddOverridableMethodParams {

@@ -4,11 +4,11 @@ import { commands, window } from 'vscode';
 import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
-import { OverridableMethodsRequest, AddOverridableMethodsRequest } from './protocol';
+import { ListOverridableMethodsRequest, AddOverridableMethodsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient) {
     commands.registerCommand(Commands.OVERRIDE_METHODS_PROMPT, async (params: CodeActionParams) => {
-        const result = await languageClient.sendRequest(OverridableMethodsRequest.type, params);
+        const result = await languageClient.sendRequest(ListOverridableMethodsRequest.type, params);
         if (!result || !result.methods || !result.methods.length) {
             window.showWarningMessage('No overridable methods found in the super type.');
             return;
