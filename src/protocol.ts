@@ -148,3 +148,31 @@ export interface AddOverridableMethodParams {
 export namespace AddOverridableMethodsRequest {
     export const type = new RequestType<AddOverridableMethodParams, WorkspaceEdit, void, void>('java/addOverridableMethods');
 }
+
+export interface VariableField {
+    bindingKey: string;
+    name: string;
+    type: string;
+}
+
+export interface CheckHashCodeEqualsResponse {
+    type: string;
+    fields: VariableField[];
+    foundHashCode: boolean;
+    foundEquals: boolean;
+    settings: any;
+}
+
+export namespace CheckHashCodeEqualsStatusRequest {
+    export const type = new RequestType<CodeActionParams, CheckHashCodeEqualsResponse, void, void>('java/checkHashCodeEqualsStatus');
+}
+
+export interface GenerateHashCodeEqualsParams {
+    context: CodeActionParams;
+    fields: VariableField[];
+    settings: any;
+}
+
+export namespace GenerateHashCodeEqualsRequest {
+    export const type = new RequestType<GenerateHashCodeEqualsParams, WorkspaceEdit, void, void>('java/generateHashCodeEquals');
+}
