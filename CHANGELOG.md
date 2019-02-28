@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.40.0 (February 28th, 2019)
+* enhancement - new source action: `Override/Implement Methods...`. See [749](https://github.com/redhat-developer/vscode-java/pull/749).
+* enhancement - attaching sources now use a project relative path, when possible. See [JLS#906](https://github.com/eclipse/eclipse.jdt.ls/issues/906).
+* bug fix - definitely fixed the file handle/memory leak on Windows when idling (when using Java 9+), also reduced CPU usage. See [JLS#936](https://github.com/eclipse/eclipse.jdt.ls/pull/936).
+
 ## 0.39.0 (February 21st, 2019)
 * enhancement - automatically detect jars in `lib/` folder next to standalone Java files. See [#501](https://github.com/redhat-developer/vscode-java/issues/501).
 * bug fix - fixed default hover/source encoding. See [#788](https://github.com/redhat-developer/vscode-java/issues/788).
