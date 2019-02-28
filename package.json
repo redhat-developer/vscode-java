@@ -271,6 +271,12 @@
           "description": "Enable/disable automatic block formatting when typing `;`, `<enter>` or `}`",
           "default": true,
           "scope": "window"
+        },
+        "java.codeGeneration.useJava7HashEquals": {
+          "type": "boolean",
+          "description": "Use Objects.hash and Objects.equals to generate the hashCode and equals methods. This setting only applies to Java 7 and higher.",
+          "default": false,
+          "scope": "window"
         }
       }
     },

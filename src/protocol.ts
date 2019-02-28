@@ -158,9 +158,7 @@ export interface VariableField {
 export interface CheckHashCodeEqualsResponse {
     type: string;
     fields: VariableField[];
-    foundHashCode: boolean;
-    foundEquals: boolean;
-    settings: any;
+    existingMethods: string[];
 }
 
 export namespace CheckHashCodeEqualsStatusRequest {
@@ -170,7 +168,7 @@ export namespace CheckHashCodeEqualsStatusRequest {
 export interface GenerateHashCodeEqualsParams {
     context: CodeActionParams;
     fields: VariableField[];
-    settings: any;
+    regenerate: boolean;
 }
 
 export namespace GenerateHashCodeEqualsRequest {

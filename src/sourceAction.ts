@@ -66,38 +66,15 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient): void {
             return;
         }
 
-        if (result.foundHashCode || result.foundEquals) {
-            const methods = [];
-            if (result.foundHashCode) {
-                methods.push('\'int hashCode()\'');
-            }
-
-            if (result.foundEquals) {
-                methods.push('\'boolean equals(Object)\'');
-            }
-
-            const ans = await window.showInformationMessage(`Methods ${methods.join(' and ')} already exist in the Class '${result.type}'. `
-                + 'Do you want to regenerate the implementation?', 'YES', 'NO');
-            if (ans !== 'YES') {
+        let regenerate = false;
+        if (result.existingMethods && result.existingMethods.length) {
+            const ans = await window.showInformationMessage(`Methods ${result.existingMethods.join(' and ')} already ${result.existingMethods.length === 1 ? 'exists' : 'exist'} in the Class '${result.type}'. `
+                + 'Do you want to regenerate the implementation?', 'Regenerate', 'Cancel');
+            if (ans !== 'Regenerate') {
                 return;
             }
 
-            result.settings.regenerate = true;
-        }
-
-        if (result.settings && result.settings.useJ7HashEquals !== undefined) {
-            const template = await window.showQuickPick([
-                'Use Objects.hash and Objects.equals methods (Java 7 or higher)',
-                'Default template'
-            ], {
-                placeHolder: 'Select the template to generate the hashCode and equals methods.'
-            });
-
-            if (!template) {
-                return;
-            } else {
-                result.settings.useJ7HashEquals = (template !== 'Default template');
-            }
+            regenerate = true;
         }
 
         const fieldItems = result.fields.map((field) => {
@@ -118,7 +95,7 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient): void {
         const workspaceEdit = await languageClient.sendRequest(GenerateHashCodeEqualsRequest.type, {
             context: params,
             fields: selectedFields.map((item) => item.originalField),
-            settings: result.settings
+            regenerate
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
     });

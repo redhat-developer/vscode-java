@@ -93,7 +93,7 @@ The following settings are supported:
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
-
+* `java.codeGeneration.useJava7HashEquals`: Use Objects.hash and Objects.equals to generate the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
 
 Troubleshooting
 ===============
