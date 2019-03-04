@@ -5,7 +5,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier } from 'vscode-languageclient';
-import { collectionJavaExtensions } from './plugin';
+import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
@@ -68,7 +68,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						],
 					},
 					initializationOptions: {
-						bundles: collectionJavaExtensions(extensions.all),
+						bundles: collectJavaExtensions(extensions.all),
 						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
 						settings: { java: getJavaConfiguration() },
 						extendedClientCapabilities:{
@@ -304,6 +304,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						}
 					};
 					context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', provider));
+					extensions.onDidChange(() => {
+						onExtensionChange(extensions.all);
+					});
 					excludeProjectSettingsFiles();
 				});
 
