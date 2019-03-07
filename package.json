@@ -272,25 +272,25 @@
           "default": true,
           "scope": "window"
         },
-        "java.hashCodeEqualsTemplate.useJava7Objects": {
+        "java.codeGeneration.hashCodeEquals.useJava7Objects": {
           "type": "boolean",
           "description": "Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher.",
           "default": false,
           "scope": "window"
         },
-        "java.hashCodeEqualsTemplate.useInstanceof": {
+        "java.codeGeneration.hashCodeEquals.useInstanceof": {
           "type": "boolean",
           "description": "Use 'instanceof' to compare types when generating the hashCode and equals methods.",
           "default": false,
           "scope": "window"
         },
-        "java.hashCodeEqualsTemplate.useBlocks": {
+        "java.codeGeneration.hashCodeEquals.useBlocks": {
           "type": "boolean",
           "description": "Use blocks in 'if' statements when generating the hashCode and equals methods.",
           "default": false,
           "scope": "window"
         },
-        "java.hashCodeEqualsTemplate.generateComments": {
+        "java.codeGeneration.hashCodeEquals.generateComments": {
           "type": "boolean",
           "description": "Generate method comments when generating the hashCode and equals methods.",
           "default": false,

@@ -93,10 +93,10 @@ The following settings are supported:
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
-* `java.hashCodeEqualsTemplate.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
-* `java.hashCodeEqualsTemplate.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
-* `java.hashCodeEqualsTemplate.useBlocks`: Use blocks in 'if' statements when generating the hashCode and equals methods. Defaults to `false`.
-* `java.hashCodeEqualsTemplate.generateComments`: Generate method comments when generating the hashCode and equals methods. Defaults to `false`.
+* `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
+* `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
+* `java.codeGeneration.hashCodeEquals.useBlocks`: Use blocks in 'if' statements when generating the hashCode and equals methods. Defaults to `false`.
+* `java.codeGeneration.hashCodeEquals.generateComments`: Generate method comments when generating the hashCode and equals methods. Defaults to `false`.
 
 Troubleshooting
 ===============
