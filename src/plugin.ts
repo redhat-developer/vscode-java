@@ -7,7 +7,7 @@ import { Commands } from './commands';
 let existingExtensions: Array<string>;
 
 export function collectJavaExtensions(extensions: vscode.Extension<any>[]): string[] {
-	existingExtensions = [];
+	const result = [];
 	if (extensions && extensions.length) {
 		for (let extension of extensions) {
 			let contributesSection = extension.packageJSON['contributes'];
@@ -15,32 +15,41 @@ export function collectJavaExtensions(extensions: vscode.Extension<any>[]): stri
 				let javaExtensions = contributesSection['javaExtensions'];
 				if (Array.isArray(javaExtensions) && javaExtensions.length) {
 					for (let javaExtensionPath of javaExtensions) {
-						existingExtensions.push(path.resolve(extension.extensionPath, javaExtensionPath));
+						result.push(path.resolve(extension.extensionPath, javaExtensionPath));
 					}
 				}
 			}
 		}
 	}
-	return existingExtensions;
+	// Make a copy of extensions:
+	existingExtensions = result.slice();
+	return result;
 }
 
 export function onExtensionChange(extensions: vscode.Extension<any>[]) {
 	if (!existingExtensions) {
 		return;
 	}
-	const oldExtensions = existingExtensions.slice();
+	const oldExtensions = new Set(existingExtensions.slice());
 	const newExtensions = collectJavaExtensions(extensions);
-	for (const newExtension of newExtensions) {
-		if (oldExtensions.indexOf(newExtension) < 0) {
-			let msg = 'Java Language Server has new extension installed or updated, please restart VS Code to enable it.';
-			let action = 'Restart Now';
-			let restartId = Commands.RELOAD_WINDOW;
-			vscode.window.showWarningMessage(msg, action).then((selection) => {
-				if (action === selection) {
-					vscode.commands.executeCommand(restartId);
-				}
-			});
-			break;
+	let hasChanged = ( oldExtensions.size != newExtensions.length);
+	if (!hasChanged) {
+		for (const newExtension of newExtensions) {
+			if (!oldExtensions.has(newExtension)) {
+				hasChanged = true;
+				break;
+			}
 		}
+	}
+
+	if (hasChanged) {
+		const msg = 'Extensions to the Java Language Server changed, reloading Visual Studio Code is required for the changes to take effect.';
+		const action = 'Reload';
+		const restartId = Commands.RELOAD_WINDOW;
+		vscode.window.showWarningMessage(msg, action).then((selection) => {
+			if (action === selection) {
+				vscode.commands.executeCommand(restartId);
+			}
+		});
 	}
 }
