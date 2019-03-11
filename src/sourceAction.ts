@@ -4,9 +4,14 @@ import { commands, window } from 'vscode';
 import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
-import { ListOverridableMethodsRequest, AddOverridableMethodsRequest } from './protocol';
+import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient) {
+    registerOverrideMethodsCommand(languageClient);
+    registerHashCodeEqualsCommand(languageClient);
+}
+
+function registerOverrideMethodsCommand(languageClient: LanguageClient): void {
     commands.registerCommand(Commands.OVERRIDE_METHODS_PROMPT, async (params: CodeActionParams) => {
         const result = await languageClient.sendRequest(ListOverridableMethodsRequest.type, params);
         if (!result || !result.methods || !result.methods.length) {
@@ -48,6 +53,49 @@ export function registerCommands(languageClient: LanguageClient) {
         const workspaceEdit = await languageClient.sendRequest(AddOverridableMethodsRequest.type, {
             context: params,
             overridableMethods: selectedItems.map((item) => item.originalMethod),
+        });
+        applyWorkspaceEdit(workspaceEdit, languageClient);
+    });
+}
+
+function registerHashCodeEqualsCommand(languageClient: LanguageClient): void {
+    commands.registerCommand(Commands.HASHCODE_EQUALS_PROMPT, async (params: CodeActionParams) => {
+        const result = await languageClient.sendRequest(CheckHashCodeEqualsStatusRequest.type, params);
+        if (!result || !result.fields || !result.fields.length) {
+            window.showErrorMessage(`The operation is not applicable to the type ${result.type}.`);
+            return;
+        }
+
+        let regenerate = false;
+        if (result.existingMethods && result.existingMethods.length) {
+            const ans = await window.showInformationMessage(`Methods ${result.existingMethods.join(' and ')} already ${result.existingMethods.length === 1 ? 'exists' : 'exist'} in the Class '${result.type}'. `
+                + 'Do you want to regenerate the implementation?', 'Regenerate', 'Cancel');
+            if (ans !== 'Regenerate') {
+                return;
+            }
+
+            regenerate = true;
+        }
+
+        const fieldItems = result.fields.map((field) => {
+            return {
+                label: `${field.name}: ${field.type}`,
+                picked: true,
+                originalField: field
+            };
+        });
+        const selectedFields = await window.showQuickPick(fieldItems, {
+            canPickMany: true,
+            placeHolder:  'Select the fields to include in the hashCode() and equals() methods.'
+        });
+        if (!selectedFields.length) {
+            return;
+        }
+
+        const workspaceEdit = await languageClient.sendRequest(GenerateHashCodeEqualsRequest.type, {
+            context: params,
+            fields: selectedFields.map((item) => item.originalField),
+            regenerate
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
     });

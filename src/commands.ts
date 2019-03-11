@@ -106,4 +106,8 @@ export namespace Commands {
      * Override or implements the methods from the supertypes.
      */
     export const OVERRIDE_METHODS_PROMPT = 'java.action.overrideMethodsPrompt';
+    /**
+     * Generate hashCode() and equals().
+     */
+    export const HASHCODE_EQUALS_PROMPT = 'java.action.hashCodeEqualsPrompt';
 }
