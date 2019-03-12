@@ -1,6 +1,6 @@
 'use strict';
 
-import { window, commands, Uri } from 'vscode';
+import { window, commands, ExtensionContext, Uri } from 'vscode';
 import { Commands } from './commands';
 
 interface Result {
@@ -19,26 +19,26 @@ interface ListCommandResult extends Result {
     data?: SourcePath[];
 }
 
-export function registerCommands() {
-    commands.registerCommand(Commands.ADD_TO_SOURCEPATH, async (uri: Uri) => {
+export function registerCommands(context: ExtensionContext) {
+    context.subscriptions.push(commands.registerCommand(Commands.ADD_TO_SOURCEPATH, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.ADD_TO_SOURCEPATH, uri.toString());
         if (result.status) {
             window.showInformationMessage(result.message ? result.message : 'Successfully added the folder to the source path.');
         } else {
             window.showErrorMessage(result.message);
         }
-    });
+    }));
 
-    commands.registerCommand(Commands.REMOVE_FROM_SOURCEPATH, async (uri: Uri) => {
+    context.subscriptions.push(commands.registerCommand(Commands.REMOVE_FROM_SOURCEPATH, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.REMOVE_FROM_SOURCEPATH, uri.toString());
         if (result.status) {
             window.showInformationMessage(result.message ? result.message : 'Successfully removed the folder from the source path.');
         } else {
             window.showErrorMessage(result.message);
         }
-    });
+    }));
 
-    commands.registerCommand(Commands.LIST_SOURCEPATHS, async() => {
+    context.subscriptions.push(commands.registerCommand(Commands.LIST_SOURCEPATHS, async() => {
         const result: ListCommandResult = await commands.executeCommand<ListCommandResult>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.LIST_SOURCEPATHS);
         if (result.status) {
             if (!result.data || !result.data.length) {
@@ -54,5 +54,5 @@ export function registerCommands() {
         } else {
             window.showErrorMessage(result.message);
         }
-    });
+    }));
 }

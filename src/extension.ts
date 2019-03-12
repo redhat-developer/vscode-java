@@ -190,39 +190,39 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						return commands.executeCommand(params.command, ...params.arguments);
 					});
 
-					commands.registerCommand(Commands.OPEN_OUTPUT, () => {
+					context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () => {
 						languageClient.outputChannel.show(ViewColumn.Three);
-					});
-					commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+					}));
+					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
 						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-					});
-					commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+					}));
+					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
 						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-					});
+					}));
 
-					commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri));
+					context.subscriptions.push(commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri)));
 
-					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore'));
+					context.subscriptions.push(commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore')));
 
-					commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
+					context.subscriptions.push(commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
 						commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'));
-					});
+					}));
 
-					commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status));
+					context.subscriptions.push(commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status)));
 
-					commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
+					context.subscriptions.push(commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
 						applyWorkspaceEdit(obj, languageClient);
-					});
+					}));
 
-					commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
+					context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
 						const params: ExecuteCommandParams = {
 							command,
 							arguments: rest
 						};
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
-					});
+					}));
 
-					commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile : boolean) => {
+					context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile : boolean) => {
 						return window.withProgress({ location: ProgressLocation.Window }, async p => {
 							if (typeof isFullCompile !== 'boolean') {
 								const selection = await window.showQuickPick(['Incremental', 'Full'], {'placeHolder' : 'please choose compile type:'});
@@ -243,9 +243,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								}, humanVisibleDelay);
 							});
 						});
-					});
+					}));
 
-					commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT, async (classFileUri: Uri): Promise<boolean> => {
+					context.subscriptions.push(commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT, async (classFileUri: Uri): Promise<boolean> => {
 						const resolveRequest: SourceAttachmentRequest = {
 							classFileUri: classFileUri.toString(),
 						};
@@ -286,14 +286,14 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							jdtEventEmitter.fire(classFileUri);
 							return true;
 						}
-					});
+					}));
 
-					buildpath.registerCommands();
-					sourceAction.registerCommands(languageClient);
+					buildpath.registerCommands(context);
+					sourceAction.registerCommands(languageClient, context);
 
-					window.onDidChangeActiveTextEditor((editor) => {
+					context.subscriptions.push(window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
-					});
+					}));
 
 					let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
 						onDidChange: jdtEventEmitter.event,
@@ -303,7 +303,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							});
 						}
 					};
-					workspace.registerTextDocumentContentProvider('jdt', provider);
+					context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', provider));
 					excludeProjectSettingsFiles();
 				});
 
@@ -318,12 +318,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				languageClient.start();
 				// Register commands here to make it available even when the language client fails
-				commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath));
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath)));
 
 				let extensionPath = context.extensionPath;
-				commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath));
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
 
-				commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath));
+				context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
 				context.subscriptions.push(onConfigurationChange());
 				toggleItem(window.activeTextEditor, item);
