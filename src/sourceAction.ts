@@ -1,18 +1,18 @@
 'use strict';
 
-import { commands, window } from 'vscode';
+import { commands, window, ExtensionContext } from 'vscode';
 import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest } from './protocol';
 
-export function registerCommands(languageClient: LanguageClient) {
-    registerOverrideMethodsCommand(languageClient);
-    registerHashCodeEqualsCommand(languageClient);
+export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
+    registerOverrideMethodsCommand(languageClient, context);
+    registerHashCodeEqualsCommand(languageClient, context);
 }
 
-function registerOverrideMethodsCommand(languageClient: LanguageClient): void {
-    commands.registerCommand(Commands.OVERRIDE_METHODS_PROMPT, async (params: CodeActionParams) => {
+function registerOverrideMethodsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.OVERRIDE_METHODS_PROMPT, async (params: CodeActionParams) => {
         const result = await languageClient.sendRequest(ListOverridableMethodsRequest.type, params);
         if (!result || !result.methods || !result.methods.length) {
             window.showWarningMessage('No overridable methods found in the super type.');
@@ -55,11 +55,11 @@ function registerOverrideMethodsCommand(languageClient: LanguageClient): void {
             overridableMethods: selectedItems.map((item) => item.originalMethod),
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
-    });
+    }));
 }
 
-function registerHashCodeEqualsCommand(languageClient: LanguageClient): void {
-    commands.registerCommand(Commands.HASHCODE_EQUALS_PROMPT, async (params: CodeActionParams) => {
+function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.HASHCODE_EQUALS_PROMPT, async (params: CodeActionParams) => {
         const result = await languageClient.sendRequest(CheckHashCodeEqualsStatusRequest.type, params);
         if (!result || !result.fields || !result.fields.length) {
             window.showErrorMessage(`The operation is not applicable to the type ${result.type}.`);
@@ -98,5 +98,5 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient): void {
             regenerate
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
-    });
+    }));
 }
