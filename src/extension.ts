@@ -120,8 +120,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								lastStatus = item.text;
 								commands.executeCommand('setContext', 'javaLSReady', true);
 								resolve({
-									apiVersion: '0.1',
+									apiVersion: '0.2',
 									javaRequirement: requirements,
+									status: report.type
 								});
 								break;
 							case 'Error':
@@ -130,8 +131,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								p.report({ message: 'Finished with Error' });
 								toggleItem(window.activeTextEditor, item);
 								resolve({
-									apiVersion: '0.1',
+									apiVersion: '0.2',
 									javaRequirement: requirements,
+									status: report.type
 								});
 								break;
 							case 'Starting':
