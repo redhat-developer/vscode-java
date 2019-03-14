@@ -30,8 +30,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	return requirements.resolveRequirements().catch(error => {
 		//show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
-			if (error.label && error.label === selection && error.openUrl) {
-				commands.executeCommand(Commands.OPEN_BROWSER, error.openUrl);
+			if (error.label && error.label === selection && error.command) {
+				commands.executeCommand(error.command, error.commandParam);
 			}
 		});
 		// rethrow to disrupt the chain.
