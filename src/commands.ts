@@ -109,5 +109,9 @@ export namespace Commands {
     /**
      * Generate hashCode() and equals().
      */
-    export const HASHCODE_EQUALS_PROMPT = 'java.action.hashCodeEqualsPrompt';
+	export const HASHCODE_EQUALS_PROMPT = 'java.action.hashCodeEqualsPrompt';
+	/**
+     * Open settings.json
+     */
+    export const OPEN_JSON_SETTINGS = 'workbench.action.openSettingsJson';
 }

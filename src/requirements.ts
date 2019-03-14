@@ -6,9 +6,10 @@ import * as path from 'path';
 import * as pathExists from 'path-exists';
 import * as expandHomeDir from 'expand-home-dir';
 import * as findJavaHome from 'find-java-home';
+import { Commands } from './commands';
 
 const isWindows = process.platform.indexOf('win') === 0;
-const JAVAC_FILENAME = 'javac' + (isWindows?'.exe':'');
+const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
 
 export interface RequirementsData {
     java_home: string;
@@ -18,8 +19,8 @@ export interface RequirementsData {
 interface ErrorData {
     message: string;
     label: string;
-    openUrl: Uri;
-    replaceClose: boolean;
+    command: string;
+    commandParam: any;
 }
 /**
  * Resolves the requirements needed to run the extension.
@@ -31,65 +32,71 @@ interface ErrorData {
 export async function resolveRequirements(): Promise<RequirementsData> {
     let java_home = await checkJavaRuntime();
     let javaVersion = await checkJavaVersion(java_home);
-    return Promise.resolve({ 'java_home': java_home, 'java_version': javaVersion});
+    return Promise.resolve({ 'java_home': java_home, 'java_version': javaVersion });
 }
 
 function checkJavaRuntime(): Promise<string> {
     return new Promise((resolve, reject) => {
-        let source : string;
-        let javaHome : string = readJavaConfig();
+        let source: string;
+        let javaHome: string = readJavaConfig();
         if (javaHome) {
-            source = 'The java.home variable defined in VS Code settings';
+            source = 'java.home variable defined in VS Code settings';
         } else {
             javaHome = process.env['JDK_HOME'];
             if (javaHome) {
-                source = 'The JDK_HOME environment variable';
+                source = 'JDK_HOME environment variable';
             } else {
                 javaHome = process.env['JAVA_HOME'];
-                source = 'The JAVA_HOME environment variable';
+                source = 'JAVA_HOME environment variable';
             }
         }
-        if(javaHome ){
+        if (javaHome) {
             javaHome = expandHomeDir(javaHome);
-            if(!pathExists.sync(javaHome)){
-                openJDKDownload(reject, source+' points to a missing folder');
+            if (!pathExists.sync(javaHome)) {
+                invalidJavaHome(reject, `The ${source} points to a missing or inaccessible folder (${javaHome})`);
             }
-            if(!pathExists.sync(path.resolve(javaHome, 'bin', JAVAC_FILENAME))){
-                openJDKDownload(reject, source+ ' does not point to a JDK.');
+            else if (!pathExists.sync(path.resolve(javaHome, 'bin', JAVAC_FILENAME))) {
+                let msg: string;
+                if (pathExists.sync(path.resolve(javaHome, JAVAC_FILENAME))) {
+                    msg = `'bin' should be removed from the ${source} (${javaHome})`;
+                } else {
+                    msg = `The ${source} (${javaHome}) does not point to a JDK.`
+                }
+                invalidJavaHome(reject, msg);
             }
             return resolve(javaHome);
         }
         //No settings, let's try to detect as last resort.
         findJavaHome(function (err, home) {
-                if (err){
-                    openJDKDownload(reject,'Java runtime could not be located');
-                }
-                else {
-                    resolve(home);
-                }
-            });
+            if (err) {
+                openJDKDownload(reject, 'Java runtime (JDK, not JRE) could not be located');
+            }
+            else {
+                resolve(home);
+            }
+        });
     });
 }
 
-function readJavaConfig() : string {
+function readJavaConfig(): string {
     const config = workspace.getConfiguration();
-    return config.get<string>('java.home',null);
+    return config.get<string>('java.home', null);
 }
 
 function checkJavaVersion(java_home: string): Promise<number> {
     return new Promise((resolve, reject) => {
         cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
             let javaVersion = parseMajorVersion(stderr);
-            if (javaVersion < 8){
+            if (javaVersion < 8) {
                 openJDKDownload(reject, 'Java 8 or more recent is required to run. Please download and install a recent JDK');
-            } else{
+            } else {
                 resolve(javaVersion);
             }
         });
     });
 }
 
-export function parseMajorVersion(content:string):number {
+export function parseMajorVersion(content: string): number {
     let regexp = /version "(.*)"/g;
     let match = regexp.exec(content);
     if (!match) {
@@ -119,7 +126,21 @@ function openJDKDownload(reject, cause) {
     reject({
         message: cause,
         label: 'Get the Java Development Kit',
-        openUrl: Uri.parse(jdkUrl),
-        replaceClose: false
+        command: Commands.OPEN_BROWSER,
+        commandParam: Uri.parse(jdkUrl),
     });
+}
+
+function invalidJavaHome(reject, cause: string) {
+    if (cause.indexOf("java.home") > -1) {
+        reject({
+            message: cause,
+            label: 'Open settings',
+            command: Commands.OPEN_JSON_SETTINGS
+        });
+    } else {
+        reject({
+            message: cause,
+        });
+    }
 }

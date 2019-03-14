@@ -42,7 +42,8 @@ suite('Java Language Extension', () => {
 				Commands.REMOVE_FROM_SOURCEPATH,
 				Commands.LIST_SOURCEPATHS,
 				Commands.OVERRIDE_METHODS_PROMPT,
-				Commands.HASHCODE_EQUALS_PROMPT
+				Commands.HASHCODE_EQUALS_PROMPT,
+				Commands.OPEN_JSON_SETTINGS
 			];
 			let foundJavaCommands = commands.filter(function(value){
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
