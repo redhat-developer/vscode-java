@@ -88,7 +88,7 @@ suite('Java Language Extension', () => {
 		};
 
 		const extensions = [fakedExtension];
-		const result = plugin.collectionJavaExtensions(extensions);
+		const result = plugin.collectJavaExtensions(extensions);
 		assert(result.length === 1);
 		assert(result[0].endsWith(path.normalize('./bin/java.extend.jar')));
 	});

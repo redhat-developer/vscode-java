@@ -8,3 +8,6 @@ undefined
 target
 dist
 bin/
+.settings
+.classpath
+.project
