@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.41.0 (March 15th, 2019)
+* enhancement - added `Generate hashcode() and equals()...` source action. See [814](https://github.com/redhat-developer/vscode-java/pull/814).
+* enhancement - added reload prompt when extension bundles changed. See [#822](https://github.com/redhat-developer/vscode-java/pull/822).
+* enhancement - added status to ExtensionAPI. See [#830](https://github.com/redhat-developer/vscode-java/issues/830).
+* enhancement - improved failed JDK detection diagnostic. See [#835](https://github.com/redhat-developer/vscode-java/issues/835).
+* bug fix - fixed the mechanism to resolve the package name of an empty java file. See [#750](https://github.com/redhat-developer/vscode-java/issues/750).
+* bug fix - fixed server stopping when idling. See [#815](https://github.com/redhat-developer/vscode-java/issues/815).
+* bug fix - signature help should select the 1st parameter after the opening round bracket. See [JLS#947](https://github.com/eclipse/eclipse.jdt.ls/issues/947).
+* debt - subscribe all disposables to the extension's context. See [#832](https://github.com/redhat-developer/vscode-java/pull/832).
+
 ## 0.40.0 (February 28th, 2019)
 * enhancement - new source action: `Override/Implement Methods...`. See [749](https://github.com/redhat-developer/vscode-java/pull/749).
 * enhancement - attaching sources now use a project relative path, when possible. See [JLS#906](https://github.com/eclipse/eclipse.jdt.ls/issues/906).
