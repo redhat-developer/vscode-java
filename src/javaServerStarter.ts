@@ -64,6 +64,10 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
 	}
+	const watchParentProcess = '-DwatchParentProcess=';
+	if (vmargs.indexOf(watchParentProcess) < 0) {
+		params.push(watchParentProcess + 'false');
+	}
 
 	parseVMargs(params, vmargs);
 	let server_home: string = path.resolve(__dirname, '../server');
