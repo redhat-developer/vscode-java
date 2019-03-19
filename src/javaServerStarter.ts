@@ -2,6 +2,7 @@
 import * as path from 'path';
 import * as net from 'net';
 import * as glob from 'glob';
+import * as os from 'os';
 import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
 import { RequirementsData } from './requirements';
 import { getJavaEncoding } from './settings';
@@ -64,9 +65,11 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
 	}
-	const watchParentProcess = '-DwatchParentProcess=';
-	if (vmargs.indexOf(watchParentProcess) < 0) {
-		params.push(watchParentProcess + 'false');
+	if (os.platform() == 'win32') {
+		const watchParentProcess = '-DwatchParentProcess=';
+		if (vmargs.indexOf(watchParentProcess) < 0) {
+			params.push(watchParentProcess + 'false');
+		}
 	}
 
 	parseVMargs(params, vmargs);
