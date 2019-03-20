@@ -174,3 +174,12 @@ export interface GenerateHashCodeEqualsParams {
 export namespace GenerateHashCodeEqualsRequest {
     export const type = new RequestType<GenerateHashCodeEqualsParams, WorkspaceEdit, void, void>('java/generateHashCodeEquals');
 }
+
+export namespace OrganizeImportsRequest {
+    export const type = new RequestType<CodeActionParams, WorkspaceEdit, void, void>('java/organizeImports');
+}
+
+export interface ImportChoice {
+    qualifiedName: string;
+    id: string;
+}
