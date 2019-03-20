@@ -12,7 +12,7 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a Java 8, 9, 10 or 11 compatible development kit.
+    * Download and install a recent Java Development Kit (latest Java 8 is the minimum requirement).
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
@@ -97,6 +97,9 @@ The following settings are supported:
 * `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useBlocks`: Use blocks in 'if' statements when generating the hashCode and equals methods. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.generateComments`: Generate method comments when generating the hashCode and equals methods. Defaults to `false`.
+
+*New in 0.42.0:*
+* `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
 
 Troubleshooting
 ===============
