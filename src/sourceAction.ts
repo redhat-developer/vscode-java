@@ -112,12 +112,25 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
 }
 
 function registerChooseImportCommand(context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORT, async (importChoices: ImportChoice[][], ranges: Range[], uri: string) => {
+    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORT, async (importChoices: ImportChoice[][], ranges: Range[], uri: string, defaultSelections: ImportChoice[]) => {
         const chosen: ImportChoice[] = [];
+        defaultSelections = defaultSelections || [];
         for (let i = 0; i < importChoices.length; i++) {
             // Move the cursor to the code line with ambiguous import choices.
             await window.showTextDocument(Uri.parse(uri), { preserveFocus: true, selection: ranges[i], viewColumn: ViewColumn.One });
-            const items = importChoices[i].map((item) => {
+            const defaultImportType = (i < defaultSelections.length) ? defaultSelections[i].qualifiedName : null;
+            // Move the recommend type to the top.
+            const items = importChoices[i].sort((a, b) => {
+                if (defaultImportType) {
+                    if (a.qualifiedName === defaultImportType) {
+                        return -1;
+                    } else if (b.qualifiedName === defaultImportType) {
+                        return 1;
+                    }
+                }
+
+                return 0;
+            }).map((item) => {
                 return {
                     label: item.qualifiedName,
                     origin: item
