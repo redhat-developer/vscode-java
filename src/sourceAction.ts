@@ -5,7 +5,7 @@ import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportChoice, ImportSelection } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -113,28 +113,28 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
 
 function registerChooseImportCommand(context: ExtensionContext): void {
     context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[]) => {
-        const chosen: ImportChoice[] = [];
+        const chosen: ImportCandidate[] = [];
         const fileUri: Uri = Uri.parse(uri);
         for (let i = 0; i < selections.length; i++) {
             // Move the cursor to the code line with ambiguous import choices.
             await window.showTextDocument(fileUri, { preserveFocus: true, selection: selections[i].range, viewColumn: ViewColumn.One });
-            const candidates: ImportChoice[] = selections[i].candidates;
+            const candidates: ImportCandidate[] = selections[i].candidates;
             // Move the recommend type to the top.
             if (selections[i].defaultSelection > 0 && selections[i].defaultSelection < candidates.length) {
-                const defaultChoice: ImportChoice = candidates[selections[i].defaultSelection];
+                const defaultChoice: ImportCandidate = candidates[selections[i].defaultSelection];
                 candidates.splice(selections[i].defaultSelection, 1);
                 candidates.unshift(defaultChoice);
             }
 
             const items = candidates.map((item) => {
                 return {
-                    label: item.qualifiedName,
+                    label: item.fullyQualifiedName,
                     origin: item
                 };
             });
 
-            const qualifiedName = candidates.length ? candidates[0].qualifiedName : "";
-            const typeName = qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1);
+            const fullyQualifiedName = candidates.length ? candidates[0].fullyQualifiedName : "";
+            const typeName = fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf(".") + 1);
             const disposables: Disposable[] = [];
             try {
                 const pick = await new Promise<any>((resolve, reject) => {

@@ -179,13 +179,13 @@ export namespace OrganizeImportsRequest {
     export const type = new RequestType<CodeActionParams, WorkspaceEdit, void, void>('java/organizeImports');
 }
 
-export interface ImportChoice {
-    qualifiedName: string;
+export interface ImportCandidate {
+    fullyQualifiedName: string;
     id: string;
 }
 
 export interface ImportSelection {
-    candidates: ImportChoice[];
+    candidates: ImportCandidate[];
     range: Range;
     defaultSelection: number;
 }
