@@ -5,7 +5,7 @@ import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportChoice } from './protocol';
+OrganizeImportsRequest, ImportChoice, ImportSelection } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -112,31 +112,28 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
 }
 
 function registerChooseImportCommand(context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORT, async (importChoices: ImportChoice[][], ranges: Range[], uri: string, defaultSelections: ImportChoice[]) => {
+    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[]) => {
         const chosen: ImportChoice[] = [];
-        defaultSelections = defaultSelections || [];
-        for (let i = 0; i < importChoices.length; i++) {
+        const fileUri: Uri = Uri.parse(uri);
+        for (let i = 0; i < selections.length; i++) {
             // Move the cursor to the code line with ambiguous import choices.
-            await window.showTextDocument(Uri.parse(uri), { preserveFocus: true, selection: ranges[i], viewColumn: ViewColumn.One });
-            const defaultImportType = (i < defaultSelections.length) ? defaultSelections[i].qualifiedName : null;
+            await window.showTextDocument(fileUri, { preserveFocus: true, selection: selections[i].range, viewColumn: ViewColumn.One });
+            const candidates: ImportChoice[] = selections[i].candidates;
             // Move the recommend type to the top.
-            const items = importChoices[i].sort((a, b) => {
-                if (defaultImportType) {
-                    if (a.qualifiedName === defaultImportType) {
-                        return -1;
-                    } else if (b.qualifiedName === defaultImportType) {
-                        return 1;
-                    }
-                }
+            if (selections[i].defaultSelection > 0 && selections[i].defaultSelection < candidates.length) {
+                const defaultChoice: ImportChoice = candidates[selections[i].defaultSelection];
+                candidates.splice(selections[i].defaultSelection, 1);
+                candidates.unshift(defaultChoice);
+            }
 
-                return 0;
-            }).map((item) => {
+            const items = candidates.map((item) => {
                 return {
                     label: item.qualifiedName,
                     origin: item
                 };
             });
-            const qualifiedName = importChoices[i].length ? importChoices[i][0].qualifiedName : "";
+
+            const qualifiedName = candidates.length ? candidates[0].qualifiedName : "";
             const typeName = qualifiedName.substring(qualifiedName.lastIndexOf(".") + 1);
             const disposables: Disposable[] = [];
             try {
@@ -144,7 +141,7 @@ function registerChooseImportCommand(context: ExtensionContext): void {
                     const input = window.createQuickPick();
                     input.title = "Organize Imports";
                     input.step = i + 1;
-                    input.totalSteps = importChoices.length;
+                    input.totalSteps = selections.length;
                     input.placeholder = `Choose type '${typeName}' to import`;
                     input.items = items;
                     disposables.push(

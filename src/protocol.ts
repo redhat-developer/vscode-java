@@ -1,7 +1,7 @@
 'use strict';
 
 import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
-import { Command } from 'vscode';
+import { Command, Range } from 'vscode';
 
 /**
  * The message type. Copied from vscode protocol
@@ -182,4 +182,10 @@ export namespace OrganizeImportsRequest {
 export interface ImportChoice {
     qualifiedName: string;
     id: string;
+}
+
+export interface ImportSelection {
+    candidates: ImportChoice[];
+    range: Range;
+    defaultSelection: number;
 }

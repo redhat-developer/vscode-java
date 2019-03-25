@@ -121,5 +121,5 @@ export namespace Commands {
     /**
      * Choose type to import.
      */
-    export const CHOOSE_IMPORT = "java.action.organizeImports.chooseImport";
+    export const CHOOSE_IMPORTS = "java.action.organizeImports.chooseImports";
 }
