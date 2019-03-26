@@ -114,4 +114,12 @@ export namespace Commands {
      * Open settings.json
      */
     export const OPEN_JSON_SETTINGS = 'workbench.action.openSettingsJson';
+    /**
+     * Organize imports.
+     */
+    export const ORGANIZE_IMPORTS = "java.action.organizeImports";
+    /**
+     * Choose type to import.
+     */
+    export const CHOOSE_IMPORTS = "java.action.organizeImports.chooseImports";
 }

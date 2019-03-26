@@ -75,7 +75,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 							classFileContentsSupport:true,
 							overrideMethodsPromptSupport:true,
-							hashCodeEqualsPromptSupport:true
+							hashCodeEqualsPromptSupport:true,
+							advancedOrganizeImportsSupport:true
 						},
 						triggerFiles: getTriggerFiles()
 					},

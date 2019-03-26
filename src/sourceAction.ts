@@ -1,14 +1,17 @@
 'use strict';
 
-import { commands, window, ExtensionContext } from 'vscode';
+import { commands, window, ExtensionContext, Range, ViewColumn, Uri, Disposable} from 'vscode';
 import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
-import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest } from './protocol';
+import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
+OrganizeImportsRequest, ImportCandidate, ImportSelection } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
     registerHashCodeEqualsCommand(languageClient, context);
+    registerOrganizeImportsCommand(languageClient, context);
+    registerChooseImportCommand(context);
 }
 
 function registerOverrideMethodsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -98,5 +101,60 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: 
             regenerate
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
+    }));
+}
+
+function registerOrganizeImportsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.ORGANIZE_IMPORTS, async (params: CodeActionParams) => {
+        const workspaceEdit = await languageClient.sendRequest(OrganizeImportsRequest.type, params);
+        applyWorkspaceEdit(workspaceEdit, languageClient);
+    }));
+}
+
+function registerChooseImportCommand(context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[]) => {
+        const chosen: ImportCandidate[] = [];
+        const fileUri: Uri = Uri.parse(uri);
+        for (let i = 0; i < selections.length; i++) {
+            const selection : ImportSelection = selections[i];
+            // Move the cursor to the code line with ambiguous import choices.
+            await window.showTextDocument(fileUri, { preserveFocus: true, selection: selection.range, viewColumn: ViewColumn.One });
+            const candidates: ImportCandidate[] = selection.candidates;
+            const items = candidates.map((item) => {
+                return {
+                    label: item.fullyQualifiedName,
+                    origin: item
+                };
+            });
+
+            const fullyQualifiedName = candidates[0].fullyQualifiedName;
+            const typeName = fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf(".") + 1);
+            const disposables: Disposable[] = [];
+            try {
+                const pick = await new Promise<any>((resolve, reject) => {
+                    const input = window.createQuickPick();
+                    input.title = "Organize Imports";
+                    input.step = i + 1;
+                    input.totalSteps = selections.length;
+                    input.placeholder = `Choose type '${typeName}' to import`;
+                    input.items = items;
+                    disposables.push(
+                        input.onDidChangeSelection(items => resolve(items[0])),
+                        input.onDidHide(() => {
+                            reject(undefined);
+                        }),
+                        input
+                    );
+                    input.show();
+                });
+                chosen.push(pick ? pick.origin : null);
+            } catch (err) {
+                break;
+            } finally {
+                disposables.forEach(d => d.dispose());
+            }
+        }
+
+        return chosen;
     }));
 }

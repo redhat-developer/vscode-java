@@ -1,7 +1,7 @@
 'use strict';
 
 import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
-import { Command } from 'vscode';
+import { Command, Range } from 'vscode';
 
 /**
  * The message type. Copied from vscode protocol
@@ -173,4 +173,18 @@ export interface GenerateHashCodeEqualsParams {
 
 export namespace GenerateHashCodeEqualsRequest {
     export const type = new RequestType<GenerateHashCodeEqualsParams, WorkspaceEdit, void, void>('java/generateHashCodeEquals');
+}
+
+export namespace OrganizeImportsRequest {
+    export const type = new RequestType<CodeActionParams, WorkspaceEdit, void, void>('java/organizeImports');
+}
+
+export interface ImportCandidate {
+    fullyQualifiedName: string;
+    id: string;
+}
+
+export interface ImportSelection {
+    candidates: ImportCandidate[];
+    range: Range;
 }
