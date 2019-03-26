@@ -116,13 +116,14 @@ function registerChooseImportCommand(context: ExtensionContext): void {
         const chosen: ImportCandidate[] = [];
         const fileUri: Uri = Uri.parse(uri);
         for (let i = 0; i < selections.length; i++) {
+            const selection : ImportSelection = selections[i];
             // Move the cursor to the code line with ambiguous import choices.
-            await window.showTextDocument(fileUri, { preserveFocus: true, selection: selections[i].range, viewColumn: ViewColumn.One });
-            const candidates: ImportCandidate[] = selections[i].candidates;
+            await window.showTextDocument(fileUri, { preserveFocus: true, selection: selection.range, viewColumn: ViewColumn.One });
+            const candidates: ImportCandidate[] = selection.candidates;
             // Move the recommend type to the top.
-            if (selections[i].defaultSelection > 0 && selections[i].defaultSelection < candidates.length) {
-                const defaultChoice: ImportCandidate = candidates[selections[i].defaultSelection];
-                candidates.splice(selections[i].defaultSelection, 1);
+            if (selection.defaultSelection && selection.defaultSelection < candidates.length) {
+                const defaultChoice: ImportCandidate = candidates[selection.defaultSelection];
+                candidates.splice(selection.defaultSelection, 1);
                 candidates.unshift(defaultChoice);
             }
 
@@ -133,7 +134,7 @@ function registerChooseImportCommand(context: ExtensionContext): void {
                 };
             });
 
-            const fullyQualifiedName = candidates.length ? candidates[0].fullyQualifiedName : "";
+            const fullyQualifiedName = candidates[0].fullyQualifiedName;
             const typeName = fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf(".") + 1);
             const disposables: Disposable[] = [];
             try {
