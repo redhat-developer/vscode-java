@@ -242,6 +242,12 @@
           ],
           "scope": "window"
         },
+        "java.foldingRange.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.",
+          "scope": "window"
+        },
         "java.progressReports.enabled": {
           "type": "boolean",
           "description": "[Experimental] Enable/disable progress reports from background processes on the server.",
