@@ -187,5 +187,4 @@ export interface ImportCandidate {
 export interface ImportSelection {
     candidates: ImportCandidate[];
     range: Range;
-    defaultSelection: null | number;
 }

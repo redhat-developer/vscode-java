@@ -120,13 +120,6 @@ function registerChooseImportCommand(context: ExtensionContext): void {
             // Move the cursor to the code line with ambiguous import choices.
             await window.showTextDocument(fileUri, { preserveFocus: true, selection: selection.range, viewColumn: ViewColumn.One });
             const candidates: ImportCandidate[] = selection.candidates;
-            // Move the recommend type to the top.
-            if (selection.defaultSelection && selection.defaultSelection < candidates.length) {
-                const defaultChoice: ImportCandidate = candidates[selection.defaultSelection];
-                candidates.splice(selection.defaultSelection, 1);
-                candidates.unshift(defaultChoice);
-            }
-
             const items = candidates.map((item) => {
                 return {
                     label: item.fullyQualifiedName,
