@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.42.0 (March 29th, 2019)
+* enhancement - added "imports" folding support. See [#555](https://github.com/redhat-developer/vscode-java/issues/555).
+* enhancement - added UI to manage anbiguous imports. See [#673](https://github.com/redhat-developer/vscode-java/issues/673).
+* enhancement - added `Convert to static import` code actions. See [#796](https://github.com/redhat-developer/vscode-java/issues/796).
+* enhancement - eliminated CPU usage when idling on Windows. See [#843](https://github.com/redhat-developer/vscode-java/pull/843).
+* enhancement - added Java 12 support. See [#671](https://github.com/redhat-developer/vscode-java/issues/671).
+* bug fix - fixed occasional NPE when navigating to class, on Linux. See [#963](https://github.com/eclipse/eclipse.jdt.ls/issues/963).
+
+
 ## 0.41.0 (March 15th, 2019)
 * enhancement - added `Generate hashcode() and equals()...` source action. See [814](https://github.com/redhat-developer/vscode-java/pull/814).
 * enhancement - added reload prompt when extension bundles changed. See [#822](https://github.com/redhat-developer/vscode-java/pull/822).
