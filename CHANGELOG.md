@@ -1,11 +1,11 @@
 # Change Log
 
 ## 0.42.0 (March 29th, 2019)
-* enhancement - added "imports" folding support. See [#555](https://github.com/redhat-developer/vscode-java/issues/555).
-* enhancement - added UI to manage anbiguous imports. See [#673](https://github.com/redhat-developer/vscode-java/issues/673).
-* enhancement - added `Convert to static import` code actions. See [#796](https://github.com/redhat-developer/vscode-java/issues/796).
-* enhancement - eliminated CPU usage when idling on Windows. See [#843](https://github.com/redhat-developer/vscode-java/pull/843).
-* enhancement - added Java 12 support. See [#671](https://github.com/redhat-developer/vscode-java/issues/671).
+* enhancement - added "imports" folding support. See [#694](https://github.com/eclipse/eclipse.jdt.ls/issues/694).
+* enhancement - added `Convert to static import` code actions. See [#958](https://github.com/eclipse/eclipse.jdt.ls/pull/958).
+* enhancement - added Java 12 support. See [#959](https://github.com/eclipse/eclipse.jdt.ls/issues/959).
+* enhancement - eliminated CPU usage when idling on Windows. See [#960](https://github.com/eclipse/eclipse.jdt.ls/issues/960).
+* enhancement - added UI to manage ambiguous imports. See [#966](https://github.com/eclipse/eclipse.jdt.ls/pull/966).
 * bug fix - fixed occasional NPE when navigating to class, on Linux. See [#963](https://github.com/eclipse/eclipse.jdt.ls/issues/963).
 
 ## 0.41.0 (March 15th, 2019)
