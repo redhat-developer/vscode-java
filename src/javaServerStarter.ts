@@ -3,16 +3,18 @@ import * as path from 'path';
 import * as net from 'net';
 import * as glob from 'glob';
 import * as os from 'os';
+import isDocker = require('is-Docker');
 import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
 import { RequirementsData } from './requirements';
 import { getJavaEncoding } from './settings';
+import { getJavaConfiguration } from './utils';
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 
 export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig): Executable {
-	let executable: Executable = Object.create(null);
-	let options: ExecutableOptions = Object.create(null);
+	const executable: Executable = Object.create(null);
+	const options: ExecutableOptions = Object.create(null);
 	options.env = process.env;
 	options.stdio = 'pipe';
 	executable.options = options;
@@ -21,9 +23,9 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	return executable;
 }
 export function awaitServerConnection(port): Thenable<StreamInfo> {
-	let addr = parseInt(port);
+	const addr = parseInt(port);
 	return new Promise((res, rej) => {
-		let server = net.createServer(stream => {
+		const server = net.createServer(stream => {
 			server.close();
 			console.log('JDT LS connection established on port ' + addr);
 			res({ reader: stream, writer: stream });
@@ -39,7 +41,7 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 
 
 function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath): string[] {
-	let params: string[] = [];
+	const params: string[] = [];
 	if (DEBUG) {
 		params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y');
 		// suspend=y is the default. Use this form if you need to debug the server startup code:
@@ -61,6 +63,10 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 
 	let vmargs = javaConfiguration.get('jdt.ls.vmargs', '');
+	if( getJavaConfiguration().inspect('jdt.ls.vmargs').defaultValue === vmargs
+		&& isDocker() ) {
+		vmargs = '-noverify -XX:+UseContainerSupport -XX:MaxRAMPercentage=80 -XX:+UseG1GC -XX:+UseStringDeduplication';
+	}
 	const encodingKey = '-Dfile.encoding=';
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
@@ -74,14 +80,14 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 
 	parseVMargs(params, vmargs);
 	let server_home: string = path.resolve(__dirname, '../server');
-	let launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: server_home });
+	const launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: server_home });
 	if (launchersFound.length) {
 		params.push('-jar'); params.push(path.resolve(server_home, launchersFound[0]));
 	} else {
 		return null;
 	}
 
-	//select configuration directory according to OS
+	// select configuration directory according to OS
 	let configDir = 'config_win';
 	if (process.platform === 'darwin') {
 		configDir = 'config_mac';
@@ -95,26 +101,26 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 
 
 function startedInDebugMode(): boolean {
-	let args = (process as any).execArgv;
+	const args = (process as any).execArgv;
 	if (args) {
 		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg) || /^--inspect-brk=?/.test(arg));
 	}
 	return false;
 }
 
-//exported for tests
+// exported for tests
 export function parseVMargs(params: any[], vmargsLine: string) {
 	if (!vmargsLine) {
 		return;
 	}
-	let vmargs = vmargsLine.match(/(?:[^\s"]+|"[^"]*")+/g);
+	const vmargs = vmargsLine.match(/(?:[^\s"]+|"[^"]*")+/g);
 	if (vmargs === null) {
 		return;
 	}
 	vmargs.forEach(arg => {
-		//remove all standalone double quotes
+		// remove all standalone double quotes
 		arg = arg.replace(/(\\)?"/g, function ($0, $1) { return ($1 ? $0 : ''); });
-		//unescape all escaped double quotes
+		// unescape all escaped double quotes
 		arg = arg.replace(/(\\)"/g, '"');
 		if (params.indexOf(arg) < 0) {
 			params.push(arg);

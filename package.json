@@ -441,6 +441,7 @@
     "tmp": "^0.0.33",
     "path-exists": "^3.0.0",
     "expand-home-dir": "^0.0.3",
-    "glob": "^7.1.3"
+    "glob": "^7.1.3",
+    "is-docker": "1.1.0"
   }
 }
