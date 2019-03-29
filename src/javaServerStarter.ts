@@ -18,6 +18,7 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	executable.options = options;
 	executable.command = path.resolve(requirements.java_home + '/bin/java');
 	executable.args = prepareParams(requirements, javaConfig, workspacePath);
+	console.log('Starting Java server with: ' + executable.command + ' ' + executable.args.join(' '));
 	return executable;
 }
 export function awaitServerConnection(port): Thenable<StreamInfo> {
