@@ -307,9 +307,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						}
 					};
 					context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', provider));
-					extensions.onDidChange(() => {
-						onExtensionChange(extensions.all);
-					});
+					if (extensions.onDidChange) {//Theia doesn't support this API yet
+						extensions.onDidChange(() => {
+							onExtensionChange(extensions.all);
+						});
+					}
 					excludeProjectSettingsFiles();
 				});
 
