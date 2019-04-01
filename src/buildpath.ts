@@ -47,7 +47,7 @@ export function registerCommands(context: ExtensionContext) {
                 window.showQuickPick(result.data.map(sourcePath => {
                     return {
                         label: sourcePath.displayPath,
-                        detail: `$(file-directory) ${sourcePath.projectType} Project: ${sourcePath.projectName}`, 
+                        detail: `$(file-directory) ${sourcePath.projectType} Project: ${sourcePath.projectName}`,
                     };
                 }), { placeHolder: 'All Java source directories recognized by the workspace.'});
             }

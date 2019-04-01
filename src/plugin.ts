@@ -9,12 +9,12 @@ let existingExtensions: Array<string>;
 export function collectJavaExtensions(extensions: vscode.Extension<any>[]): string[] {
 	const result = [];
 	if (extensions && extensions.length) {
-		for (let extension of extensions) {
-			let contributesSection = extension.packageJSON['contributes'];
+		for (const extension of extensions) {
+			const contributesSection = extension.packageJSON['contributes'];
 			if (contributesSection) {
-				let javaExtensions = contributesSection['javaExtensions'];
+				const javaExtensions = contributesSection['javaExtensions'];
 				if (Array.isArray(javaExtensions) && javaExtensions.length) {
-					for (let javaExtensionPath of javaExtensions) {
+					for (const javaExtensionPath of javaExtensions) {
 						result.push(path.resolve(extension.extensionPath, javaExtensionPath));
 					}
 				}
@@ -32,7 +32,7 @@ export function onExtensionChange(extensions: vscode.Extension<any>[]) {
 	}
 	const oldExtensions = new Set(existingExtensions.slice());
 	const newExtensions = collectJavaExtensions(extensions);
-	let hasChanged = ( oldExtensions.size != newExtensions.length);
+	let hasChanged = ( oldExtensions.size !== newExtensions.length);
 	if (!hasChanged) {
 		for (const newExtension of newExtensions) {
 			if (!oldExtensions.has(newExtension)) {

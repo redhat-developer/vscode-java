@@ -5,7 +5,6 @@ import { LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
 
-
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 
 const changeItem = {
@@ -23,14 +22,14 @@ export function onConfigurationChange() {
 		if (!params.affectsConfiguration('java')) {
 			return;
 		}
-		let newConfig = getJavaConfiguration();
+		const newConfig = getJavaConfiguration();
 		if (newConfig.get(EXCLUDE_FILE_CONFIG)) {
 			excludeProjectSettingsFiles();
 		}
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
-			let msg = 'Java Language Server configuration changed, please restart VS Code.';
-			let action = 'Restart Now';
-			let restartId = Commands.RELOAD_WINDOW;
+			const msg = 'Java Language Server configuration changed, please restart VS Code.';
+			const action = 'Restart Now';
+			const restartId = Commands.RELOAD_WINDOW;
 			oldConfig = newConfig;
 			window.showWarningMessage(msg, action).then((selection) => {
 				if (action === selection) {
@@ -86,7 +85,7 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 					config.update('exclude', excludedInspectedValue.workspaceValue, ConfigurationTarget.Workspace);
 				} else if (result === changeItem.never) {
 					const storeInWorkspace = getJavaConfiguration().inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
-					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace?ConfigurationTarget.Workspace:ConfigurationTarget.Global);
+					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace?ConfigurationTarget.Workspace: ConfigurationTarget.Global);
 				}
 			});
 		}
@@ -105,12 +104,12 @@ function hasConfigKeyChanged(key, oldConfig, newConfig) {
 
 export function getJavaEncoding(): string {
 	const config = workspace.getConfiguration();
-	const languageConfig = config.get('[java]')
+	const languageConfig = config.get('[java]');
 	let javaEncoding = null;
-	if (languageConfig != null) {
+	if (languageConfig) {
 		javaEncoding = languageConfig['files.encoding'];
 	}
-	if (javaEncoding == null) {
+	if (!javaEncoding) {
 		javaEncoding = config.get<string>('files.encoding', 'UTF-8');
 	}
 	return javaEncoding;
