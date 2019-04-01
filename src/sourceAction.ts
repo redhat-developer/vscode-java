@@ -1,6 +1,6 @@
 'use strict';
 
-import { commands, window, ExtensionContext, Range, ViewColumn, Uri, Disposable} from 'vscode';
+import { commands, window, ExtensionContext, Range, ViewColumn, Uri, Disposable } from 'vscode';
 import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
@@ -117,7 +117,7 @@ function registerChooseImportCommand(context: ExtensionContext): void {
         const chosen: ImportCandidate[] = [];
         const fileUri: Uri = Uri.parse(uri);
         for (let i = 0; i < selections.length; i++) {
-            const selection : ImportSelection = selections[i];
+            const selection: ImportSelection = selections[i];
             // Move the cursor to the code line with ambiguous import choices.
             await window.showTextDocument(fileUri, { preserveFocus: true, selection: selection.range, viewColumn: ViewColumn.One });
             const candidates: ImportCandidate[] = selection.candidates;

@@ -30,9 +30,9 @@ interface ErrorData {
  *
  */
 export async function resolveRequirements(): Promise<RequirementsData> {
-    let java_home = await checkJavaRuntime();
-    let javaVersion = await checkJavaVersion(java_home);
-    return Promise.resolve({ 'java_home': java_home, 'java_version': javaVersion });
+    const javaHome = await checkJavaRuntime();
+    const javaVersion = await checkJavaVersion(javaHome);
+    return Promise.resolve({ java_home: javaHome, java_version: javaVersion });
 }
 
 function checkJavaRuntime(): Promise<string> {
@@ -60,14 +60,14 @@ function checkJavaRuntime(): Promise<string> {
                 if (pathExists.sync(path.resolve(javaHome, JAVAC_FILENAME))) {
                     msg = `'bin' should be removed from the ${source} (${javaHome})`;
                 } else {
-                    msg = `The ${source} (${javaHome}) does not point to a JDK.`
+                    msg = `The ${source} (${javaHome}) does not point to a JDK.`;
                 }
                 invalidJavaHome(reject, msg);
             }
             return resolve(javaHome);
         }
-        //No settings, let's try to detect as last resort.
-        findJavaHome(function (err, home) {
+        // No settings, let's try to detect as last resort.
+        findJavaHome((err, home) => {
             if (err) {
                 openJDKDownload(reject, 'Java runtime (JDK, not JRE) could not be located');
             }
@@ -83,10 +83,10 @@ function readJavaConfig(): string {
     return config.get<string>('java.home', null);
 }
 
-function checkJavaVersion(java_home: string): Promise<number> {
+function checkJavaVersion(javaHome: string): Promise<number> {
     return new Promise((resolve, reject) => {
-        cp.execFile(java_home + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
-            let javaVersion = parseMajorVersion(stderr);
+        cp.execFile(javaHome + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
+            const javaVersion = parseMajorVersion(stderr);
             if (javaVersion < 8) {
                 openJDKDownload(reject, 'Java 8 or more recent is required to run. Please download and install a recent JDK');
             } else {
@@ -103,12 +103,12 @@ export function parseMajorVersion(content: string): number {
         return 0;
     }
     let version = match[1];
-    //Ignore '1.' prefix for legacy Java versions
+    // Ignore '1.' prefix for legacy Java versions
     if (version.startsWith('1.')) {
         version = version.substring(2);
     }
 
-    //look into the interesting bits now
+    // look into the interesting bits now
     regexp = /\d+/g;
     match = regexp.exec(version);
     let javaVersion = 0;

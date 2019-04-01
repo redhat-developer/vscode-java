@@ -73,15 +73,15 @@ export interface ActionableMessage {
 }
 
 export namespace StatusNotification {
-	export const type = new NotificationType<StatusReport,void >('language/status');
+	export const type = new NotificationType<StatusReport, void >('language/status');
 }
 
 export namespace ProgressReportNotification {
-	export const type = new NotificationType<ProgressReport,void >('language/progressReport');
+	export const type = new NotificationType<ProgressReport, void >('language/progressReport');
 }
 
 export namespace ClassFileContentsRequest {
-    export const type= new RequestType<TextDocumentIdentifier, string, void, void> ('java/classFileContents');
+    export const type = new RequestType<TextDocumentIdentifier, string, void, void> ('java/classFileContents');
 }
 
 export namespace ProjectConfigurationUpdateRequest {
@@ -99,7 +99,6 @@ export namespace CompileWorkspaceRequest {
 export namespace ExecuteClientCommandRequest {
     export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/executeClientCommand');
 }
-
 
 export namespace SendNotificationRequest {
     export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/notify');

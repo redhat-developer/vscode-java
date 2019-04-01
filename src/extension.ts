@@ -9,8 +9,10 @@ import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
-SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute } from './protocol';
+import {
+	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
+	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute
+} from './protocol';
 import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
 import * as sourceAction from './sourceAction';
@@ -20,7 +22,7 @@ import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 
 let lastStatus;
 let languageClient: LanguageClient;
-let jdtEventEmitter = new EventEmitter<Uri>();
+const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
@@ -28,7 +30,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	enableJavadocSymbols();
 
 	return requirements.resolveRequirements().catch(error => {
-		//show error
+		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
 			if (error.label && error.label === selection && error.command) {
 				commands.executeCommand(error.command, error.commandParam);
@@ -43,10 +45,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (!storagePath) {
 					storagePath = getTempWorkspace();
 				}
-				let workspacePath = path.resolve(storagePath + '/jdt_ws');
+				const workspacePath = path.resolve(storagePath + '/jdt_ws');
 
 				// Options to control the language client
-				let clientOptions: LanguageClientOptions = {
+				const clientOptions: LanguageClientOptions = {
 					// Register the server for java
 					documentSelector: [
 						{ scheme: 'file', language: 'java' },
@@ -60,34 +62,34 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						bundles: collectJavaExtensions(extensions.all),
 						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
 						settings: { java: getJavaConfiguration() },
-						extendedClientCapabilities:{
+						extendedClientCapabilities: {
 							progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
-							classFileContentsSupport:true,
-							overrideMethodsPromptSupport:true,
-							hashCodeEqualsPromptSupport:true,
-							advancedOrganizeImportsSupport:true,
-							generateToStringPromptSupport:true
+							classFileContentsSupport: true,
+							overrideMethodsPromptSupport: true,
+							hashCodeEqualsPromptSupport: true,
+							advancedOrganizeImportsSupport: true,
+							generateToStringPromptSupport: true
 						},
 						triggerFiles: getTriggerFiles()
 					},
 					revealOutputChannelOn: RevealOutputChannelOn.Never
 				};
 
-				let item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
+				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
 				item.text = '$(rocket)';
 				item.command = Commands.OPEN_OUTPUT;
-				let progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE+1);
+				const progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE + 1);
 
 				let serverOptions;
-				let port = process.env['SERVER_PORT'];
+				const port = process.env['SERVER_PORT'];
 				if (!port) {
-					let lsPort = process.env['JDTLS_CLIENT_PORT'];
+					const lsPort = process.env['JDTLS_CLIENT_PORT'];
 					if (!lsPort) {
 						serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
 					} else {
 						serverOptions = () => {
-							let socket = net.connect(lsPort);
-							let result: StreamInfo = {
+							const socket = net.connect(lsPort);
+							const result: StreamInfo = {
 								writer: socket,
 								reader: socket
 							};
@@ -166,9 +168,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						}
 						const titles = notification.commands.map(a => a.title);
 						show(notification.message, ...titles).then((selection) => {
-							for (let action of notification.commands) {
+							for (const action of notification.commands) {
 								if (action.title === selection) {
-									let args: any[] = (action.arguments) ? action.arguments : [];
+									const args: any[] = (action.arguments) ? action.arguments : [];
 									commands.executeCommand(action.command, ...args);
 									break;
 								}
@@ -215,17 +217,17 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
 					}));
 
-					context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile : boolean) => {
+					context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean) => {
 						return window.withProgress({ location: ProgressLocation.Window }, async p => {
 							if (typeof isFullCompile !== 'boolean') {
-								const selection = await window.showQuickPick(['Incremental', 'Full'], {'placeHolder' : 'please choose compile type:'});
+								const selection = await window.showQuickPick(['Incremental', 'Full'], { placeHolder: 'please choose compile type:' });
 								isFullCompile = selection !== 'Incremental';
 							}
 							p.report({ message: 'Compiling workspace...' });
 							const start = new Date().getTime();
 							const res = await languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
 							const elapsed = new Date().getTime() - start;
-							const humanVisibleDelay = elapsed < 1000? 1000:0;
+							const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
 							return new Promise((resolve, reject) => {
 								setTimeout(() => { // set a timeout so user would still see the message when build time is short
 									if (res === CompileWorkspaceStatus.SUCCEED) {
@@ -288,7 +290,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						toggleItem(editor, item);
 					}));
 
-					let provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
+					const provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
 						onDidChange: jdtEventEmitter.event,
 						provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
 							return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
@@ -297,7 +299,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						}
 					};
 					context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', provider));
-					if (extensions.onDidChange) {//Theia doesn't support this API yet
+					if (extensions.onDidChange) {// Theia doesn't support this API yet
 						extensions.onDidChange(() => {
 							onExtensionChange(extensions.all);
 						});
@@ -305,12 +307,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					excludeProjectSettingsFiles();
 				});
 
-				let cleanWorkspaceExists = fs.existsSync( path.join(workspacePath,  cleanWorkspaceFileName));
+				const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
 				if (cleanWorkspaceExists) {
 					try {
 						deleteDirectory(workspacePath);
 					} catch (error) {
-						window.showErrorMessage('Failed to delete ' + workspacePath + ': ' + error);
+						window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
 					}
 				}
 
@@ -318,7 +320,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				// Register commands here to make it available even when the language client fails
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath)));
 
-				let extensionPath = context.extensionPath;
+				const extensionPath = context.extensionPath;
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
 
 				context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
@@ -389,7 +391,7 @@ function setIncompleteClasspathSeverity(severity: string) {
 	const config = getJavaConfiguration();
 	const section = 'errors.incompleteClasspath.severity';
 	config.update(section, severity, true).then(
-		() => console.log(section + ' globally set to ' + severity),
+		() => console.log(`${section} globally set to ${severity}`),
 		(error) => console.log(error)
 	);
 }
@@ -417,7 +419,7 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 
 	const st = FeatureStatus[status];
 	config.update(section, st).then(
-		() => console.log(section + ' set to ' + st),
+		() => console.log(`${section} set to ${st}`),
 		(error) => console.log(error)
 	);
 	if (status !== FeatureStatus.disabled) {
@@ -442,15 +444,14 @@ function getTempWorkspace() {
 }
 
 function makeRandomHexString(length) {
-	let chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+	const chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
 	let result = '';
 	for (let i = 0; i < length; i++) {
-		let idx = Math.floor(chars.length * Math.random());
+		const idx = Math.floor(chars.length * Math.random());
 		result += chars[idx];
 	}
 	return result;
 }
-
 
 async function cleanWorkspace(workspacePath) {
 	const doIt = 'Restart and delete';
@@ -465,8 +466,8 @@ async function cleanWorkspace(workspacePath) {
 
 function deleteDirectory(dir) {
 	if (fs.existsSync(dir)) {
-		fs.readdirSync(dir).forEach(function (child) {
-			let entry = path.join(dir, child);
+		fs.readdirSync(dir).forEach((child) => {
+			const entry = path.join(dir, child);
 			if (fs.lstatSync(entry).isDirectory()) {
 				deleteDirectory(entry);
 			} else {
@@ -478,7 +479,7 @@ function deleteDirectory(dir) {
 }
 
 function openServerLogFile(workspacePath): Thenable<boolean> {
-	let serverLogFile = path.join(workspacePath, '.metadata', '.log');
+	const serverLogFile = path.join(workspacePath, '.metadata', '.log');
 	if (!serverLogFile) {
 		return window.showWarningMessage('Java Language Server has not started logging.').then(() => false);
 	}
@@ -501,27 +502,27 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 }
 
 async function openFormatter(extensionPath) {
-	let defaultFormatter = path.join(extensionPath, 'formatters', 'eclipse-formatter.xml');
-	let formatterUrl: string = getJavaConfiguration().get('format.settings.url');
+	const defaultFormatter = path.join(extensionPath, 'formatters', 'eclipse-formatter.xml');
+	const formatterUrl: string = getJavaConfiguration().get('format.settings.url');
 	if (formatterUrl && formatterUrl.length > 0) {
 		if (isRemote(formatterUrl)) {
 			commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(formatterUrl));
 		} else {
-			let document = getPath(formatterUrl);
+			const document = getPath(formatterUrl);
 			if (document && fs.existsSync(document)) {
 				return openDocument(extensionPath, document, defaultFormatter, null);
 			}
 		}
 	}
-	let global = workspace.workspaceFolders === undefined;
-	let fileName = formatterUrl || 'eclipse-formatter.xml';
+	const global = workspace.workspaceFolders === undefined;
+	const fileName = formatterUrl || 'eclipse-formatter.xml';
 	let file;
 	let relativePath;
 	if (!global) {
 		file = path.join(workspace.workspaceFolders[0].uri.fsPath, fileName);
 		relativePath = fileName;
 	} else {
-		let root = path.join(extensionPath, '..', 'redhat.java');
+		const root = path.join(extensionPath, '..', 'redhat.java');
 		if (!fs.existsSync(root)) {
 			fs.mkdirSync(root);
 		}
@@ -542,7 +543,7 @@ async function openFormatter(extensionPath) {
 function getPath(f) {
 	if (workspace.workspaceFolders && !path.isAbsolute(f)) {
 		workspace.workspaceFolders.forEach(wf => {
-			let file = path.resolve(wf.uri.path, f);
+			const file = path.resolve(wf.uri.path, f);
 			if (fs.existsSync(file)) {
 				return file;
 			}
@@ -585,18 +586,18 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 	};
 	await window.showInputBox(options).then(f => {
 		if (f) {
-			let global = workspace.workspaceFolders === undefined;
+			const global = workspace.workspaceFolders === undefined;
 			if (isRemote(f)) {
 				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(f));
 				getJavaConfiguration().update('format.settings.url', f, global);
 			} else {
 				if (!path.isAbsolute(f)) {
-					let fileName = f;
+					const fileName = f;
 					if (!global) {
 						f = path.join(workspace.workspaceFolders[0].uri.fsPath, fileName);
 						relativePath = fileName;
 					} else {
-						let root = path.join(extensionPath, '..', 'redhat.java');
+						const root = path.join(extensionPath, '..', 'redhat.java');
 						if (!fs.existsSync(root)) {
 							fs.mkdirSync(root);
 						}
@@ -607,14 +608,14 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 				}
 				getJavaConfiguration().update('format.settings.url', (relativePath !== null ? relativePath : f), global);
 				if (!fs.existsSync(f)) {
-					let name = relativePath !== null ? relativePath : f;
-					let msg = '\'' + name + '\' does not exist. Do you want to create it?';
-					let action = 'Yes';
+					const name = relativePath !== null ? relativePath : f;
+					const msg = `' ${name} ' does not exist. Do you want to create it?`;
+					const action = 'Yes';
 					window.showWarningMessage(msg, action, 'No').then((selection) => {
 						if (action === selection) {
 							fs.createReadStream(defaultFormatter)
-							.pipe(fs.createWriteStream(f))
-							.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
+								.pipe(fs.createWriteStream(f))
+								.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
 						}
 					});
 				} else {
@@ -626,20 +627,20 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 }
 
 export async function applyWorkspaceEdit(obj, languageClient) {
-	let edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
+	const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 	if (edit) {
 		await workspace.applyEdit(edit);
 		// By executing the range formatting command to correct the indention according to the VS Code editor settings.
 		// More details, see: https://github.com/redhat-developer/vscode-java/issues/557
 		try {
-			let currentEditor = window.activeTextEditor;
+			const currentEditor = window.activeTextEditor;
 			// If the Uri path of the edit change is not equal to that of the active editor, we will skip the range formatting
 			if (currentEditor.document.uri.fsPath !== edit.entries()[0][0].fsPath) {
 				return;
 			}
-			let cursorPostion = currentEditor.selection.active;
+			const cursorPostion = currentEditor.selection.active;
 			// Get the array of all the changes
-			let changes = edit.entries()[0][1];
+			const changes = edit.entries()[0][1];
 			// Get the position information of the first change
 			let startPosition = new Position(changes[0].range.start.line, changes[0].range.start.character);
 			let lineOffsets = changes[0].newText.split(/\r?\n/).length - 1;
@@ -662,7 +663,7 @@ export async function applyWorkspaceEdit(obj, languageClient) {
 }
 
 async function executeRangeFormat(editor, startPosition, lineOffset) {
-	let endPosition = editor.document.positionAt(editor.document.offsetAt(new Position(startPosition.line + lineOffset + 1, 0)) - 1);
+	const endPosition = editor.document.positionAt(editor.document.offsetAt(new Position(startPosition.line + lineOffset + 1, 0)) - 1);
 	editor.selection = new Selection(startPosition, endPosition);
 	await commands.executeCommand('editor.action.formatSelection');
 }

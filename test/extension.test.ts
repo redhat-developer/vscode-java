@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as plugin from '../src/plugin';
 import * as java from '../src/javaServerStarter';
 import * as requirements from '../src/requirements';
-import {Commands} from '../src/commands';
+import { Commands } from '../src/commands';
 
 suite('Java Language Extension', () => {
 
@@ -48,16 +48,16 @@ suite('Java Language Extension', () => {
 				Commands.CHOOSE_IMPORTS,
 				Commands.GENERATE_TOSTRING_PROMPT
 			];
-			let foundJavaCommands = commands.filter(function(value){
+			const foundJavaCommands = commands.filter(function(value) {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
 			});
-			assert.equal(foundJavaCommands.length ,JAVA_COMMANDS.length, 'Some Java commands are not registered properly or a new command is not added to the test');
+			assert.equal(foundJavaCommands.length , JAVA_COMMANDS.length, 'Some Java commands are not registered properly or a new command is not added to the test');
 		});
 	});
 
 	test('should parse VM arguments', function () {
-		let userArgs = '-Xmx512m -noverify   -Dfoo=\"something with blank\"  ';
-		let vmArgs = ['-noverify', 'foo'];
+		const userArgs = '-Xmx512m -noverify   -Dfoo=\"something with blank\"  ';
+		const vmArgs = ['-noverify', 'foo'];
 
 		java.parseVMargs(vmArgs, userArgs);
 
@@ -69,8 +69,8 @@ suite('Java Language Extension', () => {
 	});
 
 	test('should parse VM arguments with spaces', function () {
-		let userArgs = '-javaagent:"C:\\Program Files\\Java\\lombok.jar" -Xbootclasspath/a:"C:\\Program Files\\Java\\lombok.jar" -Dfoo="Some \\"crazy\\" stuff"';
-		let vmArgs = [];
+		const userArgs = '-javaagent:"C:\\Program Files\\Java\\lombok.jar" -Xbootclasspath/a:"C:\\Program Files\\Java\\lombok.jar" -Dfoo="Some \\"crazy\\" stuff"';
+		const vmArgs = [];
 
 		java.parseVMargs(vmArgs, userArgs);
 
@@ -98,7 +98,7 @@ suite('Java Language Extension', () => {
 	});
 
 	test('should parse Java version', function () {
-		//Test boundaries
+		// Test boundaries
 		assert.equal(requirements.parseMajorVersion(null), 0);
 		assert.equal(requirements.parseMajorVersion(''), 0);
 		assert.equal(requirements.parseMajorVersion('foo'), 0);
@@ -106,7 +106,7 @@ suite('Java Language Extension', () => {
 		assert.equal(requirements.parseMajorVersion('version ""'), 0);
 		assert.equal(requirements.parseMajorVersion('version "NaN"'), 0);
 
-		//Test the real stuff
+		// Test the real stuff
 		assert.equal(requirements.parseMajorVersion('version "1.7"'), 7);
 		assert.equal(requirements.parseMajorVersion('version "1.8.0_151"'), 8);
 		assert.equal(requirements.parseMajorVersion('version "9"'), 9);

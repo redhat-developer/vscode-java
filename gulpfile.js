@@ -1,16 +1,10 @@
 'use strict';
 const gulp = require('gulp');
-const gulp_tslint = require('gulp-tslint');
 const cp = require('child_process');
 const decompress = require('gulp-decompress');
 const download = require('gulp-download');
 const server_dir = '../eclipse.jdt.ls';
 //...
-gulp.task('tslint', () => {
-    return gulp.src(['**/*.ts', '!**/*.d.ts', '!node_modules/**'])
-      .pipe(gulp_tslint())
-      .pipe(gulp_tslint.report());
-});
 
 gulp.task('download_server', function(done) {
 	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
@@ -34,7 +28,7 @@ gulp.task('dev_server', function(done) {
 	}
 	else if(isMac()){
 		command += '-Denvironment.os=macosx -Denvironment.ws=cocoa -Denvironment.arch=x86_64';
-	} 
+	}
 	else if(isWin()){
 		command += '-Denvironment.os=win32 -Denvironment.ws=win32 -Denvironment.arch=x86_64';
 	}
