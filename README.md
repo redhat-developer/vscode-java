@@ -103,6 +103,9 @@ The following settings are supported:
 *New in 0.42.0:*
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
 
+*New in 0.43.0:*
+* `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
+
 Troubleshooting
 ===============
 1. Check the status of the language tools on the lower right corner (marked with A on image below).
