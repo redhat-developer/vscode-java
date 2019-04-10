@@ -109,7 +109,7 @@ export namespace Commands {
     /**
      * Generate hashCode() and equals().
      */
-	export const HASHCODE_EQUALS_PROMPT = 'java.action.hashCodeEqualsPrompt';
+    export const HASHCODE_EQUALS_PROMPT = 'java.action.hashCodeEqualsPrompt';
 	/**
      * Open settings.json
      */
@@ -122,4 +122,8 @@ export namespace Commands {
      * Choose type to import.
      */
     export const CHOOSE_IMPORTS = "java.action.organizeImports.chooseImports";
+    /**
+     * Generate toString().
+     */
+    export const GENERATE_TOSTRING_PROMPT = 'java.action.generateToStringPrompt';
 }

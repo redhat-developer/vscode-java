@@ -5,13 +5,14 @@ import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
     registerHashCodeEqualsCommand(languageClient, context);
     registerOrganizeImportsCommand(languageClient, context);
     registerChooseImportCommand(context);
+    registerGenerateToStringCommand(languageClient, context);
 }
 
 function registerOverrideMethodsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -156,5 +157,43 @@ function registerChooseImportCommand(context: ExtensionContext): void {
         }
 
         return chosen;
+    }));
+}
+
+function registerGenerateToStringCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_TOSTRING_PROMPT, async (params: CodeActionParams) => {
+        const result = await languageClient.sendRequest(CheckToStringStatusRequest.type, params);
+        if (!result) {
+            return;
+        }
+
+        if (result.existed) {
+            const ans = await window.showInformationMessage(`Method 'toString()' already exists in the Class '${result.type}'. `
+                + 'Do you want to replace the implementation?', 'Replace', 'Cancel');
+            if (ans !== 'Replace') {
+                return;
+            }
+        }
+
+        const fieldItems = result.fields.map((field) => {
+            return {
+                label: `${field.name}: ${field.type}`,
+                picked: true,
+                originalField: field
+            };
+        });
+        const selectedFields = await window.showQuickPick(fieldItems, {
+            canPickMany: true,
+            placeHolder:  'Select the fields to include in the toString() method.'
+        });
+        if (!selectedFields) {
+            return;
+        }
+
+        const workspaceEdit = await languageClient.sendRequest(GenerateToStringRequest.type, {
+            context: params,
+            fields: selectedFields.map((item) => item.originalField),
+        });
+        applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
