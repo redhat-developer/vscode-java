@@ -5,7 +5,7 @@ import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableField } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -175,24 +175,29 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             }
         }
 
-        const fieldItems = result.fields.map((field) => {
-            return {
-                label: `${field.name}: ${field.type}`,
-                picked: true,
-                originalField: field
-            };
-        });
-        const selectedFields = await window.showQuickPick(fieldItems, {
-            canPickMany: true,
-            placeHolder:  'Select the fields to include in the toString() method.'
-        });
-        if (!selectedFields) {
-            return;
+        let fields: VariableField[] = [];
+        if (result.fields && result.fields.length) {
+            const fieldItems = result.fields.map((field) => {
+                return {
+                    label: `${field.name}: ${field.type}`,
+                    picked: true,
+                    originalField: field
+                };
+            });
+            const selectedFields = await window.showQuickPick(fieldItems, {
+                canPickMany: true,
+                placeHolder:  'Select the fields to include in the toString() method.'
+            });
+            if (!selectedFields) {
+                return;
+            }
+
+            fields = selectedFields.map((item) => item.originalField);
         }
 
         const workspaceEdit = await languageClient.sendRequest(GenerateToStringRequest.type, {
             context: params,
-            fields: selectedFields.map((item) => item.originalField),
+            fields,
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
