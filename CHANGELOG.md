@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.42.1 (April 1st, 2019)
+* bug fix - fixed java.lang.UnsupportedClassVersionError when trying to run/test standalone code. See [#801](https://github.com/redhat-developer/vscode-java/issues/801).
+
 ## 0.42.0 (March 29th, 2019)
 * enhancement - added "imports" folding support. See [#694](https://github.com/eclipse/eclipse.jdt.ls/issues/694).
 * enhancement - added `Convert to static import` code actions. See [#958](https://github.com/eclipse/eclipse.jdt.ls/pull/958).

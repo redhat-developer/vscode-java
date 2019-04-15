@@ -55,17 +55,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					],
 					synchronize: {
 						configurationSection: 'java',
-						// Notify the server about file changes to .java and project/build files contained in the workspace
-						fileEvents: [
-							workspace.createFileSystemWatcher('**/*.java'),
-							workspace.createFileSystemWatcher('**/pom.xml'),
-							workspace.createFileSystemWatcher('**/*.gradle'),
-							workspace.createFileSystemWatcher('**/gradle.properties'),
-							workspace.createFileSystemWatcher('**/.project'),
-							workspace.createFileSystemWatcher('**/.classpath'),
-							workspace.createFileSystemWatcher('**/settings/*.prefs'),
-							workspace.createFileSystemWatcher('**/src/**')
-						],
 					},
 					initializationOptions: {
 						bundles: collectJavaExtensions(extensions.all),
@@ -76,7 +65,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							classFileContentsSupport: true,
 							overrideMethodsPromptSupport: true,
 							hashCodeEqualsPromptSupport: true,
-							advancedOrganizeImportsSupport: true
+							advancedOrganizeImportsSupport: true,
+							generateToStringPromptSupport: true
 						},
 						triggerFiles: getTriggerFiles()
 					},

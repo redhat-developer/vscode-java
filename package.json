@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-1.0",
-  "version": "0.42.0",
+  "version": "0.43.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
@@ -129,6 +129,12 @@
           "type": "boolean",
           "default": true,
           "description": "Enable/disable the Maven importer.",
+          "scope": "window"
+        },
+        "java.maven.downloadSources": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable eager download of Maven source artifacts.",
           "scope": "window"
         },
         "java.referencesCodeLens.enabled": {
@@ -290,16 +296,56 @@
           "default": false,
           "scope": "window"
         },
-        "java.codeGeneration.hashCodeEquals.useBlocks": {
+        "java.codeGeneration.useBlocks": {
           "type": "boolean",
-          "description": "Use blocks in 'if' statements when generating the hashCode and equals methods.",
+          "description": "Use blocks in 'if' statements when generating the methods.",
           "default": false,
           "scope": "window"
         },
-        "java.codeGeneration.hashCodeEquals.generateComments": {
+        "java.codeGeneration.generateComments": {
           "type": "boolean",
-          "description": "Generate method comments when generating the hashCode and equals methods.",
+          "description": "Generate method comments when generating the methods.",
           "default": false,
+          "scope": "window"
+        },
+        "java.codeGeneration.toString.template": {
+          "type": "string",
+          "description": "The template for generating the toString method.",
+          "default": "${object.className} [${member.name()}=${member.value}, ${otherMembers}]"
+        },
+        "java.codeGeneration.toString.codeStyle": {
+          "type": "string",
+          "enum": [
+            "STRING_CONCATENATION",
+            "STRING_BUILDER",
+            "STRING_BUILDER_CHAINED",
+            "STRING_FORMAT"
+          ],
+          "enumDescriptions": [
+            "String concatenation",
+            "StringBuilder/StringBuffer",
+            "StringBuilder/StringBuffer - chained call",
+            "String.format/MessageFormat"
+          ],
+          "description": "The code style for generating the toString method.",
+          "default": "STRING_CONCATENATION"
+        },
+        "java.codeGeneration.toString.skipNullValues": {
+          "type": "boolean",
+          "description": "Skip null values when generating the toString method.",
+          "default": false,
+          "scope": "window"
+        },
+        "java.codeGeneration.toString.listArrayContents": {
+          "type": "boolean",
+          "description": "List contents of arrays instead of using native toString().",
+          "default": true,
+          "scope": "window"
+        },
+        "java.codeGeneration.toString.limitElements": {
+          "type": "integer",
+          "description": "Limit number of items in arrays/collections/maps to list, if 0 then list all.",
+          "default": 0,
           "scope": "window"
         }
       }
