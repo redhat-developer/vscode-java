@@ -97,12 +97,17 @@ The following settings are supported:
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
 * `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
-* `java.codeGeneration.hashCodeEquals.useBlocks`: Use blocks in 'if' statements when generating the hashCode and equals methods. Defaults to `false`.
-* `java.codeGeneration.hashCodeEquals.generateComments`: Generate method comments when generating the hashCode and equals methods. Defaults to `false`.
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
 
 *New in 0.43.0:*
 * `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
+* `java.codeGeneration.useBlocks`: Use blocks in 'if' statements when generating the methods. Defaults to `false`.
+* `java.codeGeneration.generateComments`: Generate method comments when generating the methods. Defaults to `false`.
+* `java.codeGeneration.toString.template`: The template for generating the toString method. Defaults to `${object.className} [${member.name()}=${member.value}, ${otherMembers}]`.
+* `java.codeGeneration.toString.codeStyle`: The code style for generating the toString method. Defaults to `STRING_CONCATENATION`.
+* `java.codeGeneration.toString.skipNullValues`: Skip null values when generating the toString method. Defaults to `false`.
+* `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
+* `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 
 Troubleshooting
 ===============

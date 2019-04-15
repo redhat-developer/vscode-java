@@ -188,3 +188,22 @@ export interface ImportSelection {
     candidates: ImportCandidate[];
     range: Range;
 }
+
+export interface CheckToStringResponse {
+    type: string;
+    fields: VariableField[];
+    exists: boolean;
+}
+
+export namespace CheckToStringStatusRequest {
+    export const type = new RequestType<CodeActionParams, CheckToStringResponse, void, void>('java/checkToStringStatus');
+}
+
+export interface GenerateToStringParams {
+    context: CodeActionParams;
+    fields: VariableField[];
+}
+
+export namespace GenerateToStringRequest {
+    export const type = new RequestType<GenerateToStringParams, WorkspaceEdit, void, void>('java/generateToString');
+}
