@@ -167,7 +167,7 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             return;
         }
 
-        if (result.existed) {
+        if (result.exists) {
             const ans = await window.showInformationMessage(`Method 'toString()' already exists in the Class '${result.type}'. `
                 + 'Do you want to replace the implementation?', 'Replace', 'Cancel');
             if (ans !== 'Replace') {

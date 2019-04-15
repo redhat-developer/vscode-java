@@ -192,7 +192,7 @@ export interface ImportSelection {
 export interface CheckToStringResponse {
     type: string;
     fields: VariableField[];
-    existed: boolean;
+    exists: boolean;
 }
 
 export namespace CheckToStringStatusRequest {
