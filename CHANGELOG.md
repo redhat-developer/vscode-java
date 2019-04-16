@@ -1,11 +1,13 @@
 # Change Log
 
 
-## 0.43.0 (April 16th, 2019)
+## 0.43.0 (April 17th, 2019)
 * enhancement - optimize server initialization. See [#869](https://github.com/redhat-developer/vscode-java/pull/869).
 * enhancement - download Java sources lazily for Maven projects. See [#870](https://github.com/redhat-developer/vscode-java/pull/870).
 * enhancement - added `Generate toString()...` source action. See [#873](https://github.com/redhat-developer/vscode-java/pull/873).
+* enhancement - show more detailed progress report on startup. See [#883](https://github.com/redhat-developer/vscode-java/issues/883).
 * bug fix - completion cache resets after file recompilation resulting in slow code completion. See [JLS#847](https://github.com/eclipse/eclipse.jdt.ls/issues/847).
+* bug fix - fix jar detection on windows, for invisible projects. See [#882](https://github.com/redhat-developer/vscode-java/issues/882).
 
 ## 0.42.1 (April 1st, 2019)
 * bug fix - fixed java.lang.UnsupportedClassVersionError when trying to run/test standalone code. See [#801](https://github.com/redhat-developer/vscode-java/issues/801).
