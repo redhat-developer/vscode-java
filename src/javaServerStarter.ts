@@ -15,6 +15,13 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	const options: ExecutableOptions = Object.create(null);
 	options.env = process.env;
 	options.stdio = 'pipe';
+	if (os.platform() === 'win32') {
+		const vmargs = javaConfig.get('jdt.ls.vmargs', '');
+		const watchParentProcess = '-DwatchParentProcess=';
+		if (vmargs.indexOf(watchParentProcess) >= 0) {
+			options.detached = true;
+		}
+	}
 	executable.options = options;
 	executable.command = path.resolve(requirements.java_home + '/bin/java');
 	executable.args = prepareParams(requirements, javaConfig, workspacePath);
@@ -68,7 +75,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	if (os.platform() === 'win32') {
 		const watchParentProcess = '-DwatchParentProcess=';
 		if (vmargs.indexOf(watchParentProcess) < 0) {
-			params.push(watchParentProcess + 'false');
+			params.push(watchParentProcess + '0');
 		}
 	}
 
