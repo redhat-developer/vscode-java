@@ -206,3 +206,23 @@ export interface GenerateToStringParams {
 export namespace GenerateToStringRequest {
     export const type = new RequestType<GenerateToStringParams, WorkspaceEdit, void, void>('java/generateToString');
 }
+
+export interface AccessorField {
+    fieldName: string;
+    isStatic: boolean;
+    generateGetter: boolean;
+    generateSetter: boolean;
+}
+
+export namespace ResolveUnimplementedAccessorsRequest {
+    export const type = new RequestType<CodeActionParams, AccessorField[], void, void>('java/resolveUnimplementedAccessors');
+}
+
+export interface GenerateAccessorsParams {
+    context: CodeActionParams;
+    accessors: AccessorField[];
+}
+
+export namespace GenerateAccessorsRequest {
+    export const type = new RequestType<GenerateAccessorsParams, WorkspaceEdit, void, void>('java/generateAccessors');
+}
