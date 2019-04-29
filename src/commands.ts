@@ -126,4 +126,8 @@ export namespace Commands {
      * Generate toString().
      */
     export const GENERATE_TOSTRING_PROMPT = 'java.action.generateToStringPrompt';
+    /**
+     * Generate Getters and Setters.
+     */
+    export const GENERATE_ACCESSORS_PROMPT = 'java.action.generateAccessorsPrompt';
 }

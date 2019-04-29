@@ -68,7 +68,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							overrideMethodsPromptSupport: true,
 							hashCodeEqualsPromptSupport: true,
 							advancedOrganizeImportsSupport: true,
-							generateToStringPromptSupport: true
+							generateToStringPromptSupport: true,
+							advancedGenerateAccessorsSupport: true,
 						},
 						triggerFiles: getTriggerFiles()
 					},
