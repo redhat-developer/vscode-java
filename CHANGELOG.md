@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.44.0 (May 2nd, 2019)
+* enhancement - show more progress details of workspace jobs. See [#896](https://github.com/redhat-developer/vscode-java/issues/896).
+* enhancement - added advanced `Generate getters and setters...` source action. See [#907](https://github.com/redhat-developer/vscode-java/pull/907).
+* enhancement - batch Maven project imports when available ram < 1.5GB and number of projects > 50, to reduce memory consumption. See [JLS#982](https://github.com/eclipse/eclipse.jdt.ls/issues/982).
+* enhancement - tentative workaround for poor resource refresh performance on Windows. See [JLS#1001](https://github.com/eclipse/eclipse.jdt.ls/pull/1001).
+* enhancement - log resource path and line number of build errors. See [JLS#1013](https://github.com/eclipse/eclipse.jdt.ls/issues/1013).
+* bug fix - update classpath when jar files are modified. See [#775](https://github.com/redhat-developer/vscode-java/issues/775).
+* bug fix - remove ellipsis on `Create getter and setter for` label. See [#908](https://github.com/redhat-developer/vscode-java/issues/908).
+* bug fix - fixed NPE when peeking implementation on generic types. See [JLS#1004](https://github.com/eclipse/eclipse.jdt.ls/issues/1004).
+* bug fix - only return signature help on method invocation and javadoc reference. See [JLS#1009](https://github.com/eclipse/eclipse.jdt.ls/issues/1009).
+* bug fix - properly detect active signature in signature help. See [JLS#1017](https://github.com/eclipse/eclipse.jdt.ls/issues/1017).
+* bug fix - use proper kinds for interfaces, enums and constants, in completion and document symbols. See [JLS#1012](https://github.com/eclipse/eclipse.jdt.ls/issues/1012).
 
 ## 0.43.0 (April 17th, 2019)
 * enhancement - optimize server initialization. See [#869](https://github.com/redhat-developer/vscode-java/pull/869).
