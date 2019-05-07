@@ -105,6 +105,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				// Create the language client and start the client.
 				languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
+
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
@@ -186,9 +187,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						return commands.executeCommand(params.command, ...params.arguments);
 					});
 
-					context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () => {
-						languageClient.outputChannel.show(ViewColumn.Three);
-					}));
 					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
 						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
 					}));
@@ -319,6 +317,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				languageClient.start();
 				// Register commands here to make it available even when the language client fails
+
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () =>  languageClient.outputChannel.show(ViewColumn.Three)));
+
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath)));
 
 				const extensionPath = context.extensionPath;
@@ -481,7 +482,7 @@ function deleteDirectory(dir) {
 
 function openServerLogFile(workspacePath): Thenable<boolean> {
 	const serverLogFile = path.join(workspacePath, '.metadata', '.log');
-	if (!serverLogFile) {
+	if (!fs.existsSync(serverLogFile)) {
 		return window.showWarningMessage('Java Language Server has not started logging.').then(() => false);
 	}
 
