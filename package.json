@@ -27,14 +27,9 @@
   ],
   "activationEvents": [
     "onLanguage:java",
-    "onCommand:java.show.references",
-    "onCommand:java.show.implementations",
-    "onCommand:java.open.output",
-    "onCommand:java.open.serverLog",
-    "onCommand:java.execute.workspaceCommand",
-    "onCommand:java.projectConfiguration.update",
     "workspaceContains:pom.xml",
-    "workspaceContains:build.gradle"
+    "workspaceContains:build.gradle",
+    "workspaceContains:.classpath"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -439,6 +434,18 @@
         }
       ],
       "commandPalette": [
+        {
+          "command": "java.projectConfiguration.update",
+          "when": "javaLSReady"
+        },
+        {
+          "command": "java.workspace.compile",
+          "when": "javaLSReady"
+        },
+        {
+          "command": "java.project.listSourcePaths",
+          "when": "javaLSReady"
+        },
         {
           "command": "java.project.updateSourceAttachment",
           "when": "false"
