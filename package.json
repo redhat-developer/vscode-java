@@ -114,16 +114,28 @@
           "description": "Traces the communication between VS Code and the Java language server.",
           "scope": "window"
         },
+        "java.import.maven.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the Maven importer.",
+          "scope": "window"
+        },
         "java.import.gradle.enabled": {
           "type": "boolean",
           "default": true,
           "description": "Enable/disable the Gradle importer.",
           "scope": "window"
         },
-        "java.import.maven.enabled": {
+        "java.import.gradle.wrapper.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable/disable the Maven importer.",
+          "description": "Enable/disable the Gradle wrapper.",
+          "scope": "window"
+        },
+        "java.import.gradle.version": {
+          "type": "string",
+          "default": null,
+          "description": "Gradle version, used if the gradle wrapper is missing or disabled.",
           "scope": "window"
         },
         "java.maven.downloadSources": {

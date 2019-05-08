@@ -109,6 +109,10 @@ The following settings are supported:
 * `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 
+*New in 0.45.0:*
+* `java.import.gradle.wrapper.enabled`: Enable/disable the Gradle wrapper.
+* `java.import.gradle.version`: Gradle version, used if the gradle wrapper is missing or disabled.
+
 Troubleshooting
 ===============
 1. Check the status of the language tools on the lower right corner (marked with A on image below).
