@@ -14,6 +14,11 @@ def buildVscodeExtension(){
 
 node('rhel7'){
 	stage 'Build JDT LS'
+
+	env.JAVA_HOME="${tool 'openjdk-1.8'}"
+	env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+	sh 'java -version'
+
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
 	sh "./mvnw clean verify -B -U -e -Pserver-distro -Dtycho.disableP2Mirrors=true -P!jboss-maven-repos,!redhat-ga-repository,!redhat-ea-repository"
 
