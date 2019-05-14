@@ -70,6 +70,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							advancedOrganizeImportsSupport: true,
 							generateToStringPromptSupport: true,
 							advancedGenerateAccessorsSupport: true,
+							generateConstructorsPromptSupport: true,
 						},
 						triggerFiles: getTriggerFiles()
 					},

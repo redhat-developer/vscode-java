@@ -5,7 +5,7 @@ import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableField, ResolveUnimplementedAccessorsRequest, GenerateAccessorsRequest } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, ResolveUnimplementedAccessorsRequest, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -14,6 +14,7 @@ export function registerCommands(languageClient: LanguageClient, context: Extens
     registerChooseImportCommand(context);
     registerGenerateToStringCommand(languageClient, context);
     registerGenerateAccessorsCommand(languageClient, context);
+    registerGenerateConstructorsCommand(languageClient, context);
 }
 
 function registerOverrideMethodsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -176,7 +177,7 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             }
         }
 
-        let fields: VariableField[] = [];
+        let fields: VariableBinding[] = [];
         if (result.fields && result.fields.length) {
             const fieldItems = result.fields.map((field) => {
                 return {
@@ -236,6 +237,60 @@ function registerGenerateAccessorsCommand(languageClient: LanguageClient, contex
         const workspaceEdit = await languageClient.sendRequest(GenerateAccessorsRequest.type, {
             context: params,
             accessors: selectedAccessors.map((item) => item.originalField),
+        });
+        applyWorkspaceEdit(workspaceEdit, languageClient);
+    }));
+}
+
+function registerGenerateConstructorsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_CONSTRUCTORS_PROMPT, async (params: CodeActionParams) => {
+        const status = await languageClient.sendRequest(CheckConstructorStatusRequest.type, params);
+        if (!status || !status.constructors || !status.constructors.length) {
+            return;
+        }
+
+        let selectedConstructors = status.constructors;
+        let selectedFields = [];
+        if (status.constructors.length > 1) {
+            const constructorItems = status.constructors.map((constructor) => {
+                return {
+                    label: `${constructor.name}(${constructor.parameters.join(',')})`,
+                    originalConstructor: constructor,
+                };
+            });
+            const selectedConstructorItems = await window.showQuickPick(constructorItems, {
+                canPickMany: true,
+                placeHolder: 'Select super class constructor(s).',
+            });
+            if (!selectedConstructorItems || !selectedConstructorItems.length) {
+                return;
+            }
+
+            selectedConstructors = selectedConstructorItems.map(item => item.originalConstructor);
+        }
+
+        if (status.fields.length) {
+            const fieldItems = status.fields.map((field) => {
+                return {
+                    label: `${field.name}: ${field.type}`,
+                    originalField: field,
+                };
+            });
+            const selectedFieldItems = await window.showQuickPick(fieldItems, {
+                canPickMany: true,
+                placeHolder: 'Select fields to initialize by constructor(s).',
+            });
+            if (!selectedFieldItems) {
+                return;
+            }
+
+            selectedFields = selectedFieldItems.map(item => item.originalField);
+        }
+
+        const workspaceEdit = await languageClient.sendRequest(GenerateConstructorsRequest.type, {
+            context: params,
+            constructors: selectedConstructors,
+            fields: selectedFields,
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
