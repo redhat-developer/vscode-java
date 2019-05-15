@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.45.0 (May 15th, 2019)
+* enhancement - optionally disable loading Gradle from wrapper and use a specific Gradle version. See [#875](https://github.com/redhat-developer/vscode-java/issues/875).
+* enhancement - added `Assign parameters to new fields` source actions. See [JLS#167](https://github.com/eclipse/eclipse.jdt.ls/issues/167).
+* enhancement - added code action for adding non existing constructor from super class. See [JLS#767](https://github.com/eclipse/eclipse.jdt.ls/issues/767).
+* enhancement - use the `java.codeGeneration.generateComments` preference to generate comments for getter and setter. See [JLS#1024](https://github.com/eclipse/eclipse.jdt.ls/pull/1024).
+* bug fix - fixed extension activation conditions causing some issues. See [#914](https://github.com/redhat-developer/vscode-java/issues/914) and [#915](https://github.com/redhat-developer/vscode-java/pull/915).
+* bug fix - fixed failing build caused by a bad formatter URL. See [#916](https://github.com/redhat-developer/vscode-java/issues/916).
+* bug fix - fixed NPE when closing a renamed file. See [JLS#993](https://github.com/eclipse/eclipse.jdt.ls/issues/993).
+* bug fix - fixed Signature Help for constructors. See [JLS#1030](https://github.com/eclipse/eclipse.jdt.ls/issues/1030).
+
 ## 0.44.0 (May 2nd, 2019)
 * enhancement - show more progress details of workspace jobs. See [#896](https://github.com/redhat-developer/vscode-java/issues/896).
 * enhancement - added advanced `Generate getters and setters...` source action. See [#907](https://github.com/redhat-developer/vscode-java/pull/907).
