@@ -81,6 +81,8 @@ The following settings are supported:
 * `java.format.enabled` : Enable/disable the default Java formatter.
 * `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
+* `java.import.gradle.wrapper.enabled`: Enable/disable the Gradle wrapper.
+* `java.import.gradle.version`: Gradle version, used if the gradle wrapper is missing or disabled.
 * `java.import.maven.enabled` : Enable/disable the Maven importer.
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
 * `java.maxConcurrentBuilds`: Set max simultaneous project builds.
@@ -95,12 +97,10 @@ The following settings are supported:
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.enabled` : Enable/disable code completion support.
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
-* `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
-* `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
-
-*New in 0.43.0:*
 * `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
+* `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
+* `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
 * `java.codeGeneration.useBlocks`: Use blocks in 'if' statements when generating the methods. Defaults to `false`.
 * `java.codeGeneration.generateComments`: Generate method comments when generating the methods. Defaults to `false`.
 * `java.codeGeneration.toString.template`: The template for generating the toString method. Defaults to `${object.className} [${member.name()}=${member.value}, ${otherMembers}]`.
@@ -109,9 +109,6 @@ The following settings are supported:
 * `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 
-*New in 0.45.0:*
-* `java.import.gradle.wrapper.enabled`: Enable/disable the Gradle wrapper.
-* `java.import.gradle.version`: Gradle version, used if the gradle wrapper is missing or disabled.
 
 Troubleshooting
 ===============
