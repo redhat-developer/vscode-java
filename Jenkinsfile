@@ -20,7 +20,7 @@ node('rhel7'){
 	sh 'java -version'
 
 	git url: 'https://github.com/eclipse/eclipse.jdt.ls.git'
-	sh "./mvnw clean verify -B -U -e -Pserver-distro -Dtycho.disableP2Mirrors=true -P!jboss-maven-repos,!redhat-ga-repository,!redhat-ea-repository"
+	sh "./mvnw clean verify -B -U -e -Pserver-distro -Dtycho.disableP2Mirrors=true -DskipTests -P!jboss-maven-repos,!redhat-ga-repository,!redhat-ea-repository"
 
 	def files = findFiles(glob: '**/org.eclipse.jdt.ls.product/distro/**.tar.gz')
 	stash name: 'server_distro', includes :files[0].path
