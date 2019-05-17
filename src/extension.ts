@@ -78,7 +78,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				};
 
 				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-				item.text = '$(rocket)';
+				item.text = '$(sync~spin)';
 				item.command = Commands.OPEN_OUTPUT;
 				const progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE + 1);
 
