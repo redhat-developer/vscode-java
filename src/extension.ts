@@ -71,6 +71,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							generateToStringPromptSupport: true,
 							advancedGenerateAccessorsSupport: true,
 							generateConstructorsPromptSupport: true,
+							generateDelegateMethodsPromptSupport: true,
 						},
 						triggerFiles: getTriggerFiles()
 					},
