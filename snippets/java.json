@@ -191,5 +191,12 @@
 			"${0:Object} ${1:foo} = new ${0:Object}();"
 		],
 		"description": "Create new Object"
+	},
+	"Private field": {
+		"prefix": "prf",
+		"body": [
+			"private ${1:String} ${2:name};"
+		],
+		"description": "Private field"
 	}
 }
