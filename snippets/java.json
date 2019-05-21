@@ -98,6 +98,16 @@
 		],
 		"description": "try/catch block"
 	},
+	"tryresources": {
+		"prefix": "try_resources",
+		"body": [
+			"try ($1) {",
+			"\t$2",
+			"} catch (${3:Exception} ${4:e}) {",
+			"\t$5//${0:TODO}: handle exception",
+			"}"
+		]
+	},
 	"private_method": {
 		"prefix": "private_method",
 		"body": [
