@@ -301,7 +301,7 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
     context.subscriptions.push(commands.registerCommand(Commands.GENERATE_DELEGATE_METHODS_PROMPT, async (params: CodeActionParams) => {
         const status = await languageClient.sendRequest(CheckDelegateMethodsStatusRequest.type, params);
         if (!status || !status.delegateFields || !status.delegateFields.length) {
-            window.showWarningMessage("No delegatable fields found in current class.");
+            window.showWarningMessage("All delegatable methods are already implemented.");
             return;
         }
 
@@ -332,7 +332,7 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
         });
 
         if (!delegateEntryItems.length) {
-            window.showWarningMessage("No delegatable methods found in the selected field.");
+            window.showWarningMessage("All delegatable methods are already implemented.");
             return;
         }
 
