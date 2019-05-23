@@ -251,3 +251,30 @@ export interface GenerateConstructorsParams {
 export namespace GenerateConstructorsRequest {
     export const type = new RequestType<GenerateConstructorsParams, WorkspaceEdit, void, void>('java/generateConstructors');
 }
+
+export interface DelegateField {
+    field: VariableBinding;
+    delegateMethods: MethodBinding[];
+}
+
+export interface CheckDelegateMethodsResponse {
+    delegateFields: DelegateField[];
+}
+
+export namespace CheckDelegateMethodsStatusRequest {
+    export const type = new RequestType<CodeActionParams, CheckDelegateMethodsResponse, void, void>('java/checkDelegateMethodsStatus');
+}
+
+export interface DelegateEntry {
+    field: VariableBinding;
+    delegateMethod: MethodBinding;
+}
+
+export interface GenerateDelegateMethodsParams {
+    context: CodeActionParams;
+    delegateEntries: DelegateEntry[];
+}
+
+export namespace GenerateDelegateMethodsRequest {
+    export const type = new RequestType<GenerateDelegateMethodsParams, WorkspaceEdit, void, void>('java/generateDelegateMethods');
+}

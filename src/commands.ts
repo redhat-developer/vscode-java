@@ -134,4 +134,8 @@ export namespace Commands {
      * Generate Constructors.
      */
     export const GENERATE_CONSTRUCTORS_PROMPT = 'java.action.generateConstructorsPrompt';
+    /**
+     * Generate Delegate Methods.
+     */
+    export const GENERATE_DELEGATE_METHODS_PROMPT = 'java.action.generateDelegateMethodsPrompt';
 }

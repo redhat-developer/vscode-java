@@ -49,6 +49,7 @@ suite('Java Language Extension', () => {
 				Commands.GENERATE_TOSTRING_PROMPT,
 				Commands.GENERATE_ACCESSORS_PROMPT,
 				Commands.GENERATE_CONSTRUCTORS_PROMPT,
+				Commands.GENERATE_DELEGATE_METHODS_PROMPT,
 			];
 			const foundJavaCommands = commands.filter(function(value) {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');

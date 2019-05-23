@@ -5,7 +5,7 @@ import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, ResolveUnimplementedAccessorsRequest, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, ResolveUnimplementedAccessorsRequest, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -15,6 +15,7 @@ export function registerCommands(languageClient: LanguageClient, context: Extens
     registerGenerateToStringCommand(languageClient, context);
     registerGenerateAccessorsCommand(languageClient, context);
     registerGenerateConstructorsCommand(languageClient, context);
+    registerGenerateDelegateMethodsCommand(languageClient, context);
 }
 
 function registerOverrideMethodsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -291,6 +292,67 @@ function registerGenerateConstructorsCommand(languageClient: LanguageClient, con
             context: params,
             constructors: selectedConstructors,
             fields: selectedFields,
+        });
+        applyWorkspaceEdit(workspaceEdit, languageClient);
+    }));
+}
+
+function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_DELEGATE_METHODS_PROMPT, async (params: CodeActionParams) => {
+        const status = await languageClient.sendRequest(CheckDelegateMethodsStatusRequest.type, params);
+        if (!status || !status.delegateFields || !status.delegateFields.length) {
+            window.showWarningMessage("All delegatable methods are already implemented.");
+            return;
+        }
+
+        let selectedDelegateField = status.delegateFields[0];
+        if (status.delegateFields.length > 1) {
+            const fieldItems = status.delegateFields.map((delegateField) => {
+                return {
+                    label: `${delegateField.field.name}: ${delegateField.field.type}`,
+                    originalField: delegateField,
+                };
+            });
+            const selectedFieldItem = await window.showQuickPick(fieldItems, {
+                placeHolder: 'Select target to generate delegates for.',
+            });
+            if (!selectedFieldItem) {
+                return;
+            }
+
+            selectedDelegateField = selectedFieldItem.originalField;
+        }
+
+        let delegateEntryItems = selectedDelegateField.delegateMethods.map(delegateMethod => {
+            return {
+                label: `${selectedDelegateField.field.name}.${delegateMethod.name}(${delegateMethod.parameters.join(',')})`,
+                originalField: selectedDelegateField.field,
+                originalMethod: delegateMethod,
+            }
+        });
+
+        if (!delegateEntryItems.length) {
+            window.showWarningMessage("All delegatable methods are already implemented.");
+            return;
+        }
+
+        const selectedDelegateEntryItems = await window.showQuickPick(delegateEntryItems, {
+            canPickMany: true,
+            placeHolder: 'Select methods to generate delegates for.',
+        });
+        if (!selectedDelegateEntryItems || !selectedDelegateEntryItems.length) {
+            return;
+        }
+
+        const delegateEntries = selectedDelegateEntryItems.map(item => {
+            return {
+                field: item.originalField,
+                delegateMethod: item.originalMethod,
+            };
+        });
+        const workspaceEdit = await languageClient.sendRequest(GenerateDelegateMethodsRequest.type, {
+            context: params,
+            delegateEntries,
         });
         applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
