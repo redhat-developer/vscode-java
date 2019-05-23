@@ -325,7 +325,7 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
 
         let delegateEntryItems = selectedDelegateField.delegateMethods.map(delegateMethod => {
             return {
-                label: `${selectedDelegateField.field.name}->${delegateMethod.name}(${delegateMethod.parameters.join(',')})`,
+                label: `${selectedDelegateField.field.name}.${delegateMethod.name}(${delegateMethod.parameters.join(',')})`,
                 originalField: selectedDelegateField.field,
                 originalMethod: delegateMethod,
             }
