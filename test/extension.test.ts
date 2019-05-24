@@ -13,14 +13,14 @@ suite('Java Language Extension', () => {
 		assert.ok(vscode.extensions.getExtension('redhat.java'));
 	});
 
-	test('should activate', function () {
+	test('should activate', () => {
 		this.timeout(1 * 60 * 1000);
 		return vscode.extensions.getExtension('redhat.java').activate().then((api) => {
 			assert.ok(true);
 		});
 	});
 
-	test('should register all java commands', function () {
+	test('should register all java commands', () => {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const JAVA_COMMANDS = [
@@ -51,14 +51,14 @@ suite('Java Language Extension', () => {
 				Commands.GENERATE_CONSTRUCTORS_PROMPT,
 				Commands.GENERATE_DELEGATE_METHODS_PROMPT,
 			];
-			const foundJavaCommands = commands.filter(function(value) {
+			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
 			});
 			assert.equal(foundJavaCommands.length , JAVA_COMMANDS.length, 'Some Java commands are not registered properly or a new command is not added to the test');
 		});
 	});
 
-	test('should parse VM arguments', function () {
+	test('should parse VM arguments', () => {
 		const userArgs = '-Xmx512m -noverify   -Dfoo=\"something with blank\"  ';
 		const vmArgs = ['-noverify', 'foo'];
 
@@ -71,7 +71,7 @@ suite('Java Language Extension', () => {
 		assert.equal('-Dfoo=something with blank', vmArgs[3]);
 	});
 
-	test('should parse VM arguments with spaces', function () {
+	test('should parse VM arguments with spaces', () => {
 		const userArgs = '-javaagent:"C:\\Program Files\\Java\\lombok.jar" -Xbootclasspath/a:"C:\\Program Files\\Java\\lombok.jar" -Dfoo="Some \\"crazy\\" stuff"';
 		const vmArgs = [];
 
@@ -83,7 +83,7 @@ suite('Java Language Extension', () => {
 		assert.equal(vmArgs[2], '-Dfoo=Some "crazy" stuff');
 	});
 
-	test('should collect java extensions', function () {
+	test('should collect java extensions', () => {
 		const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../../test/resources/packageExample.json'), 'utf8'));
 		const fakedExtension = {
 			id: 'test',
@@ -100,7 +100,7 @@ suite('Java Language Extension', () => {
 		assert(result[0].endsWith(path.normalize('./bin/java.extend.jar')));
 	});
 
-	test('should parse Java version', function () {
+	test('should parse Java version', () => {
 		// Test boundaries
 		assert.equal(requirements.parseMajorVersion(null), 0);
 		assert.equal(requirements.parseMajorVersion(''), 0);
