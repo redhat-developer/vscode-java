@@ -6,6 +6,7 @@ import * as plugin from '../src/plugin';
 import * as java from '../src/javaServerStarter';
 import * as requirements from '../src/requirements';
 import { Commands } from '../src/commands';
+import { setTimeout } from 'timers';
 
 suite('Java Language Extension', () => {
 
@@ -13,16 +14,17 @@ suite('Java Language Extension', () => {
 		assert.ok(vscode.extensions.getExtension('redhat.java'));
 	});
 
-	test('should activate', () => {
-		this.timeout(1 * 60 * 1000);
-		return vscode.extensions.getExtension('redhat.java').activate().then((api) => {
-			assert.ok(true);
-		});
+	test('should activate', (done) => {
+		setTimeout(() => {
+			vscode.extensions.getExtension('redhat.java').activate().then((api) => {
+				assert.ok(true);
+				done();
+			});
+		}, 1 * 60 * 1000);
 	});
 
 	test('should register all java commands', () => {
-		return vscode.commands.getCommands(true).then((commands) =>
-		{
+		return vscode.commands.getCommands(true).then((commands) => {
 			const JAVA_COMMANDS = [
 				Commands.OPEN_OUTPUT,
 				Commands.SHOW_JAVA_REFERENCES,
