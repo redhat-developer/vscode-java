@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.46.0 (June 5th, 2019)
+* enhancement - new 'try with resources' snippet, triggered by `try_resources`. See [#932](https://github.com/redhat-developer/vscode-java/pull/932).
+* enhancement - new 'private field' snippet, triggered by `prf`. See [#933](https://github.com/redhat-developer/vscode-java/pull/933).
+* enhancement - new spinning icon in status bar, when server is loading. Good bye rocket. See [#929](https://github.com/redhat-developer/vscode-java/pull/929).
+* enhancement - enabled proposed API. See [#942](https://github.com/redhat-developer/vscode-java/pull/942).
+* enhancement - added code action to generate constructors. See [#921](https://github.com/redhat-developer/vscode-java/pull/921).
+* enhancement - added code action to generate delegate methods. See [#930](https://github.com/redhat-developer/vscode-java/pull/930).
+* enhancement - updated buildship to 3.1.0. See [Buildship changelog](https://discuss.gradle.org/t/buildship-3-1-is-now-available/31600).
+* enhancement - updated m2e to 1.12 (now embeds Maven 3.6.1). See [m2e changelog](https://projects.eclipse.org/projects/technology.m2e/releases/1.12/bugs).
+* enhancement - provide more info on hover for constant fields. See [JLS#1049](https://github.com/eclipse/eclipse.jdt.ls/issues/1049).
+* bug fix - fixed Signature Help not matching active parameter per type. See [JLS#1037](https://github.com/eclipse/eclipse.jdt.ls/issues/1037).
+* bug fix - fixed disabling Gradle wrapper in certain cases. See [JLS#1044](https://github.com/eclipse/eclipse.jdt.ls/issues/1044).
+
 ## 0.45.0 (May 15th, 2019)
 * enhancement - optionally disable loading Gradle from wrapper and use a specific Gradle version. See [#875](https://github.com/redhat-developer/vscode-java/issues/875).
 * enhancement - added `Assign parameters to new fields` source actions. See [JLS#167](https://github.com/eclipse/eclipse.jdt.ls/issues/167).
