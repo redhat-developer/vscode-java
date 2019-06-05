@@ -4,7 +4,6 @@
 * enhancement - new 'try with resources' snippet, triggered by `try_resources`. See [#932](https://github.com/redhat-developer/vscode-java/pull/932).
 * enhancement - new 'private field' snippet, triggered by `prf`. See [#933](https://github.com/redhat-developer/vscode-java/pull/933).
 * enhancement - new spinning icon in status bar, when server is loading. Good bye rocket. See [#929](https://github.com/redhat-developer/vscode-java/pull/929).
-* enhancement - enabled proposed API. See [#942](https://github.com/redhat-developer/vscode-java/pull/942).
 * enhancement - added code action to generate constructors. See [#921](https://github.com/redhat-developer/vscode-java/pull/921).
 * enhancement - added code action to generate delegate methods. See [#930](https://github.com/redhat-developer/vscode-java/pull/930).
 * enhancement - updated buildship to 3.1.0. See [Buildship changelog](https://discuss.gradle.org/t/buildship-3-1-is-now-available/31600).

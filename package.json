@@ -9,7 +9,7 @@
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
-  "enableProposedApi": true,
+  "enableProposedApi": false,
   "engines": {
     "vscode": "^1.31.0"
   },
