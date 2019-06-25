@@ -138,4 +138,12 @@ export namespace Commands {
      * Generate Delegate Methods.
      */
     export const GENERATE_DELEGATE_METHODS_PROMPT = 'java.action.generateDelegateMethodsPrompt';
+    /**
+     * Apply Refactoring Command.
+     */
+    export const APPLY_REFACTORING_COMMAND = 'java.action.applyRefactoringCommand';
+    /**
+     * Rename Command.
+     */
+    export const RENAME_COMMAND = 'java.action.rename';
 }

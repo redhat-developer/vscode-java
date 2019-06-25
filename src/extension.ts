@@ -16,6 +16,7 @@ import {
 import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
 import * as sourceAction from './sourceAction';
+import * as refactorAction from './refactorAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
@@ -72,6 +73,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							advancedGenerateAccessorsSupport: true,
 							generateConstructorsPromptSupport: true,
 							generateDelegateMethodsPromptSupport: true,
+							advancedExtractRefactoringSupport: true,
 						},
 						triggerFiles: getTriggerFiles()
 					},
@@ -286,6 +288,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 					buildpath.registerCommands(context);
 					sourceAction.registerCommands(languageClient, context);
+					refactorAction.registerCommands(languageClient, context);
 
 					context.subscriptions.push(window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);

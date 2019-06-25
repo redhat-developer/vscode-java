@@ -50,6 +50,8 @@ suite('Java Language Extension', () => {
 				Commands.GENERATE_ACCESSORS_PROMPT,
 				Commands.GENERATE_CONSTRUCTORS_PROMPT,
 				Commands.GENERATE_DELEGATE_METHODS_PROMPT,
+				Commands.APPLY_REFACTORING_COMMAND,
+				Commands.RENAME_COMMAND
 			];
 			const foundJavaCommands = commands.filter(function(value) {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
