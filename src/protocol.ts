@@ -294,6 +294,7 @@ export interface GetRefactorEditParams {
     command: string;
     context: CodeActionParams;
     options: FormattingOptions;
+    commandArguments: any[];
 }
 
 export namespace GetRefactorEditRequest {
