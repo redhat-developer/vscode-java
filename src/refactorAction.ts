@@ -28,11 +28,13 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
         }
     }));
 
-    context.subscriptions.push(commands.registerCommand(javaCommands.APPLY_REFACTORING_COMMAND, async (command: string, params: any) => {
+    context.subscriptions.push(commands.registerCommand(javaCommands.APPLY_REFACTORING_COMMAND, async (command: string, params: any, commandInfo: any) => {
         if (command === 'extractVariable'
             || command === 'extractVariableAllOccurrence'
             || command === 'extractConstant'
-            || command === 'extractMethod') {
+            || command === 'extractMethod'
+            || command === 'extractField'
+            || command === 'convertVariableToField') {
             const currentEditor = window.activeTextEditor;
             if (!currentEditor || !currentEditor.options) {
                 return;
@@ -42,10 +44,32 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                 tabSize: <number> currentEditor.options.tabSize,
                 insertSpaces: <boolean> currentEditor.options.insertSpaces,
             };
+            const commandArguments: any[] = [];
+            if (command === 'extractField' || command === 'convertVariableToField') {
+                if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
+                    const scopes: any[] = commandInfo.initializedScopes;
+                    let initializeIn: string;
+                    if (scopes.length === 1) {
+                        initializeIn = scopes[0];
+                    } else if (scopes.length > 1) {
+                        initializeIn = await window.showQuickPick(scopes, {
+                            placeHolder: "Initialize the field in",
+                        });
+
+                        if (!initializeIn) {
+                            return;
+                        }
+                    }
+
+                    commandArguments.push(initializeIn);
+                }
+            }
+
             const result: RefactorWorkspaceEdit = await languageClient.sendRequest(GetRefactorEditRequest.type, {
                 command,
                 context: params,
                 options: formattingOptions,
+                commandArguments,
             });
 
             if (!result || !result.edit) {
