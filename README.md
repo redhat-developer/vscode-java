@@ -109,6 +109,12 @@ The following settings are supported:
 * `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 
+*New in 0.47.0*
+
+* `java.import.gradle.arguments`: Arguments to pass to Gradle.
+* `java.import.gradle.jvmArguments`: JVM arguments to pass to Gradle.
+* `java.import.gradle.home`: setting for GRADLE_HOME.
+
 
 Troubleshooting
 ===============
