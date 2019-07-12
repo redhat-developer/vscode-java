@@ -300,3 +300,30 @@ export interface GetRefactorEditParams {
 export namespace GetRefactorEditRequest {
     export const type = new RequestType<GetRefactorEditParams, RefactorWorkspaceEdit, void, void>('java/getRefactorEdit');
 }
+
+export interface PackageNode {
+    displayName: string;
+    uri: string;
+    path: string;
+    project: string;
+    isDefaultPackage: boolean;
+    isParentOfSelectedFile: boolean;
+}
+
+export interface PackageDestinationsResponse {
+    packageNodes: PackageNode[];
+}
+
+export namespace GetPackageDestinationsRequest {
+    export const type = new RequestType<string[], PackageDestinationsResponse, void, void>('java/getPackageDestinations');
+}
+
+export interface MoveFileParams {
+    documentUris: string[];
+    targetUri: string;
+    updateReferences: boolean;
+}
+
+export namespace MoveFileRequest {
+    export const type = new RequestType<MoveFileParams, WorkspaceEdit, void, void>('java/moveFile');
+}

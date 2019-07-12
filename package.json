@@ -432,6 +432,11 @@
         "command": "java.project.listSourcePaths",
         "title": "List all Java source paths",
         "category": "Java"
+      },
+      {
+        "command": "java.refactor.moveFile",
+        "title": "Refactor: Move...",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -461,6 +466,11 @@
           "when": "explorerResourceIsFolder&&javaLSReady",
           "command": "java.project.removeFromSourcePath",
           "group": "1_javaactions@2"
+        },
+        {
+          "when": "javaLSReady && resourceFilename =~ /.*\\.java$/",
+          "command": "java.refactor.moveFile",
+          "group": "1_javaactions"
         }
       ],
       "editor/context": [
@@ -498,6 +508,10 @@
         },
         {
           "command": "java.project.removeFromSourcePath",
+          "when": "false"
+        },
+        {
+          "command": "java.refactor.moveFile",
           "when": "false"
         }
       ]

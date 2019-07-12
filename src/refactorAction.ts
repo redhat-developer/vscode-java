@@ -1,12 +1,15 @@
 'use strict';
 
+import { existsSync } from 'fs';
+import * as path from 'path';
 import { commands, window, ExtensionContext, workspace, Position, Uri, TextDocument } from 'vscode';
 import { LanguageClient, FormattingOptions } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, RefactorWorkspaceEdit, RenamePosition } from './protocol';
+import { GetRefactorEditRequest, RefactorWorkspaceEdit, RenamePosition, GetPackageDestinationsRequest, MoveFileRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
+    registerMoveFileCommand(languageClient, context);
 }
 
 function registerApplyRefactorCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -91,4 +94,101 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             }
         }
     }));
+}
+
+function registerMoveFileCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(javaCommands.MOVE_FILE_COMMAND, async (hoverUri: Uri, allSelections?: Uri[]) => {
+        let targetUris: Uri[];
+        if (!allSelections || allSelections.length < 2) {
+            targetUris = [ hoverUri ];
+        } else {
+            targetUris = allSelections.filter(uri => uri.path && uri.path.endsWith('.java'));
+        }
+
+        if (!hasCommonParent(targetUris)) {
+            window.showErrorMessage("Not supported. Please select multiple files from the same directory and do again.");
+            return;
+        }
+
+        const moveDestination = await languageClient.sendRequest(GetPackageDestinationsRequest.type, targetUris.map(uri => uri.toString()));
+        if (!moveDestination || !moveDestination.packageNodes || !moveDestination.packageNodes.length) {
+            window.showErrorMessage("Cannot find available Java packages to place the selected files.");
+            return;
+        }
+
+        const packageNodeItems = moveDestination.packageNodes.map((packageNode) => {
+            const packageUri: Uri = packageNode.uri ? Uri.parse(packageNode.uri) : null;
+            const displayPath: string = packageUri ? workspace.asRelativePath(packageUri, true) : packageNode.path;
+            return {
+                label: (packageNode.isParentOfSelectedFile ? '* ' : '') + packageNode.displayName,
+                description: displayPath,
+                packageNode,
+            }
+        });
+
+        let placeHolder = (targetUris.length === 1) ? `Choose the target package for ${getFileNameFromUri(targetUris[0])}.`
+                        : `Choose the target package for ${targetUris.length} selected files.`;
+        let selectPackageNodeItem = await window.showQuickPick(packageNodeItems, {
+            placeHolder,
+        });
+        if (!selectPackageNodeItem) {
+            return;
+        }
+
+        const packageUri: Uri = selectPackageNodeItem.packageNode.uri ? Uri.parse(selectPackageNodeItem.packageNode.uri) : null;
+        if (packageUri && packageUri.fsPath) {
+            const duplicatedFiles: string[] = [];
+            const moveUris: Uri[] = [];
+            for (const uri of targetUris) {
+                const fileName: string = getFileNameFromUri(uri);
+                if (existsSync(path.join(packageUri.fsPath, fileName))) {
+                    duplicatedFiles.push(fileName);
+                } else {
+                    moveUris.push(uri);
+                }
+            }
+
+            if (duplicatedFiles.length) {
+                window.showWarningMessage(`The files '${duplicatedFiles.join(',')}' already exist in the package '${selectPackageNodeItem.packageNode.displayName}'. The move operation will ignore them.`);
+            }
+
+            if (!moveUris.length) {
+                return;
+            }
+
+            targetUris = moveUris;
+        }
+
+        const workspaceEdit = await languageClient.sendRequest(MoveFileRequest.type, {
+            documentUris: targetUris.map(uri => uri.toString()),
+            targetUri: selectPackageNodeItem.packageNode.uri,
+            updateReferences: true,
+        });
+        if (workspaceEdit) {
+            const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
+            if (edit) {
+                await workspace.applyEdit(edit);
+            }
+        }
+    }));
+}
+
+function getFileNameFromUri(uri: Uri): string {
+    return uri.fsPath.replace(/^.*[\\\/]/, '');
+}
+
+function hasCommonParent(uris: Uri[]): boolean {
+    if (uris == null || uris.length <= 1) {
+        return true;
+    }
+
+    const firstParent: string = path.dirname(uris[0].fsPath);
+    for (let i = 1; i < uris.length; i++) {
+        const parent = path.dirname(uris[i].fsPath);
+        if (path.relative(firstParent, parent) !== '.') {
+            return false;
+        }
+    }
+
+    return true;
 }
