@@ -502,8 +502,8 @@
     "vscode:prepublish": "webpack --mode production",
     "compile": "tsc -p ./",
     "watch": "webpack --mode development --watch --info-verbosity verbose",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runtest.js",
     "build-server": "./node_modules/.bin/gulp build_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
     "webpack": "webpack --mode development"
@@ -512,6 +512,7 @@
     "@types/glob": "5.0.30",
     "@types/mocha": "^5.2.5",
     "@types/node": "^6.0.40",
+    "@types/vscode": "^1.36.0",
     "gulp": "^4.0.0",
     "gulp-decompress": "2.0.1",
     "gulp-download": "0.0.1",
@@ -520,7 +521,7 @@
     "tslint": "^5.11.0",
     "typescript": "^3.4.1",
     "typescript-tslint-plugin": "^0.3.1",
-    "vscode": "^1.1.35",
+    "vscode-test": "^1.0.0",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2"
   },
