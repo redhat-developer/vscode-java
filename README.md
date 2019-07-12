@@ -98,6 +98,7 @@ The following settings are supported:
 * `java.completion.enabled` : Enable/disable code completion support.
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
+* `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 * `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
 * `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
@@ -114,7 +115,7 @@ The following settings are supported:
 * `java.import.gradle.arguments`: Arguments to pass to Gradle.
 * `java.import.gradle.jvmArguments`: JVM arguments to pass to Gradle.
 * `java.import.gradle.home`: setting for GRADLE_HOME.
-
+* `java.selectionRange.enabled`: Setting for Smart Selection support for Java. When it's on, Expand/Shrink Selection works better for Java code.
 
 Troubleshooting
 ===============
