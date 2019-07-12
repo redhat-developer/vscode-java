@@ -11,7 +11,7 @@
   "preview": true,
   "enableProposedApi": false,
   "engines": {
-    "vscode": "^1.33.0"
+    "vscode": "^1.36.0"
   },
   "repository": {
     "type": "git",
