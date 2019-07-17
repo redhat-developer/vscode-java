@@ -38,6 +38,7 @@ Features
 * Code formatting (on-type/selection/file)
 * Code snippets
 * Annotation processing support (automatic for Maven projects)
+* Semantic selection
 
 Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
@@ -58,7 +59,8 @@ Available commands
 ==========================
 The following commands are available:
 - `Java:Update Project configuration` (`Shift+Alt+U`):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
-- `Java:Open Java Language Server log file`: opens the Java Language Server log file, useful for troubleshooting problems.
+- `Java:Open Java language server log file`: opens the Java Language Server log file, useful for troubleshooting problems.
+- `Java:Open Java extension log file`: opens the Java extension log file, useful for troubleshooting problems.
 - `Java:Force Java compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
 - `Java:Open Java formatter settings`: Open the Eclipse formatter settings. Creates a new settings file if none exists.
 - `Java:Clean the Java language server workspace`: Clean the Java language server workspace.
@@ -98,7 +100,6 @@ The following settings are supported:
 * `java.completion.enabled` : Enable/disable code completion support.
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
-* `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 * `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
 * `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
@@ -115,7 +116,7 @@ The following settings are supported:
 * `java.import.gradle.arguments`: Arguments to pass to Gradle.
 * `java.import.gradle.jvmArguments`: JVM arguments to pass to Gradle.
 * `java.import.gradle.home`: setting for GRADLE_HOME.
-* `java.selectionRange.enabled`: Setting for Smart Selection support for Java. When it's on, Expand/Shrink Selection works better for Java code.
+* `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 
 Troubleshooting
 ===============
