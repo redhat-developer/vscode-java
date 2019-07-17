@@ -26,6 +26,7 @@ let lastStatus;
 let languageClient: LanguageClient;
 const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
+let clientLogFile;
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
@@ -33,8 +34,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
 	}
-
-	initializeLogFile(path.join(storagePath, 'client.log'));
+	clientLogFile = path.join(storagePath, 'client.log');
+	initializeLogFile(clientLogFile);
 
 	enableJavadocSymbols();
 
@@ -331,6 +332,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath)));
 
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, () => openClientLogFile(clientLogFile)));
+
 				const extensionPath = context.extensionPath;
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
 
@@ -491,11 +494,20 @@ function deleteDirectory(dir) {
 
 function openServerLogFile(workspacePath): Thenable<boolean> {
 	const serverLogFile = path.join(workspacePath, '.metadata', '.log');
-	if (!fs.existsSync(serverLogFile)) {
-		return window.showWarningMessage('Java Language Server has not started logging.').then(() => false);
+	return openLogFile(serverLogFile, 'Could not open Java Language Server log file');
+}
+
+function openClientLogFile(logFile): Thenable<boolean> {
+	return openLogFile(logFile, 'Could not open Java extension log file');
+}
+
+
+function openLogFile(logFile, openingFailureWarning:string ): Thenable<boolean> {
+	if (!fs.existsSync(logFile)) {
+		return window.showWarningMessage('No log file available').then(() => false);
 	}
 
-	return workspace.openTextDocument(serverLogFile)
+	return workspace.openTextDocument(logFile)
 		.then(doc => {
 			if (!doc) {
 				return false;
@@ -506,7 +518,7 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 		}, () => false)
 		.then(didOpen => {
 			if (!didOpen) {
-				window.showWarningMessage('Could not open Java Language Server log file');
+				window.showWarningMessage(openingFailureWarning);
 			}
 			return didOpen;
 		});
