@@ -20,6 +20,7 @@ import * as refactorAction from './refactorAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
+import { logger, initializeLogFile } from './log';
 
 let lastStatus;
 let languageClient: LanguageClient;
@@ -27,6 +28,13 @@ const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+
+	let storagePath = context.storagePath;
+	if (!storagePath) {
+		storagePath = getTempWorkspace();
+	}
+
+	initializeLogFile(path.join(storagePath, 'client.log'));
 
 	enableJavadocSymbols();
 
@@ -42,10 +50,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}).then(requirements => {
 		return window.withProgress<ExtensionAPI>({ location: ProgressLocation.Window }, p => {
 			return new Promise((resolve, reject) => {
-				let storagePath = context.storagePath;
-				if (!storagePath) {
-					storagePath = getTempWorkspace();
-				}
 				const workspacePath = path.resolve(storagePath + '/jdt_ws');
 
 				// Options to control the language client
@@ -390,7 +394,7 @@ function enableJavadocSymbols() {
 
 function logNotification(message: string, ...items: string[]) {
 	return new Promise((resolve, reject) => {
-		console.log(message);
+		logger.verbose(message);
 	});
 }
 
@@ -398,8 +402,8 @@ function setIncompleteClasspathSeverity(severity: string) {
 	const config = getJavaConfiguration();
 	const section = 'errors.incompleteClasspath.severity';
 	config.update(section, severity, true).then(
-		() => console.log(`${section} globally set to ${severity}`),
-		(error) => console.log(error)
+		() => logger.info(`${section} globally set to ${severity}`),
+		(error) => logger.error(error)
 	);
 }
 
@@ -426,8 +430,8 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 
 	const st = FeatureStatus[status];
 	config.update(section, st).then(
-		() => console.log(`${section} set to ${st}`),
-		(error) => console.log(error)
+		() => logger.info(`${section} set to ${st}`),
+		(error) => logger.error(error)
 	);
 	if (status !== FeatureStatus.disabled) {
 		projectConfigurationUpdate(languageClient, uri);
