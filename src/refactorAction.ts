@@ -117,13 +117,13 @@ function registerMoveFileCommand(languageClient: LanguageClient, context: Extens
 
 async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
     if (!hasCommonParent(fileUris)) {
-        window.showErrorMessage("Not supported. Please select multiple files from the same directory and do again.");
+        window.showErrorMessage("Moving files of different directories are not supported. Please make sure they are from the same directory.");
         return;
     }
 
     const moveDestination = await languageClient.sendRequest(GetPackageDestinationsRequest.type, fileUris.map(uri => uri.toString()));
     if (!moveDestination || !moveDestination.packageNodes || !moveDestination.packageNodes.length) {
-        window.showErrorMessage("Cannot find available Java packages to place the selected files.");
+        window.showErrorMessage("Cannot find available Java packages to move the selected files to.");
         return;
     }
 
