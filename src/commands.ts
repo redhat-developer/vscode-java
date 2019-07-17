@@ -75,6 +75,12 @@ export namespace Commands {
     export const OPEN_SERVER_LOG = 'java.open.serverLog';
 
     /**
+    * Open Java client Log file
+    */
+    export const OPEN_CLIENT_LOG = 'java.open.clientLog';
+
+    
+    /**
      * Open Java formatter settings
      */
     export const OPEN_FORMATTER = 'java.open.formatter.settings';

@@ -390,7 +390,12 @@
       },
       {
         "command": "java.open.serverLog",
-        "title": "Open Java Language Server log file",
+        "title": "Open Java language server log file",
+        "category": "Java"
+      },
+      {
+        "command": "java.open.clientLog",
+        "title": "Open Java extension log file",
         "category": "Java"
       },
       {
