@@ -500,13 +500,12 @@
   },
   "scripts": {
     "vscode:prepublish": "webpack --mode production",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./&webpack --mode development",
     "watch": "webpack --mode development --watch --info-verbosity verbose",
     "pretest": "npm run compile",
     "test": "node ./out/test/runtest.js",
     "build-server": "./node_modules/.bin/gulp build_server",
-    "watch-server": "./node_modules/.bin/gulp watch_server",
-    "webpack": "webpack --mode development"
+    "watch-server": "./node_modules/.bin/gulp watch_server"
   },
   "devDependencies": {
     "@types/glob": "5.0.30",
