@@ -21,6 +21,7 @@ import * as net from 'net';
 import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
+import glob = require('glob');
 
 let lastStatus;
 let languageClient: LanguageClient;
@@ -497,8 +498,21 @@ function openServerLogFile(workspacePath): Thenable<boolean> {
 	return openLogFile(serverLogFile, 'Could not open Java Language Server log file');
 }
 
-function openClientLogFile(logFile): Thenable<boolean> {
-	return openLogFile(logFile, 'Could not open Java extension log file');
+function openClientLogFile(logFile: string): Thenable<boolean> {
+	return new Promise((resolve) => {
+		const filename = path.basename(logFile);
+		const dirname = path.dirname(logFile);
+
+		// find out the newest one
+		glob(filename + '.*', { cwd: dirname }, (err, files) => {
+			if (!err && files.length > 0) {
+				files.sort();
+				logFile = path.join(dirname, files[files.length - 1]);
+			}
+
+			openLogFile(logFile, 'Could not open Java extension log file').then((result) => resolve(result));
+		});
+	});
 }
 
 

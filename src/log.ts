@@ -1,10 +1,12 @@
 import { createLogger, format, transports } from 'winston';
+import * as DailyRotateFile from 'winston-daily-rotate-file';
 
 export function initializeLogFile(filename: string) {
-	logger.add(new transports.File({
+	logger.add(new DailyRotateFile({
 		filename: filename,
-		maxsize: 100 * 1024, // 100k max size per file
-		maxFiles: 2 // the last 100k of logs are always available
+		datePattern: 'YYYY-MM-DD',
+		maxSize: '100k', // 100k max size per file
+		maxFiles: '2d' // retain logs of the last two days
 	}));
 }
 
