@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.47.0 (July 19th, 2019)
+## 0.47.0 (July 18th, 2019)
 * enhancement - trigger client autorename after 'extract to variable/constant/method'. See [#333](https://github.com/redhat-developer/vscode-java/issues/333).
 * enhancement - added support for semantic selection. See [#780](https://github.com/redhat-developer/vscode-java/issues/780).
 * enhancement - Maven projects use the latest Execution Environment when source/target is not yet supported. See [#951](https://github.com/redhat-developer/vscode-java/issues/951).
@@ -14,7 +14,7 @@
 * bug fix - fixed signature help returning the wrong active parameter. See [JLS#1039](https://github.com/eclipse/eclipse.jdt.ls/issues/1039).
 * bug fix - fixed signature help stopped working after using a lambda. See [JLS#1086](https://github.com/eclipse/eclipse.jdt.ls/issues/1086).
 * debt - replaced vscode package with @types/vscode. See [#977](https://github.com/redhat-developer/vscode-java/issues/977).
-* documentation - setup the project for development. See [#949](https://github.com/redhat-developer/vscode-java/issues/949.)
+* documentation - setup the project for development. See [#949](https://github.com/redhat-developer/vscode-java/issues/949).
 
 ## 0.46.0 (June 5th, 2019)
 * enhancement - new 'try with resources' snippet, triggered by `try_resources`. See [#932](https://github.com/redhat-developer/vscode-java/pull/932).
