@@ -152,8 +152,4 @@ export namespace Commands {
      * Rename Command.
      */
     export const RENAME_COMMAND = 'java.action.rename';
-    /**
-     * Move File Command.
-     */
-    export const MOVE_FILE_COMMAND = 'java.refactor.moveFile';
 }

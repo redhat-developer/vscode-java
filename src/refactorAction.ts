@@ -9,7 +9,6 @@ import { GetPackageDestinationsRequest, GetRefactorEditRequest, MoveFileRequest,
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
-    registerMoveFileCommand(languageClient, context);
 }
 
 function registerApplyRefactorCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -99,19 +98,6 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
 
             await moveFile(languageClient, [Uri.parse(commandInfo.uri)]);
         }
-    }));
-}
-
-function registerMoveFileCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(javaCommands.MOVE_FILE_COMMAND, async (hoverUri: Uri, allSelections?: Uri[]) => {
-        let targetUris: Uri[];
-        if (!allSelections || allSelections.length < 2) {
-            targetUris = [ hoverUri ];
-        } else {
-            targetUris = allSelections.filter(uri => uri.path && uri.path.endsWith('.java'));
-        }
-
-        await moveFile(languageClient, targetUris);
     }));
 }
 
