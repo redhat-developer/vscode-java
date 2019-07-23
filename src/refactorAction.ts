@@ -14,7 +14,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
         try {
             const uri: Uri = Uri.parse(position.uri);
             const document: TextDocument = await workspace.openTextDocument(uri);
-            if (document == null) {
+            if (document === null) {
                 return;
             }
 
@@ -34,7 +34,8 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             || command === 'extractConstant'
             || command === 'extractMethod'
             || command === 'extractField'
-            || command === 'convertVariableToField') {
+            || command === 'convertVariableToField'
+            || command === 'invertVariable') {
             const currentEditor = window.activeTextEditor;
             if (!currentEditor || !currentEditor.options) {
                 return;
@@ -80,7 +81,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             if (edit) {
                 await workspace.applyEdit(edit);
             }
-            
+
             if (result.command) {
                 if (result.command.arguments) {
                     await commands.executeCommand(result.command.command, ...result.command.arguments);
