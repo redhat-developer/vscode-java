@@ -2,10 +2,10 @@
 
 import { existsSync } from 'fs';
 import * as path from 'path';
-import { commands, window, ExtensionContext, workspace, Position, Uri, TextDocument } from 'vscode';
-import { LanguageClient, FormattingOptions } from 'vscode-languageclient';
+import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
+import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, RefactorWorkspaceEdit, RenamePosition, GetPackageDestinationsRequest, MoveFileRequest } from './protocol';
+import { GetPackageDestinationsRequest, GetRefactorEditRequest, MoveFileRequest, RefactorWorkspaceEdit, RenamePosition } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -180,6 +180,8 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
         if (edit) {
             await workspace.applyEdit(edit);
         }
+
+        await saveEdit(workspaceEdit);
     }
 }
 
@@ -201,4 +203,45 @@ function hasCommonParent(uris: Uri[]): boolean {
     }
 
     return true;
+}
+
+async function saveEdit(edit: WorkspaceEdit) {
+    if (!edit) {
+        return;
+    }
+
+    const touchedFiles: Set<string> = new Set<string>();
+    if (edit.changes) {
+        for (const uri of Object.keys(edit.changes)) {
+            touchedFiles.add(uri);
+        }
+    }
+
+    if (edit.documentChanges) {
+        for (const change of edit.documentChanges) {
+            const kind = (<any> change).kind;
+            if (kind === 'rename') {
+                if (touchedFiles.has((<RenameFile> change).oldUri)) {
+                    touchedFiles.delete((<RenameFile> change).oldUri);
+                    touchedFiles.add((<RenameFile> change).newUri);
+                }
+            } else if (kind === 'delete') {
+                if (touchedFiles.has((<DeleteFile> change).uri)) {
+                    touchedFiles.delete((<DeleteFile> change).uri);
+                }
+            } else if (!kind) {
+                touchedFiles.add((<TextDocumentEdit> change).textDocument.uri);
+            }
+        }
+    }
+
+    for (const fileUri of touchedFiles) {
+        const uri: Uri = Uri.parse(fileUri);
+        const document: TextDocument = await workspace.openTextDocument(uri);
+        if (document == null) {
+            continue;
+        }
+
+        await document.save();
+    }
 }
