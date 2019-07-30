@@ -288,6 +288,7 @@ export interface RenamePosition {
 export interface RefactorWorkspaceEdit {
     edit: WorkspaceEdit;
     command?: Command;
+    errorMessage?: string;
 }
 
 export interface GetRefactorEditParams {
@@ -325,5 +326,5 @@ export interface MoveFileParams {
 }
 
 export namespace MoveFileRequest {
-    export const type = new RequestType<MoveFileParams, WorkspaceEdit, void, void>('java/moveFile');
+    export const type = new RequestType<MoveFileParams, RefactorWorkspaceEdit, void, void>('java/moveFile');
 }

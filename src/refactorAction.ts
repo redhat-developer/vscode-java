@@ -75,22 +75,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                 commandArguments,
             });
 
-            if (!result || !result.edit) {
-                return;
-            }
-
-            const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(result.edit);
-            if (edit) {
-                await workspace.applyEdit(edit);
-            }
-
-            if (result.command) {
-                if (result.command.arguments) {
-                    await commands.executeCommand(result.command.command, ...result.command.arguments);
-                } else {
-                    await commands.executeCommand(result.command.command);
-                }
-            }
+            await applyRefactorEdit(languageClient, result);
         } else if (command === 'moveFile') {
             if (!commandInfo || !commandInfo.uri) {
                 return;
@@ -99,6 +84,32 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             await moveFile(languageClient, [Uri.parse(commandInfo.uri)]);
         }
     }));
+}
+
+async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: RefactorWorkspaceEdit) {
+    if (!refactorEdit) {
+        return;
+    }
+
+    if (refactorEdit.errorMessage) {
+        window.showErrorMessage(refactorEdit.errorMessage);
+        return;
+    }
+
+    if (refactorEdit.edit) {
+        const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(refactorEdit.edit);
+        if (edit) {
+            await workspace.applyEdit(edit);
+        }
+    }
+
+    if (refactorEdit.command) {
+        if (refactorEdit.command.arguments) {
+            await commands.executeCommand(refactorEdit.command.command, ...refactorEdit.command.arguments);
+        } else {
+            await commands.executeCommand(refactorEdit.command.command);
+        }
+    }
 }
 
 async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
@@ -156,18 +167,15 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
         fileUris = moveUris;
     }
 
-    const workspaceEdit = await languageClient.sendRequest(MoveFileRequest.type, {
+    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveFileRequest.type, {
         documentUris: fileUris.map(uri => uri.toString()),
         targetUri: selectPackageNodeItem.packageNode.uri,
         updateReferences: true,
     });
-    if (workspaceEdit) {
-        const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
-        if (edit) {
-            await workspace.applyEdit(edit);
-        }
 
-        await saveEdit(workspaceEdit);
+    await applyRefactorEdit(languageClient, refactorEdit);
+    if (refactorEdit && refactorEdit.edit) {
+        await saveEdit(refactorEdit.edit);
     }
 }
 
