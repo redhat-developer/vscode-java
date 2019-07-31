@@ -5,7 +5,7 @@ import * as cp from 'child_process';
 import * as path from 'path';
 import * as pathExists from 'path-exists';
 import * as expandHomeDir from 'expand-home-dir';
-import * as findJavaHome from 'find-java-home';
+import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
 
 const isWindows = process.platform.indexOf('win') === 0;
