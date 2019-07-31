@@ -114,7 +114,7 @@ async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: R
 
 async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
     if (!hasCommonParent(fileUris)) {
-        window.showErrorMessage("Moving files of different directories are not supported. Please make sure they are from the same directory.");
+        window.showErrorMessage("Moving files from different directories are not supported. Please make sure they are from the same directory.");
         return;
     }
 
