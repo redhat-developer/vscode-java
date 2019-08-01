@@ -516,8 +516,7 @@ function openClientLogFile(logFile: string): Thenable<boolean> {
 	});
 }
 
-
-function openLogFile(logFile, openingFailureWarning:string ): Thenable<boolean> {
+function openLogFile(logFile, openingFailureWarning: string): Thenable<boolean> {
 	if (!fs.existsSync(logFile)) {
 		return window.showWarningMessage('No log file available').then(() => false);
 	}

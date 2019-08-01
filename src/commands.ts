@@ -79,7 +79,6 @@ export namespace Commands {
     */
     export const OPEN_CLIENT_LOG = 'java.open.clientLog';
 
-    
     /**
      * Open Java formatter settings
      */
