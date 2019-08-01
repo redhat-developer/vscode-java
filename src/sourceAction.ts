@@ -223,7 +223,7 @@ function registerGenerateAccessorsCommand(languageClient: LanguageClient, contex
             }
             return {
                 label: accessor.fieldName,
-                description: (accessor.isStatic?'static ':'')+ description.join(', '),
+                description: (accessor.isStatic ? 'static ' : '')+ description.join(', '),
                 originalField: accessor,
             };
         });
@@ -323,12 +323,12 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
             selectedDelegateField = selectedFieldItem.originalField;
         }
 
-        let delegateEntryItems = selectedDelegateField.delegateMethods.map(delegateMethod => {
+        const delegateEntryItems = selectedDelegateField.delegateMethods.map(delegateMethod => {
             return {
                 label: `${selectedDelegateField.field.name}.${delegateMethod.name}(${delegateMethod.parameters.join(',')})`,
                 originalField: selectedDelegateField.field,
                 originalMethod: delegateMethod,
-            }
+            };
         });
 
         if (!delegateEntryItems.length) {
