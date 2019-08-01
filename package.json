@@ -532,7 +532,7 @@
   },
   "dependencies": {
     "vscode-languageclient": "5.3.0-next.6",
-    "find-java-home": "0.2.0",
+    "find-java-home": "1.0.0",
     "tmp": "^0.0.33",
     "path-exists": "^3.0.0",
     "expand-home-dir": "^0.0.3",
