@@ -311,12 +311,18 @@ export interface PackageNode {
     isParentOfSelectedFile: boolean;
 }
 
-export interface PackageDestinationsResponse {
-    packageNodes: PackageNode[];
+export interface MoveDestinationsParams {
+    destinationKind: string;
+    sourceUris?: string[];
+    params?: CodeActionParams;
 }
 
-export namespace GetPackageDestinationsRequest {
-    export const type = new RequestType<string[], PackageDestinationsResponse, void, void>('java/getPackageDestinations');
+export interface MoveDestinationsResponse {
+    destinations: any[];
+}
+
+export namespace GetMoveDestinationsRequest {
+    export const type = new RequestType<MoveDestinationsParams, MoveDestinationsResponse, void, void>('java/getMoveDestinations');
 }
 
 export interface MoveFileParams {

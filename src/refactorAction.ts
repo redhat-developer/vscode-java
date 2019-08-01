@@ -5,7 +5,7 @@ import * as path from 'path';
 import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetPackageDestinationsRequest, GetRefactorEditRequest, MoveFileRequest, RefactorWorkspaceEdit, RenamePosition } from './protocol';
+import { GetRefactorEditRequest, MoveFileRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -118,13 +118,16 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
         return;
     }
 
-    const moveDestination = await languageClient.sendRequest(GetPackageDestinationsRequest.type, fileUris.map(uri => uri.toString()));
-    if (!moveDestination || !moveDestination.packageNodes || !moveDestination.packageNodes.length) {
+    const moveDestinations = await languageClient.sendRequest(GetMoveDestinationsRequest.type, {
+        destinationKind: 'package',
+        sourceUris: fileUris.map(uri => uri.toString())
+    });
+    if (!moveDestinations || !moveDestinations.destinations || !moveDestinations.destinations.length) {
         window.showErrorMessage("Cannot find available Java packages to move the selected files to.");
         return;
     }
 
-    const packageNodeItems = moveDestination.packageNodes.map((packageNode) => {
+    const packageNodeItems = moveDestinations.destinations.map((packageNode) => {
         const packageUri: Uri = packageNode.uri ? Uri.parse(packageNode.uri) : null;
         const displayPath: string = packageUri ? workspace.asRelativePath(packageUri, true) : packageNode.path;
         return {
