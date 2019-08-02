@@ -80,6 +80,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							generateConstructorsPromptSupport: true,
 							generateDelegateMethodsPromptSupport: true,
 							advancedExtractRefactoringSupport: true,
+							moveRefactoringSupport: true,
 						},
 						triggerFiles: getTriggerFiles()
 					},

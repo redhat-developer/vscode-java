@@ -288,6 +288,7 @@ export interface RenamePosition {
 export interface RefactorWorkspaceEdit {
     edit: WorkspaceEdit;
     command?: Command;
+    errorMessage?: string;
 }
 
 export interface GetRefactorEditParams {
@@ -299,4 +300,33 @@ export interface GetRefactorEditParams {
 
 export namespace GetRefactorEditRequest {
     export const type = new RequestType<GetRefactorEditParams, RefactorWorkspaceEdit, void, void>('java/getRefactorEdit');
+}
+
+export interface PackageNode {
+    displayName: string;
+    uri: string;
+    path: string;
+    project: string;
+    isDefaultPackage: boolean;
+    isParentOfSelectedFile: boolean;
+}
+
+export interface MoveParams {
+    moveKind: string;
+    sourceUris: string[];
+    params: CodeActionParams;
+    destination?: any;
+    updateReferences?: boolean;
+}
+
+export interface MoveDestinationsResponse {
+    destinations: any[];
+}
+
+export namespace GetMoveDestinationsRequest {
+    export const type = new RequestType<MoveParams, MoveDestinationsResponse, void, void>('java/getMoveDestinations');
+}
+
+export namespace MoveRequest {
+    export const type = new RequestType<MoveParams, RefactorWorkspaceEdit, void, void>('java/move');
 }
