@@ -5,7 +5,7 @@ import * as path from 'path';
 import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveFileRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -170,9 +170,10 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
         fileUris = moveUris;
     }
 
-    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveFileRequest.type, {
-        documentUris: fileUris.map(uri => uri.toString()),
-        targetUri: selectPackageNodeItem.packageNode.uri,
+    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+        moveKind: 'moveResource',
+        sourceUris: fileUris.map(uri => uri.toString()),
+        destination: selectPackageNodeItem.packageNode,
         updateReferences: true,
     });
 

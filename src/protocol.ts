@@ -325,12 +325,14 @@ export namespace GetMoveDestinationsRequest {
     export const type = new RequestType<MoveDestinationsParams, MoveDestinationsResponse, void, void>('java/getMoveDestinations');
 }
 
-export interface MoveFileParams {
-    documentUris: string[];
-    targetUri: string;
+export interface MoveParams {
+    moveKind: string;
+    sourceUris: string[];
+    params: CodeActionParams;
+    destination: any;
     updateReferences: boolean;
 }
 
-export namespace MoveFileRequest {
-    export const type = new RequestType<MoveFileParams, RefactorWorkspaceEdit, void, void>('java/moveFile');
+export namespace MoveRequest {
+    export const type = new RequestType<MoveParams, RefactorWorkspaceEdit, void, void>('java/move');
 }
