@@ -119,7 +119,7 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
     }
 
     const moveDestinations = await languageClient.sendRequest(GetMoveDestinationsRequest.type, {
-        destinationKind: 'package',
+        moveKind: 'moveResource',
         sourceUris: fileUris.map(uri => uri.toString())
     });
     if (!moveDestinations || !moveDestinations.destinations || !moveDestinations.destinations.length) {
@@ -173,6 +173,7 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
     const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
         moveKind: 'moveResource',
         sourceUris: fileUris.map(uri => uri.toString()),
+        params: null,
         destination: selectPackageNodeItem.packageNode,
         updateReferences: true,
     });

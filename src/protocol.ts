@@ -311,10 +311,12 @@ export interface PackageNode {
     isParentOfSelectedFile: boolean;
 }
 
-export interface MoveDestinationsParams {
-    destinationKind: string;
-    sourceUris?: string[];
-    params?: CodeActionParams;
+export interface MoveParams {
+    moveKind: string;
+    sourceUris: string[];
+    params: CodeActionParams;
+    destination?: any;
+    updateReferences?: boolean;
 }
 
 export interface MoveDestinationsResponse {
@@ -322,15 +324,7 @@ export interface MoveDestinationsResponse {
 }
 
 export namespace GetMoveDestinationsRequest {
-    export const type = new RequestType<MoveDestinationsParams, MoveDestinationsResponse, void, void>('java/getMoveDestinations');
-}
-
-export interface MoveParams {
-    moveKind: string;
-    sourceUris: string[];
-    params: CodeActionParams;
-    destination: any;
-    updateReferences: boolean;
+    export const type = new RequestType<MoveParams, MoveDestinationsResponse, void, void>('java/getMoveDestinations');
 }
 
 export namespace MoveRequest {
