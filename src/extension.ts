@@ -39,11 +39,11 @@ class ClientErrorHandler implements ErrorHandler {
 
 	public error(_error: Error, _message: Message, count: number): ErrorAction {
 		if (count && count <= 3) {
-			logger.error(`${this.name} server encounted error: ${_message}, ${_error && _error.toString()}`);
+			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
 			return ErrorAction.Continue;
 		}
 
-		logger.error(`${this.name} server encounted error and will shut down: ${_message}, ${_error && _error.toString()}`);
+		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
 		return ErrorAction.Shutdown;
 	}
 
@@ -53,9 +53,9 @@ class ClientErrorHandler implements ErrorHandler {
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			return CloseAction.Restart;
 		} else {
-			let diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
+			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
 			if (diff <= 3 * 60 * 1000) {
-				let message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
+				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
 				logger.error(message);
 				window.showErrorMessage(message);
 				return CloseAction.DoNotRestart;
@@ -126,7 +126,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					revealOutputChannelOn: RevealOutputChannelOn.Never,
 					errorHandler: new ClientErrorHandler(extensionName),
 					initializationFailedHandler: error => {
-						logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`)
+						logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
 						return true;
 					}
 				};
