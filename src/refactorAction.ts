@@ -130,16 +130,16 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
     const packageNodeItems = moveDestinations.destinations.map((packageNode) => {
         const packageUri: Uri = packageNode.uri ? Uri.parse(packageNode.uri) : null;
         const displayPath: string = packageUri ? workspace.asRelativePath(packageUri, true) : packageNode.path;
-        return {
-            label: (packageNode.isParentOfSelectedFile ? '* ' : '') + packageNode.displayName,
-            description: displayPath,
-            packageNode,
-        }
+		return {
+			label: (packageNode.isParentOfSelectedFile ? '* ' : '') + packageNode.displayName,
+			description: displayPath,
+			packageNode,
+		};
     });
 
-    let placeHolder = (fileUris.length === 1) ? `Choose the target package for ${getFileNameFromUri(fileUris[0])}.`
+    const placeHolder = (fileUris.length === 1) ? `Choose the target package for ${getFileNameFromUri(fileUris[0])}.`
                     : `Choose the target package for ${fileUris.length} selected files.`;
-    let selectPackageNodeItem = await window.showQuickPick(packageNodeItems, {
+					const selectPackageNodeItem = await window.showQuickPick(packageNodeItems, {
         placeHolder,
     });
     if (!selectPackageNodeItem) {
@@ -189,7 +189,7 @@ function getFileNameFromUri(uri: Uri): string {
 }
 
 function hasCommonParent(uris: Uri[]): boolean {
-    if (uris == null || uris.length <= 1) {
+    if (uris === null || uris.length <= 1) {
         return true;
     }
 
@@ -237,7 +237,7 @@ async function saveEdit(edit: WorkspaceEdit) {
     for (const fileUri of touchedFiles) {
         const uri: Uri = Uri.parse(fileUri);
         const document: TextDocument = await workspace.openTextDocument(uri);
-        if (document == null) {
+        if (document === null) {
             continue;
         }
 
