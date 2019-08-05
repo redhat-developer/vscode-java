@@ -57,7 +57,12 @@ class ClientErrorHandler implements ErrorHandler {
 			if (diff <= 3 * 60 * 1000) {
 				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
 				logger.error(message);
-				window.showErrorMessage(message);
+				const action = "Show logs";
+				window.showErrorMessage(message, action).then(selection => {
+					if (selection === action) {
+						commands.executeCommand(Commands.OPEN_LOGS);
+					}
+				});
 				return CloseAction.DoNotRestart;
 			}
 
