@@ -80,6 +80,11 @@ export namespace Commands {
     export const OPEN_CLIENT_LOG = 'java.open.clientLog';
 
     /**
+    * Open Java log files side by side
+    */
+   export const OPEN_LOGS = 'java.open.logs';
+
+    /**
      * Open Java formatter settings
      */
     export const OPEN_FORMATTER = 'java.open.formatter.settings';

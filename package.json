@@ -399,6 +399,11 @@
         "category": "Java"
       },
       {
+        "command": "java.open.logs",
+        "title": "Open all log files",
+        "category": "Java"
+      },
+      {
         "command": "java.workspace.compile",
         "title": "Force Java compilation",
         "category": "Java"
