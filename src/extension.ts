@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import * as requirements from './requirements';
@@ -27,7 +27,46 @@ let lastStatus;
 let languageClient: LanguageClient;
 const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
+const extensionName = 'Language Support for Java';
 let clientLogFile;
+
+class ClientErrorHandler implements ErrorHandler {
+	private restarts: number[];
+
+	constructor(private name: string) {
+		this.restarts = [];
+	}
+
+	public error(_error: Error, _message: Message, count: number): ErrorAction {
+		if (count && count <= 3) {
+			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
+			return ErrorAction.Continue;
+		}
+
+		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
+		return ErrorAction.Shutdown;
+	}
+
+	public closed(): CloseAction {
+		this.restarts.push(Date.now());
+		if (this.restarts.length < 5) {
+			logger.error(`The ${this.name} server crashed and will restart.`);
+			return CloseAction.Restart;
+		} else {
+			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
+			if (diff <= 3 * 60 * 1000) {
+				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
+				logger.error(message);
+				window.showErrorMessage(message);
+				return CloseAction.DoNotRestart;
+			}
+
+			logger.error(`The ${this.name} server crashed and will restart.`);
+			this.restarts.shift();
+			return CloseAction.Restart;
+		}
+	}
+}
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
@@ -84,7 +123,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						},
 						triggerFiles: getTriggerFiles()
 					},
-					revealOutputChannelOn: RevealOutputChannelOn.Never
+					revealOutputChannelOn: RevealOutputChannelOn.Never,
+					errorHandler: new ClientErrorHandler(extensionName),
+					initializationFailedHandler: error => {
+						logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
+						return true;
+					}
 				};
 
 				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
@@ -114,7 +158,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 
 				// Create the language client and start the client.
-				languageClient = new LanguageClient('java', 'Language Support for Java', serverOptions, clientOptions);
+				languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 
 				languageClient.onReady().then(() => {
