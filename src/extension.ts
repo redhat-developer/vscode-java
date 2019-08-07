@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -68,6 +68,42 @@ class ClientErrorHandler implements ErrorHandler {
 	}
 }
 
+class OutputInfoCollector implements OutputChannel {
+	private channel: OutputChannel = null;
+
+	constructor(public name: string) {
+		this.channel = window.createOutputChannel(this.name);
+	}
+
+	append(value: string): void {
+		logger.info(value);
+		this.channel.append(value);
+	}
+
+	appendLine(value: string): void {
+		logger.info(value);
+		this.channel.appendLine(value);
+	}
+
+	clear(): void {
+		this.channel.clear();
+	}
+
+	show(preserveFocus?: boolean): void;
+	show(column?: ViewColumn, preserveFocus?: boolean): void;
+	show(column?: any, preserveFocus?: any) {
+		this.channel.show(column, preserveFocus);
+	}
+
+	hide(): void {
+		this.channel.hide();
+	}
+
+	dispose(): void {
+		this.channel.dispose();
+	}
+}
+
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	let storagePath = context.storagePath;
@@ -128,7 +164,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					initializationFailedHandler: error => {
 						logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
 						return true;
-					}
+					},
+					outputChannel: new OutputInfoCollector(extensionName),
+					outputChannelName: extensionName
 				};
 
 				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
