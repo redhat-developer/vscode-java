@@ -3,9 +3,9 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
-import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
+import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -82,6 +82,10 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             }
 
             await moveFile(languageClient, [Uri.parse(commandInfo.uri)]);
+        } else if (command === 'moveInstanceMethod') {
+            await moveInstanceMethod(languageClient, params, commandInfo);
+        } else if (command === 'moveStaticMember') {
+            await moveStaticMember(languageClient, params, commandInfo);
         }
     }));
 }
@@ -242,5 +246,91 @@ async function saveEdit(edit: WorkspaceEdit) {
         }
 
         await document.save();
+    }
+}
+
+async function moveInstanceMethod(languageClient: LanguageClient, params: CodeActionParams, commandInfo: any) {
+    const moveDestinations = await languageClient.sendRequest(GetMoveDestinationsRequest.type, {
+        moveKind: 'moveInstanceMethod',
+        sourceUris: [ params.textDocument.uri ],
+        params
+    });
+    if (moveDestinations && moveDestinations.errorMessage) {
+        window.showErrorMessage(moveDestinations.errorMessage);
+        return;
+    }
+
+    if (!moveDestinations || !moveDestinations.destinations || !moveDestinations.destinations.length) {
+        window.showErrorMessage("Cannot find possible class targets to move the selected method to.");
+        return;
+    }
+
+    const destinationNodeItems = moveDestinations.destinations.map((destination) => {
+        return {
+            label: destination.type + " " + destination.name,
+            description: destination.isField ? "Field" : "Method Parameter",
+            destination,
+        }
+    });
+    const methodName = commandInfo && commandInfo.displayName ? commandInfo.displayName : '';
+    let selected = await window.showQuickPick(destinationNodeItems, {
+        placeHolder: `Select the new class for the instance method ${methodName}.`,
+    });
+    if (!selected) {
+        return;
+    }
+
+    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+        moveKind: 'moveInstanceMethod',
+        sourceUris: [ params.textDocument.uri ],
+        params,
+        destination: selected.destination,
+    });
+    await applyRefactorEdit(languageClient, refactorEdit);
+}
+
+async function moveStaticMember(languageClient: LanguageClient, params: CodeActionParams, commandInfo: any) {
+    const memberName = commandInfo && commandInfo.displayName ? commandInfo.displayName : '';
+    const picked = await window.showQuickPick(
+        languageClient.sendRequest(SearchSymbols.type, {
+            query: '*',
+            projectName: commandInfo ? commandInfo.projectName : null,
+            sourceOnly: true,
+        }).then(types => {
+            if (types && types.length) {
+                return types.sort((a, b) => {
+                    if (a.name < b.name) {
+                        return -1;
+                    } else if (a.name > b.name) {
+                        return 1;
+                    }
+                    return 0;
+                }).map((symbol => {
+                    return {
+                        label: symbol.name,
+                        description: symbol.containerName,
+                        symbolNode: symbol,
+                    };
+                }));
+            } else {
+                return [{
+                    label: 'No result found',
+                    alwaysShow: true,
+                    description: '',
+                    symbolNode: null,
+                }];
+            }
+        }), {
+            placeHolder: `Select the new class for the static member ${memberName}.`
+        });
+
+    if (picked && picked.symbolNode) {
+        const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+            moveKind: 'moveStaticMember',
+            sourceUris: [ params.textDocument.uri ],
+            params,
+            destination: picked.symbolNode,
+        });
+        await applyRefactorEdit(languageClient, refactorEdit);
     }
 }
