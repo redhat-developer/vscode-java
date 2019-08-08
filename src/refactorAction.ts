@@ -267,13 +267,13 @@ async function moveInstanceMethod(languageClient: LanguageClient, params: CodeAc
 
     const destinationNodeItems = moveDestinations.destinations.map((destination) => {
         return {
-            label: destination.type + " " + destination.name,
+            label: `${destination.type} ${destination.name}`,
             description: destination.isField ? "Field" : "Method Parameter",
             destination,
-        }
+        };
     });
     const methodName = commandInfo && commandInfo.displayName ? commandInfo.displayName : '';
-    let selected = await window.showQuickPick(destinationNodeItems, {
+    const selected = await window.showQuickPick(destinationNodeItems, {
         placeHolder: `Select the new class for the instance method ${methodName}.`,
     });
     if (!selected) {
