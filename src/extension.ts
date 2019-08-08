@@ -57,7 +57,12 @@ class ClientErrorHandler implements ErrorHandler {
 			if (diff <= 3 * 60 * 1000) {
 				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
 				logger.error(message);
-				window.showErrorMessage(message);
+				const action = "Show logs";
+				window.showErrorMessage(message, action).then(selection => {
+					if (selection === action) {
+						commands.executeCommand(Commands.OPEN_LOGS);
+					}
+				});
 				return CloseAction.DoNotRestart;
 			}
 
@@ -376,9 +381,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () =>  languageClient.outputChannel.show(ViewColumn.Three)));
 
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, () => openServerLogFile(workspacePath)));
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
 
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, () => openClientLogFile(clientLogFile)));
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, (column: ViewColumn) => openClientLogFile(clientLogFile, column)));
+
+				context.subscriptions.push(commands.registerCommand(Commands.OPEN_LOGS, () => openLogs()));
 
 				const extensionPath = context.extensionPath;
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
@@ -538,12 +545,12 @@ function deleteDirectory(dir) {
 	}
 }
 
-function openServerLogFile(workspacePath): Thenable<boolean> {
+function openServerLogFile(workspacePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
 	const serverLogFile = path.join(workspacePath, '.metadata', '.log');
-	return openLogFile(serverLogFile, 'Could not open Java Language Server log file');
+	return openLogFile(serverLogFile, 'Could not open Java Language Server log file', column);
 }
 
-function openClientLogFile(logFile: string): Thenable<boolean> {
+function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
 	return new Promise((resolve) => {
 		const filename = path.basename(logFile);
 		const dirname = path.dirname(logFile);
@@ -555,12 +562,17 @@ function openClientLogFile(logFile: string): Thenable<boolean> {
 				logFile = path.join(dirname, files[files.length - 1]);
 			}
 
-			openLogFile(logFile, 'Could not open Java extension log file').then((result) => resolve(result));
+			openLogFile(logFile, 'Could not open Java extension log file', column).then((result) => resolve(result));
 		});
 	});
 }
 
-function openLogFile(logFile, openingFailureWarning: string): Thenable<boolean> {
+async function openLogs() {
+	await commands.executeCommand(Commands.OPEN_CLIENT_LOG, ViewColumn.One);
+	await commands.executeCommand(Commands.OPEN_SERVER_LOG, ViewColumn.Two);
+}
+
+function openLogFile(logFile, openingFailureWarning: string, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
 	if (!fs.existsSync(logFile)) {
 		return window.showWarningMessage('No log file available').then(() => false);
 	}
@@ -570,8 +582,7 @@ function openLogFile(logFile, openingFailureWarning: string): Thenable<boolean> 
 			if (!doc) {
 				return false;
 			}
-			return window.showTextDocument(doc, window.activeTextEditor ?
-				window.activeTextEditor.viewColumn : undefined)
+			return window.showTextDocument(doc, column)
 				.then(editor => !!editor);
 		}, () => false)
 		.then(didOpen => {

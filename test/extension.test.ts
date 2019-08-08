@@ -35,6 +35,7 @@ suite('Java Language Extension', () => {
 				Commands.EXECUTE_WORKSPACE_COMMAND,
 				Commands.OPEN_SERVER_LOG,
 				Commands.OPEN_CLIENT_LOG,
+				Commands.OPEN_LOGS,
 				Commands.COMPILE_WORKSPACE,
 				Commands.OPEN_FORMATTER,
 				Commands.CLEAN_WORKSPACE,
