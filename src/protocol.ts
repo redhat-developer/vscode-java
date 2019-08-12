@@ -335,7 +335,7 @@ export namespace MoveRequest {
 
 export interface SearchSymbolParams extends WorkspaceSymbolParams {
     projectName: string;
-    top?: number;
+    maxResults?: number;
     sourceOnly?: boolean;
 }
 

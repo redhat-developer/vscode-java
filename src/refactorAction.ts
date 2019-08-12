@@ -291,6 +291,15 @@ async function moveInstanceMethod(languageClient: LanguageClient, params: CodeAc
 
 async function moveStaticMember(languageClient: LanguageClient, params: CodeActionParams, commandInfo: any) {
     const memberName = commandInfo && commandInfo.displayName ? commandInfo.displayName : '';
+    const exclude: Set<string> = new Set();
+    if (commandInfo.enclosingTypeName) {
+        exclude.add(commandInfo.enclosingTypeName);
+        // 55: Type, 71: Enum, 81: AnnotationType
+        if (commandInfo.memberType === 55 || commandInfo.memeberType === 71
+            || commandInfo.memberType === 81) {
+            exclude.add(`${commandInfo.enclosingTypeName}.${commandInfo.displayName}`);
+        }
+    }
     const picked = await window.showQuickPick(
         languageClient.sendRequest(SearchSymbols.type, {
             query: '*',
@@ -298,7 +307,10 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
             sourceOnly: true,
         }).then(types => {
             if (types && types.length) {
-                return types.sort((a, b) => {
+                return types.filter((type) => {
+                    const typeName = type.containerName ? `${type.containerName}.${type.name}` : type.name;
+                    return !exclude.has(typeName);
+                }).sort((a, b) => {
                     if (a.name < b.name) {
                         return -1;
                     } else if (a.name > b.name) {
