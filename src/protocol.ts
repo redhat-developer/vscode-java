@@ -1,6 +1,6 @@
 'use strict';
 
-import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit, FormattingOptions } from 'vscode-languageclient';
+import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit, FormattingOptions, WorkspaceSymbolParams, SymbolInformation } from 'vscode-languageclient';
 import { Command, Range } from 'vscode';
 
 /**
@@ -152,6 +152,7 @@ export interface VariableBinding {
     bindingKey: string;
     name: string;
     type: string;
+    isField: boolean;
 }
 
 export interface CheckHashCodeEqualsResponse {
@@ -320,6 +321,7 @@ export interface MoveParams {
 }
 
 export interface MoveDestinationsResponse {
+    errorMessage?: string;
     destinations: any[];
 }
 
@@ -329,4 +331,14 @@ export namespace GetMoveDestinationsRequest {
 
 export namespace MoveRequest {
     export const type = new RequestType<MoveParams, RefactorWorkspaceEdit, void, void>('java/move');
+}
+
+export interface SearchSymbolParams extends WorkspaceSymbolParams {
+    projectName: string;
+    maxResults?: number;
+    sourceOnly?: boolean;
+}
+
+export namespace SearchSymbols {
+    export const type = new RequestType<SearchSymbolParams, SymbolInformation[], void, void>('java/searchSymbols');
 }
