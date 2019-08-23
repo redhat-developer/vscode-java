@@ -86,6 +86,8 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             await moveInstanceMethod(languageClient, params, commandInfo);
         } else if (command === 'moveStaticMember') {
             await moveStaticMember(languageClient, params, commandInfo);
+        } else if (command === 'moveTypeToNewFile') {
+            await moveTypeToNewFile(languageClient, params);
         }
     }));
 }
@@ -124,7 +126,8 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
 
     const moveDestinations = await languageClient.sendRequest(GetMoveDestinationsRequest.type, {
         moveKind: 'moveResource',
-        sourceUris: fileUris.map(uri => uri.toString())
+        sourceUris: fileUris.map(uri => uri.toString()),
+        params: null,
     });
     if (!moveDestinations || !moveDestinations.destinations || !moveDestinations.destinations.length) {
         window.showErrorMessage("Cannot find available Java packages to move the selected files to.");
@@ -345,4 +348,13 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
         });
         await applyRefactorEdit(languageClient, refactorEdit);
     }
+}
+
+async function moveTypeToNewFile(languageClient: LanguageClient, params: CodeActionParams) {
+    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+        moveKind: 'moveTypeToNewFile',
+        sourceUris: [ params.textDocument.uri ],
+        params,
+    });
+    await applyRefactorEdit(languageClient, refactorEdit);
 }
