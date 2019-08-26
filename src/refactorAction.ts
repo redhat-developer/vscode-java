@@ -3,7 +3,7 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
-import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams } from 'vscode-languageclient';
+import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
 import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols } from './protocol';
 
@@ -86,8 +86,8 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             await moveInstanceMethod(languageClient, params, commandInfo);
         } else if (command === 'moveStaticMember') {
             await moveStaticMember(languageClient, params, commandInfo);
-        } else if (command === 'moveTypeToNewFile') {
-            await moveTypeToNewFile(languageClient, params);
+        } else if (command === 'moveType') {
+            await moveType(languageClient, params, commandInfo);
         }
     }));
 }
@@ -303,10 +303,25 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
             exclude.add(`${commandInfo.enclosingTypeName}.${commandInfo.displayName}`);
         }
     }
+
+    const projectName = commandInfo ? commandInfo.projectName : null;
+    const picked = await selectTargetClass(languageClient, `Select the new class for the static member ${memberName}.`, projectName, exclude);
+    if (picked) {
+        const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+            moveKind: 'moveStaticMember',
+            sourceUris: [ params.textDocument.uri ],
+            params,
+            destination: picked,
+        });
+        await applyRefactorEdit(languageClient, refactorEdit);
+    }
+}
+
+async function selectTargetClass(languageClient: LanguageClient, placeHolder: string, projectName: string, exclude: Set<string>): Promise<SymbolInformation> {
     const picked = await window.showQuickPick(
         languageClient.sendRequest(SearchSymbols.type, {
             query: '*',
-            projectName: commandInfo ? commandInfo.projectName : null,
+            projectName,
             sourceOnly: true,
         }).then(types => {
             if (types && types.length) {
@@ -336,25 +351,66 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
                 }];
             }
         }), {
-            placeHolder: `Select the new class for the static member ${memberName}.`
+            placeHolder,
         });
 
-    if (picked && picked.symbolNode) {
-        const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
-            moveKind: 'moveStaticMember',
-            sourceUris: [ params.textDocument.uri ],
-            params,
-            destination: picked.symbolNode,
-        });
-        await applyRefactorEdit(languageClient, refactorEdit);
-    }
+    return picked ? picked.symbolNode : null;
 }
 
-async function moveTypeToNewFile(languageClient: LanguageClient, params: CodeActionParams) {
-    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
-        moveKind: 'moveTypeToNewFile',
-        sourceUris: [ params.textDocument.uri ],
-        params,
+async function moveType(languageClient: LanguageClient, params: CodeActionParams, commandInfo: any) {
+    if (!commandInfo || !commandInfo.supportedDestinationKinds) {
+        return;
+    }
+
+    const destinationPickItems: any[] = commandInfo.supportedDestinationKinds.map((kind) => {
+        if (kind === 'newFile') {
+            return {
+                label: `Move type ${commandInfo.displayName} to new file`,
+                kind,
+            };
+        } else {
+            return {
+                label: `Move type ${commandInfo.displayName} to another class`,
+                kind,
+            };
+        }
     });
+
+    if (!destinationPickItems.length) {
+        return;
+    }
+
+    const picked = await window.showQuickPick(destinationPickItems, {
+        placeHolder: 'What would you like to do?',
+    });
+    if (!picked) {
+        return;
+    }
+
+    let refactorEdit: RefactorWorkspaceEdit;
+    if (picked.kind === 'newFile') {
+        refactorEdit = await languageClient.sendRequest(MoveRequest.type, {
+            moveKind: 'moveTypeToNewFile',
+            sourceUris: [ params.textDocument.uri ],
+            params,
+        });
+    } else {
+        const exclude: Set<string> = new Set();
+        if (commandInfo.enclosingTypeName) {
+            exclude.add(commandInfo.enclosingTypeName);
+            exclude.add(`${commandInfo.enclosingTypeName}.${commandInfo.displayName}`);
+        }
+
+        const picked = await selectTargetClass(languageClient, `Select the new class for the type ${commandInfo.displayName}.`, commandInfo.projectName, exclude);
+        if (picked) {
+            refactorEdit = await languageClient.sendRequest(MoveRequest.type, {
+                moveKind: 'moveTypeToClass',
+                sourceUris: [ params.textDocument.uri ],
+                params,
+                destination: picked,
+            });
+        }
+    }
+
     await applyRefactorEdit(languageClient, refactorEdit);
 }
