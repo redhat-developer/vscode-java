@@ -1,5 +1,23 @@
 # Change Log
 
+## 0.48.0 (September 4th, 2019)
+* enhancement - ignore "Unsupported SuppressWarning" warnings by default. See [#507](https://github.com/redhat-developer/vscode-java/issues/507).
+* enhancement - code action to move member to another class. See [#980](https://github.com/redhat-developer/vscode-java/issues/980).
+* enhancement - code action to move class to another package. See [#1017](https://github.com/redhat-developer/vscode-java/issues/1017).
+* enhancement - code action to move inner types to new class. See [#1027](https://github.com/redhat-developer/vscode-java/pull/1027).
+* enhancement - code action to 'Invert local variable'. See [#997](https://github.com/redhat-developer/vscode-java/pull/997).
+* enhancement - show client & server logs side by side. See [#1016](https://github.com/redhat-developer/vscode-java/issues/1016).
+* enhancement - rotate client logs daily. See [#989](https://github.com/redhat-developer/vscode-java/pull/989).
+* enhancement - log language client failures. See [#1015](https://github.com/redhat-developer/vscode-java/pull/1015).
+* enhancement - code action to create unresolved types. See [JLS#853](https://github.com/eclipse/eclipse.jdt.ls/issues/853).
+* enhancement - properly render @ApiNote in javadoc. See [JLS#1069](https://github.com/eclipse/eclipse.jdt.ls/issues/1069).
+* enhancement - code action to convert lambda to anonymous class. See [JLS#1119](https://github.com/eclipse/eclipse.jdt.ls/issues/1119).
+* bug fix - fixed "Java runtime could not be located" for Windows + Oracle JDK. See [#836](https://github.com/redhat-developer/vscode-java/issues/836).
+* bug fix - fixed go to implementation doesn't work for method invocation. See [#886](https://github.com/redhat-developer/vscode-java/issues/886).
+* bug fix - fixed find implementation doesn't work on classes. See [JLS#1098](https://github.com/eclipse/eclipse.jdt.ls/issues/1098).
+* bug fix - fixed NavigateToDefinitionHandler should not return null. See [JLS#1143](https://github.com/eclipse/eclipse.jdt.ls/pull/1143).
+* bug fix - fixed secondary same-line error not reported. See [JLS#1147](https://github.com/eclipse/eclipse.jdt.ls/issues/1147).
+
 ## 0.47.0 (July 18th, 2019)
 * enhancement - trigger client autorename after 'extract to variable/constant/method'. See [#333](https://github.com/redhat-developer/vscode-java/issues/333).
 * enhancement - added support for semantic selection. See [#780](https://github.com/redhat-developer/vscode-java/issues/780).
