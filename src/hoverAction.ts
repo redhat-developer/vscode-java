@@ -1,6 +1,6 @@
 'use strict';
 
-import { commands, ExtensionContext, HoverProvider, languages, CancellationToken, Hover, Position, TextDocument, MarkdownString, window, Uri, MarkedString, Command} from "vscode";
+import { commands, ExtensionContext, HoverProvider, languages, CancellationToken, Hover, Position, TextDocument, MarkdownString, window, Uri, MarkedString, Command } from "vscode";
 import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
 import { MethodOverride } from "./protocol";
 import { registerHoverCommand, provideHoverCommandFn } from "./extension.api";
@@ -17,7 +17,6 @@ export function registerClientHoverProvider(languageClient: LanguageClient, cont
     context.subscriptions.push(commands.registerCommand(NAVIGATE_TO_OVERRIDE_COMMAND, (location: any) => {
         navigateToOverride(languageClient, location);
     }));
-    context.subscriptions.push()
 
     return hoverProvider.registerHoverCommand;
 }
