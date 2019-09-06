@@ -2,11 +2,10 @@
 
 import { commands, ExtensionContext, HoverProvider, languages, CancellationToken, Hover, Position, TextDocument, MarkdownString, window, Uri, MarkedString, Command } from "vscode";
 import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
+import { Commands as javaCommands } from "./commands";
 import { MethodOverride } from "./protocol";
 import { registerHoverCommand, provideHoverCommandFn } from "./extension.api";
 import { logger } from "./log";
-
-const NAVIGATE_TO_OVERRIDE_COMMAND = 'java.action.navigateToOverride';
 
 export function registerClientHoverProvider(languageClient: LanguageClient, context: ExtensionContext): registerHoverCommand {
     const hoverProvider: JavaHoverProvider = new JavaHoverProvider(languageClient);
@@ -14,7 +13,7 @@ export function registerClientHoverProvider(languageClient: LanguageClient, cont
         return await provideOverrideHoverCommand(languageClient, params, token);
     });
     context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
-    context.subscriptions.push(commands.registerCommand(NAVIGATE_TO_OVERRIDE_COMMAND, (location: any) => {
+    context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_OVERRIDE_COMMAND, (location: any) => {
         navigateToOverride(languageClient, location);
     }));
 
@@ -27,7 +26,7 @@ async function provideOverrideHoverCommand(languageClient: LanguageClient, param
         const location = response[0];
         return [{
             title: 'Go To Override',
-            command: NAVIGATE_TO_OVERRIDE_COMMAND,
+            command: javaCommands.NAVIGATE_TO_OVERRIDE_COMMAND,
             tooltip: `Go to override method '${location.declaringTypeName}.${location.methodName}'`,
             arguments: [ location ],
         }];
