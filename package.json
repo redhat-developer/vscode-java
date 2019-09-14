@@ -263,6 +263,15 @@
           ],
           "scope": "window"
         },
+        "java.completion.filteredTypes": {
+          "type": "array",
+          "description": "Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.",
+          "default": [
+            "java.awt.*",
+            "com.sun.*"
+          ],
+          "scope": "window"
+        },
         "java.completion.importOrder": {
           "type": "array",
           "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group.",

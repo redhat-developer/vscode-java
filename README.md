@@ -110,13 +110,14 @@ The following settings are supported:
 * `java.codeGeneration.toString.skipNullValues`: Skip null values when generating the toString method. Defaults to `false`.
 * `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
-
-*New in 0.47.0*
-
 * `java.import.gradle.arguments`: Arguments to pass to Gradle.
 * `java.import.gradle.jvmArguments`: JVM arguments to pass to Gradle.
 * `java.import.gradle.home`: setting for GRADLE_HOME.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
+
+*New in 0.49.0*
+
+* `java.completion.filteredTypes`: Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.
 
 Troubleshooting
 ===============
