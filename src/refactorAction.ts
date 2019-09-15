@@ -37,7 +37,8 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             || command === 'extractMethod'
             || command === 'extractField'
             || command === 'convertVariableToField'
-            || command === 'invertVariable') {
+            || command === 'invertVariable'
+            || command === 'convertAnonymousClassToNestedCommand') {
             const currentEditor = window.activeTextEditor;
             if (!currentEditor || !currentEditor.options) {
                 return;
