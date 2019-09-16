@@ -348,6 +348,6 @@ export interface MethodLocation extends Location {
     methodName: string;
 }
 
-export namespace MethodOverride {
-    export const type = new RequestType<TextDocumentPositionParams, MethodLocation[], void, void>('java/methodOverride');
+export namespace SuperMethod {
+    export const type = new RequestType<TextDocumentPositionParams, MethodLocation[], void, void>('java/superMethod');
 }

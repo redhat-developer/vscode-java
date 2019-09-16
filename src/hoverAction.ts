@@ -3,37 +3,40 @@
 import { commands, ExtensionContext, HoverProvider, languages, CancellationToken, Hover, Position, TextDocument, MarkdownString, window, Uri, MarkedString, Command } from "vscode";
 import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
 import { Commands as javaCommands } from "./commands";
-import { MethodOverride } from "./protocol";
+import { SuperMethod } from "./protocol";
 import { registerHoverCommand, provideHoverCommandFn } from "./extension.api";
 import { logger } from "./log";
 
 export function registerClientHoverProvider(languageClient: LanguageClient, context: ExtensionContext): registerHoverCommand {
     const hoverProvider: JavaHoverProvider = new JavaHoverProvider(languageClient);
     hoverProvider.registerHoverCommand(async (params: TextDocumentPositionParams, token: CancellationToken) => {
-        return await provideOverrideHoverCommand(languageClient, params, token);
+        return await provideHoverCommand(languageClient, params, token);
     });
     context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
-    context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_OVERRIDE_COMMAND, (location: any) => {
-        navigateToOverride(languageClient, location);
+    context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_SUPER_METHOD_COMMAND, (location: any) => {
+        navigateToSuperMethod(languageClient, location);
     }));
 
     return hoverProvider.registerHoverCommand;
 }
 
-async function provideOverrideHoverCommand(languageClient: LanguageClient, params: TextDocumentPositionParams, token: CancellationToken): Promise<Command[] | undefined> {
-    const response = await languageClient.sendRequest(MethodOverride.type, params, token);
+async function provideHoverCommand(languageClient: LanguageClient, params: TextDocumentPositionParams, token: CancellationToken): Promise<Command[] | undefined> {
+    const response = await languageClient.sendRequest(SuperMethod.type, params, token);
     if (response && response.length) {
         const location = response[0];
         return [{
-            title: 'Go To Override',
-            command: javaCommands.NAVIGATE_TO_OVERRIDE_COMMAND,
-            tooltip: `Go to override method '${location.declaringTypeName}.${location.methodName}'`,
-            arguments: [ location ],
+            title: 'Go To Super Method',
+            command: javaCommands.NAVIGATE_TO_SUPER_METHOD_COMMAND,
+            tooltip: `Go to super method '${location.declaringTypeName}.${location.methodName}'`,
+            arguments: [{
+                uri: location.uri,
+                range: location.range,
+            }],
         }];
     }
 }
 
-function navigateToOverride(languageClient: LanguageClient, location: any) {
+function navigateToSuperMethod(languageClient: LanguageClient, location: any) {
     const range = languageClient.protocol2CodeConverter.asRange(location.range);
     window.showTextDocument(Uri.parse(location.uri), {
         preserveFocus: true,

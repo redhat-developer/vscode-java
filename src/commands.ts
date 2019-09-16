@@ -157,7 +157,7 @@ export namespace Commands {
      */
     export const RENAME_COMMAND = 'java.action.rename';
     /**
-     * Navigate To Override Method Command.
+     * Navigate To Super Method Command.
      */
-    export const NAVIGATE_TO_OVERRIDE_COMMAND = 'java.action.navigateToOverride';
+    export const NAVIGATE_TO_SUPER_METHOD_COMMAND = 'java.action.navigateToSuperMethod';
 }
