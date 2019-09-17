@@ -15,6 +15,7 @@ import {
 } from './protocol';
 import { ExtensionAPI } from './extension.api';
 import * as buildpath from './buildpath';
+import * as hoverAction from './hoverAction';
 import * as sourceAction from './sourceAction';
 import * as refactorAction from './refactorAction';
 import * as net from 'net';
@@ -161,6 +162,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							generateDelegateMethodsPromptSupport: true,
 							advancedExtractRefactoringSupport: true,
 							moveRefactoringSupport: true,
+							clientHoverProvider: true,
 						},
 						triggerFiles: getTriggerFiles()
 					},
@@ -203,6 +205,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				// Create the language client and start the client.
 				languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
+				const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
 
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
@@ -215,7 +218,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								resolve({
 									apiVersion: '0.2',
 									javaRequirement: requirements,
-									status: report.type
+									status: report.type,
+									registerHoverCommand,
 								});
 								break;
 							case 'Error':
@@ -226,7 +230,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								resolve({
 									apiVersion: '0.2',
 									javaRequirement: requirements,
-									status: report.type
+									status: report.type,
+									registerHoverCommand,
 								});
 								break;
 							case 'Starting':
