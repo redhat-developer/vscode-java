@@ -3,7 +3,7 @@
 import { commands, ExtensionContext, HoverProvider, languages, CancellationToken, Hover, Position, TextDocument, MarkdownString, window, Uri, MarkedString, Command } from "vscode";
 import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
 import { Commands as javaCommands } from "./commands";
-import { SuperMethod } from "./protocol";
+import { FindLinks } from "./protocol";
 import { registerHoverCommand, provideHoverCommandFn } from "./extension.api";
 import { logger } from "./log";
 
@@ -13,21 +13,31 @@ export function registerClientHoverProvider(languageClient: LanguageClient, cont
         return await provideHoverCommand(languageClient, params, token);
     });
     context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
-    context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_SUPER_METHOD_COMMAND, (location: any) => {
-        navigateToSuperMethod(languageClient, location);
+    context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, (location: any) => {
+        navigateToSuperImplementation(languageClient, location);
     }));
 
     return hoverProvider.registerHoverCommand;
 }
 
 async function provideHoverCommand(languageClient: LanguageClient, params: TextDocumentPositionParams, token: CancellationToken): Promise<Command[] | undefined> {
-    const response = await languageClient.sendRequest(SuperMethod.type, params, token);
+    const response = await languageClient.sendRequest(FindLinks.type, {
+        type: 'superImplementation',
+        position: params,
+    }, token);
     if (response && response.length) {
         const location = response[0];
+        let tooltip;
+        if (location.kind === 'method') {
+            tooltip = `Go to super method '${location.displayName}'`;
+        } else {
+            tooltip = `Go to super implementation '${location.displayName}}'`;
+        }
+
         return [{
-            title: 'Go To Super Method',
-            command: javaCommands.NAVIGATE_TO_SUPER_METHOD_COMMAND,
-            tooltip: `Go to super method '${location.declaringTypeName}.${location.methodName}'`,
+            title: 'Go to Super Implementation',
+            command: javaCommands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND,
+            tooltip,
             arguments: [{
                 uri: location.uri,
                 range: location.range,
@@ -36,7 +46,7 @@ async function provideHoverCommand(languageClient: LanguageClient, params: TextD
     }
 }
 
-function navigateToSuperMethod(languageClient: LanguageClient, location: any) {
+function navigateToSuperImplementation(languageClient: LanguageClient, location: any) {
     const range = languageClient.protocol2CodeConverter.asRange(location.range);
     window.showTextDocument(Uri.parse(location.uri), {
         preserveFocus: true,

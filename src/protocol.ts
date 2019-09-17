@@ -343,11 +343,16 @@ export namespace SearchSymbols {
     export const type = new RequestType<SearchSymbolParams, SymbolInformation[], void, void>('java/searchSymbols');
 }
 
-export interface MethodLocation extends Location {
-    declaringTypeName: string;
-    methodName: string;
+export interface FindLinksParams {
+    type: string;
+    position: TextDocumentPositionParams;
 }
 
-export namespace SuperMethod {
-    export const type = new RequestType<TextDocumentPositionParams, MethodLocation[], void, void>('java/superMethod');
+export interface LinkLocation extends Location {
+    displayName: string;
+    kind: string;
+}
+
+export namespace FindLinks {
+    export const type = new RequestType<FindLinksParams, LinkLocation[], void, void>('java/findLinks');
 }

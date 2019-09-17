@@ -159,5 +159,5 @@ export namespace Commands {
     /**
      * Navigate To Super Method Command.
      */
-    export const NAVIGATE_TO_SUPER_METHOD_COMMAND = 'java.action.navigateToSuperMethod';
+    export const NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND = 'java.action.navigateToSuperImplementation';
 }
