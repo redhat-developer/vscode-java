@@ -31,7 +31,7 @@ async function provideHoverCommand(languageClient: LanguageClient, params: TextD
         if (location.kind === 'method') {
             tooltip = `Go to super method '${location.displayName}'`;
         } else {
-            tooltip = `Go to super implementation '${location.displayName}}'`;
+            tooltip = `Go to super implementation '${location.displayName}'`;
         }
 
         return [{
@@ -39,7 +39,7 @@ async function provideHoverCommand(languageClient: LanguageClient, params: TextD
             command: javaCommands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND,
             tooltip,
             arguments: [{
-                uri: location.uri,
+                uri: encodeBase64(location.uri),
                 range: location.range,
             }],
         }];
@@ -48,10 +48,18 @@ async function provideHoverCommand(languageClient: LanguageClient, params: TextD
 
 function navigateToSuperImplementation(languageClient: LanguageClient, location: any) {
     const range = languageClient.protocol2CodeConverter.asRange(location.range);
-    window.showTextDocument(Uri.parse(location.uri), {
+    window.showTextDocument(Uri.parse(decodeBase64(location.uri)), {
         preserveFocus: true,
         selection: range,
     });
+}
+
+function encodeBase64(text: string): string {
+    return Buffer.from(text).toString('base64');
+}
+
+function decodeBase64(text: string): string {
+    return Buffer.from(text, 'base64').toString('ascii');
 }
 
 class JavaHoverProvider implements HoverProvider {
