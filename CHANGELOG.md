@@ -13,6 +13,7 @@
 * bug fix - fixed wrong completion text for AnonymousDeclarationType. See [JLS#1168](https://github.com/eclipse/eclipse.jdt.ls/issues/1168).
 * bug fix - fixed "No delegateCommandHandler for 'xxx'" error. See [JLS#1146](https://github.com/eclipse/eclipse.jdt.ls/issues/1146).
 * bug fix - load bundle only once if same bundle occurs multiple times in different locations. See [JLS#1174](https://github.com/eclipse/eclipse.jdt.ls/pull/1174).
+* bug fix - fixed incorrect `prepareRename` response when called over import. See [JLS#1175](https://github.com/eclipse/eclipse.jdt.ls/issues/1175).
 
 ## 0.48.0 (September 4th, 2019)
 * enhancement - ignore "Unsupported SuppressWarning" warnings by default. See [#507](https://github.com/redhat-developer/vscode-java/issues/507).
