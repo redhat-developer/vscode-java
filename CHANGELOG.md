@@ -1,12 +1,13 @@
 # Change Log
 
-## 0.49.0 (September 19th, 2019)
+## 0.49.0 (September 18th, 2019)
 * enhancement - navigate to the super implementation. See [#553](https://github.com/redhat-developer/vscode-java/issues/553).
 * enhancement - exclude certain packages from autocomplete/autoimport. See [#710](https://github.com/redhat-developer/vscode-java/issues/710).
 * enhancement - code action: create non existing package when package declaration mismatch. See [#1030](https://github.com/redhat-developer/vscode-java/issues/1030).
 * enhancement - code action: convert anonymous class to nested class. See [#1060](https://github.com/redhat-developer/vscode-java/pull/1060).
 * enhancement - code action: fix non accessible references. See [JLS#440](https://github.com/eclipse/eclipse.jdt.ls/issues/440).
 * enhancement - code action: convert for-loop to for-each loop. See [JLS#1166](https://github.com/eclipse/eclipse.jdt.ls/issues/1166).
+* enhancement - use `vscode.env.appName` instead of hardcoding `VS Code`. See [#1066](https://github.com/redhat-developer/vscode-java/issues/1066).
 * bug fix - fixed tables not properly rendered on Javadoc hover. See [#1002](https://github.com/redhat-developer/vscode-java/issues/1002).
 * bug fix - extract embedded javadoc images. See [#1007](https://github.com/redhat-developer/vscode-java/issues/1007).
 * bug fix - fixed extension never reaching the ready state (always spin). See [#1056](https://github.com/redhat-developer/vscode-java/issues/1056).
@@ -14,6 +15,7 @@
 * bug fix - fixed "No delegateCommandHandler for 'xxx'" error. See [JLS#1146](https://github.com/eclipse/eclipse.jdt.ls/issues/1146).
 * bug fix - load bundle only once if same bundle occurs multiple times in different locations. See [JLS#1174](https://github.com/eclipse/eclipse.jdt.ls/pull/1174).
 * bug fix - fixed incorrect `prepareRename` response when called over import. See [JLS#1175](https://github.com/eclipse/eclipse.jdt.ls/issues/1175).
+* documentation - update CONTRIBUTING.md with images for setting up server and remote debugging. See [#1037](https://github.com/redhat-developer/vscode-java/pull/1037).
 
 ## 0.48.0 (September 4th, 2019)
 * enhancement - ignore "Unsupported SuppressWarning" warnings by default. See [#507](https://github.com/redhat-developer/vscode-java/issues/507).
