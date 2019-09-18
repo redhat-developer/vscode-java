@@ -43,7 +43,7 @@ export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) 
 	}
 
 	if (hasChanged) {
-		const msg = 'Extensions to the Java Language Server changed, reloading Visual Studio Code is required for the changes to take effect.';
+		const msg = `Extensions to the Java Language Server changed, reloading ${vscode.env.appName} is required for the changes to take effect.`;
 		const action = 'Reload';
 		const restartId = Commands.RELOAD_WINDOW;
 		vscode.window.showWarningMessage(msg, action).then((selection) => {

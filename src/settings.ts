@@ -1,6 +1,6 @@
 'use strict';
 
-import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget } from 'vscode';
+import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
@@ -27,7 +27,7 @@ export function onConfigurationChange() {
 			excludeProjectSettingsFiles();
 		}
 		if (hasJavaConfigChanged(oldConfig, newConfig)) {
-			const msg = 'Java Language Server configuration changed, please restart VS Code.';
+			const msg = `Java Language Server configuration changed, please restart ${env.appName}.`;
 			const action = 'Restart Now';
 			const restartId = Commands.RELOAD_WINDOW;
 			oldConfig = newConfig;
@@ -70,7 +70,7 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 				items.unshift(changeItem.global);
 			}
 
-			window.showInformationMessage('Do you want to exclude the VS Code Java project settings files (.classpath, .project. .settings, .factorypath) from the file explorer?', ...items).then((result) => {
+			window.showInformationMessage(`Do you want to exclude the ${env.appName} Java project settings files (.classpath, .project. .settings, .factorypath) from the file explorer?`, ...items).then((result) => {
 				if (result === changeItem.global) {
 					excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
 					for (const hiddenFile of needExcludeFiles) {
