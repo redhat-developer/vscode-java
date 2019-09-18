@@ -1,6 +1,6 @@
 'use strict';
 
-import { workspace, Uri } from 'vscode';
+import { workspace, Uri, env } from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
 import * as pathExists from 'path-exists';
@@ -40,7 +40,7 @@ function checkJavaRuntime(): Promise<string> {
         let source: string;
         let javaHome: string = readJavaConfig();
         if (javaHome) {
-            source = 'java.home variable defined in VS Code settings';
+            source = `java.home variable defined in ${env.appName} settings`;
         } else {
             javaHome = process.env['JDK_HOME'];
             if (javaHome) {
