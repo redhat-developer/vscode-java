@@ -388,6 +388,12 @@
           "default": true,
           "description": "Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.",
           "scope": "window"
+        },
+        "java.actionsOnPaste.organizeImports": {
+          "type": "boolean",
+          "description": "Triggers 'Organize imports' when java code is pasted into an empty file.",
+          "default": true,
+          "scope": "window"
         }
       }
     },
