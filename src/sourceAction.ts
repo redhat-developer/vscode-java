@@ -1,6 +1,6 @@
 'use strict';
 
-import { commands, window, ExtensionContext, Range, ViewColumn, Uri, Disposable } from 'vscode';
+import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable } from 'vscode';
 import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';

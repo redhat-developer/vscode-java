@@ -116,6 +116,7 @@ The following settings are supported:
 * `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
+* `java.actionsOnPaste.organizeImports`: Triggers "Organize imports" when java code is pasted into an empty file.
 
 Troubleshooting
 ===============

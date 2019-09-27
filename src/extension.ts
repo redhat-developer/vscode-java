@@ -20,7 +20,7 @@ import * as sourceAction from './sourceAction';
 import * as refactorAction from './refactorAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
+import { onConfigurationChange, excludeProjectSettingsFiles, initializeSettings } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 
@@ -388,6 +388,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					buildpath.registerCommands(context);
 					sourceAction.registerCommands(languageClient, context);
 					refactorAction.registerCommands(languageClient, context);
+					initializeSettings(languageClient, context); // may need to move in the future
 
 					context.subscriptions.push(window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
@@ -435,7 +436,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
-				context.subscriptions.push(onConfigurationChange());
+				context.subscriptions.push(onConfigurationChange(languageClient, context));
 				toggleItem(window.activeTextEditor, item);
 			});
 		});
