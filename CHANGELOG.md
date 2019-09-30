@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.50.0 (October 1st, 2019)
+* enhancement - added Java 13 support for Maven and Eclipse projects. See [JLS#1179](https://github.com/eclipse/eclipse.jdt.ls/issues/1179).
+* enhancement - added support for diagnostic tags. See [#1051](https://github.com/redhat-developer/vscode-java/pull/1051).
+* enhancement - code-action: fixed methods with reduced visibility. See [JLS#442](https://github.com/eclipse/eclipse.jdt.ls/issues/442).
+* enhancement - code-action: inline method/variable/field. See [JLS#656](https://github.com/eclipse/eclipse.jdt.ls/issues/656) and [JLS#771](https://github.com/eclipse/eclipse.jdt.ls/issues/771).
+* enhancement - provide more granularity of progress during Maven import. See [JLS#1121](https://github.com/eclipse/eclipse.jdt.ls/issues/1121).
+* enhancement - update Buildship to 3.1.2. See [JLS#1195](https://github.com/eclipse/eclipse.jdt.ls/pulls/1195).
+* bug - fixed wrong range for `Surround with try/multi-catch` code action. See [JLS#1189](https://github.com/eclipse/eclipse.jdt.ls/issues/1189).
+
 ## 0.49.0 (September 18th, 2019)
 * enhancement - navigate to the super implementation. See [#553](https://github.com/redhat-developer/vscode-java/issues/553).
 * enhancement - exclude certain packages from autocomplete/autoimport. See [#710](https://github.com/redhat-developer/vscode-java/issues/710).
