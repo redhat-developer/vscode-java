@@ -8,38 +8,6 @@
 		],
 		"description": "Public static main method"
 	},
-	"sysout": {
-		"prefix": "sysout",
-		"body": [
-			"System.out.println($0);"
-		],
-		"description": "Print to standard out"
-	},
-	"syserr": {
-		"prefix": "syserr",
-		"body": [
-			"System.err.println($0);"
-		],
-		"description": "Print to standard err"
-	},
-	"fori": {
-		"prefix": "fori",
-		"body": [
-			"for (${1:int} ${2:i} = ${3:0}; $2 < ${4:max}; $2++) {",
-			"\t$0",
-			"}"
-		],
-		"description": "Indexed for loop"
-	},
-	"foreach": {
-		"prefix": "foreach",
-		"body": [
-			"for (${1:type} ${2:var} : ${3:iterable}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "Enhanced for loop"
-	},
 	"Public constructor": {
 		"prefix": "ctor",
 		"body": [
@@ -48,44 +16,6 @@
 			"}"
 		],
 		"description": "Public constructor"
-	},
-	"if": {
-		"prefix": "if",
-		"body": [
-			"if (${1:condition}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "if statement"
-	},
-	"ifelse": {
-		"prefix": "ifelse",
-		"body": [
-			"if (${1:condition}) {",
-			"\t$2",
-			"} else {",
-			"\t$0",
-			"}"
-		],
-		"description": "if/else statement"
-	},
-	"ifnull": {
-		"prefix": "ifnull",
-		"body": [
-			"if (${1:condition} == null) {",
-			"\t$0",
-			"}"
-		],
-		"description": "if statement checking for null"
-	},
-	"ifnotnull": {
-		"prefix": "ifnotnull",
-		"body": [
-			"if (${1:condition} != null) {",
-			"\t$0",
-			"}"
-		],
-		"description": "if statement checking for not null"
 	},
 	"trycatch": {
 		"prefix": "try_catch",
@@ -166,24 +96,6 @@
 			"}"
 		],
 		"description": "Switch Statement"
-	},
-	"While Statement": {
-		"prefix": "while",
-		"body": [
-			"while (${1:condition}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "While Statement"
-	},
-	"Do-While Statement": {
-		"prefix": "dowhile",
-		"body": [
-			"do {",
-			"\t$0",
-			"} while (${1:condition});"
-		],
-		"description": "Do-While Statement"
 	},
 	"newObject": {
 		"prefix": "new",
