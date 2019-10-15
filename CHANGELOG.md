@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.51.0 (October 16th, 2019)
+* enhancement - automatically trigger auto-import on paste. Can be disabled with `java.actionsOnPaste.organizeImports`. See [#1075](https://github.com/redhat-developer/vscode-java/issues/1075).
+* enhancement - made code snippets context sensitive. See [JLS#977](https://github.com/eclipse/eclipse.jdt.ls/issues/977).
+* enhancement - improve snippet documentation rendering. See [JLS#1205](https://github.com/eclipse/eclipse.jdt.ls/issues/1205).
+* bug fix - fixed preview features enabled at an invalid source release level 12, preview can be enabled only at source level 13. See [#1086](https://github.com/redhat-developer/vscode-java/issues/1086).
+* bug fix - don't return workspace symbols without a name. See [JLS#1204](https://github.com/eclipse/eclipse.jdt.ls/issues/1204).
+* bug fix - fixed package fragments not updated when adding a new folder. See [JLS#1137](https://github.com/eclipse/eclipse.jdt.ls/issues/1137).
+
 ## 0.50.0 (October 1st, 2019)
 * enhancement - added Java 13 support for Maven and Eclipse projects. See [JLS#1179](https://github.com/eclipse/eclipse.jdt.ls/issues/1179).
 * enhancement - added support for diagnostic tags. See [#1051](https://github.com/redhat-developer/vscode-java/pull/1051).
