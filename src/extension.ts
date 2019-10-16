@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, Disposable } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -23,6 +23,7 @@ import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles, initializeSettings } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
+import { SnippetCompletionProvider } from './snippetCompletionProvider';
 
 let lastStatus;
 let languageClient: LanguageClient;
@@ -207,6 +208,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient.registerProposedFeatures();
 				const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
 
+				const snippetProvider: Disposable = languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, new SnippetCompletionProvider());
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
@@ -221,6 +223,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									status: report.type,
 									registerHoverCommand,
 								});
+								snippetProvider.dispose();
 								break;
 							case 'Error':
 								item.text = '$(thumbsdown)';
