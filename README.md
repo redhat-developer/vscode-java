@@ -118,7 +118,7 @@ The following settings are supported:
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 
 New in 0.51.0:
-* `java.actionsOnPaste.organizeImports`: Triggers "Organize imports" when java code is pasted into an empty file.
+* `java.actionsOnPaste.organizeImports`: [experimental] Triggers "Organize imports" when code is pasted into a java file.
 
 Troubleshooting
 ===============
