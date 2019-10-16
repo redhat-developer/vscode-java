@@ -129,6 +129,10 @@ export namespace Commands {
      */
     export const ORGANIZE_IMPORTS = "java.action.organizeImports";
     /**
+     * Organize imports silently.
+     */
+    export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
+    /**
      * Choose type to import.
      */
     export const CHOOSE_IMPORTS = "java.action.organizeImports.chooseImports";

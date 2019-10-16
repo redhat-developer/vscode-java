@@ -155,9 +155,7 @@ export function registerOverridePasteCommand(languageClient: LanguageClient, con
 
         const clipboardText: string = await env.clipboard.readText();
         const editor: TextEditor = window.activeTextEditor;
-
         const documentText: string = editor.document.getText();
-
         const isCursorOnly = editor.selection.isEmpty;
         let action: Thenable<boolean>;
         if (isCursorOnly) {
@@ -174,18 +172,21 @@ export function registerOverridePasteCommand(languageClient: LanguageClient, con
         }
 
         action.then((wasApplied) => {
-            const hasText: boolean = documentText !== null && /\S/.test(documentText);
             const fileURI = editor.document.uri.toString();
-            if (wasApplied && !hasText && fileURI.endsWith(".java")) { // only organizing imports if document is blank
-                // Organize imports only requires uri from CodeActionParams
-                const codeActionParams = { textDocument: { uri: fileURI } };
-                commands.executeCommand(Commands.ORGANIZE_IMPORTS, codeActionParams);
+            if (wasApplied && fileURI.endsWith(".java")) {
+                const hasText: boolean = documentText !== null && /\S/.test(documentText);
+                if (hasText) {
+                    // Organize imports silently to avoid surprising the user
+                    commands.executeCommand(Commands.ORGANIZE_IMPORTS_SILENTLY, fileURI);
+                } else {
+                    commands.executeCommand(Commands.ORGANIZE_IMPORTS, { textDocument: { uri: fileURI } });
+                }
             }
         });
-	}));
+    }));
 
-	pasteSubscriptionIndex = length - 1;
-	languageClient.info(`Registered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
+    pasteSubscriptionIndex = length - 1;
+    languageClient.info(`Registered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
 }
 
 export function unregisterOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext) {
