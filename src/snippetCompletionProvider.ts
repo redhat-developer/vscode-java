@@ -5,11 +5,17 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 
 export class SnippetCompletionProvider implements CompletionItemProvider {
+
+    private snippets: {};
+
+    public constructor() {
+        this.snippets = fse.readJSONSync(path.join(__dirname, '..', 'snippets', 'server.json'));
+    }
+
     public async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionItem[]> {
         const snippetItems: CompletionItem[] = [];
-        const snippets: {} = await fse.readJSON(path.join(__dirname, '..', 'snippets', 'server.json'));
-        for (const label of Object.keys(snippets)) {
-            const snippetContent = snippets[label];
+        for (const label of Object.keys(this.snippets)) {
+            const snippetContent = this.snippets[label];
             const snippetItem: CompletionItem = new CompletionItem(snippetContent.prefix);
             snippetItem.kind = CompletionItemKind.Snippet;
             snippetItem.detail = snippetContent.description;
