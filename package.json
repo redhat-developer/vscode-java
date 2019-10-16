@@ -201,7 +201,7 @@
         },
         "java.import.exclusions": {
           "type": "array",
-          "description": "Configure glob patterns for excluding folders",
+          "description": "Configure glob patterns for excluding folders. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.",
           "default": [
             "**/node_modules/**",
             "**/.metadata/**",

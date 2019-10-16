@@ -82,7 +82,7 @@ The following settings are supported:
 * `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
 * `java.signatureHelp.enabled` : Enable/disable signature help support (triggered on `(`).
 * `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).
-* `java.import.exclusions` : Exclude folders from import via glob patterns.
+* `java.import.exclusions` : Exclude folders from import via glob patterns. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
 * `java.import.gradle.home`: setting for GRADLE_HOME.
 * `java.import.gradle.arguments`: Arguments to pass to Gradle.
