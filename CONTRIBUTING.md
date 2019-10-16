@@ -186,7 +186,7 @@ You can create a binary that you can sideload to your VS Code installation.
 	$ npm install
 	```
 4. Optionally, follow the instruction to build the server.
-5. See documentation on [extension installation](https://github.com/Microsoft/vscode-docs/blob/master/docs/extensions/publish-extension.md)
+5. See documentation on [extension installation](https://github.com/microsoft/vscode-docs/blob/master/api/working-with-extensions/publishing-extension.md)
 on ways to sideload or share.
 
 # Reporting issues
