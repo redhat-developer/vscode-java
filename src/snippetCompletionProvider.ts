@@ -7,12 +7,18 @@ import * as path from 'path';
 export class SnippetCompletionProvider implements CompletionItemProvider {
 
     private snippets: {};
+    private activation: boolean;
 
     public constructor() {
+        this.activation = true;
         this.snippets = fse.readJSONSync(path.join(__dirname, '..', 'snippets', 'server.json'));
     }
 
     public async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionItem[]> {
+        if (!this.activation) {
+            return [];
+        }
+
         const snippetItems: CompletionItem[] = [];
         for (const label of Object.keys(this.snippets)) {
             const snippetContent = this.snippets[label];
@@ -25,6 +31,10 @@ export class SnippetCompletionProvider implements CompletionItemProvider {
             snippetItems.push(snippetItem);
         }
         return snippetItems;
+    }
+
+    public setActivation(activation: boolean): void {
+        this.activation = activation;
     }
 }
 

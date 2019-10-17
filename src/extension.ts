@@ -208,7 +208,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient.registerProposedFeatures();
 				const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
 
-				const snippetProvider: Disposable = languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, new SnippetCompletionProvider());
+				const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
+				context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
+
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
@@ -223,7 +225,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									status: report.type,
 									registerHoverCommand,
 								});
-								snippetProvider.dispose();
+								snippetProvider.setActivation(false);
 								break;
 							case 'Error':
 								item.text = '$(thumbsdown)';
