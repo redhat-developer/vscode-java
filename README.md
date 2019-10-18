@@ -29,6 +29,8 @@ Features
 * Code/Source actions / Refactoring
 * Javadoc hovers
 * Organize imports
+	- triggered manually or on save
+	- when pasting code into a java file with `Ctrl+Shift+v` (`Cmd+Shift+v` on Mac).
 * Type search
 * Code outline
 * Code folding
@@ -117,8 +119,8 @@ The following settings are supported:
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 
-New in 0.52.0:
-* "Organize imports" is triggered when pasting code into a java file with `Ctrl+Shift+v` (`Cmd+Shift+v` on Mac).
+New in 0.54.0:
+* `java.maven.updateSnapshots`: Force update of Snapshots/Releases.
 
 Troubleshooting
 ===============
