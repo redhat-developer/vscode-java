@@ -163,6 +163,12 @@
           "description": "Enable/disable eager download of Maven source artifacts.",
           "scope": "window"
         },
+        "java.maven.updateSnapshots": {
+          "type": "boolean",
+          "default": false,
+          "description": "Force update of Snapshots/Releases.",
+          "scope": "window"
+        },
         "java.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": false,
