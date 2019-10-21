@@ -49,6 +49,12 @@
         "path": "./snippets/java.json"
       }
     ],
+    "jsonValidation": [
+      {
+        "fileMatch": "package.json",
+        "url": "./schemas/package.schema.json"
+      }
+    ],
     "configuration": {
       "type": "object",
       "title": "Java configuration",

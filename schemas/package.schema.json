@@ -1,0 +1,20 @@
+{
+	"$schema": "http://json-schema.org/draft-04/schema#",
+	"title": "Java Language server contributions to package.json",
+	"type": "object",
+	"properties": {
+		"contributes": {
+			"type": "object",
+			"properties": {
+				"javaExtensions": {
+					"type": "array",
+					"markdownDescription": "Java language server extensions",
+					"items": {
+						"type": "string",
+						"description": "Relative path to a Java language server extension JAR file"
+					}
+				}
+			}
+		}
+	}
+}
