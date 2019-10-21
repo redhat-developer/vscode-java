@@ -391,7 +391,7 @@
         },
         "java.actionsOnPaste.organizeImports": {
           "type": "boolean",
-          "description": "Triggers 'Organize imports' when java code is pasted into an empty file.",
+          "description": "Triggers 'Organize imports' when code is pasted into a Java file.",
           "default": true,
           "scope": "window"
         }
