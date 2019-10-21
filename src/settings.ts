@@ -99,7 +99,7 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 					config.update('exclude', excludedInspectedValue.workspaceValue, ConfigurationTarget.Workspace);
 				} else if (result === changeItem.never) {
 					const storeInWorkspace = getJavaConfiguration().inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
-					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace?ConfigurationTarget.Workspace: ConfigurationTarget.Global);
+					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace ? ConfigurationTarget.Workspace : ConfigurationTarget.Global);
 				}
 			});
 		}
@@ -150,43 +150,49 @@ export function handleJavaPasteConfigurationChange(languageClient: LanguageClien
 }
 
 export function registerOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    // referencing https://github.com/gazugafan/vscode-indent-on-paste/blob/master/src/extension.ts
-    const length = context.subscriptions.push(commands.registerCommand('editor.action.clipboardPasteAction', async () => {
+	// referencing https://github.com/gazugafan/vscode-indent-on-paste/blob/master/src/extension.ts
+	const length = context.subscriptions.push(commands.registerCommand('editor.action.clipboardPasteAction', async () => {
 
-        const clipboardText: string = await env.clipboard.readText();
-        const editor: TextEditor = window.activeTextEditor;
-        const documentText: string = editor.document.getText();
-        const isCursorOnly = editor.selection.isEmpty;
-        let action: Thenable<boolean>;
-        if (isCursorOnly) {
-            action = editor.edit(textInserter => {
-                textInserter.insert(editor.selection.start, clipboardText);
-            });
-        }
-        else {
-            const start = editor.selection.start;
-            const end = editor.selection.end;
-            action = editor.edit(textInserter => {
-                textInserter.replace(new Range(start, end), clipboardText);
-            });
-        }
+		const clipboardText: string = await env.clipboard.readText();
+		const editor: TextEditor = window.activeTextEditor;
+		const documentText: string = editor.document.getText();
+		const numCursors = editor.selections.length;
+		let bits: string[] = [];
+		if (numCursors > 1) {
+			bits = clipboardText.split(/\r?\n/);
+		}
+		const action = editor.edit(textInserter => {
+			for (let i = 0; i < numCursors; i++) {
+				const selection = editor.selections[i];
+				const isCursorOnly = selection.isEmpty;
+				const text = bits.length === numCursors ? bits[i] : clipboardText;
+				if (isCursorOnly) {
+					textInserter.insert(selection.start, text);
+				}
+				else {
+					const start = selection.start;
+					const end = selection.end;
+					textInserter.replace(new Range(start, end), text);
+				}
+			}
+		});
 
-        action.then((wasApplied) => {
-            const fileURI = editor.document.uri.toString();
-            if (wasApplied && fileURI.endsWith(".java")) {
-                const hasText: boolean = documentText !== null && /\S/.test(documentText);
-                if (hasText) {
-                    // Organize imports silently to avoid surprising the user
-                    commands.executeCommand(Commands.ORGANIZE_IMPORTS_SILENTLY, fileURI);
-                } else {
-                    commands.executeCommand(Commands.ORGANIZE_IMPORTS, { textDocument: { uri: fileURI } });
-                }
-            }
-        });
-    }));
+		action.then((wasApplied) => {
+			const fileURI = editor.document.uri.toString();
+			if (wasApplied && fileURI.endsWith(".java")) {
+				const hasText: boolean = documentText !== null && /\S/.test(documentText);
+				if (hasText) {
+					// Organize imports silently to avoid surprising the user
+					commands.executeCommand(Commands.ORGANIZE_IMPORTS_SILENTLY, fileURI);
+				} else {
+					commands.executeCommand(Commands.ORGANIZE_IMPORTS, { textDocument: { uri: fileURI } });
+				}
+			}
+		});
+	}));
 
-    pasteSubscriptionIndex = length - 1;
-    languageClient.info(`Registered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
+	pasteSubscriptionIndex = length - 1;
+	languageClient.info(`Registered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
 }
 
 export function unregisterOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext) {
