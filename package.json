@@ -397,8 +397,8 @@
         },
         "java.actionsOnPaste.organizeImports": {
           "type": "boolean",
-          "description": "Triggers 'Organize imports' when code is pasted into a Java file.",
-          "default": true,
+          "description": "[Experimental] Triggers 'Organize imports' when code is pasted into a Java file. This overrides VS Code's default paste action, thus might cause some issues. Disabled by default.",
+          "default": false,
           "scope": "window"
         }
       }
