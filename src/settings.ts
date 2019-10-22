@@ -15,8 +15,6 @@ const changeItem = {
 
 const EXCLUDE_FILE_CONFIG = 'configuration.checkProjectSettingsExclusions';
 export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // java.actionsOnPaste.organizeImports
-// index of the paste disposable in the subscriptions array
-let pasteSubscriptionIndex;
 
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 
@@ -39,19 +37,9 @@ export function onConfigurationChange(languageClient: LanguageClient, context: E
 				}
 			});
 		}
-		handleJavaPasteConfigurationChange(languageClient, context, newConfig);
 		// update old config
 		oldConfig = newConfig;
 	});
-}
-
-/**
- * Starting point for any settings that need to be handled when the server starts
- * @param languageClient
- * @param context
- */
-export function initializeSettings(languageClient: LanguageClient, context: ExtensionContext) {
-	handleInitialConfigurations(languageClient, context, getJavaConfiguration());
 }
 
 export function excludeProjectSettingsFiles() {
@@ -127,79 +115,4 @@ export function getJavaEncoding(): string {
 		javaEncoding = config.get<string>('files.encoding', 'UTF-8');
 	}
 	return javaEncoding;
-}
-
-export function handleInitialConfigurations(languageClient: LanguageClient, context: ExtensionContext, newConfig: WorkspaceConfiguration) {
-	// organize imports on paste registration
-	if (newConfig.get(ORGANIZE_IMPORTS_ON_PASTE)) {
-		registerOverridePasteCommand(languageClient, context);
-	}
-}
-
-export function handleJavaPasteConfigurationChange(languageClient: LanguageClient, context: ExtensionContext, newConfig: WorkspaceConfiguration) {
-	const oldOrganizeImportsOnPaste = oldConfig.get(ORGANIZE_IMPORTS_ON_PASTE);
-	const newOrganizeImportsOnPaste = newConfig.get(ORGANIZE_IMPORTS_ON_PASTE);
-	if (oldOrganizeImportsOnPaste !== newOrganizeImportsOnPaste) {
-		if (newOrganizeImportsOnPaste === true) {
-			registerOverridePasteCommand(languageClient, context);
-		}
-		else {
-			unregisterOverridePasteCommand(languageClient, context);
-		}
-	}
-}
-
-export function registerOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-	// referencing https://github.com/gazugafan/vscode-indent-on-paste/blob/master/src/extension.ts
-	const length = context.subscriptions.push(commands.registerCommand('editor.action.clipboardPasteAction', async () => {
-
-		const clipboardText: string = await env.clipboard.readText();
-		const editor: TextEditor = window.activeTextEditor;
-		const documentText: string = editor.document.getText();
-		const numCursors = editor.selections.length;
-		let bits: string[] = [];
-		if (numCursors > 1) {
-			bits = clipboardText.split(/\r?\n/);
-		}
-		const action = editor.edit(textInserter => {
-			for (let i = 0; i < numCursors; i++) {
-				const selection = editor.selections[i];
-				const isCursorOnly = selection.isEmpty;
-				const text = bits.length === numCursors ? bits[i] : clipboardText;
-				if (isCursorOnly) {
-					textInserter.insert(selection.start, text);
-				}
-				else {
-					const start = selection.start;
-					const end = selection.end;
-					textInserter.replace(new Range(start, end), text);
-				}
-			}
-		});
-
-		action.then((wasApplied) => {
-			const fileURI = editor.document.uri.toString();
-			if (wasApplied && fileURI.endsWith(".java")) {
-				const hasText: boolean = documentText !== null && /\S/.test(documentText);
-				if (hasText) {
-					// Organize imports silently to avoid surprising the user
-					commands.executeCommand(Commands.ORGANIZE_IMPORTS_SILENTLY, fileURI);
-				} else {
-					commands.executeCommand(Commands.ORGANIZE_IMPORTS, { textDocument: { uri: fileURI } });
-				}
-			}
-		});
-	}));
-
-	pasteSubscriptionIndex = length - 1;
-	languageClient.info(`Registered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
-}
-
-export function unregisterOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext) {
-	if (pasteSubscriptionIndex !== null) {
-		const pasteDisposable: Disposable = context.subscriptions[pasteSubscriptionIndex];
-		pasteDisposable.dispose();
-		pasteSubscriptionIndex = null;
-		languageClient.info(`Unregistered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
-	}
 }

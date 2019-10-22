@@ -117,8 +117,8 @@ The following settings are supported:
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 
-New in 0.51.0:
-* `java.actionsOnPaste.organizeImports`: [Experimental] Triggers "Organize imports" when code is pasted into a java file. This overrides VS Code's default paste action, thus might cause some issues. Disabled by default.
+New in 0.52.0:
+* "Organize imports" is triggered when pasting code into a java file with `Ctrl+Shift+v` (`Cmd+Shift+v` on Mac).
 
 Troubleshooting
 ===============
