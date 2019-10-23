@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.52.0 (October 23rd, 2019)
+* enhancement - define schema for `contribute/javaExtensions` in package.json. See [#1114](https://github.com/redhat-developer/vscode-java/pull/1114).
+* enhancement - add text selection support in code snippet. see [JLS#1222](https://github.com/eclipse/eclipse.jdt.ls/pull/1222).
+* enhancement - unused imports displayed as faded. See [JLS#1219](https://github.com/eclipse/eclipse.jdt.ls/issues/1219).
+* bug fix - fixed pasting with multi-cursor. See [#1112](https://github.com/redhat-developer/vscode-java/issues/1112).
+* bug fix - organize imports on paste moved to a specific command (`ctrl+shift+v` - `cmd+shift+v` on Mac). Removed `java.actionsOnPaste.organizeImports` preference. See [#1115](https://github.com/redhat-developer/vscode-java/issues/1115).
+* documentation - fixed broken link in CONTRIBUTING.md. See [#1105](https://github.com/redhat-developer/vscode-java/pull/1105)
+
 ## 0.51.0 (October 16th, 2019)
 * enhancement - [experimental] automatically trigger auto-import on paste. Can be disabled with `java.actionsOnPaste.organizeImports`. See [#1075](https://github.com/redhat-developer/vscode-java/issues/1075) and [#1098](https://github.com/redhat-developer/vscode-java/issues/1098).
 * enhancement - allow negative patterns in `java.import.exclusions` preference, to allow folder inclusions. See [#1084](https://github.com/redhat-developer/vscode-java/issues/1084).
