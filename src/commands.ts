@@ -82,7 +82,7 @@ export namespace Commands {
     /**
     * Open Java log files side by side
     */
-   export const OPEN_LOGS = 'java.open.logs';
+    export const OPEN_LOGS = 'java.open.logs';
 
     /**
      * Open Java formatter settings
@@ -132,6 +132,10 @@ export namespace Commands {
      * Organize imports silently.
      */
     export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
+    /**
+     * Custom paste action (triggers auto-import)
+     */
+    export const CLIPBOARD_ONPASTE = 'java.action.clipboardPasteAction';
     /**
      * Choose type to import.
      */

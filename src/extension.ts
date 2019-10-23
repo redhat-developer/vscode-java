@@ -18,9 +18,10 @@ import * as buildpath from './buildpath';
 import * as hoverAction from './hoverAction';
 import * as sourceAction from './sourceAction';
 import * as refactorAction from './refactorAction';
+import * as pasteAction from './pasteAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles, initializeSettings } from './settings';
+import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 
@@ -388,7 +389,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					buildpath.registerCommands(context);
 					sourceAction.registerCommands(languageClient, context);
 					refactorAction.registerCommands(languageClient, context);
-					initializeSettings(languageClient, context); // may need to move in the future
+					pasteAction.registerCommands(languageClient, context);
 
 					context.subscriptions.push(window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
