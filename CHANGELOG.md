@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.53.0 (November 15th, 2019)
+* enhancement - code action: add 'final' modifier where possible. See [#774](https://github.com/redhat-developer/vscode-java/issues/774).
+* enhancement - update m2e to 1.14 (embeds Maven 3.6.2). See [#1103](https://github.com/redhat-developer/vscode-java/issues/1103).
+* enhancement - code action: remove unnecessary cast. See [JLS#165](https://github.com/eclipse/eclipse.jdt.ls/issues/165).
+* enhancement - provide better symbol details on hover. See [JLS#1227](https://github.com/eclipse/eclipse.jdt.ls/issues/1227).
+* enhancement - code action: improve "Invert Condition" refactoring trigger. See [JLS#1230](https://github.com/eclipse/eclipse.jdt.ls/issues/1230).
+* enhancement - refresh the extension bundles after uninstalling. See [JLS#1253](https://github.com/eclipse/eclipse.jdt.ls/pull/1253).
+* bug fixed - fixed Maven import failure caused by m2e-apt unable to parse maven-compiler-plugin configuration. See [#1131](https://github.com/redhat-developer/vscode-java/issues/1131).
+* bug fixed  - add Java 13 support for Gradle projects. See [JLS#1196](https://github.com/eclipse/eclipse.jdt.ls/issues/1196).
+* bug fixed - fixed errors reported from unrelated gradle projects outside the workspace. See [JLS#1261](https://github.com/eclipse/eclipse.jdt.ls/issues/1261).
+
 ## 0.52.0 (October 23rd, 2019)
 * enhancement - define schema for `contribute/javaExtensions` in package.json. See [#1114](https://github.com/redhat-developer/vscode-java/pull/1114).
 * enhancement - add text selection support in code snippet. see [JLS#1222](https://github.com/eclipse/eclipse.jdt.ls/pull/1222).
