@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.53.1 (November 15th, 2019)
+* bug fix - fixed "Organize Imports" shortcut no longer working. See [#1142](https://github.com/redhat-developer/vscode-java/issues/1142).
+
 ## 0.53.0 (November 14th, 2019)
 * enhancement - code action: add 'final' modifier where possible. See [#774](https://github.com/redhat-developer/vscode-java/issues/774).
 * enhancement - update m2e to 1.14 (embeds Maven 3.6.2). See [#1103](https://github.com/redhat-developer/vscode-java/issues/1103).
