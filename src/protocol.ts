@@ -1,6 +1,20 @@
 'use strict';
 
-import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit, FormattingOptions, WorkspaceSymbolParams, SymbolInformation, TextDocumentPositionParams, Location } from 'vscode-languageclient';
+import {
+    CodeActionParams,
+    DocumentSymbol,
+    DocumentSymbolParams,
+    ExecuteCommandParams,
+    FormattingOptions,
+    Location,
+    NotificationType,
+    RequestType,
+    SymbolInformation,
+    TextDocumentIdentifier,
+    TextDocumentPositionParams,
+    WorkspaceEdit,
+    WorkspaceSymbolParams,
+} from 'vscode-languageclient';
 import { Command, Range } from 'vscode';
 
 /**
@@ -355,4 +369,10 @@ export interface LinkLocation extends Location {
 
 export namespace FindLinks {
     export const type = new RequestType<FindLinksParams, LinkLocation[], void, void>('java/findLinks');
+}
+
+export type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;
+
+export namespace DocumentSymbolRequest {
+    export const type = new RequestType<DocumentSymbolParams, DocumentSymbolsResponse, void, void>('textDocument/documentSymbol');
 }
