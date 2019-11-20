@@ -11,7 +11,7 @@
   "preview": true,
   "enableProposedApi": false,
   "engines": {
-    "vscode": "^1.36.0"
+    "vscode": "^1.40.0"
   },
   "repository": {
     "type": "git",
@@ -452,6 +452,11 @@
         "command": "java.project.listSourcePaths",
         "title": "List all Java source paths",
         "category": "Java"
+      },
+      {
+        "command": "java.show.server.stask.status",
+        "title": "Show Build Job Status",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -541,13 +546,15 @@
   },
   "devDependencies": {
     "@types/glob": "5.0.30",
+    "@types/lodash.findindex": "^4.6.6",
     "@types/mocha": "^5.2.5",
     "@types/node": "^6.0.40",
-    "@types/vscode": "^1.36.0",
+    "@types/vscode": "^1.40.0",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.0",
     "gulp-decompress": "2.0.1",
     "gulp-download": "0.0.1",
+    "lodash.findindex": "^4.6.0",
     "mocha": "^5.2.0",
     "ts-loader": "^5.3.1",
     "tslint": "^5.11.0",

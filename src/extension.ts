@@ -24,8 +24,9 @@ import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
+import { serverTasks } from './serverTasks';
+import { serverTaskPresenter } from './serverTaskPresenter';
 
-let lastStatus;
 let languageClient: LanguageClient;
 const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
@@ -179,8 +180,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
 				item.text = '$(sync~spin)';
-				item.command = Commands.OPEN_OUTPUT;
-				const progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE + 1);
+				item.command = Commands.SHOW_SERVER_TASK_STATUS;
+
+				commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 
 				let serverOptions;
 				const port = process.env['SERVER_PORT'];
@@ -213,8 +215,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						switch (report.type) {
 							case 'Started':
 								item.text = '$(thumbsup)';
-								p.report({ message: 'Finished' });
-								lastStatus = item.text;
 								commands.executeCommand('setContext', 'javaLSReady', true);
 								resolve({
 									apiVersion: '0.2',
@@ -225,8 +225,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								break;
 							case 'Error':
 								item.text = '$(thumbsdown)';
-								lastStatus = item.text;
-								p.report({ message: 'Finished with Error' });
 								toggleItem(window.activeTextEditor, item);
 								resolve({
 									apiVersion: '0.2',
@@ -236,22 +234,15 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								});
 								break;
 							case 'Starting':
-								p.report({ message: report.message });
-								break;
 							case 'Message':
-								item.text = report.message;
-								setTimeout(() => { item.text = lastStatus; }, 3000);
+								// message goes to progress report instead
 								break;
 						}
 						item.tooltip = report.message;
 						toggleItem(window.activeTextEditor, item);
 					});
 					languageClient.onNotification(ProgressReportNotification.type, (progress) => {
-						progressBar.show();
-						progressBar.text = progress.status;
-						if (progress.complete) {
-							setTimeout(() => { progressBar.hide(); }, 500);
-						}
+						serverTasks.updateServerTask(progress);
 					});
 					languageClient.onNotification(ActionableNotification.type, (notification) => {
 						let show = null;
@@ -436,6 +427,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
 
 				context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
+
+				context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, () => serverTaskPresenter.presentServerTaskView()));
 
 				context.subscriptions.push(onConfigurationChange(languageClient, context));
 				toggleItem(window.activeTextEditor, item);
