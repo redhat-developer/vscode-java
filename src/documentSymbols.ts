@@ -2,11 +2,14 @@
 
 import {
     CancellationToken,
+    DocumentSymbol,
     DocumentSymbolParams,
     DocumentSymbolRequest,
-    LanguageClient
+    LanguageClient,
+    SymbolInformation
 } from "vscode-languageclient";
-import { DocumentSymbolsResponse } from "./protocol";
+
+type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;
 
 export type getDocumentSymbolsCommand = (params: DocumentSymbolParams, token?: CancellationToken) => Promise<DocumentSymbolsResponse>;
 

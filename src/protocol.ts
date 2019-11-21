@@ -2,7 +2,6 @@
 
 import {
     CodeActionParams,
-    DocumentSymbol,
     ExecuteCommandParams,
     FormattingOptions,
     Location,
@@ -369,5 +368,3 @@ export interface LinkLocation extends Location {
 export namespace FindLinks {
     export const type = new RequestType<FindLinksParams, LinkLocation[], void, void>('java/findLinks');
 }
-
-export type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;
