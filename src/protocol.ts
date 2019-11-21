@@ -3,7 +3,6 @@
 import {
     CodeActionParams,
     DocumentSymbol,
-    DocumentSymbolParams,
     ExecuteCommandParams,
     FormattingOptions,
     Location,
@@ -372,7 +371,3 @@ export namespace FindLinks {
 }
 
 export type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;
-
-export namespace DocumentSymbolRequest {
-    export const type = new RequestType<DocumentSymbolParams, DocumentSymbolsResponse, void, void>('textDocument/documentSymbol');
-}
