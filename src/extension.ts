@@ -7,13 +7,14 @@ import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, co
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
+import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documentSymbols';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import {
 	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
 	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute
 } from './protocol';
-import { ExtensionAPI } from './extension.api';
+import { ExtensionAPI, ExtensionApiVersion } from './extension.api';
 import * as buildpath from './buildpath';
 import * as hoverAction from './hoverAction';
 import * as sourceAction from './sourceAction';
@@ -207,6 +208,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 				const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
+				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
 
 				languageClient.onReady().then(() => {
 					languageClient.onNotification(StatusNotification.type, (report) => {
@@ -217,10 +219,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								lastStatus = item.text;
 								commands.executeCommand('setContext', 'javaLSReady', true);
 								resolve({
-									apiVersion: '0.2',
+									apiVersion: ExtensionApiVersion,
 									javaRequirement: requirements,
 									status: report.type,
 									registerHoverCommand,
+									getDocumentSymbols
 								});
 								break;
 							case 'Error':
@@ -229,10 +232,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								p.report({ message: 'Finished with Error' });
 								toggleItem(window.activeTextEditor, item);
 								resolve({
-									apiVersion: '0.2',
+									apiVersion: ExtensionApiVersion,
 									javaRequirement: requirements,
 									status: report.type,
 									registerHoverCommand,
+									getDocumentSymbols
 								});
 								break;
 							case 'Starting':
