@@ -34,8 +34,10 @@ function organizeTasks() {
 	}
 
 	// make sure in-progress items are always at the end
-	newArray = newArray.filter(task => task.complete);
-	newArray.push(...tasks.filter(task => !task.complete));
+	newArray.sort((a, b) => {
+		const ai = a.complete ? 0 : 1, bi = a.complete ? 0 : 1;
+		return ai - bi;
+	});
 
 	tasks = newArray;
 }
@@ -60,10 +62,9 @@ function applyReport(report: ProgressReport) {
 	const index = findIndex(tasks, task => task.id === report.id);
 	if (index === -1) {
 		tasks.push(report);
-		organizeTasks();
-		return;
+	} else {
+		tasks[index] = report;
 	}
 
-	tasks[index] = report;
 	organizeTasks();
 }

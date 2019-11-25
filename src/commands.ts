@@ -171,5 +171,5 @@ export namespace Commands {
     /**
      * Show server task status
      */
-    export const SHOW_SERVER_TASK_STATUS = 'java.show.server.stask.status';
+    export const SHOW_SERVER_TASK_STATUS = 'java.show.server.task.status';
 }

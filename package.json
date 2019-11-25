@@ -454,7 +454,7 @@
         "category": "Java"
       },
       {
-        "command": "java.show.server.stask.status",
+        "command": "java.show.server.task.status",
         "title": "Show Build Job Status",
         "category": "Java"
       }
