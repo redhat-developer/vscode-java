@@ -27,6 +27,7 @@ import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { serverTasks } from './serverTasks';
 import { serverTaskPresenter } from './serverTaskPresenter';
+import { serverStatus, ServerStatusKind } from './serverStatus';
 
 let languageClient: LanguageClient;
 const jdtEventEmitter = new EventEmitter<Uri>();
@@ -185,6 +186,17 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 
+				serverStatus.initialize();
+				serverStatus.onServerStatusChanged(status => {
+					if (status === ServerStatusKind.Busy) {
+						item.text = '$(sync~spin)';
+					} else if (status === ServerStatusKind.Error) {
+						item.text = '$(thumbsdown)';
+					} else {
+						item.text = '$(thumbsup)';
+					}
+				});
+
 				let serverOptions;
 				const port = process.env['SERVER_PORT'];
 				if (!port) {
@@ -216,7 +228,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
 							case 'Started':
-								item.text = '$(thumbsup)';
+								serverStatus.updateServerStatus(ServerStatusKind.Ready);
 								commands.executeCommand('setContext', 'javaLSReady', true);
 								resolve({
 									apiVersion: ExtensionApiVersion,
@@ -227,7 +239,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								});
 								break;
 							case 'Error':
-								item.text = '$(thumbsdown)';
+								serverStatus.updateServerStatus(ServerStatusKind.Error);
 								toggleItem(window.activeTextEditor, item);
 								resolve({
 									apiVersion: ExtensionApiVersion,
