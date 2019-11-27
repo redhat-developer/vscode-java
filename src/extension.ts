@@ -7,25 +7,29 @@ import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, co
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
+import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documentSymbols';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import {
 	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
 	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute
 } from './protocol';
-import { ExtensionAPI } from './extension.api';
+import { ExtensionAPI, ExtensionApiVersion } from './extension.api';
 import * as buildpath from './buildpath';
 import * as hoverAction from './hoverAction';
 import * as sourceAction from './sourceAction';
 import * as refactorAction from './refactorAction';
+import * as pasteAction from './pasteAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles, initializeSettings } from './settings';
+import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
+import { serverTasks } from './serverTasks';
+import { serverTaskPresenter } from './serverTaskPresenter';
+import { serverStatus, ServerStatusKind } from './serverStatus';
 
-let lastStatus;
 let languageClient: LanguageClient;
 const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
@@ -179,8 +183,20 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
 				item.text = '$(sync~spin)';
-				item.command = Commands.OPEN_OUTPUT;
-				const progressBar = window.createStatusBarItem(StatusBarAlignment.Left, Number.MIN_VALUE + 1);
+				item.command = Commands.SHOW_SERVER_TASK_STATUS;
+
+				commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
+
+				serverStatus.initialize();
+				serverStatus.onServerStatusChanged(status => {
+					if (status === ServerStatusKind.Busy) {
+						item.text = '$(sync~spin)';
+					} else if (status === ServerStatusKind.Error) {
+						item.text = '$(thumbsdown)';
+					} else {
+						item.text = '$(thumbsup)';
+					}
+				});
 
 				let serverOptions;
 				const port = process.env['SERVER_PORT'];
@@ -207,6 +223,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 				const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
+				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
 
 				const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
 				context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
@@ -215,47 +232,38 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					languageClient.onNotification(StatusNotification.type, (report) => {
 						switch (report.type) {
 							case 'Started':
-								item.text = '$(thumbsup)';
-								p.report({ message: 'Finished' });
-								lastStatus = item.text;
+								serverStatus.updateServerStatus(ServerStatusKind.Ready);
 								commands.executeCommand('setContext', 'javaLSReady', true);
 								resolve({
-									apiVersion: '0.2',
+									apiVersion: ExtensionApiVersion,
 									javaRequirement: requirements,
 									status: report.type,
 									registerHoverCommand,
+									getDocumentSymbols
 								});
 								snippetProvider.setActivation(false);
 								break;
 							case 'Error':
-								item.text = '$(thumbsdown)';
-								lastStatus = item.text;
-								p.report({ message: 'Finished with Error' });
+								serverStatus.updateServerStatus(ServerStatusKind.Error);
 								toggleItem(window.activeTextEditor, item);
 								resolve({
-									apiVersion: '0.2',
+									apiVersion: ExtensionApiVersion,
 									javaRequirement: requirements,
 									status: report.type,
 									registerHoverCommand,
+									getDocumentSymbols
 								});
 								break;
 							case 'Starting':
-								p.report({ message: report.message });
-								break;
 							case 'Message':
-								item.text = report.message;
-								setTimeout(() => { item.text = lastStatus; }, 3000);
+								// message goes to progress report instead
 								break;
 						}
 						item.tooltip = report.message;
 						toggleItem(window.activeTextEditor, item);
 					});
 					languageClient.onNotification(ProgressReportNotification.type, (progress) => {
-						progressBar.show();
-						progressBar.text = progress.status;
-						if (progress.complete) {
-							setTimeout(() => { progressBar.hide(); }, 500);
-						}
+						serverTasks.updateServerTask(progress);
 					});
 					languageClient.onNotification(ActionableNotification.type, (notification) => {
 						let show = null;
@@ -393,7 +401,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					buildpath.registerCommands(context);
 					sourceAction.registerCommands(languageClient, context);
 					refactorAction.registerCommands(languageClient, context);
-					initializeSettings(languageClient, context); // may need to move in the future
+					pasteAction.registerCommands(languageClient, context);
 
 					context.subscriptions.push(window.onDidChangeActiveTextEditor((editor) => {
 						toggleItem(editor, item);
@@ -440,6 +448,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
 
 				context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
+
+				context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, () => serverTaskPresenter.presentServerTaskView()));
 
 				context.subscriptions.push(onConfigurationChange(languageClient, context));
 				toggleItem(window.activeTextEditor, item);

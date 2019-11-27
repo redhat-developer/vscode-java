@@ -82,7 +82,7 @@ The following settings are supported:
 * `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
 * `java.signatureHelp.enabled` : Enable/disable signature help support (triggered on `(`).
 * `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).
-* `java.import.exclusions` : Exclude folders from import via glob patterns.
+* `java.import.exclusions` : Exclude folders from import via glob patterns. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
 * `java.import.gradle.home`: setting for GRADLE_HOME.
 * `java.import.gradle.arguments`: Arguments to pass to Gradle.
@@ -117,8 +117,8 @@ The following settings are supported:
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 
-New in 0.51.0:
-* `java.actionsOnPaste.organizeImports`: Triggers "Organize imports" when java code is pasted into an empty file.
+New in 0.52.0:
+* "Organize imports" is triggered when pasting code into a java file with `Ctrl+Shift+v` (`Cmd+Shift+v` on Mac).
 
 Troubleshooting
 ===============

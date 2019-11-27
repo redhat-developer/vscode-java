@@ -1,12 +1,36 @@
 # Change Log
 
+## 0.53.1 (November 15th, 2019)
+* bug fix - fixed "Organize Imports" shortcut no longer working. See [#1142](https://github.com/redhat-developer/vscode-java/issues/1142).
+
+## 0.53.0 (November 14th, 2019)
+* enhancement - code action: add 'final' modifier where possible. See [#774](https://github.com/redhat-developer/vscode-java/issues/774).
+* enhancement - update m2e to 1.14 (embeds Maven 3.6.2). See [#1103](https://github.com/redhat-developer/vscode-java/issues/1103).
+* enhancement - code action: remove unnecessary cast. See [JLS#165](https://github.com/eclipse/eclipse.jdt.ls/issues/165).
+* enhancement - provide better symbol details on hover. See [JLS#1227](https://github.com/eclipse/eclipse.jdt.ls/issues/1227).
+* enhancement - code action: improve "Invert Condition" refactoring trigger. See [JLS#1230](https://github.com/eclipse/eclipse.jdt.ls/issues/1230).
+* enhancement - refresh the extension bundles after uninstalling. See [JLS#1253](https://github.com/eclipse/eclipse.jdt.ls/pull/1253).
+* bug fixed - fixed Maven import failure caused by m2e-apt unable to parse maven-compiler-plugin configuration. See [#1131](https://github.com/redhat-developer/vscode-java/issues/1131).
+* bug fixed  - add Java 13 support for Gradle projects. See [JLS#1196](https://github.com/eclipse/eclipse.jdt.ls/issues/1196).
+* bug fixed - fixed errors reported from unrelated gradle projects outside the workspace. See [JLS#1261](https://github.com/eclipse/eclipse.jdt.ls/issues/1261).
+
+## 0.52.0 (October 23rd, 2019)
+* enhancement - define schema for `contribute/javaExtensions` in package.json. See [#1114](https://github.com/redhat-developer/vscode-java/pull/1114).
+* enhancement - add text selection support in code snippet. see [JLS#1222](https://github.com/eclipse/eclipse.jdt.ls/pull/1222).
+* enhancement - unused imports displayed as faded. See [JLS#1219](https://github.com/eclipse/eclipse.jdt.ls/issues/1219).
+* bug fix - fixed pasting with multi-cursor. See [#1112](https://github.com/redhat-developer/vscode-java/issues/1112).
+* bug fix - organize imports on paste moved to a specific command (`ctrl+shift+v` - `cmd+shift+v` on Mac). Removed `java.actionsOnPaste.organizeImports` preference. See [#1115](https://github.com/redhat-developer/vscode-java/issues/1115).
+* documentation - fixed broken link in CONTRIBUTING.md. See [#1105](https://github.com/redhat-developer/vscode-java/pull/1105)
+
 ## 0.51.0 (October 16th, 2019)
-* enhancement - automatically trigger auto-import on paste. Can be disabled with `java.actionsOnPaste.organizeImports`. See [#1075](https://github.com/redhat-developer/vscode-java/issues/1075).
+* enhancement - [experimental] automatically trigger auto-import on paste. Can be disabled with `java.actionsOnPaste.organizeImports`. See [#1075](https://github.com/redhat-developer/vscode-java/issues/1075) and [#1098](https://github.com/redhat-developer/vscode-java/issues/1098).
+* enhancement - allow negative patterns in `java.import.exclusions` preference, to allow folder inclusions. See [#1084](https://github.com/redhat-developer/vscode-java/issues/1084).
 * enhancement - made code snippets context sensitive. See [JLS#977](https://github.com/eclipse/eclipse.jdt.ls/issues/977).
 * enhancement - improve snippet documentation rendering. See [JLS#1205](https://github.com/eclipse/eclipse.jdt.ls/issues/1205).
 * bug fix - fixed preview features enabled at an invalid source release level 12, preview can be enabled only at source level 13. See [#1086](https://github.com/redhat-developer/vscode-java/issues/1086).
 * bug fix - don't return workspace symbols without a name. See [JLS#1204](https://github.com/eclipse/eclipse.jdt.ls/issues/1204).
 * bug fix - fixed package fragments not updated when adding a new folder. See [JLS#1137](https://github.com/eclipse/eclipse.jdt.ls/issues/1137).
+* bug fix - don't filter method completions from filtered types. See [JLS#1212](https://github.com/eclipse/eclipse.jdt.ls/issues/1212).
 
 ## 0.50.0 (October 1st, 2019)
 * enhancement - added Java 13 support for Maven and Eclipse projects. See [JLS#1179](https://github.com/eclipse/eclipse.jdt.ls/issues/1179).

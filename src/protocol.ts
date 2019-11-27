@@ -1,6 +1,18 @@
 'use strict';
 
-import { RequestType, NotificationType, TextDocumentIdentifier, ExecuteCommandParams, CodeActionParams, WorkspaceEdit, FormattingOptions, WorkspaceSymbolParams, SymbolInformation, TextDocumentPositionParams, Location } from 'vscode-languageclient';
+import {
+    CodeActionParams,
+    ExecuteCommandParams,
+    FormattingOptions,
+    Location,
+    NotificationType,
+    RequestType,
+    SymbolInformation,
+    TextDocumentIdentifier,
+    TextDocumentPositionParams,
+    WorkspaceEdit,
+    WorkspaceSymbolParams,
+} from 'vscode-languageclient';
 import { Command, Range } from 'vscode';
 
 /**

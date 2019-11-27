@@ -15,8 +15,6 @@ const changeItem = {
 
 const EXCLUDE_FILE_CONFIG = 'configuration.checkProjectSettingsExclusions';
 export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // java.actionsOnPaste.organizeImports
-// index of the paste disposable in the subscriptions array
-let pasteSubscriptionIndex;
 
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 
@@ -39,19 +37,9 @@ export function onConfigurationChange(languageClient: LanguageClient, context: E
 				}
 			});
 		}
-		handleJavaPasteConfigurationChange(languageClient, context, newConfig);
 		// update old config
 		oldConfig = newConfig;
 	});
-}
-
-/**
- * Starting point for any settings that need to be handled when the server starts
- * @param languageClient
- * @param context
- */
-export function initializeSettings(languageClient: LanguageClient, context: ExtensionContext) {
-	handleInitialConfigurations(languageClient, context, getJavaConfiguration());
 }
 
 export function excludeProjectSettingsFiles() {
@@ -99,7 +87,7 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 					config.update('exclude', excludedInspectedValue.workspaceValue, ConfigurationTarget.Workspace);
 				} else if (result === changeItem.never) {
 					const storeInWorkspace = getJavaConfiguration().inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
-					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace?ConfigurationTarget.Workspace: ConfigurationTarget.Global);
+					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace ? ConfigurationTarget.Workspace : ConfigurationTarget.Global);
 				}
 			});
 		}
@@ -127,72 +115,4 @@ export function getJavaEncoding(): string {
 		javaEncoding = config.get<string>('files.encoding', 'UTF-8');
 	}
 	return javaEncoding;
-}
-
-export function handleInitialConfigurations(languageClient: LanguageClient, context: ExtensionContext, newConfig: WorkspaceConfiguration) {
-	// organize imports on paste registration
-	if (newConfig.get(ORGANIZE_IMPORTS_ON_PASTE)) {
-		registerOverridePasteCommand(languageClient, context);
-	}
-}
-
-export function handleJavaPasteConfigurationChange(languageClient: LanguageClient, context: ExtensionContext, newConfig: WorkspaceConfiguration) {
-	const oldOrganizeImportsOnPaste = oldConfig.get(ORGANIZE_IMPORTS_ON_PASTE);
-	const newOrganizeImportsOnPaste = newConfig.get(ORGANIZE_IMPORTS_ON_PASTE);
-	if (oldOrganizeImportsOnPaste !== newOrganizeImportsOnPaste) {
-		if (newOrganizeImportsOnPaste === true) {
-			registerOverridePasteCommand(languageClient, context);
-		}
-		else {
-			unregisterOverridePasteCommand(languageClient, context);
-		}
-	}
-}
-
-export function registerOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    // referencing https://github.com/gazugafan/vscode-indent-on-paste/blob/master/src/extension.ts
-    const length = context.subscriptions.push(commands.registerCommand('editor.action.clipboardPasteAction', async () => {
-
-        const clipboardText: string = await env.clipboard.readText();
-        const editor: TextEditor = window.activeTextEditor;
-
-        const documentText: string = editor.document.getText();
-
-        const isCursorOnly = editor.selection.isEmpty;
-        let action: Thenable<boolean>;
-        if (isCursorOnly) {
-            action = editor.edit(textInserter => {
-                textInserter.insert(editor.selection.start, clipboardText);
-            });
-        }
-        else {
-            const start = editor.selection.start;
-            const end = editor.selection.end;
-            action = editor.edit(textInserter => {
-                textInserter.replace(new Range(start, end), clipboardText);
-            });
-        }
-
-        action.then((wasApplied) => {
-            const hasText: boolean = documentText !== null && /\S/.test(documentText);
-            const fileURI = editor.document.uri.toString();
-            if (wasApplied && !hasText && fileURI.endsWith(".java")) { // only organizing imports if document is blank
-                // Organize imports only requires uri from CodeActionParams
-                const codeActionParams = { textDocument: { uri: fileURI } };
-                commands.executeCommand(Commands.ORGANIZE_IMPORTS, codeActionParams);
-            }
-        });
-	}));
-
-	pasteSubscriptionIndex = length - 1;
-	languageClient.info(`Registered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
-}
-
-export function unregisterOverridePasteCommand(languageClient: LanguageClient, context: ExtensionContext) {
-	if (pasteSubscriptionIndex !== null) {
-		const pasteDisposable: Disposable = context.subscriptions[pasteSubscriptionIndex];
-		pasteDisposable.dispose();
-		pasteSubscriptionIndex = null;
-		languageClient.info(`Unregistered 'java.${ORGANIZE_IMPORTS_ON_PASTE}' command.`);
-	}
 }

@@ -54,7 +54,9 @@ suite('Java Language Extension', () => {
 				Commands.GENERATE_DELEGATE_METHODS_PROMPT,
 				Commands.APPLY_REFACTORING_COMMAND,
 				Commands.RENAME_COMMAND,
-				Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND
+				Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND,
+				Commands.CLIPBOARD_ONPASTE,
+				Commands.SHOW_SERVER_TASK_STATUS,
 			];
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');

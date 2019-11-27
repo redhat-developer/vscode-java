@@ -5,13 +5,13 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-1.0",
-  "version": "0.51.0",
+  "version": "0.54.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
   "enableProposedApi": false,
   "engines": {
-    "vscode": "^1.36.0"
+    "vscode": "^1.40.0"
   },
   "repository": {
     "type": "git",
@@ -47,6 +47,12 @@
       {
         "language": "java",
         "path": "./snippets/java.json"
+      }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "package.json",
+        "url": "./schemas/package.schema.json"
       }
     ],
     "configuration": {
@@ -201,7 +207,7 @@
         },
         "java.import.exclusions": {
           "type": "array",
-          "description": "Configure glob patterns for excluding folders",
+          "description": "Configure glob patterns for excluding folders. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.",
           "default": [
             "**/node_modules/**",
             "**/.metadata/**",
@@ -388,12 +394,6 @@
           "default": true,
           "description": "Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.",
           "scope": "window"
-        },
-        "java.actionsOnPaste.organizeImports": {
-          "type": "boolean",
-          "description": "Triggers 'Organize imports' when java code is pasted into an empty file.",
-          "default": true,
-          "scope": "window"
         }
       }
     },
@@ -452,6 +452,11 @@
         "command": "java.project.listSourcePaths",
         "title": "List all Java source paths",
         "category": "Java"
+      },
+      {
+        "command": "java.show.server.task.status",
+        "title": "Show Build Job Status",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -463,6 +468,12 @@
       {
         "command": "java.workspace.compile",
         "key": "shift+alt+b"
+      },
+      {
+        "command": "java.action.clipboardPasteAction",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "javaLSReady && editorLangId == java"
       }
     ],
     "menus": {
@@ -536,31 +547,32 @@
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",
     "@types/glob": "5.0.30",
+    "@types/lodash.findindex": "^4.6.6",
     "@types/mocha": "^5.2.5",
     "@types/node": "^6.0.40",
-    "@types/vscode": "^1.36.0",
+    "@types/vscode": "^1.40.0",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.0",
     "gulp-decompress": "2.0.1",
     "gulp-download": "0.0.1",
-    "lodash.template": ">=4.5.0",
+    "lodash.findindex": "^4.6.0",
     "mocha": "^5.2.0",
     "ts-loader": "^5.3.1",
     "tslint": "^5.11.0",
     "typescript": "^3.4.1",
     "typescript-tslint-plugin": "^0.3.1",
-    "vscode-test": "^1.0.0",
+    "vscode-test": "^1.2.3",
     "webpack": "^4.27.1",
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
+    "vscode-languageclient": "5.3.0-next.9",
+    "find-java-home": "1.1.0",
+    "tmp": "^0.0.33",
+    "path-exists": "^3.0.0",
     "expand-home-dir": "^0.0.3",
-    "find-java-home": "1.0.0",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.3",
-    "path-exists": "^3.0.0",
-    "tmp": "^0.0.33",
-    "vscode-languageclient": "5.3.0-next.9",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
   }

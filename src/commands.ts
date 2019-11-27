@@ -82,7 +82,7 @@ export namespace Commands {
     /**
     * Open Java log files side by side
     */
-   export const OPEN_LOGS = 'java.open.logs';
+    export const OPEN_LOGS = 'java.open.logs';
 
     /**
      * Open Java formatter settings
@@ -129,6 +129,14 @@ export namespace Commands {
      */
     export const ORGANIZE_IMPORTS = "java.action.organizeImports";
     /**
+     * Organize imports silently.
+     */
+    export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
+    /**
+     * Custom paste action (triggers auto-import)
+     */
+    export const CLIPBOARD_ONPASTE = 'java.action.clipboardPasteAction';
+    /**
      * Choose type to import.
      */
     export const CHOOSE_IMPORTS = "java.action.organizeImports.chooseImports";
@@ -160,4 +168,8 @@ export namespace Commands {
      * Navigate To Super Method Command.
      */
     export const NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND = 'java.action.navigateToSuperImplementation';
+    /**
+     * Show server task status
+     */
+    export const SHOW_SERVER_TASK_STATUS = 'java.show.server.task.status';
 }
