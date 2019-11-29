@@ -5,20 +5,22 @@ import * as glob from 'glob';
 import * as os from 'os';
 import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
 import { RequirementsData } from './requirements';
-import { getJavaEncoding } from './settings';
+import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag } from './settings';
 import { logger } from './log';
+import { getJavaConfiguration } from './utils';
+import { workspace, ExtensionContext } from 'vscode';
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 
-export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig): Executable {
+export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig, context: ExtensionContext): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
 	options.env = process.env;
 	options.stdio = 'pipe';
 	executable.options = options;
 	executable.command = path.resolve(requirements.java_home + '/bin/java');
-	executable.args = prepareParams(requirements, javaConfig, workspacePath);
+	executable.args = prepareParams(requirements, javaConfig, workspacePath, context);
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
 }
@@ -39,7 +41,7 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 	});
 }
 
-function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath): string[] {
+function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath, context: ExtensionContext): string[] {
 	const params: string[] = [];
 	if (DEBUG) {
 		params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y');
@@ -60,8 +62,23 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	if (DEBUG) {
 		params.push('-Dlog.level=ALL');
 	}
-
-	const vmargs = javaConfiguration.get('jdt.ls.vmargs', '');
+	let vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').workspaceValue;
+	if (vmargsCheck !== undefined) {
+		const agentFlag = getJavaagentFlag(vmargsCheck);
+		if (agentFlag !== null) {
+			const keyVmargs = getKey(IS_WORKSPACE_VMARGS_ALLOWED, context.storagePath, vmargsCheck);
+			const key = context.globalState.get(keyVmargs);
+			if (key !== true) {
+				vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').globalValue;
+			}
+		}
+	}
+	let vmargs;
+	if (vmargsCheck !== undefined) {
+		vmargs = vmargsCheck + '';
+	} else {
+		vmargs = '';
+	}
 	const encodingKey = '-Dfile.encoding=';
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
