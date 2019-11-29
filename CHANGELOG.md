@@ -1,5 +1,11 @@
 # Change Log
 
+## 0.54.0 (November 30th, 2019)
+* enhancement - Added getDocumentSymbols call to extension API. See [#1151](https://github.com/redhat-developer/vscode-java/pull/1151).
+* enhancement - Show server tasks in terminal. See [#1153](https://github.com/redhat-developer/vscode-java/pull/1153).
+* enhancement - Show busy status when there are incomplete tasks. See [#1159](https://github.com/redhat-developer/vscode-java/pull/1159).
+* enhancement - Always show workspace status in status bar. See [#1163](https://github.com/redhat-developer/vscode-java/pull/1163).
+
 ## 0.53.1 (November 15th, 2019)
 * bug fix - fixed "Organize Imports" shortcut no longer working. See [#1142](https://github.com/redhat-developer/vscode-java/issues/1142).
 
