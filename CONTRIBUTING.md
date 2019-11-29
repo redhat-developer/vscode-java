@@ -87,9 +87,17 @@ This will build and place the binaries under the `server` folder. Alternately yo
 $ cd ../vscode-java
 $ ./node_modules/.bin/gulp download_server
 ```
-### Setting up the JDT Language Server in Eclipse
+### Setting up the JDT Language Server
+Below are the details about how to set up the JDT Language Server in different IDEs. **Notice**: You only need set up it once in any of your preferred IDE.
 
-4. In Eclipse, import a maven project:
+### B-1) Setting up the JDT Language Server in VS Code
+1) Please install [Eclipse PDE support](https://marketplace.visualstudio.com/items?itemName=yaozheng.vscode-pde) extension in your VS Code first. The PDE extension's home page provides more usage details about _Reload Target Platform_, _Run JUnit Plug-in Test_, _Run Eclipse Application_.
+
+2) Open VS Code on the `eclipse.jdt.ls` folder. The PDE extension will work with Java extension together to automatically load the eclipse.jdt.ls project. Check the status of the language tools on the lower right corner. It should show ready (thumbs up) as the image below.  
+  ![status indicator](images/statusMarker.png)
+
+### B-2) Setting up the JDT Language Server in Eclipse
+1) In Eclipse, import a maven project:
 
     ![Import Project](images/changelog/importProject.png)
 
@@ -100,7 +108,7 @@ following prompts:
 
     ![Import Project](images/changelog/importedMavenProject.png)
 
-5) Now we need to use Tycho to download the dependencies,
+2) Now we need to use Tycho to download the dependencies,
 this will get rid of the errors.
 
 	At the top right arrow it will say `Set Target Platform`, select that and continue.
@@ -111,7 +119,7 @@ this will get rid of the errors.
 
     ![Import Project](images/changelog/reloadTargetPlatform.png)
 
-6) Wait till the bottom right is done loading:
+3) Wait till the bottom right is done loading:
 
     ![Import Project](images/changelog/loadingTargetPlatform.png)
 
@@ -126,51 +134,36 @@ this will get rid of the errors.
 
 ## **C)** Run with a remote JDT language server
 
-While developing the language server and the extension, you don't need to deploy the server every time to try out changes. Instead you can run the language server out of its Eclipse workspace:
-
+While developing the language server and the extension, you don't need to deploy the server every time to try out changes. Instead you can run the language server out of its Eclipse workspace. Currently we provide two kinds of connection modes between the extension and the language server.
+## **C-1)** The extension opens the connection first, and waits the language server to connect to it.
 ### a) _Launch Extension - Client Side_
 
 1. Open VSCode on the `vscode-java` folder
 
-2. In the debug viewlet, run the launch _Launch Extension - Remote Server_
+2. In the debug viewlet, run the launch _Launch Extension - Remote Server_  
 ![Remote Server](images/changelog/RemoteServer.png)
 
 3. The extension will open a socket on port 3333 and will wait for the JDT language server to connect
 
+### b) _Launch Debug Server - Server Side_
 
+- With the client side **(vscode-java) running**, you can start the remote server in your preferred IDE.
+  - Start the remote server via VS Code.  
+    ![Remote Server In VS Code](images/changelog/RemoteServerInVSCode.png)
 
-### b) _Setup Debug Server - Server Side_
-
-[**\*Skip to C if this option exists\***](#c-launch-debug-server---server-side)
-
-In Eclipse, run the JDT language server as an Eclipse application.
-   1) Create a debug configuration of type _Eclipse Application_.
-   		![Creation Menu](images/changelog/DebugConfigurationOpen.png)
-
-   		![New Configuration](images/changelog/CreateNewConfiguration.png)
-   2) in the main tab of the debug configuration set the product to `org.eclipse.jdt.ls.core.product`.
-
-   		![Choose Product](./images/changelog/ChooseProduct.png)
-   3) in the Environment tab, define a variable `CLIENT_PORT` with value `3333`.
-
-   		![Define Port](images/changelog/ClientPort.png)
-   4) If your workspace contains 'org.eclipse.jdt.ui', use the Plug-Ins tab in the debug configuration to exclude the plug-in. The presence of 'org.eclipse.jdt.ui' will cause the language server to hang.
-
-### c) _Launch Debug Server - Server Side_
-
-- With the client side **(vscode-java) running**, you can start the remote server.
-
-	![Define Port](images/changelog/DebugRemoteServer.png)
+  - Start the remote server via Eclipse.  
+    ![Remote Server In Eclipse](images/changelog/DebugRemoteServer.png)
 
 - In the debug console of VSCode you can see if the connection was successful.
 - When the server is running breakpoints can be reached and hot code replace can be used to make fixes without restarting the server.
 - You can modify `launch.json` to use a different port:
     - Modify `SERVER_PORT` to specify the port the JDT LS server should connect to.
 
-### _Launch Extension - JDTLS Client_
+## C-2) The language server opens the connection first, and waits the extension to connect to it.
+- Start the language server via `jdt.ls.socket-stream` launch configuration in VS Code or Eclipse  
+  ![Socket Steam in VS Code](images/changelog/SocketSteamInVSCode.png)
 
-- start the `jdt.ls.socket-stream` launch configuration in Eclipse
-- start the _Launch Extension - JDTLS Client_ in VS Code
+- Start the extenion via _Launch Extension - JDTLS Client_ in VS Code
 - You can modify `launch.json` to use a different port:
     - Modify `JDTLS_CLIENT_PORT` to specify the port VS Code should connect to.
 
