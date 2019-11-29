@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.54.0 (December 4th, 2019)
+* enhancement - new `java.maven.updateSnapshots` preference to update snapshots/releases for Maven projects. See [#1102](https://github.com/redhat-developer/vscode-java/issues/1102).
+* enhancement - jump to definition on break/continue. See [#1145](https://github.com/redhat-developer/vscode-java/issues/1145).
+* enhancement - added getDocumentSymbols call to extension API. See [#1151](https://github.com/redhat-developer/vscode-java/pull/1151).
+* enhancement - show server tasks in terminal. See [#1153](https://github.com/redhat-developer/vscode-java/pull/1153).
+* enhancement - show busy status when there are incomplete tasks. See [#1159](https://github.com/redhat-developer/vscode-java/pull/1159).
+* enhancement - always show workspace status in status bar. See [#1163](https://github.com/redhat-developer/vscode-java/pull/1163).
+* enhancement - add quickfix to correct access to static elements. See [JLS#439](https://github.com/eclipse/eclipse.jdt.ls/issues/439).
+* enhancement - sort code actions by relevance. See [JLS#1250](https://github.com/eclipse/eclipse.jdt.ls/issues/1250).
+* enhancement - no need to publish diagnostics in BuildWorkspaceHandler. See [JLS#1282](https://github.com/eclipse/eclipse.jdt.ls/pull/1282).
+* bug fixed - warn about sensible java preferences in project settings. See [#1154](https://github.com/redhat-developer/vscode-java/issues/1154) and [#1160](https://github.com/redhat-developer/vscode-java/pull/1160).
+* bug fixed - update problems when changing the name of the package folder. See [#1283](https://github.com/redhat-developer/vscode-java/issues/1152).
+
 ## 0.53.1 (November 15th, 2019)
 * bug fix - fixed "Organize Imports" shortcut no longer working. See [#1142](https://github.com/redhat-developer/vscode-java/issues/1142).
 
