@@ -1,12 +1,13 @@
 'use strict';
 
-import { workspace, Uri, env } from 'vscode';
+import { workspace, Uri, env, window, ConfigurationTarget, commands, ExtensionContext } from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
 import * as pathExists from 'path-exists';
 import * as expandHomeDir from 'expand-home-dir';
 import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
+import { checkJavaPreferences } from './settings';
 
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
@@ -29,16 +30,16 @@ interface ErrorData {
  * if any of the requirements fails to resolve.
  *
  */
-export async function resolveRequirements(): Promise<RequirementsData> {
-    const javaHome = await checkJavaRuntime();
+export async function resolveRequirements(context: ExtensionContext): Promise<RequirementsData> {
+    const javaHome = await checkJavaRuntime(context);
     const javaVersion = await checkJavaVersion(javaHome);
     return Promise.resolve({ java_home: javaHome, java_version: javaVersion });
 }
 
-function checkJavaRuntime(): Promise<string> {
-    return new Promise((resolve, reject) => {
+function checkJavaRuntime(context: ExtensionContext): Promise<string> {
+    return new Promise(async (resolve, reject) => {
         let source: string;
-        let javaHome: string = readJavaConfig();
+        let javaHome = await checkJavaPreferences(context);
         if (javaHome) {
             source = `java.home variable defined in ${env.appName} settings`;
         } else {
@@ -76,11 +77,6 @@ function checkJavaRuntime(): Promise<string> {
             }
         });
     });
-}
-
-function readJavaConfig(): string {
-    const config = workspace.getConfiguration();
-    return config.get<string>('java.home', null);
 }
 
 function checkJavaVersion(javaHome: string): Promise<number> {

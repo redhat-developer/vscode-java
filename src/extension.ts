@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler, DidChangeConfigurationNotification } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documentSymbols';
@@ -22,7 +22,7 @@ import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
+import { onConfigurationChange, excludeProjectSettingsFiles, getKey, IS_WORKSPACE_JDK_ALLOWED } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
@@ -126,7 +126,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	enableJavadocSymbols();
 
-	return requirements.resolveRequirements().catch(error => {
+	return requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
 			if (error.label && error.label === selection && error.command) {
@@ -138,7 +138,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}).then(requirements => {
 		return new Promise((resolve, reject) => {
 			const workspacePath = path.resolve(storagePath + '/jdt_ws');
-
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
 				// Register the server for java
@@ -153,7 +152,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-					settings: { java: getJavaConfiguration() },
+					settings: { java: getJavaConfig(requirements.java_home) },
 					extendedClientCapabilities: {
 						progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 						classFileContentsSupport: true,
@@ -169,6 +168,14 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						clientHoverProvider: true,
 					},
 					triggerFiles: getTriggerFiles()
+				},
+				middleware: {
+					workspace: {
+					  didChangeConfiguration: () => {
+						languageClient.sendNotification(DidChangeConfigurationNotification.type, { settings: getJavaConfig(requirements.java_home) });
+						onConfigurationChange(languageClient, context);
+					  }
+					}
 				},
 				revealOutputChannelOn: RevealOutputChannelOn.Never,
 				errorHandler: new ClientErrorHandler(extensionName),
@@ -203,7 +210,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			if (!port) {
 				const lsPort = process.env['JDTLS_CLIENT_PORT'];
 				if (!lsPort) {
-					serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+					serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfig(requirements.java_home), context);
 				} else {
 					serverOptions = () => {
 						const socket = net.connect(lsPort);
@@ -448,6 +455,13 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			context.subscriptions.push(onConfigurationChange(languageClient, context));
 		});
 	});
+}
+
+function getJavaConfig(javaHome: string) {
+	const origConfig = getJavaConfiguration();
+	const javaConfig = JSON.parse(JSON.stringify(origConfig));
+	javaConfig.home = javaHome;
+	return javaConfig;
 }
 
 export function deactivate(): Thenable<void> {
