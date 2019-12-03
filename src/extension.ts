@@ -25,6 +25,7 @@ import { getJavaConfiguration } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
+import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { serverTasks } from './serverTasks';
 import { serverTaskPresenter } from './serverTaskPresenter';
 import { serverStatus, ServerStatusKind } from './serverStatus';
@@ -224,6 +225,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
 			const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
 
+			const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
+			context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
+
 			languageClient.onReady().then(() => {
 				languageClient.onNotification(StatusNotification.type, (report) => {
 					switch (report.type) {
@@ -237,6 +241,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								registerHoverCommand,
 								getDocumentSymbols
 							});
+							snippetProvider.setActivation(false);
 							break;
 						case 'Error':
 							serverStatus.updateServerStatus(ServerStatusKind.Error);
