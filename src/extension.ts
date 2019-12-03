@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, Disposable } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -136,324 +136,316 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 		// rethrow to disrupt the chain.
 		throw error;
 	}).then(requirements => {
-		return window.withProgress<ExtensionAPI>({ location: ProgressLocation.Window }, p => {
-			return new Promise((resolve, reject) => {
-				const workspacePath = path.resolve(storagePath + '/jdt_ws');
+		return new Promise((resolve, reject) => {
+			const workspacePath = path.resolve(storagePath + '/jdt_ws');
 
-				// Options to control the language client
-				const clientOptions: LanguageClientOptions = {
-					// Register the server for java
-					documentSelector: [
-						{ scheme: 'file', language: 'java' },
-						{ scheme: 'jdt', language: 'java' },
-						{ scheme: 'untitled', language: 'java' }
-					],
-					synchronize: {
-						configurationSection: 'java',
+			// Options to control the language client
+			const clientOptions: LanguageClientOptions = {
+				// Register the server for java
+				documentSelector: [
+					{ scheme: 'file', language: 'java' },
+					{ scheme: 'jdt', language: 'java' },
+					{ scheme: 'untitled', language: 'java' }
+				],
+				synchronize: {
+					configurationSection: 'java',
+				},
+				initializationOptions: {
+					bundles: collectJavaExtensions(extensions.all),
+					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
+					settings: { java: getJavaConfiguration() },
+					extendedClientCapabilities: {
+						progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
+						classFileContentsSupport: true,
+						overrideMethodsPromptSupport: true,
+						hashCodeEqualsPromptSupport: true,
+						advancedOrganizeImportsSupport: true,
+						generateToStringPromptSupport: true,
+						advancedGenerateAccessorsSupport: true,
+						generateConstructorsPromptSupport: true,
+						generateDelegateMethodsPromptSupport: true,
+						advancedExtractRefactoringSupport: true,
+						moveRefactoringSupport: true,
+						clientHoverProvider: true,
 					},
-					initializationOptions: {
-						bundles: collectJavaExtensions(extensions.all),
-						workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-						settings: { java: getJavaConfiguration() },
-						extendedClientCapabilities: {
-							progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
-							classFileContentsSupport: true,
-							overrideMethodsPromptSupport: true,
-							hashCodeEqualsPromptSupport: true,
-							advancedOrganizeImportsSupport: true,
-							generateToStringPromptSupport: true,
-							advancedGenerateAccessorsSupport: true,
-							generateConstructorsPromptSupport: true,
-							generateDelegateMethodsPromptSupport: true,
-							advancedExtractRefactoringSupport: true,
-							moveRefactoringSupport: true,
-							clientHoverProvider: true,
-						},
-						triggerFiles: getTriggerFiles()
-					},
-					revealOutputChannelOn: RevealOutputChannelOn.Never,
-					errorHandler: new ClientErrorHandler(extensionName),
-					initializationFailedHandler: error => {
-						logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
-						return true;
-					},
-					outputChannel: new OutputInfoCollector(extensionName),
-					outputChannelName: extensionName
-				};
+					triggerFiles: getTriggerFiles()
+				},
+				revealOutputChannelOn: RevealOutputChannelOn.Never,
+				errorHandler: new ClientErrorHandler(extensionName),
+				initializationFailedHandler: error => {
+					logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
+					return true;
+				},
+				outputChannel: new OutputInfoCollector(extensionName),
+				outputChannelName: extensionName
+			};
 
-				const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-				item.text = '$(sync~spin)';
-				item.command = Commands.SHOW_SERVER_TASK_STATUS;
+			const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
+			item.text = '$(sync~spin)';
+			item.command = Commands.SHOW_SERVER_TASK_STATUS;
+			item.show();
 
-				commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
+			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 
-				serverStatus.initialize();
-				serverStatus.onServerStatusChanged(status => {
-					if (status === ServerStatusKind.Busy) {
-						item.text = '$(sync~spin)';
-					} else if (status === ServerStatusKind.Error) {
-						item.text = '$(thumbsdown)';
-					} else {
-						item.text = '$(thumbsup)';
+			serverStatus.initialize();
+			serverStatus.onServerStatusChanged(status => {
+				if (status === ServerStatusKind.Busy) {
+					item.text = '$(sync~spin)';
+				} else if (status === ServerStatusKind.Error) {
+					item.text = '$(thumbsdown)';
+				} else {
+					item.text = '$(thumbsup)';
+				}
+			});
+
+			let serverOptions;
+			const port = process.env['SERVER_PORT'];
+			if (!port) {
+				const lsPort = process.env['JDTLS_CLIENT_PORT'];
+				if (!lsPort) {
+					serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+				} else {
+					serverOptions = () => {
+						const socket = net.connect(lsPort);
+						const result: StreamInfo = {
+							writer: socket,
+							reader: socket
+						};
+						return Promise.resolve(result);
+					};
+				}
+			} else {
+				// used during development
+				serverOptions = awaitServerConnection.bind(null, port);
+			}
+
+			// Create the language client and start the client.
+			languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
+			languageClient.registerProposedFeatures();
+			const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
+			const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
+
+			const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
+			context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
+
+			languageClient.onReady().then(() => {
+				languageClient.onNotification(StatusNotification.type, (report) => {
+					switch (report.type) {
+						case 'Started':
+							serverStatus.updateServerStatus(ServerStatusKind.Ready);
+							commands.executeCommand('setContext', 'javaLSReady', true);
+							resolve({
+								apiVersion: ExtensionApiVersion,
+								javaRequirement: requirements,
+								status: report.type,
+								registerHoverCommand,
+								getDocumentSymbols
+							});
+							snippetProvider.setActivation(false);
+							break;
+						case 'Error':
+							serverStatus.updateServerStatus(ServerStatusKind.Error);
+							resolve({
+								apiVersion: ExtensionApiVersion,
+								javaRequirement: requirements,
+								status: report.type,
+								registerHoverCommand,
+								getDocumentSymbols
+							});
+							break;
+						case 'Starting':
+						case 'Message':
+							// message goes to progress report instead
+							break;
 					}
+					item.tooltip = report.message;
+				});
+				languageClient.onNotification(ProgressReportNotification.type, (progress) => {
+					serverTasks.updateServerTask(progress);
+				});
+				languageClient.onNotification(ActionableNotification.type, (notification) => {
+					let show = null;
+					switch (notification.severity) {
+						case MessageType.Log:
+							show = logNotification;
+							break;
+						case MessageType.Info:
+							show = window.showInformationMessage;
+							break;
+						case MessageType.Warning:
+							show = window.showWarningMessage;
+							break;
+						case MessageType.Error:
+							show = window.showErrorMessage;
+							break;
+					}
+					if (!show) {
+						return;
+					}
+					const titles = notification.commands.map(a => a.title);
+					show(notification.message, ...titles).then((selection) => {
+						for (const action of notification.commands) {
+							if (action.title === selection) {
+								const args: any[] = (action.arguments) ? action.arguments : [];
+								commands.executeCommand(action.command, ...args);
+								break;
+							}
+						}
+					});
+				});
+				languageClient.onRequest(ExecuteClientCommandRequest.type, (params) => {
+					return commands.executeCommand(params.command, ...params.arguments);
 				});
 
-				let serverOptions;
-				const port = process.env['SERVER_PORT'];
-				if (!port) {
-					const lsPort = process.env['JDTLS_CLIENT_PORT'];
-					if (!lsPort) {
-						serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
-					} else {
-						serverOptions = () => {
-							const socket = net.connect(lsPort);
-							const result: StreamInfo = {
-								writer: socket,
-								reader: socket
-							};
-							return Promise.resolve(result);
-						};
-					}
-				} else {
-					// used during development
-					serverOptions = awaitServerConnection.bind(null, port);
-				}
+				languageClient.onRequest(SendNotificationRequest.type, (params) => {
+					return commands.executeCommand(params.command, ...params.arguments);
+				});
 
-				// Create the language client and start the client.
-				languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
-				languageClient.registerProposedFeatures();
-				const registerHoverCommand = hoverAction.registerClientHoverProvider(languageClient, context);
-				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
+				context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+					commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+				}));
+				context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
+					commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
+				}));
 
-				const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
-				context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
+				context.subscriptions.push(commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri)));
 
-				languageClient.onReady().then(() => {
-					languageClient.onNotification(StatusNotification.type, (report) => {
-						switch (report.type) {
-							case 'Started':
-								serverStatus.updateServerStatus(ServerStatusKind.Ready);
-								commands.executeCommand('setContext', 'javaLSReady', true);
-								resolve({
-									apiVersion: ExtensionApiVersion,
-									javaRequirement: requirements,
-									status: report.type,
-									registerHoverCommand,
-									getDocumentSymbols
-								});
-								snippetProvider.setActivation(false);
-								break;
-							case 'Error':
-								serverStatus.updateServerStatus(ServerStatusKind.Error);
-								toggleItem(window.activeTextEditor, item);
-								resolve({
-									apiVersion: ExtensionApiVersion,
-									javaRequirement: requirements,
-									status: report.type,
-									registerHoverCommand,
-									getDocumentSymbols
-								});
-								break;
-							case 'Starting':
-							case 'Message':
-								// message goes to progress report instead
-								break;
+				context.subscriptions.push(commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore')));
+
+				context.subscriptions.push(commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
+					commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'));
+				}));
+
+				context.subscriptions.push(commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status)));
+
+				context.subscriptions.push(commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
+					applyWorkspaceEdit(obj, languageClient);
+				}));
+
+				context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
+					const params: ExecuteCommandParams = {
+						command,
+						arguments: rest
+					};
+					return languageClient.sendRequest(ExecuteCommandRequest.type, params);
+				}));
+
+				context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean) => {
+					return window.withProgress({ location: ProgressLocation.Window }, async p => {
+						if (typeof isFullCompile !== 'boolean') {
+							const selection = await window.showQuickPick(['Incremental', 'Full'], { placeHolder: 'please choose compile type:' });
+							isFullCompile = selection !== 'Incremental';
 						}
-						item.tooltip = report.message;
-						toggleItem(window.activeTextEditor, item);
-					});
-					languageClient.onNotification(ProgressReportNotification.type, (progress) => {
-						serverTasks.updateServerTask(progress);
-					});
-					languageClient.onNotification(ActionableNotification.type, (notification) => {
-						let show = null;
-						switch (notification.severity) {
-							case MessageType.Log:
-								show = logNotification;
-								break;
-							case MessageType.Info:
-								show = window.showInformationMessage;
-								break;
-							case MessageType.Warning:
-								show = window.showWarningMessage;
-								break;
-							case MessageType.Error:
-								show = window.showErrorMessage;
-								break;
-						}
-						if (!show) {
-							return;
-						}
-						const titles = notification.commands.map(a => a.title);
-						show(notification.message, ...titles).then((selection) => {
-							for (const action of notification.commands) {
-								if (action.title === selection) {
-									const args: any[] = (action.arguments) ? action.arguments : [];
-									commands.executeCommand(action.command, ...args);
-									break;
+						p.report({ message: 'Compiling workspace...' });
+						const start = new Date().getTime();
+						const res = await languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
+						const elapsed = new Date().getTime() - start;
+						const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
+						return new Promise((resolve, reject) => {
+							setTimeout(() => { // set a timeout so user would still see the message when build time is short
+								if (res === CompileWorkspaceStatus.SUCCEED) {
+									resolve(res);
+								} else {
+									reject(res);
 								}
-							}
+							}, humanVisibleDelay);
 						});
 					});
-					languageClient.onRequest(ExecuteClientCommandRequest.type, (params) => {
-						return commands.executeCommand(params.command, ...params.arguments);
+				}));
+
+				context.subscriptions.push(commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT, async (classFileUri: Uri): Promise<boolean> => {
+					const resolveRequest: SourceAttachmentRequest = {
+						classFileUri: classFileUri.toString(),
+					};
+					const resolveResult: SourceAttachmentResult = await <SourceAttachmentResult>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.RESOLVE_SOURCE_ATTACHMENT, JSON.stringify(resolveRequest));
+					if (resolveResult.errorMessage) {
+						window.showErrorMessage(resolveResult.errorMessage);
+						return false;
+					}
+
+					const attributes: SourceAttachmentAttribute = resolveResult.attributes || {};
+					const defaultPath = attributes.sourceAttachmentPath || attributes.jarPath;
+					const sourceFileUris: Uri[] = await window.showOpenDialog({
+						defaultUri: defaultPath ? Uri.file(defaultPath) : null,
+						openLabel: 'Select Source File',
+						canSelectFiles: true,
+						canSelectFolders: false,
+						canSelectMany: false,
+						filters: {
+							'Source files': ['jar', 'zip']
+						},
 					});
 
-					languageClient.onRequest(SendNotificationRequest.type, (params) => {
-						return commands.executeCommand(params.command, ...params.arguments);
-					});
-
-					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
-						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-					}));
-					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_IMPLEMENTATIONS, (uri: string, position: LSPosition, locations: LSLocation[]) => {
-						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
-					}));
-
-					context.subscriptions.push(commands.registerCommand(Commands.CONFIGURATION_UPDATE, uri => projectConfigurationUpdate(languageClient, uri)));
-
-					context.subscriptions.push(commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH, (data?: any) => setIncompleteClasspathSeverity('ignore')));
-
-					context.subscriptions.push(commands.registerCommand(Commands.IGNORE_INCOMPLETE_CLASSPATH_HELP, (data?: any) => {
-						commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse('https://github.com/redhat-developer/vscode-java/wiki/%22Classpath-is-incomplete%22-warning'));
-					}));
-
-					context.subscriptions.push(commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(languageClient, uri, status)));
-
-					context.subscriptions.push(commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
-						applyWorkspaceEdit(obj, languageClient);
-					}));
-
-					context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
-						const params: ExecuteCommandParams = {
-							command,
-							arguments: rest
-						};
-						return languageClient.sendRequest(ExecuteCommandRequest.type, params);
-					}));
-
-					context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean) => {
-						return window.withProgress({ location: ProgressLocation.Window }, async p => {
-							if (typeof isFullCompile !== 'boolean') {
-								const selection = await window.showQuickPick(['Incremental', 'Full'], { placeHolder: 'please choose compile type:' });
-								isFullCompile = selection !== 'Incremental';
-							}
-							p.report({ message: 'Compiling workspace...' });
-							const start = new Date().getTime();
-							const res = await languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
-							const elapsed = new Date().getTime() - start;
-							const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
-							return new Promise((resolve, reject) => {
-								setTimeout(() => { // set a timeout so user would still see the message when build time is short
-									if (res === CompileWorkspaceStatus.SUCCEED) {
-										resolve(res);
-									} else {
-										reject(res);
-									}
-								}, humanVisibleDelay);
-							});
-						});
-					}));
-
-					context.subscriptions.push(commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT, async (classFileUri: Uri): Promise<boolean> => {
-						const resolveRequest: SourceAttachmentRequest = {
+					if (sourceFileUris && sourceFileUris.length) {
+						const updateRequest: SourceAttachmentRequest = {
 							classFileUri: classFileUri.toString(),
+							attributes: {
+								...attributes,
+								sourceAttachmentPath: sourceFileUris[0].fsPath
+							},
 						};
-						const resolveResult: SourceAttachmentResult = await <SourceAttachmentResult>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.RESOLVE_SOURCE_ATTACHMENT, JSON.stringify(resolveRequest));
-						if (resolveResult.errorMessage) {
-							window.showErrorMessage(resolveResult.errorMessage);
+						const updateResult: SourceAttachmentResult = await <SourceAttachmentResult>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_SOURCE_ATTACHMENT, JSON.stringify(updateRequest));
+						if (updateResult.errorMessage) {
+							window.showErrorMessage(updateResult.errorMessage);
 							return false;
 						}
 
-						const attributes: SourceAttachmentAttribute = resolveResult.attributes || {};
-						const defaultPath = attributes.sourceAttachmentPath || attributes.jarPath;
-						const sourceFileUris: Uri[] = await window.showOpenDialog({
-							defaultUri: defaultPath ? Uri.file(defaultPath) : null,
-							openLabel: 'Select Source File',
-							canSelectFiles: true,
-							canSelectFolders: false,
-							canSelectMany: false,
-							filters: {
-								'Source files': ['jar', 'zip']
-							},
-						});
+						// Notify jdt content provider to rerender the classfile contents.
+						jdtEventEmitter.fire(classFileUri);
+						return true;
+					}
+				}));
 
-						if (sourceFileUris && sourceFileUris.length) {
-							const updateRequest: SourceAttachmentRequest = {
-								classFileUri: classFileUri.toString(),
-								attributes: {
-									...attributes,
-									sourceAttachmentPath: sourceFileUris[0].fsPath
-								},
-							};
-							const updateResult: SourceAttachmentResult = await <SourceAttachmentResult>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_SOURCE_ATTACHMENT, JSON.stringify(updateRequest));
-							if (updateResult.errorMessage) {
-								window.showErrorMessage(updateResult.errorMessage);
-								return false;
-							}
+				buildpath.registerCommands(context);
+				sourceAction.registerCommands(languageClient, context);
+				refactorAction.registerCommands(languageClient, context);
+				pasteAction.registerCommands(languageClient, context);
 
-							// Notify jdt content provider to rerender the classfile contents.
-							jdtEventEmitter.fire(classFileUri);
-							return true;
-						}
-					}));
-
-					buildpath.registerCommands(context);
-					sourceAction.registerCommands(languageClient, context);
-					refactorAction.registerCommands(languageClient, context);
-					pasteAction.registerCommands(languageClient, context);
-
-					context.subscriptions.push(window.onDidChangeActiveTextEditor((editor) => {
-						toggleItem(editor, item);
-					}));
-
-					const provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
-						onDidChange: jdtEventEmitter.event,
-						provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
-							return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
-								return v || '';
-							});
-						}
-					};
-					context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', provider));
-					if (extensions.onDidChange) {// Theia doesn't support this API yet
-						extensions.onDidChange(() => {
-							onExtensionChange(extensions.all);
+				const provider: TextDocumentContentProvider = <TextDocumentContentProvider>{
+					onDidChange: jdtEventEmitter.event,
+					provideTextDocumentContent: (uri: Uri, token: CancellationToken): Thenable<string> => {
+						return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
+							return v || '';
 						});
 					}
-					excludeProjectSettingsFiles();
-				});
-
-				const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
-				if (cleanWorkspaceExists) {
-					try {
-						deleteDirectory(workspacePath);
-					} catch (error) {
-						window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
-					}
+				};
+				context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', provider));
+				if (extensions.onDidChange) {// Theia doesn't support this API yet
+					extensions.onDidChange(() => {
+						onExtensionChange(extensions.all);
+					});
 				}
-
-				languageClient.start();
-				// Register commands here to make it available even when the language client fails
-
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () =>  languageClient.outputChannel.show(ViewColumn.Three)));
-
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
-
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, (column: ViewColumn) => openClientLogFile(clientLogFile, column)));
-
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_LOGS, () => openLogs()));
-
-				const extensionPath = context.extensionPath;
-				context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
-
-				context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
-
-				context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, () => serverTaskPresenter.presentServerTaskView()));
-
-				context.subscriptions.push(onConfigurationChange(languageClient, context));
-				toggleItem(window.activeTextEditor, item);
+				excludeProjectSettingsFiles();
 			});
+
+			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
+			if (cleanWorkspaceExists) {
+				try {
+					deleteDirectory(workspacePath);
+				} catch (error) {
+					window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
+				}
+			}
+
+			languageClient.start();
+			// Register commands here to make it available even when the language client fails
+
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () =>  languageClient.outputChannel.show(ViewColumn.Three)));
+
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
+
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, (column: ViewColumn) => openClientLogFile(clientLogFile, column)));
+
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_LOGS, () => openLogs()));
+
+			const extensionPath = context.extensionPath;
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(extensionPath)));
+
+			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
+
+			context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, () => serverTaskPresenter.presentServerTaskView()));
+
+			context.subscriptions.push(onConfigurationChange(languageClient, context));
 		});
 	});
 }
@@ -552,15 +544,6 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 		projectConfigurationUpdate(languageClient, uri);
 	}
 }
-function toggleItem(editor: TextEditor, item) {
-	if (editor && editor.document &&
-		(editor.document.languageId === 'java' || isJavaConfigFile(editor.document.uri.path))) {
-		item.show();
-	} else {
-		item.hide();
-	}
-}
-
 function isJavaConfigFile(path: String) {
 	return path.endsWith('pom.xml') || path.endsWith('.gradle');
 }
