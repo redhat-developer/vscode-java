@@ -172,7 +172,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				middleware: {
 					workspace: {
 					  didChangeConfiguration: () => {
-						languageClient.sendNotification(DidChangeConfigurationNotification.type, { settings: getJavaConfig(requirements.java_home) });
+						languageClient.sendNotification(DidChangeConfigurationNotification.type, {
+							settings: {
+								java: getJavaConfig(requirements.java_home),
+							}
+						});
 						onConfigurationChange(languageClient, context);
 					  }
 					}
