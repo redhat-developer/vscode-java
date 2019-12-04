@@ -1,5 +1,9 @@
 # Change Log
 
+
+## 0.54.1 (December 4th, 2019)
+* bug fix - fixed ignored global "java.jdt.ls.vmargs" setting (broke lombok support). See [#1175](https://github.com/redhat-developer/vscode-java/issues/1175).
+
 ## 0.54.0 (December 4th, 2019)
 * enhancement - new `java.maven.updateSnapshots` preference to update snapshots/releases for Maven projects. See [#1102](https://github.com/redhat-developer/vscode-java/issues/1102).
 * enhancement - jump to definition on break/continue. See [#1145](https://github.com/redhat-developer/vscode-java/issues/1145).
@@ -10,8 +14,8 @@
 * enhancement - add quickfix to correct access to static elements. See [JLS#439](https://github.com/eclipse/eclipse.jdt.ls/issues/439).
 * enhancement - sort code actions by relevance. See [JLS#1250](https://github.com/eclipse/eclipse.jdt.ls/issues/1250).
 * enhancement - no need to publish diagnostics in BuildWorkspaceHandler. See [JLS#1282](https://github.com/eclipse/eclipse.jdt.ls/pull/1282).
-* bug fixed - warn about sensible java preferences in project settings. See [#1154](https://github.com/redhat-developer/vscode-java/issues/1154) and [#1160](https://github.com/redhat-developer/vscode-java/pull/1160).
-* bug fixed - update problems when changing the name of the package folder. See [#1283](https://github.com/redhat-developer/vscode-java/issues/1152).
+* bug fix - warn about sensible java preferences in project settings. See [#1154](https://github.com/redhat-developer/vscode-java/issues/1154) and [#1160](https://github.com/redhat-developer/vscode-java/pull/1160).
+* bug fix - update problems when changing the name of the package folder. See [#1283](https://github.com/redhat-developer/vscode-java/issues/1152).
 
 ## 0.53.1 (November 15th, 2019)
 * bug fix - fixed "Organize Imports" shortcut no longer working. See [#1142](https://github.com/redhat-developer/vscode-java/issues/1142).
