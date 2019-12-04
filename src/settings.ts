@@ -125,7 +125,7 @@ export async function checkJavaPreferences(context: ExtensionContext) {
 	let javaHome = workspace.getConfiguration().inspect<string>('java.home').workspaceValue;
 	let isVerified = javaHome === undefined || javaHome === null;
 	if (isVerified) {
-		javaHome = workspace.getConfiguration().inspect<string>('java.home').globalValue;
+		javaHome = getJavaConfiguration().get('home');
 	}
 	const allow = 'Allow';
 	const disallow = 'Disallow';
