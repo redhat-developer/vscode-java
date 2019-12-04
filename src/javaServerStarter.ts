@@ -72,6 +72,8 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 				vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').globalValue;
 			}
 		}
+	} else {
+		vmargsCheck = getJavaConfiguration().get('jdt.ls.vmargs');
 	}
 	let vmargs;
 	if (vmargsCheck !== undefined) {
