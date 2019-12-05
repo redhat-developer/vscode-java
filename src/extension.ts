@@ -196,7 +196,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			item.command = Commands.SHOW_SERVER_TASK_STATUS;
 			item.show();
 
-			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
+			if (workspace.getConfiguration().get("java.showBuildStatusOnStart.enabled")) {
+				commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
+			}
 
 			serverStatus.initialize();
 			serverStatus.onServerStatusChanged(status => {
