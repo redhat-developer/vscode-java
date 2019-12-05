@@ -108,6 +108,7 @@ The following settings are supported:
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
 * `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
+* `java.maven.updateSnapshots`: Force update of Snapshots/Releases. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
 * `java.codeGeneration.useBlocks`: Use blocks in 'if' statements when generating the methods. Defaults to `false`.
@@ -119,8 +120,9 @@ The following settings are supported:
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 
-New in 0.54.0:
-* `java.maven.updateSnapshots`: Force update of Snapshots/Releases.
+New in 0.54.2:
+* `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
+
 
 Troubleshooting
 ===============

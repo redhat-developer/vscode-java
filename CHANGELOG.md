@@ -1,8 +1,10 @@
 # Change Log
 
+## 0.54.2 (December 5th, 2019)
+* bug fix - add `java.showBuildStatusOnStart.enabled` setting for revealing build status on startup. See [#1181](https://github.com/redhat-developer/vscode-java/issues/1181).
 
 ## 0.54.1 (December 4th, 2019)
-* bug fix - fixed ignored global "java.jdt.ls.vmargs" setting (broke lombok support). See [#1175](https://github.com/redhat-developer/vscode-java/issues/1175).
+* bug fix - fixed ignored global `java.jdt.ls.vmargs` setting (broke lombok support). See [#1175](https://github.com/redhat-developer/vscode-java/issues/1175).
 
 ## 0.54.0 (December 4th, 2019)
 * enhancement - new `java.maven.updateSnapshots` preference to update snapshots/releases for Maven projects. See [#1102](https://github.com/redhat-developer/vscode-java/issues/1102).
