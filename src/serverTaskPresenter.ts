@@ -10,7 +10,7 @@ export namespace serverTaskPresenter {
 	export async function presentServerTaskView() {
 		const execution = await getPresenterTaskExecution();
 		const terminals = vscode.window.terminals;
-		const presenterTerminals = terminals.filter(terminal => terminal.name.endsWith(execution.task.name));
+		const presenterTerminals = terminals.filter(terminal => terminal.name.indexOf(execution.task.name) >= 0);
 		if (presenterTerminals.length > 0) {
 			presenterTerminals[0].show();
 		}
@@ -20,6 +20,8 @@ export namespace serverTaskPresenter {
 let presenterTaskExecution: TaskExecution = null;
 
 async function getPresenterTaskExecution(): Promise<TaskExecution> {
+	await killExistingExecutions();
+
 	if (!!presenterTaskExecution) {
 		return Promise.resolve(presenterTaskExecution);
 	}
@@ -39,11 +41,32 @@ async function getPresenterTaskExecution(): Promise<TaskExecution> {
 	return presenterTaskExecution = await tasks.executeTask(presenterTask);
 }
 
+// Fix #1180. When switching to multiroot workspace by "Add Folder to Workspace...", vscode restarts the extension
+// host without deactivating the extension. See https://github.com/microsoft/vscode/issues/69335
+// This is to clean up the existing task execution and terminal created by previous extension instance because they
+// are no longer accessible to the current extension instance afte the restart.
+// TODO - As mentioned in https://github.com/microsoft/vscode/issues/69335, vscode will no long restart because of
+// workspace changes. We can revisit this issue to see if we can remove the fix.
+async function killExistingExecutions() {
+	if (!!presenterTaskExecution) {
+		return;
+	}
+
+	let execs = tasks.taskExecutions;
+	execs = execs.filter(exec => exec.task.name.indexOf(JAVA_SERVER_TASK_PRESENTER_TASK_NAME) >= 0);
+	execs.forEach(exec => exec.terminate());
+	await new Promise(resolve => setTimeout(resolve, 0));
+
+	let terminals = vscode.window.terminals;
+	terminals = terminals.filter(terminal => terminal.name.indexOf(JAVA_SERVER_TASK_PRESENTER_TASK_NAME) >= 0);
+	terminals.forEach(terminal => terminal.dispose());
+	await new Promise(resolve => setTimeout(resolve, 0));
+}
+
 class ServerTaskTerminal implements Pseudoterminal {
 	private _onDidWriteEvent = new EventEmitter<string>();
 	private _onDidCloseEvent = new EventEmitter<number | void>();
 	private _subscription: Disposable  = null;
-	private _rows: number = 1;
 
 	onDidWrite: Event<string> = this._onDidWriteEvent.event;
 	onDidClose?: Event<number | void> = this._onDidCloseEvent.event;
