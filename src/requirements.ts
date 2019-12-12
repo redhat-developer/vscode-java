@@ -3,7 +3,7 @@
 import { workspace, Uri, env, window, ConfigurationTarget, commands, ExtensionContext } from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
-import * as pathExists from 'path-exists';
+import * as fse from 'fs-extra';
 import * as expandHomeDir from 'expand-home-dir';
 import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
@@ -53,12 +53,11 @@ function checkJavaRuntime(context: ExtensionContext): Promise<string> {
         }
         if (javaHome) {
             javaHome = expandHomeDir(javaHome);
-            if (!pathExists.sync(javaHome)) {
+            if (!await fse.pathExists(javaHome)) {
                 invalidJavaHome(reject, `The ${source} points to a missing or inaccessible folder (${javaHome})`);
-            }
-            else if (!pathExists.sync(path.resolve(javaHome, 'bin', JAVAC_FILENAME))) {
+            } else if (!await fse.pathExists(path.resolve(javaHome, 'bin', JAVAC_FILENAME))) {
                 let msg: string;
-                if (pathExists.sync(path.resolve(javaHome, JAVAC_FILENAME))) {
+                if (await fse.pathExists(path.resolve(javaHome, JAVAC_FILENAME))) {
                     msg = `'bin' should be removed from the ${source} (${javaHome})`;
                 } else {
                     msg = `The ${source} (${javaHome}) does not point to a JDK.`;
