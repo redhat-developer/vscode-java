@@ -319,7 +319,7 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
 }
 
 async function selectTargetClass(languageClient: LanguageClient, placeHolder: string, projectName: string, exclude: Set<string>): Promise<SymbolInformation> {
-    const picked = await window.showQuickPick(
+    const picked = await window.showQuickPick<any>(
         languageClient.sendRequest(SearchSymbols.type, {
             query: '*',
             projectName,
