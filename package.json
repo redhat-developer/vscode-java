@@ -4,7 +4,7 @@
   "description": "Java Linting, Intellisense, formatting, refactoring, Maven/Gradle support and more...",
   "author": "Red Hat",
   "icon": "icons/icon128.png",
-  "license": "EPL-1.0",
+  "license": "EPL-2.0",
   "version": "0.55.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",

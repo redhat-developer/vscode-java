@@ -156,4 +156,4 @@ Feedback
 
 License
 ===============
-EPL 1.0, See [LICENSE](LICENSE) for more information.
+EPL 2.0, See [LICENSE](LICENSE) for more information.
