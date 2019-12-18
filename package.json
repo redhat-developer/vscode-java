@@ -246,7 +246,7 @@
             "include"
           ],
           "additionalProperties": false,
-          "scope": "resource"
+          "scope": "window"
         },
         "java.contentProvider.preferred": {
           "type": "string",
