@@ -222,6 +222,32 @@
           ],
           "scope": "window"
         },
+        "java.project.referencedLibraries": {
+          "type": [
+            "array",
+            "object"
+          ],
+          "description": "Configure glob patterns for referencing local libraries to a Java project.",
+          "default": [
+            "lib/**/*.jar"
+          ],
+          "properties": {
+            "include": {
+              "type": "array"
+            },
+            "exclude": {
+              "type": "array"
+            },
+            "sources": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "include"
+          ],
+          "additionalProperties": false,
+          "scope": "resource"
+        },
         "java.contentProvider.preferred": {
           "type": "string",
           "description": "Preferred content provider (a 3rd party decompiler id, usually)",
