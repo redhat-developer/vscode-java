@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler, DidChangeConfigurationNotification } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -824,7 +824,7 @@ async function executeRangeFormat(editor, startPosition, lineOffset) {
 
 function getTriggerFiles(): string[] {
 	const openedJavaFiles = [];
-	const activeJavaFile = getJavaFilePathOfTextEditor(window.activeTextEditor);
+	const activeJavaFile = getJavaFilePathOfTextDocument(window.activeTextEditor && window.activeTextEditor.document);
 	if (activeJavaFile) {
 		openedJavaFiles.push(Uri.file(activeJavaFile).toString());
 	}
@@ -833,31 +833,39 @@ function getTriggerFiles(): string[] {
 		return openedJavaFiles;
 	}
 
-	for (const rootFolder of workspace.workspaceFolders) {
+	workspace.workspaceFolders.forEach(rootFolder => {
 		if (rootFolder.uri.scheme !== 'file') {
-			continue;
+			return;
 		}
 
 		const rootPath = path.normalize(rootFolder.uri.fsPath);
 		if (isPrefix(rootPath, activeJavaFile)) {
-			continue;
+			return;
 		}
 
 		for (const textEditor of window.visibleTextEditors) {
-			const javaFileInTextEditor = getJavaFilePathOfTextEditor(textEditor);
+			const javaFileInTextEditor = getJavaFilePathOfTextDocument(textEditor.document);
 			if (isPrefix(rootPath, javaFileInTextEditor)) {
 				openedJavaFiles.push(Uri.file(javaFileInTextEditor).toString());
-				break;
+				return;
 			}
 		}
-	}
+
+		for (const textDocument of workspace.textDocuments) {
+			const javaFileInTextDocument = getJavaFilePathOfTextDocument(textDocument);
+			if (isPrefix(rootPath, javaFileInTextDocument)) {
+				openedJavaFiles.push(Uri.file(javaFileInTextDocument).toString());
+				return;
+			}
+		}
+	});
 
 	return openedJavaFiles;
 }
 
-function getJavaFilePathOfTextEditor(editor: TextEditor): string | undefined {
-	if (editor) {
-		const resource = editor.document.uri;
+function getJavaFilePathOfTextDocument(document: TextDocument): string | undefined {
+	if (document) {
+		const resource = document.uri;
 		if (resource.scheme === 'file' && resource.fsPath.endsWith('.java')) {
 			return path.normalize(resource.fsPath);
 		}
