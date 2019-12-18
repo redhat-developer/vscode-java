@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler, DidChangeConfigurationNotification } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -135,8 +135,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 		});
 		// rethrow to disrupt the chain.
 		throw error;
-	}).then(requirements => {
-		return new Promise((resolve, reject) => {
+	}).then(async (requirements) => {
+		const triggerFiles = await getTriggerFiles();
+		return new Promise<ExtensionAPI>((resolve, reject) => {
 			const workspacePath = path.resolve(storagePath + '/jdt_ws');
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
@@ -167,7 +168,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						moveRefactoringSupport: true,
 						clientHoverProvider: true,
 					},
-					triggerFiles: getTriggerFiles()
+					triggerFiles,
 				},
 				middleware: {
 					workspace: {
@@ -822,9 +823,9 @@ async function executeRangeFormat(editor, startPosition, lineOffset) {
 	await commands.executeCommand('editor.action.formatSelection');
 }
 
-function getTriggerFiles(): string[] {
+async function getTriggerFiles(): Promise<string[]> {
 	const openedJavaFiles = [];
-	const activeJavaFile = getJavaFilePathOfTextEditor(window.activeTextEditor);
+	const activeJavaFile = getJavaFilePathOfTextDocument(window.activeTextEditor && window.activeTextEditor.document);
 	if (activeJavaFile) {
 		openedJavaFiles.push(Uri.file(activeJavaFile).toString());
 	}
@@ -833,31 +834,53 @@ function getTriggerFiles(): string[] {
 		return openedJavaFiles;
 	}
 
-	for (const rootFolder of workspace.workspaceFolders) {
+	await Promise.all(workspace.workspaceFolders.map(async (rootFolder) => {
 		if (rootFolder.uri.scheme !== 'file') {
-			continue;
+			return;
 		}
 
 		const rootPath = path.normalize(rootFolder.uri.fsPath);
 		if (isPrefix(rootPath, activeJavaFile)) {
-			continue;
+			return;
 		}
 
 		for (const textEditor of window.visibleTextEditors) {
-			const javaFileInTextEditor = getJavaFilePathOfTextEditor(textEditor);
+			const javaFileInTextEditor = getJavaFilePathOfTextDocument(textEditor.document);
 			if (isPrefix(rootPath, javaFileInTextEditor)) {
 				openedJavaFiles.push(Uri.file(javaFileInTextEditor).toString());
-				break;
+				return;
 			}
 		}
-	}
+
+		for (const textDocument of workspace.textDocuments) {
+			const javaFileInTextDocument = getJavaFilePathOfTextDocument(textDocument);
+			if (isPrefix(rootPath, javaFileInTextDocument)) {
+				openedJavaFiles.push(Uri.file(javaFileInTextDocument).toString());
+				return;
+			}
+		}
+
+		for (const javaFile of await workspace.findFiles("*.java", undefined, 1)) { // Find at most 1 java file
+            if (isPrefix(rootPath, javaFile.fsPath)) {
+				openedJavaFiles.push(javaFile.toString());
+				return;
+			}
+		}
+
+		for (const javaFile of await workspace.findFiles("{src, test}/**/*.java", undefined, 1)) {
+            if (isPrefix(rootPath, javaFile.fsPath)) {
+				openedJavaFiles.push(javaFile.toString());
+				return;
+			}
+		}
+	}));
 
 	return openedJavaFiles;
 }
 
-function getJavaFilePathOfTextEditor(editor: TextEditor): string | undefined {
-	if (editor) {
-		const resource = editor.document.uri;
+function getJavaFilePathOfTextDocument(document: TextDocument): string | undefined {
+	if (document) {
+		const resource = document.uri;
 		if (resource.scheme === 'file' && resource.fsPath.endsWith('.java')) {
 			return path.normalize(resource.fsPath);
 		}
