@@ -135,8 +135,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 		});
 		// rethrow to disrupt the chain.
 		throw error;
-	}).then(requirements => {
-		return new Promise((resolve, reject) => {
+	}).then(async (requirements) => {
+		const triggerFiles = await getTriggerFiles();
+		return new Promise<ExtensionAPI>((resolve, reject) => {
 			const workspacePath = path.resolve(storagePath + '/jdt_ws');
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
@@ -167,7 +168,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						moveRefactoringSupport: true,
 						clientHoverProvider: true,
 					},
-					triggerFiles: getTriggerFiles()
+					triggerFiles,
 				},
 				middleware: {
 					workspace: {
@@ -822,7 +823,7 @@ async function executeRangeFormat(editor, startPosition, lineOffset) {
 	await commands.executeCommand('editor.action.formatSelection');
 }
 
-function getTriggerFiles(): string[] {
+async function getTriggerFiles(): Promise<string[]> {
 	const openedJavaFiles = [];
 	const activeJavaFile = getJavaFilePathOfTextDocument(window.activeTextEditor && window.activeTextEditor.document);
 	if (activeJavaFile) {
@@ -833,7 +834,7 @@ function getTriggerFiles(): string[] {
 		return openedJavaFiles;
 	}
 
-	workspace.workspaceFolders.forEach(rootFolder => {
+	await Promise.all(workspace.workspaceFolders.map(async (rootFolder) => {
 		if (rootFolder.uri.scheme !== 'file') {
 			return;
 		}
@@ -858,7 +859,14 @@ function getTriggerFiles(): string[] {
 				return;
 			}
 		}
-	});
+
+		for (const javaFile of await workspace.findFiles("**/src/**/*.java", undefined, 1)) { // Find at most 1 java file
+            if (isPrefix(rootPath, javaFile.fsPath)) {
+				openedJavaFiles.push(javaFile.toString());
+				return;
+			}
+		}
+	}));
 
 	return openedJavaFiles;
 }
