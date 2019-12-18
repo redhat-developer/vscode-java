@@ -860,7 +860,7 @@ async function getTriggerFiles(): Promise<string[]> {
 			}
 		}
 
-		for (const javaFile of await workspace.findFiles("**/src/**/*.java", undefined, 1)) { // Find at most 1 java file
+		for (const javaFile of await workspace.findFiles("src/**/*.java", undefined, 1)) { // Find at most 1 java file
             if (isPrefix(rootPath, javaFile.fsPath)) {
 				openedJavaFiles.push(javaFile.toString());
 				return;
