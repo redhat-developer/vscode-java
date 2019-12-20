@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.55.0 (December 23rd, 2019)
+* enhancement - added support for Call Hierarchy. See [#650](https://github.com/redhat-developer/vscode-java/issues/650).
+* enhancement - add jars to classpath via new `java.project.referencedLibraries` preference. See [#1196](https://github.com/redhat-developer/vscode-java/pull/1196).
+* enhancement - completion results are now limited via `java.completion.maxResults` preference. See [JLS#1298](https://github.com/eclipse/eclipse.jdt.ls/pull/1298).
+* enhancement - Remove duplicate call of getRawLocationURI(). See [JLS#1299](https://github.com/eclipse/eclipse.jdt.ls/pull/1299).
+* bug fixed - fixed Java Overview breaking the import of invisible projects. See [#1198](https://github.com/redhat-developer/vscode-java/issues/1198).
+* bug fixed - fixed build status reporter in multi-root workspaces. See [#1180](https://github.com/redhat-developer/vscode-java/issues/1180).
+* bug fixed - fixed incorrect signatures returned by signatureHelp. See [JLS#1290](https://github.com/eclipse/eclipse.jdt.ls/issues/1290).
+* bug fixed - fixed broken signatureHelp when previous string parameter has `(` or `{`. See [JLS#1293](https://github.com/eclipse/eclipse.jdt.ls/issues/1293).
+* debt - relicensed project to EPL-v2.0. See [commit](https://github.com/redhat-developer/vscode-java/commit/9b0032feb75d07f46231391ae3bf11f53e152a24).
+
+
 ## 0.54.2 (December 5th, 2019)
 * bug fix - add `java.showBuildStatusOnStart.enabled` setting for revealing build status on startup. See [#1181](https://github.com/redhat-developer/vscode-java/issues/1181).
 
