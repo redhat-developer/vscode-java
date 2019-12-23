@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.55.1 (December 23rd, 2019)
+* bug fix - fixed code completion broken with IntelliCode. See [#1213](https://github.com/redhat-developer/vscode-java/issues/1213).
+
 ## 0.55.0 (December 23rd, 2019)
 * enhancement - added support for Call Hierarchy. See [#650](https://github.com/redhat-developer/vscode-java/issues/650).
 * enhancement - add jars to classpath via new `java.project.referencedLibraries` preference. See [#1196](https://github.com/redhat-developer/vscode-java/pull/1196).
