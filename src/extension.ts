@@ -3,8 +3,8 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, VersionedTextDocumentIdentifier, ErrorHandler, Message, ErrorAction, CloseAction, InitializationFailedHandler, DidChangeConfigurationNotification } from 'vscode-languageclient';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument } from 'vscode';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documentSymbols';
@@ -14,7 +14,7 @@ import {
 	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
 	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute
 } from './protocol';
-import { ExtensionAPI, ExtensionApiVersion } from './extension.api';
+import { ExtensionAPI, ExtensionApiVersion, ClasspathQueryOptions, ClasspathResult } from './extension.api';
 import * as buildpath from './buildpath';
 import * as hoverAction from './hoverAction';
 import * as sourceAction from './sourceAction';
@@ -22,7 +22,7 @@ import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import * as net from 'net';
 import { getJavaConfiguration } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles, getKey, IS_WORKSPACE_JDK_ALLOWED } from './settings';
+import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
@@ -242,6 +242,14 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
 			context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
 
+			const getProjectSettings = async (uri: string, SettingKeys: string[]) => {
+				return await commands.executeCommand<Object>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, uri, SettingKeys);
+			};
+
+			const getClasspaths = async (uri: string, options: ClasspathQueryOptions) => {
+				return await commands.executeCommand<ClasspathResult>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_CLASSPATHS, uri, JSON.stringify(options));
+			};
+
 			languageClient.onReady().then(() => {
 				languageClient.onNotification(StatusNotification.type, (report) => {
 					switch (report.type) {
@@ -253,7 +261,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								javaRequirement: requirements,
 								status: report.type,
 								registerHoverCommand,
-								getDocumentSymbols
+								getDocumentSymbols,
+								getProjectSettings,
+								getClasspaths
 							});
 							snippetProvider.setActivation(false);
 							break;
@@ -264,7 +274,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								javaRequirement: requirements,
 								status: report.type,
 								registerHoverCommand,
-								getDocumentSymbols
+								getDocumentSymbols,
+								getProjectSettings,
+								getClasspaths
 							});
 							break;
 						case 'Starting':

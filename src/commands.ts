@@ -172,4 +172,12 @@ export namespace Commands {
      * Show server task status
      */
     export const SHOW_SERVER_TASK_STATUS = 'java.show.server.task.status';
+    /**
+     * Get the project settings
+     */
+    export const GET_PROJECT_SETTINGS = 'java.project.getSettings';
+    /**
+     * Get the classpaths and modulepaths
+     */
+    export const GET_CLASSPATHS = 'java.project.getClasspaths';
 }
