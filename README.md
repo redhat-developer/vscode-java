@@ -120,10 +120,11 @@ The following settings are supported:
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 * `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
-
-New in 0.55.0:
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
 * `java.completion.maxResults`: Maximum number of completion results (not including snippets).Setting 0 will disable the limit and return all results. Be aware the performance will be very negatively impacted.
+
+New in 0.56.0:
+* `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
 
 Troubleshooting
 ===============

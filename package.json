@@ -139,6 +139,12 @@
           "description": "Enable/disable the Gradle wrapper.",
           "scope": "window"
         },
+        "java.import.gradle.offline.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable the Gradle offline mode.",
+          "scope": "window"
+        },
         "java.import.gradle.version": {
           "type": "string",
           "default": null,
