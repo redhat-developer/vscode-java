@@ -125,6 +125,7 @@ The following settings are supported:
 
 New in 0.56.0:
 * `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
+* `java.configuration.runtimes`: Java Execution Environments.
 
 Troubleshooting
 ===============
