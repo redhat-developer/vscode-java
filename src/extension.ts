@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, Emitter } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documentSymbols';
@@ -250,6 +250,13 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				return await commands.executeCommand<ClasspathResult>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_CLASSPATHS, uri, JSON.stringify(options));
 			};
 
+			const isTestFile = async (uri: string) => {
+				return await commands.executeCommand<boolean>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IS_TEST_FILE, uri);
+			};
+
+			const _onDidClasspathUpdate = new Emitter<Uri>();
+			const onDidClasspathUpdate = _onDidClasspathUpdate.event;
+
 			languageClient.onReady().then(() => {
 				languageClient.onNotification(StatusNotification.type, (report) => {
 					switch (report.type) {
@@ -263,7 +270,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								registerHoverCommand,
 								getDocumentSymbols,
 								getProjectSettings,
-								getClasspaths
+								getClasspaths,
+								isTestFile,
+								onDidClasspathUpdate
 							});
 							snippetProvider.setActivation(false);
 							break;
@@ -276,7 +285,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								registerHoverCommand,
 								getDocumentSymbols,
 								getProjectSettings,
-								getClasspaths
+								getClasspaths,
+								isTestFile,
+								onDidClasspathUpdate
 							});
 							break;
 						case 'Starting':
@@ -290,6 +301,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					serverTasks.updateServerTask(progress);
 				});
 				languageClient.onNotification(ActionableNotification.type, (notification) => {
+					if (notification.message === "__CLASSPATH_UPDATED__") {
+						_onDidClasspathUpdate.fire(Uri.parse(notification.data));
+						return;
+					}
 					let show = null;
 					switch (notification.severity) {
 						case MessageType.Log:

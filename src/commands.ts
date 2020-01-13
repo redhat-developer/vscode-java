@@ -180,4 +180,8 @@ export namespace Commands {
      * Get the classpaths and modulepaths
      */
     export const GET_CLASSPATHS = 'java.project.getClasspaths';
+    /**
+     * Check the input file is a test file or not
+     */
+    export const IS_TEST_FILE = 'java.project.isTestFile';
 }
