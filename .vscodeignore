@@ -19,6 +19,7 @@ webpack.*.json
 node_modules
 .editorconfig
 .travis.yml
-gulpfile.jsonJenkinsfile
+gulpfile.js
+Jenkinsfile
 tslint.json
 webpack.config.js
