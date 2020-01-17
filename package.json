@@ -57,7 +57,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Java configuration",
+      "title": "Java",
       "properties": {
         "java.home": {
           "type": [
