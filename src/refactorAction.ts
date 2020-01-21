@@ -32,10 +32,12 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
 
     context.subscriptions.push(commands.registerCommand(javaCommands.APPLY_REFACTORING_COMMAND, async (command: string, params: any, commandInfo: any) => {
         if (command === 'extractVariable'
+            || command === 'assignVariable'
             || command === 'extractVariableAllOccurrence'
             || command === 'extractConstant'
             || command === 'extractMethod'
             || command === 'extractField'
+            || command === 'assignField'
             || command === 'convertVariableToField'
             || command === 'invertVariable'
             || command === 'convertAnonymousClassToNestedCommand') {
