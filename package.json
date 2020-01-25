@@ -493,6 +493,17 @@
           "default": [],
           "description": "Java Execution Environments -> Runtimes.",
           "scope": "machine"
+        },
+        "java.compiler.problem.redundantSuperinterface": {
+          "type": "string",
+          "enum": [
+            "error",
+            "warning",
+            "info",
+            "ignore"
+          ],
+          "description": "Redundant super interface.",
+          "default": null
         }
       }
     },
