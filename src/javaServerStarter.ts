@@ -92,6 +92,13 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 
 	parseVMargs(params, vmargs);
+	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
+	// were deprecated in JDK 13 and will likely be removed in a future release."
+	// so only add -noverify for older versions
+	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.java_version < 13) {
+		params.push('-noverify');
+	}
+
 	const serverHome: string = path.resolve(__dirname, '../server');
 	const launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: serverHome });
 	if (launchersFound.length) {

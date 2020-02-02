@@ -57,7 +57,7 @@
     ],
     "configuration": {
       "type": "object",
-      "title": "Java configuration",
+      "title": "Java",
       "properties": {
         "java.home": {
           "type": [
@@ -73,8 +73,8 @@
             "string",
             "null"
           ],
-          "default": "-noverify -Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication",
-          "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-noverify -Xmx1G  -XX:+UseG1GC -XX:+UseStringDeduplication` to bypass class verification, increase the heap size to 1GB and enable String deduplication with the G1 Garbage collector",
+          "default": "-Xmx1G -XX:+UseG1GC -XX:+UseStringDeduplication",
+          "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-Xmx1G  -XX:+UseG1GC -XX:+UseStringDeduplication` to increase the heap size to 1GB and enable String deduplication with the G1 Garbage collector",
           "scope": "window"
         },
         "java.errors.incompleteClasspath.severity": {

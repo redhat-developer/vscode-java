@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, Emitter } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -172,14 +172,14 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				},
 				middleware: {
 					workspace: {
-					  didChangeConfiguration: () => {
-						languageClient.sendNotification(DidChangeConfigurationNotification.type, {
-							settings: {
-								java: getJavaConfig(requirements.java_home),
-							}
-						});
-						onConfigurationChange(languageClient, context);
-					  }
+						didChangeConfiguration: () => {
+							languageClient.sendNotification(DidChangeConfigurationNotification.type, {
+								settings: {
+									java: getJavaConfig(requirements.java_home),
+								}
+							});
+							onConfigurationChange(languageClient, context);
+						}
 					}
 				},
 				revealOutputChannelOn: RevealOutputChannelOn.Never,
@@ -471,7 +471,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			languageClient.start();
 			// Register commands here to make it available even when the language client fails
 
-			context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () =>  languageClient.outputChannel.show(ViewColumn.Three)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () => languageClient.outputChannel.show(ViewColumn.Three)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
 
@@ -887,15 +887,17 @@ async function getTriggerFiles(): Promise<string[]> {
 			}
 		}
 
-		for (const javaFile of await workspace.findFiles("*.java", undefined, 1)) { // Find at most 1 java file
-            if (isPrefix(rootPath, javaFile.fsPath)) {
+		const javaFilesUnderRoot: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "*.java"), undefined, 1);
+		for (const javaFile of javaFilesUnderRoot) {
+			if (isPrefix(rootPath, javaFile.fsPath)) {
 				openedJavaFiles.push(javaFile.toString());
 				return;
 			}
 		}
 
-		for (const javaFile of await workspace.findFiles("{src, test}/**/*.java", undefined, 1)) {
-            if (isPrefix(rootPath, javaFile.fsPath)) {
+		const javaFilesInCommonPlaces: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "{src, test}/**/*.java"), undefined, 1);
+		for (const javaFile of javaFilesInCommonPlaces) {
+			if (isPrefix(rootPath, javaFile.fsPath)) {
 				openedJavaFiles.push(javaFile.toString());
 				return;
 			}
