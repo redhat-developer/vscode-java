@@ -27,9 +27,10 @@ export type getProjectSettingsCommand = (uri: string, SettingKeys: string[]) => 
 export type getClasspathsCommand = (uri: string, options: ClasspathQueryOptions) => Promise<ClasspathResult>;
 export type ClasspathQueryOptions = {
 	/**
-     * Determines whether the result should contain tests or not.
-     */
-    excludingTests: boolean;
+	 * Determines the scope of the classpath. Valid scopes are "runtime" and "test".
+	 * If the given scope is not supported, "runtime" will be used.
+	 */
+	scope: string;
 };
 
 export type ClasspathResult = {
@@ -44,7 +45,7 @@ export type ClasspathResult = {
 	/**
 	 * File path array for the modulepaths.
 	 */
-    modulepaths: string[];
+	modulepaths: string[];
 };
 
 /**
@@ -58,7 +59,7 @@ export type isTestFileCommand = (uri: string) => Promise<boolean>;
 export const ExtensionApiVersion = '0.4';
 
 export interface ExtensionAPI {
-    readonly apiVersion: string;
+	readonly apiVersion: string;
 	readonly javaRequirement: RequirementsData;
 	readonly status: "Started" | "Error";
 	readonly registerHoverCommand: registerHoverCommand;
