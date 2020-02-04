@@ -447,7 +447,7 @@
         },
         "java.configuration.runtimes": {
           "type": "array",
-          "label": "Java Execution Environments.",
+          "label": "Map Java Execution Environments to local JDKs",
           "items": {
             "type": "object",
             "default": {},
