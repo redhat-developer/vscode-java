@@ -496,6 +496,11 @@
         }
       }
     },
+    "configurationDefaults": {
+      "[java]": {
+        "editor.suggest.snippetsPreventQuickSuggestions": false
+      }
+    },
     "commands": [
       {
         "command": "java.projectConfiguration.update",
