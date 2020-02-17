@@ -1,12 +1,13 @@
 # Change Log
 
-## 0.56.0 (February 5th, 2019)
+## 0.56.0 (February 17th, 2019)
 * enhancement - added `java.import.gradle.offline.enabled` preference. See [#1157](https://github.com/redhat-developer/vscode-java/issues/1157).
 * enhancement - added `java.configuration.runtimes` preference for mapping Java Execution Environments to local JDK runtimes. See [#1207](https://github.com/redhat-developer/vscode-java/pull/1207).
 * enhancement - align settings category name with VS Code recommendations. See [#1227](https://github.com/redhat-developer/vscode-java/issues/1227).
 * enhancement - added code actions to assign statement to new variable/field. See [#1208](https://github.com/redhat-developer/vscode-java/issues/1208).
 * enhancement - added code action to remove redundant interfaces. See [JLS#438](https://github.com/eclipse/eclipse.jdt.ls/issues/438).
 * enhancement - added code actions to remove the `final` modifier. See [JLS#441](https://github.com/eclipse/eclipse.jdt.ls/issues/441).
+* enhancement - added code action to add missing case labels in switch statements. See [JLS#1140](https://github.com/eclipse/eclipse.jdt.ls/issues/1140).
 * bug fix - fixed duplicate labels in progress reports. See [#1230](https://github.com/redhat-developer/vscode-java/issues/1230).
 * bug fix - don't set the -noverify flag if JDK >= 13. See [#1250](https://github.com/redhat-developer/vscode-java/pull/1250).
 * bug fix - fixed Intellisense not working when attached javadoc can't be read. See [JLS#1314](https://github.com/eclipse/eclipse.jdt.ls/pull/1314).
