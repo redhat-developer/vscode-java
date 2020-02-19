@@ -1,6 +1,10 @@
 # Change Log
 
-## 0.56.0 (February 17th, 2019)
+## 0.57.0 (February 19th, 2020)
+* bug fix - fixed Gradle project failing to build while fetching non-existing snapshot distro. See [#1285](https://github.com/redhat-developer/vscode-java/issues/1285).
+* bug fix - fixed Java suggestion details missing in some circumstances. See [#1258](https://github.com/redhat-developer/vscode-java/issues/1258).
+
+## 0.56.0 (February 17th, 2020)
 * enhancement - added `java.import.gradle.offline.enabled` preference. See [#1157](https://github.com/redhat-developer/vscode-java/issues/1157).
 * enhancement - added `java.configuration.runtimes` preference for mapping Java Execution Environments to local JDK runtimes. See [#1207](https://github.com/redhat-developer/vscode-java/pull/1207).
 * enhancement - align settings category name with VS Code recommendations. See [#1227](https://github.com/redhat-developer/vscode-java/issues/1227).
