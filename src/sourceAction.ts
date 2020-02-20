@@ -53,7 +53,7 @@ function registerOverrideMethodsCommand(languageClient: LanguageClient, context:
             canPickMany: true,
             placeHolder: `Select methods to override or implement in ${result.type}`
         });
-        if (!selectedItems.length) {
+        if (!selectedItems || !selectedItems.length) {
             return;
         }
 
@@ -95,7 +95,7 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: 
             canPickMany: true,
             placeHolder:  'Select the fields to include in the hashCode() and equals() methods.'
         });
-        if (!selectedFields.length) {
+        if (!selectedFields || !selectedFields.length) {
             return;
         }
 
@@ -231,7 +231,7 @@ function registerGenerateAccessorsCommand(languageClient: LanguageClient, contex
             canPickMany: true,
             placeHolder:  'Select the fields to generate getters and setters.'
         });
-        if (!selectedAccessors.length) {
+        if (!selectedAccessors || !selectedAccessors.length) {
             return;
         }
 
