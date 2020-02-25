@@ -467,7 +467,8 @@
                   "JavaSE-10",
                   "JavaSE-11",
                   "JavaSE-12",
-                  "JavaSE-13"
+                  "JavaSE-13",
+                  "JavaSE-14"
                 ],
                 "label": "Java Execution Environment name. Must be unique"
               },
