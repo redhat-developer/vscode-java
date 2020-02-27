@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as net from 'net';
 import * as glob from 'glob';
 import * as os from 'os';
+import * as fs from 'fs';
 import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
 import { RequirementsData } from './requirements';
 import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag } from './settings';
@@ -114,9 +115,39 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	} else if (process.platform === 'linux') {
 		configDir = 'config_linux';
 	}
-	params.push('-configuration'); params.push(path.resolve(__dirname, '../server', configDir));
+	params.push('-configuration'); params.push(resolveConfiguration(context, configDir));
 	params.push('-data'); params.push(workspacePath);
 	return params;
+}
+
+function resolveConfiguration(context, configDir) {
+	ensureExists(context.globalStoragePath);
+	const extensionPath = path.resolve(context.extensionPath, "package.json");
+	const packageFile = JSON.parse(fs.readFileSync(extensionPath, 'utf8'));
+	let version;
+	if (packageFile) {
+		version = packageFile.version;
+	}
+	else {
+		version = '0.0.0';
+	}
+	let configuration = path.resolve(context.globalStoragePath, version);
+	ensureExists(configuration);
+	configuration = path.resolve(configuration, configDir);
+	ensureExists(configuration);
+	const configIniName = "config.ini";
+	const configIni = path.resolve(configuration, configIniName);
+	if (!fs.existsSync(configIni)) {
+		const ini = path.resolve(__dirname, '../server', configDir, configIniName);
+		fs.copyFileSync(ini, configIni);
+	}
+	return configuration;
+}
+
+function ensureExists(folder) {
+	if (!fs.existsSync(folder)) {
+		fs.mkdirSync(folder);
+	}
 }
 
 function startedInDebugMode(): boolean {
