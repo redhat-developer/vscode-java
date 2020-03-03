@@ -8,7 +8,7 @@ import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient
 import { RequirementsData } from './requirements';
 import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag } from './settings';
 import { logger } from './log';
-import { getJavaConfiguration } from './utils';
+import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } from './utils';
 import { workspace, ExtensionContext } from 'vscode';
 
 declare var v8debug;
@@ -137,17 +137,18 @@ function resolveConfiguration(context, configDir) {
 	ensureExists(configuration);
 	const configIniName = "config.ini";
 	const configIni = path.resolve(configuration, configIniName);
+	const ini = path.resolve(__dirname, '../server', configDir, configIniName);
 	if (!fs.existsSync(configIni)) {
-		const ini = path.resolve(__dirname, '../server', configDir, configIniName);
 		fs.copyFileSync(ini, configIni);
+	} else {
+		const configIniTime = getTimestamp(configIni);
+		const iniTime = getTimestamp(ini);
+		if (iniTime > configIniTime) {
+			deleteDirectory(configuration);
+			resolveConfiguration(context, configDir);
+		}
 	}
 	return configuration;
-}
-
-function ensureExists(folder) {
-	if (!fs.existsSync(folder)) {
-		fs.mkdirSync(folder);
-	}
 }
 
 function startedInDebugMode(): boolean {
