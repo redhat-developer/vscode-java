@@ -21,7 +21,7 @@ import * as sourceAction from './sourceAction';
 import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import * as net from 'net';
-import { getJavaConfiguration } from './utils';
+import { getJavaConfiguration, deleteDirectory } from './utils';
 import { onConfigurationChange, excludeProjectSettingsFiles } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
@@ -619,20 +619,6 @@ async function cleanWorkspace(workspacePath) {
 			commands.executeCommand(Commands.RELOAD_WINDOW);
 		}
 	});
-}
-
-function deleteDirectory(dir) {
-	if (fs.existsSync(dir)) {
-		fs.readdirSync(dir).forEach((child) => {
-			const entry = path.join(dir, child);
-			if (fs.lstatSync(entry).isDirectory()) {
-				deleteDirectory(entry);
-			} else {
-				fs.unlinkSync(entry);
-			}
-		});
-		fs.rmdirSync(dir);
-	}
 }
 
 function openServerLogFile(workspacePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
