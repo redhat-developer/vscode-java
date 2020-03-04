@@ -1,5 +1,14 @@
 # Change Log
 
+## 0.58.0 (March 5th, 2020)
+* enhancement - improved support for "standalone file" use cases. See [#1270](https://github.com/redhat-developer/vscode-java/issues/1270).
+* enhancement - parallel downloads of jars, for Maven projects. See [JLS#1369](https://github.com/eclipse/eclipse.jdt.ls/pull/1369).
+* enhancement - allow renaming of lambda parameters. See [#1298](https://github.com/redhat-developer/vscode-java/issues/1298).
+* enhancement - build workspace action can report progress to client. See [JLS#1368](https://github.com/eclipse/eclipse.jdt.ls/pull/1368).
+* enhancement - VS Code Java cannot run from read-only location. See [#1301](https://github.com/redhat-developer/vscode-java/issues/1301).
+* enhancement - optimize for better memory footprint management. See [#1262](https://github.com/redhat-developer/vscode-java/pull/1262)
+* bug fix - fixed error on cancelling source actions. See [#1292](https://github.com/redhat-developer/vscode-java/pull/1292).
+
 ## 0.57.0 (February 19th, 2020)
 * bug fix - fixed Gradle project failing to build while fetching non-existing snapshot distro. See [#1285](https://github.com/redhat-developer/vscode-java/issues/1285).
 * bug fix - fixed Java suggestion details missing in some circumstances. See [#1258](https://github.com/redhat-developer/vscode-java/issues/1258).
