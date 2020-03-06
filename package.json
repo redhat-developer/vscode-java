@@ -152,13 +152,19 @@
           "scope": "window"
         },
         "java.import.gradle.arguments": {
-          "type": "string",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
           "default": null,
           "description": "Arguments to pass to Gradle.",
           "scope": "window"
         },
         "java.import.gradle.jvmArguments": {
-          "type": "string",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
           "default": null,
           "description": "JVM arguments to pass to Gradle.",
           "scope": "window"
