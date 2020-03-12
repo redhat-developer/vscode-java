@@ -115,7 +115,12 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	} else if (process.platform === 'linux') {
 		configDir = 'config_linux';
 	}
-	params.push('-configuration'); params.push(resolveConfiguration(context, configDir));
+	params.push('-configuration');
+	if (DEBUG) { // Dev Mode: keep the config.ini in the installation location
+		params.push(path.resolve(__dirname, '../server', configDir));
+	} else {
+		params.push(resolveConfiguration(context, configDir));
+	}
 	params.push('-data'); params.push(workspacePath);
 	return params;
 }
