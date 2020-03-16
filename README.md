@@ -122,10 +122,11 @@ The following settings are supported:
 * `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
 * `java.completion.maxResults`: Maximum number of completion results (not including snippets).Setting 0 will disable the limit and return all results. Be aware the performance will be very negatively impacted.
-
-New in 0.56.0:
 * `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
 * `java.configuration.runtimes`: Map Java Execution Environments to local JDKs.
+
+New in 0.59.0:
+* `java.import.gradle.user.home`: setting for GRADLE_USER_HOME.
 
 Troubleshooting
 ===============

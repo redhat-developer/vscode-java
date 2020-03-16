@@ -169,6 +169,12 @@
           "description": "Setting for GRADLE_HOME.",
           "scope": "window"
         },
+        "java.import.gradle.user.home": {
+          "type": "string",
+          "default": null,
+          "description": "Setting for GRADLE_USER_HOME.",
+          "scope": "window"
+        },
         "java.maven.downloadSources": {
           "type": "boolean",
           "default": false,
