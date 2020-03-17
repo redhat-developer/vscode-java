@@ -506,7 +506,7 @@
           "enum": [
             "Standard",
             "LightWeight",
-            "HighPerformance"
+            "Hybrid"
           ],
           "enumDescriptions": [
             "Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc.",
@@ -514,7 +514,7 @@
             "Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready."
           ],
           "description": "The launch mode for the Java extension",
-          "default": "HighPerformance",
+          "default": "Hybrid",
           "scope": "window"
         }
       }

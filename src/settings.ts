@@ -197,10 +197,10 @@ export function getJavaagentFlag(vmargs) {
 export enum ServerMode {
 	STANDARD = 'Standard',
 	LIGHTWEIGHT = 'LightWeight',
-	HIGHPERFORMANCE = 'HighPerformance'
+	HYBRID = 'Hybrid'
 }
 
 export function getJavaServerMode(): ServerMode {
 	return workspace.getConfiguration().get('java.server.launchMode')
-		|| ServerMode.HIGHPERFORMANCE;
+		|| ServerMode.HYBRID;
 }
