@@ -2,16 +2,7 @@
 const gulp = require('gulp');
 const cp = require('child_process');
 const decompress = require('gulp-decompress');
-const download = require('gulp-download');
 const server_dir = '../eclipse.jdt.ls';
-//...
-
-gulp.task('download_server', function(done) {
-	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
-		.pipe(decompress())
-		.pipe(gulp.dest('./server'));
-	done();
-});
 
 gulp.task('build_server', function(done) {
 	cp.execSync(mvnw()+ ' -Pserver-distro clean package', {cwd:server_dir, stdio:[0,1,2]} );
