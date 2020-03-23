@@ -20,7 +20,7 @@ Features
 =========
 ![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/vscode-java.0.0.1.gif)
 
-* Supports code from Java 1.5 to Java 13
+* Supports code from Java 1.5 to Java 14
 * Maven pom.xml project support
 * Basic Gradle Java project support (Android not supported)
 * Standalone Java files support
