@@ -15,7 +15,7 @@ interface SourcePath {
     projectType: string;
 }
 
-interface ListCommandResult extends Result {
+export interface ListCommandResult extends Result {
     data?: SourcePath[];
 }
 

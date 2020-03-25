@@ -31,6 +31,7 @@ import { serverTaskPresenter } from './serverTaskPresenter';
 import { serverStatus, ServerStatusKind } from './serverStatus';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { registerClientProviders, ClientHoverProvider } from './providerDispatcher';
+import * as fileEventHandler from './fileEventHandler';
 
 let languageClient: LanguageClient;
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
@@ -298,6 +299,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									onDidClasspathUpdate
 								});
 								snippetProvider.setActivation(false);
+								fileEventHandler.setServerStatus(true);
 								break;
 							case 'Error':
 								serverStatus.updateServerStatus(ServerStatusKind.Error);
@@ -312,6 +314,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									isTestFile,
 									onDidClasspathUpdate
 								});
+								fileEventHandler.setServerStatus(true);
 								break;
 							case 'Starting':
 							case 'Message':
@@ -491,6 +494,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 			}
 
+			fileEventHandler.registerFileEventHandlers(languageClient, context);
 			if (requireSyntaxServer) {
 				syntaxClient.start();
 			}
@@ -499,6 +503,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () => languageClient.outputChannel.show(ViewColumn.Three)));
 				context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, () => serverTaskPresenter.presentServerTaskView()));
 			}
+
 			// Register commands here to make it available even when the language client fails
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
 
