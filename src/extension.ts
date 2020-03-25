@@ -29,6 +29,7 @@ import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { serverTasks } from './serverTasks';
 import { serverTaskPresenter } from './serverTaskPresenter';
 import { serverStatus, ServerStatusKind } from './serverStatus';
+import * as fileEventHandler from './fileEventHandler';
 
 let languageClient: LanguageClient;
 const jdtEventEmitter = new EventEmitter<Uri>();
@@ -275,6 +276,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								onDidClasspathUpdate
 							});
 							snippetProvider.setActivation(false);
+							fileEventHandler.setServerStatus(true);
 							break;
 						case 'Error':
 							serverStatus.updateServerStatus(ServerStatusKind.Error);
@@ -289,6 +291,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								isTestFile,
 								onDidClasspathUpdate
 							});
+							fileEventHandler.setServerStatus(true);
 							break;
 						case 'Starting':
 						case 'Message':
@@ -467,6 +470,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
 				}
 			}
+
+			fileEventHandler.registerFileEventHandlers(languageClient, context);
 
 			languageClient.start();
 			// Register commands here to make it available even when the language client fails
