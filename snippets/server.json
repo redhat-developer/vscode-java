@@ -92,27 +92,27 @@
 		"body": [
 			"import ${1:java}.$2.$3"
 		],
-		"description": "Import Statemet"
+		"description": "Import Statement"
 	},
 	"Import Util Statement": {
 		"prefix": "impu",
 		"body": [
 			"import ${1:java}.${2:util}.${0:*}"
 		],
-		"description": "Import Util Statemet"
+		"description": "Import Util Statement"
 	},
 	"Import Lang Statement": {
 		"prefix": "impl",
 		"body": [
 			"import ${1:java}.${2:lang}.${0:*}"
 		],
-		"description": "Import Lang Statemet"
+		"description": "Import Lang Statement"
 	},
 	"Import IO Statement": {
 		"prefix": "impio",
 		"body": [
 			"import ${1:java}.${2:io}.${0:*}"
 		],
-		"description": "Import IO Statemet"
+		"description": "Import IO Statement"
 	}
 }
