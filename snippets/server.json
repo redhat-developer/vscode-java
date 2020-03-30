@@ -86,5 +86,33 @@
 			"} while (${1:condition});"
 		],
 		"description": "Do-While Statement"
+	},
+	"Import Statement": {
+		"prefix": "imp",
+		"body": [
+			"import ${1:java}.$2.$3"
+		],
+		"description": "Import Statemet"
+	},
+	"Import Util Statement": {
+		"prefix": "impu",
+		"body": [
+			"import ${1:java}.${2:util}.${0:*}"
+		],
+		"description": "Import Util Statemet"
+	},
+	"Import Lang Statement": {
+		"prefix": "impl",
+		"body": [
+			"import ${1:java}.${2:lang}.${0:*}"
+		],
+		"description": "Import Lang Statemet"
+	},
+	"Import IO Statement": {
+		"prefix": "impio",
+		"body": [
+			"import ${1:java}.${2:io}.${0:*}"
+		],
+		"description": "Import IO Statemet"
 	}
 }
