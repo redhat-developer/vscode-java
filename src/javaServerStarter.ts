@@ -14,13 +14,13 @@ import { workspace, ExtensionContext } from 'vscode';
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 
-export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig, context: ExtensionContext): Executable {
+export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
-	options.env = process.env;
+	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
 	executable.options = options;
 	executable.command = path.resolve(requirements.java_home + '/bin/java');
-	executable.args = prepareParams(requirements, javaConfig, workspacePath, context);
+	executable.args = prepareParams(requirements, javaConfig, workspacePath, context, isSyntaxServer);
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
 }
@@ -41,10 +41,11 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 	});
 }
 
-function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath, context: ExtensionContext): string[] {
+function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): string[] {
 	const params: string[] = [];
 	if (DEBUG) {
-		params.push('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044,quiet=y');
+		const port = isSyntaxServer ? 1045 : 1044;
+		params.push(`-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${port},quiet=y`);
 		// suspend=y is the default. Use this form if you need to debug the server startup code:
 		//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 	}
@@ -109,11 +110,11 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 
 	// select configuration directory according to OS
-	let configDir = 'config_win';
+	let configDir = isSyntaxServer ? 'config_ss_win' : 'config_win';
 	if (process.platform === 'darwin') {
-		configDir = 'config_mac';
+		configDir = isSyntaxServer ? 'config_ss_mac' : 'config_mac';
 	} else if (process.platform === 'linux') {
-		configDir = 'config_linux';
+		configDir = isSyntaxServer ? 'config_ss_linux' : 'config_linux';
 	}
 	params.push('-configuration');
 	if (DEBUG) { // Dev Mode: keep the config.ini in the installation location

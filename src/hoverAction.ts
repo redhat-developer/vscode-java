@@ -4,20 +4,19 @@ import { commands, ExtensionContext, HoverProvider, languages, CancellationToken
 import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
 import { Commands as javaCommands } from "./commands";
 import { FindLinks } from "./protocol";
-import { registerHoverCommand, provideHoverCommandFn } from "./extension.api";
+import { provideHoverCommandFn } from "./extension.api";
 import { logger } from "./log";
 
-export function registerClientHoverProvider(languageClient: LanguageClient, context: ExtensionContext): registerHoverCommand {
+export function createClientHoverProvider(languageClient: LanguageClient, context: ExtensionContext): JavaHoverProvider {
     const hoverProvider: JavaHoverProvider = new JavaHoverProvider(languageClient);
     hoverProvider.registerHoverCommand(async (params: TextDocumentPositionParams, token: CancellationToken) => {
         return await provideHoverCommand(languageClient, params, token);
     });
-    context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
     context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, (location: any) => {
         navigateToSuperImplementation(languageClient, location);
     }));
 
-    return hoverProvider.registerHoverCommand;
+    return hoverProvider;
 }
 
 async function provideHoverCommand(languageClient: LanguageClient, params: TextDocumentPositionParams, token: CancellationToken): Promise<Command[] | undefined> {

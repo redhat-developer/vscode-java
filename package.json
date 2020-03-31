@@ -500,6 +500,22 @@
           "default": [],
           "description": "Java Execution Environments -> Runtimes.",
           "scope": "machine"
+        },
+        "java.server.launchMode": {
+          "type": "string",
+          "enum": [
+            "Standard",
+            "LightWeight",
+            "Hybrid"
+          ],
+          "enumDescriptions": [
+            "Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc.",
+            "Starts a syntax server with lower start-up cost. Only provides syntax features such as outline, navigation, javadoc, syntax errors.",
+            "Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready."
+          ],
+          "description": "The launch mode for the Java extension",
+          "default": "Hybrid",
+          "scope": "window"
         }
       }
     },

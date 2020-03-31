@@ -101,7 +101,8 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: WorkspaceConfiguration) {
 	return hasConfigKeyChanged('home', oldConfig, newConfig)
 		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
-		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig);
+		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig)
+		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig);
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {
@@ -191,4 +192,15 @@ export function getJavaagentFlag(vmargs) {
 		}
 	}
 	return agentFlag;
+}
+
+export enum ServerMode {
+	STANDARD = 'Standard',
+	LIGHTWEIGHT = 'LightWeight',
+	HYBRID = 'Hybrid'
+}
+
+export function getJavaServerMode(): ServerMode {
+	return workspace.getConfiguration().get('java.server.launchMode')
+		|| ServerMode.HYBRID;
 }
