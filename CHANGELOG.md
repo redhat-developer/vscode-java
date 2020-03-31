@@ -1,5 +1,18 @@
 # Change Log
 
+## 0.59.0 (April 1st 2020)
+ * enhancement - Enable Java 14 support. See [#1300](https://github.com/redhat-developer/vscode-java/pull/1300).
+ * enhancement - Support for JDK 14 for Gradle projects. See [#1338](https://github.com/redhat-developer/vscode-java/issues/1338).
+ * enhancement - Provide `record` snippet. See [JLS#1393](https://github.com/eclipse/eclipse.jdt.ls/issues/1393).
+ * enhancement - No Javadoc completion for records. See [JLS#1396](https://github.com/eclipse/eclipse.jdt.ls/issues/1396).
+ * enhancement - Fill in content for newly created files. See [#1222](https://github.com/redhat-developer/vscode-java/issues/1222).
+ * enhancement - new `java.server.launchMode` to control whether to enable a syntax language server. See [#1329](https://github.com/redhat-developer/vscode-java/pull/1329).
+ * enhancement - j.i.gradle.arguments and j.i.gradle.jvmArguments aren't properly defined. See [JLS#1387](https://github.com/eclipse/eclipse.jdt.ls/pull/1387).
+ * enhancement - enable syntax mode when importing a partial folder of maven/gradle project. See [JLS#1364](https://github.com/eclipse/eclipse.jdt.ls/pull/1364).
+ * enhancement - Add `java.import.gradle.user.home` preference for setting `GRADLE_USER_HOME`. See [#1310](https://github.com/redhat-developer/vscode-java/issues/1310).
+ * bug fix - root path in the preference manager won't update when workspace folder changes. See [JLS#1388](https://github.com/eclipse/eclipse.jdt.ls/issues/1388).
+ * bug fix - BadLocationException and diagnostic with negative line number send to client. See [JLS#1374](https://github.com/eclipse/eclipse.jdt.ls/issues/1374).
+
 ## 0.58.0 (March 5th, 2020)
 * enhancement - improved support for "standalone file" use cases. See [#1270](https://github.com/redhat-developer/vscode-java/issues/1270).
 * enhancement - parallel downloads of jars, for Maven projects. See [JLS#1369](https://github.com/eclipse/eclipse.jdt.ls/pull/1369).

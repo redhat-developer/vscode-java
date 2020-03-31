@@ -58,6 +58,29 @@ The path to the Java Development Kit is searched in the following order:
 - the `JAVA_HOME` environment variable
 - on the current system path
 
+This JDK will be used to launch the Java Language Server. And by default, will be used to compile your projects.
+
+If you need to compile your projects against a different JDK version, it's recommended you configure the `java.configuration.runtimes` property in your user settings, eg:
+
+```json
+"java.configuration.runtimes": [
+  {
+    "name": "JavaSE-1.8",
+    "path": "/path/to/jdk-8",
+  },
+  {
+    "name": "JavaSE-11",
+    "path": "/path/to/jdk-11",
+  },
+  {
+    "name": "JavaSE-14",
+    "path": "/path/to/jdk-14",
+    "default": true
+  },
+]
+```
+The default runtime will be used when you open standalone Java files.
+
 Available commands
 ==========================
 The following commands are available:
@@ -127,6 +150,12 @@ The following settings are supported:
 
 New in 0.59.0:
 * `java.import.gradle.user.home`: setting for GRADLE_USER_HOME.
+* `java.server.launchMode`:
+  - `Standard`: Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc...
+  - `LightWeight`: Starts a syntax server with lower start-up cost. Only provides syntax features such as outline, navigation, javadoc, syntax errors. The lightweight mode won't load thirdparty extensions, such as java test runner, java debugger, etc.
+  - `Hybrid`: Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready. And the syntax server will be shutdown automatically after the standard server is fully ready.
+
+  Default launch mode is `Hybrid`. Legacy mode is `Standard`
 
 Troubleshooting
 ===============
