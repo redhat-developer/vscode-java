@@ -1,7 +1,7 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, FileRenameEvent, window, TextDocument, SnippetString, commands, Uri } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -13,7 +13,9 @@ export function setServerStatus(ready: boolean) {
 }
 
 export function registerFileEventHandlers(client: LanguageClient, context: ExtensionContext, ) {
-    context.subscriptions.push(workspace.onDidCreateFiles(handleNewJavaFiles));
+	if (workspace.onDidCreateFiles) {// Theia doesn't support workspace.onDidCreateFiles yet
+		context.subscriptions.push(workspace.onDidCreateFiles(handleNewJavaFiles));
+	}
 }
 
 async function handleNewJavaFiles(e: FileCreateEvent) {
