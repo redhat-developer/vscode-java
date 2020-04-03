@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.59.1 (April 3rd 2020)
+* enhancement - sort formatter settings. See [#1359](https://github.com/redhat-developer/vscode-java/pull/1359).
+* bug fix - fixed failure to start 0.59 in theia 1.0.0/dev - onDidCreateFiles is not a function in workspace. See [#1363](https://github.com/redhat-developer/vscode-java/issues/1363).
+
 ## 0.59.0 (April 1st 2020)
  * enhancement - Enable Java 14 support. See [#1300](https://github.com/redhat-developer/vscode-java/pull/1300).
  * enhancement - Support for JDK 14 for Gradle projects. See [#1338](https://github.com/redhat-developer/vscode-java/issues/1338).
