@@ -11,6 +11,7 @@ import { checkJavaPreferences } from './settings';
 
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
+const JAVA_FILENAME = 'java' + (isWindows ? '.exe' : '');
 
 export interface RequirementsData {
     java_home: string;
@@ -80,7 +81,8 @@ function checkJavaRuntime(context: ExtensionContext): Promise<string> {
 
 function checkJavaVersion(javaHome: string): Promise<number> {
     return new Promise((resolve, reject) => {
-        cp.execFile(javaHome + '/bin/java', ['-version'], {}, (error, stdout, stderr) => {
+        const javaBin = path.join(javaHome, "bin", JAVA_FILENAME);
+        cp.execFile(javaBin, ['-version'], {}, (error, stdout, stderr) => {
             const javaVersion = parseMajorVersion(stderr);
             if (javaVersion < 8) {
                 openJDKDownload(reject, 'Java 8 or more recent is required to run. Please download and install a recent JDK');
