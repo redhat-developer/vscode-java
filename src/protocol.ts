@@ -112,8 +112,8 @@ export namespace ExecuteClientCommandRequest {
     export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/executeClientCommand');
 }
 
-export namespace SendNotificationRequest {
-    export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/notify');
+export namespace ServerNotification {
+    export const type = new NotificationType<ExecuteCommandParams, void>('workspace/notify');
 }
 
 export interface SourceAttachmentRequest {
