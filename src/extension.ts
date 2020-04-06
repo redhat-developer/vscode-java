@@ -364,7 +364,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						return commands.executeCommand(params.command, ...params.arguments);
 					});
 
-					languageClient.onRequest(SendNotificationRequest.type, (params) => {
+					languageClient.onNotification(SendNotificationRequest.type, (params) => {
 						return commands.executeCommand(params.command, ...params.arguments);
 					});
 
