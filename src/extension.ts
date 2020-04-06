@@ -11,7 +11,7 @@ import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documen
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import {
-	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, SendNotificationRequest,
+	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, ServerNotification,
 	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute
 } from './protocol';
 import { ExtensionAPI, ExtensionApiVersion, ClasspathQueryOptions, ClasspathResult, registerHoverCommand } from './extension.api';
@@ -364,8 +364,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						return commands.executeCommand(params.command, ...params.arguments);
 					});
 
-					languageClient.onRequest(SendNotificationRequest.type, (params) => {
-						return commands.executeCommand(params.command, ...params.arguments);
+					languageClient.onNotification(ServerNotification.type, (params) => {
+						commands.executeCommand(params.command, ...params.arguments);
 					});
 
 					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
