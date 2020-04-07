@@ -368,3 +368,11 @@ export interface LinkLocation extends Location {
 export namespace FindLinks {
     export const type = new RequestType<FindLinksParams, LinkLocation[], void, void>('java/findLinks');
 }
+
+export interface FileRenameParams {
+    files: Array<{ oldUri: string, newUri: string }>;
+}
+
+export namespace DidRenameFiles {
+    export const type = new RequestType<FileRenameParams, WorkspaceEdit, void, void>('java/didRenameFiles');
+}
