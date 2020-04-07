@@ -1,10 +1,11 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
+import { DidRenameFiles } from './protocol';
 
 let serverReady: boolean = false;
 
@@ -13,16 +14,20 @@ export function setServerStatus(ready: boolean) {
 }
 
 export function registerFileEventHandlers(client: LanguageClient, context: ExtensionContext, ) {
-	if (workspace.onDidCreateFiles) {// Theia doesn't support workspace.onDidCreateFiles yet
-		context.subscriptions.push(workspace.onDidCreateFiles(handleNewJavaFiles));
-	}
+    if (workspace.onDidCreateFiles) {// Theia doesn't support workspace.onDidCreateFiles yet
+        context.subscriptions.push(workspace.onDidCreateFiles(handleNewJavaFiles));
+    }
+
+    if (workspace.onDidRenameFiles) {
+        context.subscriptions.push(workspace.onDidRenameFiles((e: FileRenameEvent) => handleRenameFiles(e, client)));
+    }
 }
 
 async function handleNewJavaFiles(e: FileCreateEvent) {
     const emptyFiles: Uri[] = [];
     const textDocuments: TextDocument[] = [];
     for (const uri of e.files) {
-        if (!uri.fsPath || !uri.fsPath.endsWith(".java")) {
+        if (!isJavaFile(uri)) {
             continue;
         }
 
@@ -65,6 +70,53 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
         const textEditor = await window.showTextDocument(textDocuments[i]);
         textEditor.insertSnippet(new SnippetString(snippets.join("\n")));
     }
+}
+
+async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
+    if (!serverReady) {
+        return;
+    }
+
+    const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = e.files.filter(event =>
+        isJavaFile(event.oldUri) && isJavaFile(event.newUri)
+        && isInSameDirectory(event.oldUri, event.newUri)
+    ).map(event => {
+        return {
+            oldUri: event.oldUri.toString(),
+            newUri: event.newUri.toString(),
+        };
+    });
+
+    if (!javaRenameEvents.length) {
+        return;
+    }
+
+    window.withProgress({ location: ProgressLocation.Window }, async (p) => {
+        return new Promise(async (resolve, reject) => {
+            p.report({ message: "Computing rename updates..." });
+            try {
+                const edit = await client.sendRequest(DidRenameFiles.type, {
+                    files: javaRenameEvents
+                });
+                const codeEdit = client.protocol2CodeConverter.asWorkspaceEdit(edit);
+                if (codeEdit) {
+                    workspace.applyEdit(codeEdit);
+                }
+            } finally {
+                resolve();
+            }
+        });
+    });
+}
+
+function isJavaFile(uri: Uri): boolean {
+    return uri.fsPath && uri.fsPath.endsWith(".java");
+}
+
+function isInSameDirectory(oldUri: Uri, newUri: Uri): boolean {
+    const oldDir = path.dirname(oldUri.fsPath);
+    const newDir = path.dirname(newUri.fsPath);
+    return !path.relative(oldDir, newDir);
 }
 
 function resolveTypeName(filePath: string): string {
