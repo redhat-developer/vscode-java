@@ -516,6 +516,18 @@
           "description": "The launch mode for the Java extension",
           "default": "Hybrid",
           "scope": "window"
+        },
+        "java.sources.organizeImports.starThreshold": {
+          "type": "integer",
+          "description": "Specifies the number of imports added before a star-import declaration is used.",
+          "default": 99,
+          "scope": "window"
+        },
+        "java.sources.organizeImports.staticStarThreshold": {
+          "type": "integer",
+          "description": "Specifies the number of static imports added before a star-import declaration is used.",
+          "default": 99,
+          "scope": "window"
         }
       }
     },

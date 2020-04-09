@@ -147,8 +147,6 @@ The following settings are supported:
 * `java.completion.maxResults`: Maximum number of completion results (not including snippets).Setting 0 will disable the limit and return all results. Be aware the performance will be very negatively impacted.
 * `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
 * `java.configuration.runtimes`: Map Java Execution Environments to local JDKs.
-
-New in 0.59.0:
 * `java.import.gradle.user.home`: setting for GRADLE_USER_HOME.
 * `java.server.launchMode`:
   - `Standard`: Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc...
@@ -156,6 +154,10 @@ New in 0.59.0:
   - `Hybrid`: Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready. And the syntax server will be shutdown automatically after the standard server is fully ready.
 
   Default launch mode is `Hybrid`. Legacy mode is `Standard`
+
+  New in 0.60.0:
+* `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
+* `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
 
 Troubleshooting
 ===============
