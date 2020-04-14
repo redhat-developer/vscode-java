@@ -32,6 +32,7 @@ import { serverStatus, ServerStatusKind } from './serverStatus';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { registerClientProviders, ClientHoverProvider } from './providerDispatcher';
 import * as fileEventHandler from './fileEventHandler';
+import { registerSemanticTokensProvider } from './semanticTokenProvider';
 
 let languageClient: LanguageClient;
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
@@ -517,6 +518,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
 			context.subscriptions.push(onConfigurationChange(languageClient, context));
+
+			// temporary implementation Semantic Highlighting before it is part of LSP
+			registerSemanticTokensProvider(context);
 		});
 	});
 }
