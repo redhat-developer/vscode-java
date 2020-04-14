@@ -184,4 +184,12 @@ export namespace Commands {
      * Check the input file is a test file or not
      */
     export const IS_TEST_FILE = 'java.project.isTestFile';
+    /**
+     * Temporary command for Semantic Highlighting. To remove when LSP v3.16 is ready.
+     */
+    export const PROVIDE_SEMANTIC_TOKENS = 'java.project.provideSemanticTokens';
+    /**
+     * Temporary command to fetch Semantic Tokens Legend. To remove when LSP v3.16 is ready.
+     */
+    export const GET_SEMANTIC_TOKENS_LEGEND = 'java.project.getSemanticTokensLegend';
 }
