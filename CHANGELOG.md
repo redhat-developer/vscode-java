@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.60.0 (April 16th 2020)
+ * enhancement - support semantic tokens. See [#1393](https://github.com/redhat-developer/vscode-java/pull/1393).
+ * enhancement - display a warning about the impending requirement of Java 11 to run the extension. See [#1366](https://github.com/redhat-developer/vscode-java/issues/1366).
+ * enhancement - organize imports with the asterisk (*) wildcard character. See [#964](https://github.com/redhat-developer/vscode-java/issues/964).
+ * enhancement - update class name and references when renaming a Java file. See [#1372](https://github.com/redhat-developer/vscode-java/pull/1372).
+ * enhancement - add "Generate constructor" option in "Show Fixes" options for fields. See [#1358](https://github.com/redhat-developer/vscode-java/issues/1358).
+ * enhancement - make syntax server support hovering over a type. See [JLS#1403](https://github.com/eclipse/eclipse.jdt.ls/pull/1403).
+ * bug fix - workspace/notify notification creates no vscode command as expected. See [#1367](https://github.com/redhat-developer/vscode-java/issues/1367).
+ * bug fix - fix checkJavaVersion for Windows. See [#1360](https://github.com/redhat-developer/vscode-java/pull/1360).
+
 ## 0.59.1 (April 3rd 2020)
 * enhancement - sort formatter settings. See [#1359](https://github.com/redhat-developer/vscode-java/pull/1359).
 * bug fix - fixed failure to start 0.59 in theia 1.0.0/dev - onDidCreateFiles is not a function in workspace. See [#1363](https://github.com/redhat-developer/vscode-java/issues/1363).
