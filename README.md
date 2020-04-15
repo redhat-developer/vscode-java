@@ -12,7 +12,7 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a recent Java Development Kit (latest Java 8 is the minimum requirement).
+    * Download and install a recent Java Development Kit (latest Java 8 is the current minimum requirement, but [Java 11  will soon be required](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#jdk11.requirement)).
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
