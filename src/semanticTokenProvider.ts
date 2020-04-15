@@ -3,7 +3,11 @@ import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
 
 export function registerSemanticTokensProvider(context: vscode.ExtensionContext) {
-	if (isSemanticHTokensEnabled()) {
+	if (!vscode.languages.registerDocumentSemanticTokensProvider) { // in case Theia doesn't support this API
+		return;
+	}
+
+	if (isSemanticHighlightingEnabled()) {
 		getSemanticTokensLegend().then(legend => {
 			const semanticTokensProviderDisposable = vscode.languages.registerDocumentSemanticTokensProvider({ scheme: 'file', language: 'java' }, semanticTokensProvider, legend);
 			context.subscriptions.push(semanticTokensProviderDisposable);
@@ -38,7 +42,7 @@ function onceSemanticTokenEnabledChange(context: vscode.ExtensionContext, regist
 	const configChangeListener = vscode.workspace.onDidChangeConfiguration(e => {
 		configChangeListener.dispose();
 		if (e.affectsConfiguration('java.semanticHighlighting.enabled')) {
-			if (isSemanticHTokensEnabled()) {
+			if (isSemanticHighlightingEnabled()) {
 				// turn on
 				registerSemanticTokensProvider(context);
 			} else if (registeredDisposable) {
@@ -50,7 +54,7 @@ function onceSemanticTokenEnabledChange(context: vscode.ExtensionContext, regist
 	});
 }
 
-function isSemanticHTokensEnabled(): boolean {
+function isSemanticHighlightingEnabled(): boolean {
 	const config = getJavaConfiguration();
 	const section = 'semanticHighlighting.enabled';
 	return config.get(section);

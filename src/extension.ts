@@ -475,6 +475,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						});
 					}
 					excludeProjectSettingsFiles();
+
+					// temporary implementation Semantic Highlighting before it is part of LSP
+					registerSemanticTokensProvider(context);
 				});
 			}
 
@@ -519,8 +522,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(onConfigurationChange(languageClient, context));
 
-			// temporary implementation Semantic Highlighting before it is part of LSP
-			registerSemanticTokensProvider(context);
 		});
 	});
 }
