@@ -8,6 +8,7 @@ import * as expandHomeDir from 'expand-home-dir';
 import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
 import { checkJavaPreferences } from './settings';
+import { getJavaConfiguration } from './utils';
 
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
@@ -87,6 +88,24 @@ function checkJavaVersion(javaHome: string): Promise<number> {
             if (javaVersion < 8) {
                 openJDKDownload(reject, 'Java 8 or more recent is required to run. Please download and install a recent JDK');
             } else {
+                if (javaVersion < 11) {
+                    const section = "requirements.JDK11Warning";
+                    const dontShowAgain = "Don't Show Again";
+                    const getJDK = "Get the Java Development Kit";
+                    const jdkWarning = getJavaConfiguration().get(section);
+                    if (jdkWarning) {
+                        const message = `Java 11, or more recent, [will soon be required](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements) to run. Consider installing a recent JDK`;
+                        window.showInformationMessage(`${message}`, getJDK, dontShowAgain)
+                            .then(selection => {
+                                if (selection === dontShowAgain) {
+                                    getJavaConfiguration().update(section, false, ConfigurationTarget.Global);
+                                }
+                                if (selection === getJDK) {
+                                    commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(getJdkUrl()));
+                                }
+                            });
+                    }
+                }
                 resolve(javaVersion);
             }
         });
@@ -116,16 +135,21 @@ export function parseMajorVersion(content: string): number {
 }
 
 function openJDKDownload(reject, cause) {
-    let jdkUrl = 'https://developers.redhat.com/products/openjdk/download/?sc_cid=701f2000000RWTnAAO';
-    if (process.platform === 'darwin') {
-        jdkUrl = 'http://www.oracle.com/technetwork/java/javase/downloads/index.html';
-    }
+    const jdkUrl = getJdkUrl();
     reject({
         message: cause,
         label: 'Get the Java Development Kit',
         command: Commands.OPEN_BROWSER,
         commandParam: Uri.parse(jdkUrl),
     });
+}
+
+function getJdkUrl() {
+    let jdkUrl = 'https://developers.redhat.com/products/openjdk/download/?sc_cid=701f2000000RWTnAAO';
+    if (process.platform === 'darwin') {
+        jdkUrl = 'https://adoptopenjdk.net/';
+    }
+    return jdkUrl;
 }
 
 function invalidJavaHome(reject, cause: string) {

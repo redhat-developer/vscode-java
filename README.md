@@ -159,6 +159,7 @@ New in 0.60.0:
 * `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
 * `java.semanticHighlighting.enabled`: Enable/disable the [semantic highlighting](https://github.com/microsoft/vscode/wiki/Semantic-Highlighting-Overview). Defaults to `true`.
+`java.requirements.JDK11Warning`: Enable/disable a warning about the impending requirement of Java 11. Defaults to `true`.
 
 Semantic Highlighting
 ===============
