@@ -1,11 +1,12 @@
 'use strict';
 
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation } from 'vscode';
-import { LanguageClient } from 'vscode-languageclient';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit } from 'vscode';
+import { LanguageClient, WorkspaceEdit as LsWorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
 import { DidRenameFiles } from './protocol';
+import { Converter as ProtocolConverter } from 'vscode-languageclient/lib/protocolConverter';
 
 let serverReady: boolean = false;
 
@@ -98,7 +99,8 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
                 const edit = await client.sendRequest(DidRenameFiles.type, {
                     files: javaRenameEvents
                 });
-                const codeEdit = client.protocol2CodeConverter.asWorkspaceEdit(edit);
+
+                const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, "Rename updates");
                 if (codeEdit) {
                     workspace.applyEdit(codeEdit);
                 }
@@ -172,4 +174,59 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
     }
 
     return javaVersion < targetVersion;
+}
+
+/**
+ * This function reference the implementation of asWorkspaceEdit() from 'vscode-languageclient/lib/protocolConverter'.
+ */
+function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConverter, label: string) {
+    if (!item) {
+        return undefined;
+    }
+
+    const result = new CodeWorkspaceEdit();
+    if (item.documentChanges) {
+        item.documentChanges.forEach(change => {
+            if (CreateFile.is(change)) {
+                result.createFile(converter.asUri(change.uri), change.options, {
+                    needsConfirmation: true,
+                    label,
+                });
+            } else if (RenameFile.is(change)) {
+                result.renameFile(converter.asUri(change.oldUri), converter.asUri(change.newUri), change.options, {
+                    needsConfirmation: true,
+                    label,
+                });
+            } else if (DeleteFile.is(change)) {
+                result.deleteFile(converter.asUri(change.uri), change.options, {
+                    needsConfirmation: true,
+                    label,
+                });
+            } else if (TextDocumentEdit.is(change)) {
+                if (change.edits) {
+                    change.edits.forEach(edit => {
+                        result.replace(converter.asUri(change.textDocument.uri), converter.asRange(edit.range), edit.newText, {
+                            needsConfirmation: true,
+                            label,
+                        });
+                    });
+                }
+            } else {
+                console.error(`Unknown workspace edit change received:\n${JSON.stringify(change, undefined, 4)}`);
+            }
+        });
+    } else if (item.changes) {
+        Object.keys(item.changes).forEach(key => {
+            if (item.changes[key]) {
+                item.changes[key].forEach(edit => {
+                    result.replace(converter.asUri(key), converter.asRange(edit.range), edit.newText, {
+                        needsConfirmation: true,
+                        label,
+                    });
+                });
+            }
+        });
+    }
+
+    return result;
 }
