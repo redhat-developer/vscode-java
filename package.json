@@ -554,6 +554,11 @@
         "category": "Java"
       },
       {
+        "command": "java.project.import",
+        "title": "Import Java projects in workspacce",
+        "category": "Java"
+      },
+      {
         "command": "java.open.serverLog",
         "title": "Open Java language server log file",
         "category": "Java"
