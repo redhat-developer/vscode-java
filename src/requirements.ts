@@ -94,7 +94,7 @@ function checkJavaVersion(javaHome: string): Promise<number> {
                     const getJDK = "Get the Java Development Kit";
                     const jdkWarning = getJavaConfiguration().get(section);
                     if (jdkWarning) {
-                        const message = `Java 11, or more recent, [will soon be required](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#jdk11.requirement) to run. Consider installing a recent JDK`;
+                        const message = `Java 11 [will soon be the minimum requirement](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#jdk11.requirement) to run. Consider installing a recent JDK now.`;
                         window.showInformationMessage(`${message}`, getJDK, dontShowAgain)
                             .then(selection => {
                                 if (selection === dontShowAgain) {
