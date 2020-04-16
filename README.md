@@ -158,7 +158,7 @@ The following settings are supported:
 New in 0.60.0:
 * `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
-* `java.semanticHighlighting.enabled`: Enable/disable the [semantic highlighting](https://github.com/microsoft/vscode/wiki/Semantic-Highlighting-Overview). Defaults to `true`.
+* `java.semanticHighlighting.enabled`: Enable/disable the [semantic highlighting](https://github.com/microsoft/vscode/wiki/Semantic-Highlighting-Overview). Defaults to `false`.
 `java.requirements.JDK11Warning`: Enable/disable a warning about the impending requirement of Java 11. Defaults to `true`.
 
 Semantic Highlighting
@@ -177,7 +177,7 @@ Semantic Highlighting
     }
 }
 ```
-
+Disabled by default, as it's still experimental, it can be enabled with `"java.semanticHighlighting.enabled":true` in settings.json.
 More details in [Semantic Highlighting Wiki Page (Token Styling)](https://github.com/microsoft/vscode/wiki/Semantic-Highlighting-Overview#token-styling).
 
 Troubleshooting

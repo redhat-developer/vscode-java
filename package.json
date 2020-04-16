@@ -530,7 +530,7 @@
         },
         "java.semanticHighlighting.enabled": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Enable/disable the semantic highlighting.",
           "scope": "window"
         },
