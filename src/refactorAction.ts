@@ -113,6 +113,7 @@ async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: R
     }
 
     if (refactorEdit.command) {
+        await new Promise(resolve => setTimeout(resolve, 400));
         if (refactorEdit.command.arguments) {
             await commands.executeCommand(refactorEdit.command.command, ...refactorEdit.command.arguments);
         } else {
