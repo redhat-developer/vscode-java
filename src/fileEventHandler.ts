@@ -1,14 +1,16 @@
 'use strict';
 
+import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, languages } from 'vscode';
 import { LanguageClient, WorkspaceEdit as LsWorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
-import { DidRenameFiles } from './protocol';
+import { DidRenameFiles, WillRenameFiles } from './protocol';
 import { Converter as ProtocolConverter } from 'vscode-languageclient/lib/protocolConverter';
 
 let serverReady: boolean = false;
+let pendingEditPromise: Promise<LsWorkspaceEdit>;
 
 export function setServerStatus(ready: boolean) {
     serverReady = ready;
@@ -21,6 +23,10 @@ export function registerFileEventHandlers(client: LanguageClient, context: Exten
 
     if (workspace.onDidRenameFiles) {
         context.subscriptions.push(workspace.onDidRenameFiles((e: FileRenameEvent) => handleRenameFiles(e, client)));
+    }
+
+    if (workspace.onWillRenameFiles) {
+        context.subscriptions.push(workspace.onWillRenameFiles((e: FileWillRenameEvent) => handleWillRenameFiles(e, client)));
     }
 }
 
@@ -83,14 +89,83 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
     }
 }
 
+async function handleWillRenameFiles(e: FileWillRenameEvent, client: LanguageClient) {
+    if (!serverReady) {
+        return;
+    }
+
+    /**
+     * The refactor package name needs to be counted out before the rename, so use onWillRenameFiles
+     * listener for package rename cases.
+     *
+     * In addition, the client only gives 5s to the file event participants by default, which comes
+     * with a setting files.participants.timeout. If the computation has not been completed within
+     * that time limit, waitUntil will auto return and then emit didRename event.
+     *
+     * For these reasons, the onWillRenameFiles listener just computes the workspace edit and saves
+     * it to a temporary variable. The onDidRenameFiles listener will check whether there is ongoing
+     * computation, wait for it to complete, and then preview and apply the edit.
+     */
+    e.waitUntil(new Promise(async (resolve) => {
+        try {
+            const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = e.files.filter(event =>
+                isValidPackageRename(event.oldUri, event.newUri)
+            ).map(event => {
+                return {
+                    oldUri: event.oldUri.toString(),
+                    newUri: event.newUri.toString(),
+                };
+            });
+
+            if (!javaRenameEvents.length) {
+                return;
+            }
+
+            pendingEditPromise = client.sendRequest(WillRenameFiles.type, {
+                files: javaRenameEvents
+            });
+            await pendingEditPromise;
+        } catch (err) {
+            // ignore
+        } finally {
+            resolve();
+        }
+    }));
+}
+
 async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
     if (!serverReady) {
         return;
     }
 
+    // If the edit is already computed by onWillRename listeners, then apply it directly.
+    if (pendingEditPromise) {
+        const edit = await window.withProgress<LsWorkspaceEdit>({ location: ProgressLocation.Window }, async (p) => {
+            return new Promise(async (resolve) => {
+                p.report({ message: "Computing rename updates..." });
+                let edit: LsWorkspaceEdit;
+                try {
+                    edit = await pendingEditPromise;
+                } catch (err) {
+                    // do nothing.
+                } finally {
+                    pendingEditPromise = null;
+                    resolve(edit);
+                }
+            });
+        });
+
+        if (edit) {
+            await new Promise((resolve) =>setTimeout(resolve, 400)); // wait for the document lifecycle events to be synced to the server.
+            const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, "Rename updates", e.files);
+            workspace.applyEdit(codeEdit);
+        }
+
+        return;
+    }
+
     const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = e.files.filter(event =>
-        isJavaFile(event.oldUri) && isJavaFile(event.newUri)
-        && isInSameDirectory(event.oldUri, event.newUri)
+        isValidFileRename(event.oldUri, event.newUri)
     ).map(event => {
         return {
             oldUri: event.oldUri.toString(),
@@ -123,6 +198,26 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
 
 function isJavaFile(uri: Uri): boolean {
     return uri.fsPath && uri.fsPath.endsWith(".java");
+}
+
+function isFile(uri: Uri): boolean {
+    return lstatSync(uri.fsPath).isFile();
+}
+
+function isDirectory(uri: Uri): boolean {
+    return lstatSync(uri.fsPath).isDirectory();
+}
+
+function isValidFileRename(oldUri: Uri, newUri: Uri): boolean {
+    if (isInSameDirectory(oldUri, newUri)) {
+        return isFile(newUri) && isJavaFile(oldUri) && isJavaFile(newUri);
+    }
+
+    return false;
+}
+
+function isValidPackageRename(oldUri: Uri, newUri: Uri): boolean {
+    return isInSameDirectory(oldUri, newUri) && isDirectory(oldUri);
 }
 
 function isInSameDirectory(oldUri: Uri, newUri: Uri): boolean {
@@ -189,7 +284,7 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
 /**
  * This function reference the implementation of asWorkspaceEdit() from 'vscode-languageclient/lib/protocolConverter'.
  */
-function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConverter, label: string) {
+function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConverter, label: string, renamedFiles?: ReadonlyArray<{ oldUri: Uri, newUri: Uri }>) {
     if (!item) {
         return undefined;
     }
@@ -215,7 +310,7 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
             } else if (TextDocumentEdit.is(change)) {
                 if (change.edits) {
                     change.edits.forEach(edit => {
-                        result.replace(converter.asUri(change.textDocument.uri), converter.asRange(edit.range), edit.newText, {
+                        result.replace(adjustUri(converter.asUri(change.textDocument.uri), renamedFiles), converter.asRange(edit.range), edit.newText, {
                             needsConfirmation: true,
                             label,
                         });
@@ -229,7 +324,7 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
         Object.keys(item.changes).forEach(key => {
             if (item.changes[key]) {
                 item.changes[key].forEach(edit => {
-                    result.replace(converter.asUri(key), converter.asRange(edit.range), edit.newText, {
+                    result.replace(adjustUri(converter.asUri(key), renamedFiles), converter.asRange(edit.range), edit.newText, {
                         needsConfirmation: true,
                         label,
                     });
@@ -239,4 +334,19 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
     }
 
     return result;
+}
+
+// Correct the uri to the value after rename.
+function adjustUri(originUri: Uri, renamedFiles: ReadonlyArray<{ oldUri: Uri, newUri: Uri }>): Uri {
+    if (renamedFiles) {
+        for (const file of renamedFiles) {
+            if (isPrefix(file.oldUri.fsPath, originUri.fsPath)) {
+                const relativePath = path.relative(file.oldUri.fsPath, originUri.fsPath);
+                const newPath = path.join(file.newUri.fsPath, relativePath);
+                return Uri.file(newPath);
+            }
+        }
+    }
+
+    return originUri;
 }

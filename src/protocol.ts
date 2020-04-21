@@ -376,3 +376,7 @@ export interface FileRenameParams {
 export namespace DidRenameFiles {
     export const type = new RequestType<FileRenameParams, WorkspaceEdit, void, void>('java/didRenameFiles');
 }
+
+export namespace WillRenameFiles {
+    export const type = new RequestType<FileRenameParams, WorkspaceEdit, void, void>('java/willRenameFiles');
+}
