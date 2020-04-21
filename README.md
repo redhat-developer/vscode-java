@@ -159,6 +159,13 @@ The following settings are supported:
 * `java.semanticHighlighting.enabled`: Enable/disable [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java files. Defaults to `false`.
 * `java.requirements.JDK11Warning`: Enable/disable a warning about the impending requirement of Java 11. Defaults to `true`.
 
+New in 0.62.0:
+* `java.refactor.renameFromFileExplorer`: Specifies whether to update imports and package declarations when renaming files from File Explorer. Defaults to `prompt`.
+  - `never`: Don't enable refactoring for rename operations on File Explorer.
+  - `autoApply`: Always automatically update the imports and package declarations.
+  - `preview`: Always preview the changes before applying.
+  - `prompt`: Ask user to confirm whether to bypass refactor preview.
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) is controlled by the `java.semanticHighlighting.enabled` preference. When enabled, it fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience different small issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing.
