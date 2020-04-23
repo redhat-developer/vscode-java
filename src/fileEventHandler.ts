@@ -89,8 +89,16 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
     }
 }
 
+function isRenameRefactoringEnabled(): boolean {
+    return workspace.getConfiguration().get("java.refactor.renameFromFileExplorer") !== "Never";
+}
+
+function isPreviewRenameRefactoring(): boolean {
+    return workspace.getConfiguration().get("java.refactor.renameFromFileExplorer") === "PreviewBeforeApply";
+}
+
 async function handleWillRenameFiles(e: FileWillRenameEvent, client: LanguageClient) {
-    if (!serverReady) {
+    if (!serverReady || !isRenameRefactoringEnabled()) {
         return;
     }
 
@@ -134,7 +142,7 @@ async function handleWillRenameFiles(e: FileWillRenameEvent, client: LanguageCli
 }
 
 async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
-    if (!serverReady) {
+    if (!serverReady || !isRenameRefactoringEnabled()) {
         return;
     }
 
@@ -157,7 +165,7 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
 
         if (edit) {
             await new Promise((resolve) =>setTimeout(resolve, 400)); // wait for the document lifecycle events to be synced to the server.
-            const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, "Rename updates", e.files);
+            const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates", e.files);
             workspace.applyEdit(codeEdit);
         }
 
@@ -185,7 +193,7 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
                     files: javaRenameEvents
                 });
 
-                const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, "Rename updates");
+                const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates");
                 if (codeEdit) {
                     workspace.applyEdit(codeEdit);
                 }
@@ -284,7 +292,7 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
 /**
  * This function reference the implementation of asWorkspaceEdit() from 'vscode-languageclient/lib/protocolConverter'.
  */
-function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConverter, label: string, renamedFiles?: ReadonlyArray<{ oldUri: Uri, newUri: Uri }>) {
+function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConverter, enablePreview: boolean, label: string, renamedFiles?: ReadonlyArray<{ oldUri: Uri, newUri: Uri }>) {
     if (!item) {
         return undefined;
     }
@@ -294,24 +302,24 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
         item.documentChanges.forEach(change => {
             if (CreateFile.is(change)) {
                 result.createFile(converter.asUri(change.uri), change.options, {
-                    needsConfirmation: true,
+                    needsConfirmation: enablePreview,
                     label,
                 });
             } else if (RenameFile.is(change)) {
                 result.renameFile(converter.asUri(change.oldUri), converter.asUri(change.newUri), change.options, {
-                    needsConfirmation: true,
+                    needsConfirmation: enablePreview,
                     label,
                 });
             } else if (DeleteFile.is(change)) {
                 result.deleteFile(converter.asUri(change.uri), change.options, {
-                    needsConfirmation: true,
+                    needsConfirmation: enablePreview,
                     label,
                 });
             } else if (TextDocumentEdit.is(change)) {
                 if (change.edits) {
                     change.edits.forEach(edit => {
                         result.replace(adjustUri(converter.asUri(change.textDocument.uri), renamedFiles), converter.asRange(edit.range), edit.newText, {
-                            needsConfirmation: true,
+                            needsConfirmation: enablePreview,
                             label,
                         });
                     });
@@ -325,7 +333,7 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
             if (item.changes[key]) {
                 item.changes[key].forEach(edit => {
                     result.replace(adjustUri(converter.asUri(key), renamedFiles), converter.asRange(edit.range), edit.newText, {
-                        needsConfirmation: true,
+                        needsConfirmation: enablePreview,
                         label,
                     });
                 });

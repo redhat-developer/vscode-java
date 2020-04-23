@@ -539,6 +539,22 @@
           "description": "Enable/disable a warning about the impending requirement of Java 11.",
           "default": true,
           "scope": "window"
+        },
+        "java.refactor.renameFromFileExplorer": {
+          "type": "string",
+          "enum": [
+            "Never",
+            "AutoApply",
+            "PreviewBeforeApply"
+          ],
+          "enumDescriptions": [
+            "Don't enable refactoring for rename operations on File Explorer.",
+            "Always automatically update the imports and package declarations.",
+            "Always preview the changes before applying."
+          ],
+          "description": "Specifies whether to update imports and package declarations when renaming files from File Explorer.",
+          "default": "PreviewBeforeApply",
+          "scope": "window"
         }
       }
     },
