@@ -2,7 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType } from 'vscode';
 import { LanguageClient, WorkspaceEdit as LsWorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -116,14 +116,15 @@ async function handleWillRenameFiles(e: FileWillRenameEvent, client: LanguageCli
      */
     e.waitUntil(new Promise(async (resolve) => {
         try {
-            const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = e.files.filter(event =>
-                isValidPackageRename(event.oldUri, event.newUri)
-            ).map(event => {
-                return {
-                    oldUri: event.oldUri.toString(),
-                    newUri: event.newUri.toString(),
-                };
-            });
+            const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = [];
+            for (const file of e.files) {
+                if (await isPackageWillRename(file.oldUri, file.newUri)) {
+                    javaRenameEvents.push({
+                        oldUri: file.oldUri.toString(),
+                        newUri: file.newUri.toString(),
+                    });
+                }
+            }
 
             if (!javaRenameEvents.length) {
                 return;
@@ -172,14 +173,15 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
         return;
     }
 
-    const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = e.files.filter(event =>
-        isValidFileRename(event.oldUri, event.newUri)
-    ).map(event => {
-        return {
-            oldUri: event.oldUri.toString(),
-            newUri: event.newUri.toString(),
-        };
-    });
+    const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = [];
+    for (const file of e.files) {
+        if (await isJavaFileRename(file.oldUri, file.newUri)) {
+            javaRenameEvents.push({
+                oldUri: file.oldUri.toString(),
+                newUri: file.newUri.toString(),
+            });
+        }
+    }
 
     if (!javaRenameEvents.length) {
         return;
@@ -208,24 +210,32 @@ function isJavaFile(uri: Uri): boolean {
     return uri.fsPath && uri.fsPath.endsWith(".java");
 }
 
-function isFile(uri: Uri): boolean {
-    return lstatSync(uri.fsPath).isFile();
+async function isFile(uri: Uri): Promise<boolean> {
+    try {
+        return (await workspace.fs.stat(uri)).type === FileType.File;
+    } catch {
+        return lstatSync(uri.fsPath).isFile();
+    }
 }
 
-function isDirectory(uri: Uri): boolean {
-    return lstatSync(uri.fsPath).isDirectory();
+async function isDirectory(uri: Uri): Promise<boolean> {
+    try {
+        return (await workspace.fs.stat(uri)).type === FileType.Directory;
+    } catch {
+        return lstatSync(uri.fsPath).isDirectory();
+    }
 }
 
-function isValidFileRename(oldUri: Uri, newUri: Uri): boolean {
+async function isJavaFileRename(oldUri: Uri, newUri: Uri): Promise<boolean> {
     if (isInSameDirectory(oldUri, newUri)) {
-        return isFile(newUri) && isJavaFile(oldUri) && isJavaFile(newUri);
+        return await isFile(newUri) && isJavaFile(oldUri) && isJavaFile(newUri);
     }
 
     return false;
 }
 
-function isValidPackageRename(oldUri: Uri, newUri: Uri): boolean {
-    return isInSameDirectory(oldUri, newUri) && isDirectory(oldUri);
+async function isPackageWillRename(oldUri: Uri, newUri: Uri): Promise<boolean> {
+    return isInSameDirectory(oldUri, newUri) && await isDirectory(oldUri);
 }
 
 function isInSameDirectory(oldUri: Uri, newUri: Uri): boolean {
@@ -257,7 +267,7 @@ function resolvePackageName(sourcePaths: string[], filePath: string): string {
 
 function isPrefix(parentPath: string, filePath: string): boolean {
     const relative = path.relative(parentPath, filePath);
-    return relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+    return !relative || (!relative.startsWith('..') && !path.isAbsolute(relative));
 }
 
 const COMPLIANCE = "org.eclipse.jdt.core.compiler.compliance";
