@@ -2,7 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, languages } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position } from 'vscode';
 import { LanguageClient, WorkspaceEdit as LsWorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -302,24 +302,24 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
         item.documentChanges.forEach(change => {
             if (CreateFile.is(change)) {
                 result.createFile(converter.asUri(change.uri), change.options, {
-                    needsConfirmation: enablePreview,
+                    needsConfirmation: false,
                     label,
                 });
             } else if (RenameFile.is(change)) {
                 result.renameFile(converter.asUri(change.oldUri), converter.asUri(change.newUri), change.options, {
-                    needsConfirmation: enablePreview,
+                    needsConfirmation: false,
                     label,
                 });
             } else if (DeleteFile.is(change)) {
                 result.deleteFile(converter.asUri(change.uri), change.options, {
-                    needsConfirmation: enablePreview,
+                    needsConfirmation: false,
                     label,
                 });
             } else if (TextDocumentEdit.is(change)) {
                 if (change.edits) {
                     change.edits.forEach(edit => {
                         result.replace(adjustUri(converter.asUri(change.textDocument.uri), renamedFiles), converter.asRange(edit.range), edit.newText, {
-                            needsConfirmation: enablePreview,
+                            needsConfirmation: false,
                             label,
                         });
                     });
@@ -333,11 +333,28 @@ function asPreviewWorkspaceEdit(item: LsWorkspaceEdit, converter: ProtocolConver
             if (item.changes[key]) {
                 item.changes[key].forEach(edit => {
                     result.replace(adjustUri(converter.asUri(key), renamedFiles), converter.asRange(edit.range), edit.newText, {
-                        needsConfirmation: enablePreview,
+                        needsConfirmation: false,
                         label,
                     });
                 });
             }
+        });
+    }
+
+    /**
+     * See the issue https://github.com/microsoft/vscode/issues/94650.
+     * The current vscode doesn't provide a way for the extension to pre-select all changes.
+     *
+     * As a workaround, this extension would append a dummy text edit that needs a confirm,
+     * and then make all others text edits not need a confirm. This will ensure that
+     * the REFACTOR PREVIEW panel can be triggered and all valid changes pre-selected.
+     */
+    const textEditEntries = result.entries();
+    if (enablePreview && textEditEntries && textEditEntries.length) {
+        const dummyNodeUri: Uri = textEditEntries[textEditEntries.length - 1][0];
+        result.insert(dummyNodeUri, new Position(0, 0), "", {
+            needsConfirmation: true,
+            label: "Dummy node used to enable preview"
         });
     }
 
