@@ -54,20 +54,30 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
     }
 
     for (let i = 0; i < emptyFiles.length; i++) {
-        const packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
         const typeName: string = resolveTypeName(textDocuments[i].fileName);
+        const isPackageInfo = typeName === 'package-info';
+        const isModuleInfo = typeName === 'module-info';
         const snippets: string[] = [];
-        if (packageName) {
-            snippets.push(`package ${packageName};`);
+        if (!isModuleInfo) {
+            const packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
+            if (packageName) {
+                snippets.push(`package ${packageName};`);
+                if (!isPackageInfo) {
+                    snippets.push("");
+                }
+            }
         }
-        snippets.push("");
-        if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
-            snippets.push(`public \${1|class,interface,enum|} ${typeName} {`);
-        } else {
-            snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}()|} {`);
+        if (!isPackageInfo) {
+            if (isModuleInfo) {
+                snippets.push(`module \${1:name} {`);
+            } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
+                snippets.push(`public \${1|class,interface,enum|} ${typeName} {`);
+            } else {
+                snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}()|} {`);
+            }
+            snippets.push("\t${0}");
+            snippets.push("}");
         }
-        snippets.push("");
-        snippets.push("}");
         const textEditor = await window.showTextDocument(textDocuments[i]);
         textEditor.insertSnippet(new SnippetString(snippets.join("\n")));
     }
