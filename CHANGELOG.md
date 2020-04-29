@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.61.0 (April 30th 2020)
+
+ * enhancement - organize imports should resolve static imports as well. See [#1386](https://github.com/redhat-developer/vscode-java/issues/1386).
+ * enhancement - prompt to enable semantic hightlighting on startup. See [#1419](https://github.com/redhat-developer/vscode-java/pull/1419).
+ * enhancement - refine semantic highlighting. See [JLS#1416](https://github.com/eclipse/eclipse.jdt.ls/pull/1416).
+ * bug fix - code folding is buggy. See [#1419](https://github.com/eclipse/eclipse.jdt.ls/issues/1419).
+ * bug fix - New File -> (module|package)-info.java should be handled properly. See [#1405](https://github.com/redhat-developer/vscode-java/issues/1405).
+ * bug fix - semantic highlighting sometimes looks bad. See [#1396](https://github.com/redhat-developer/vscode-java/issues/1396).
+ * bug fix - custom color for arguments used in method body. See [#1277](https://github.com/redhat-developer/vscode-java/issues/1277).
+ * bug fix - missing highlight on some non-ASCII identifiers. See [#826](https://github.com/redhat-developer/vscode-java/issues/826).
+ * bug fix - syntax highlighting is broken with array syntax. See [#728](https://github.com/redhat-developer/vscode-java/issues/728).
+ * bug fix - highlighting is wrong. See [#707](https://github.com/redhat-developer/vscode-java/issues/707).
+ * bug fix - syntax highlighting broken on import containing upper cased letters. See [#351](https://github.com/redhat-developer/vscode-java/issues/351).
+ * bug fix - syntax highlighting is not working with comment. See [#338](https://github.com/redhat-developer/vscode-java/issues/338).
+ * bug fix - syntax highlighting is not working on special named classes. See [#299](https://github.com/redhat-developer/vscode-java/issues/299).
+
 ## 0.60.0 (April 16th 2020)
  * enhancement - support semantic tokens. See [#1393](https://github.com/redhat-developer/vscode-java/pull/1393).
  * enhancement - preview the updates before applying the changes caused by file rename. See [#1375](https://github.com/redhat-developer/vscode-java/pull/1375).
