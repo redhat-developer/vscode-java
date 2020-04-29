@@ -2,7 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget } from 'vscode';
 import { LanguageClient, WorkspaceEdit as LsWorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -11,6 +11,14 @@ import { Converter as ProtocolConverter } from 'vscode-languageclient/lib/protoc
 
 let serverReady: boolean = false;
 let pendingEditPromise: Promise<LsWorkspaceEdit>;
+
+const PREFERENCE_KEY = "java.refactor.renameFromFileExplorer";
+const enum Preference {
+    Never = "Never",
+    AlwaysAutoApply = "AlwaysAutoApply",
+    AlwaysPreview = "AlwaysPreview",
+    Prompt = "Prompt"
+}
 
 export function setServerStatus(ready: boolean) {
     serverReady = ready;
@@ -90,11 +98,16 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
 }
 
 function isRenameRefactoringEnabled(): boolean {
-    return workspace.getConfiguration().get("java.refactor.renameFromFileExplorer") !== "Never";
+    return workspace.getConfiguration().get<Preference>(PREFERENCE_KEY) !== Preference.Never;
 }
 
 function isPreviewRenameRefactoring(): boolean {
-    return workspace.getConfiguration().get("java.refactor.renameFromFileExplorer") === "PreviewBeforeApply";
+    const preference = workspace.getConfiguration().get<Preference>(PREFERENCE_KEY);
+    return preference === Preference.AlwaysPreview || preference === Preference.Prompt;
+}
+
+function needsConfirmRenameRefactoring(): boolean {
+    return workspace.getConfiguration().get<Preference>(PREFERENCE_KEY) === Preference.Prompt;
 }
 
 async function handleWillRenameFiles(e: FileWillRenameEvent, client: LanguageClient) {
@@ -165,6 +178,7 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
         });
 
         if (edit) {
+            askForConfirmation();
             await new Promise((resolve) =>setTimeout(resolve, 400)); // wait for the document lifecycle events to be synced to the server.
             const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates", e.files);
             workspace.applyEdit(codeEdit);
@@ -197,6 +211,7 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
 
                 const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates");
                 if (codeEdit) {
+                    askForConfirmation();
                     workspace.applyEdit(codeEdit);
                 }
             } finally {
@@ -204,6 +219,23 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
             }
         });
     });
+}
+
+function askForConfirmation() {
+    if (needsConfirmRenameRefactoring()) {
+        window.showInformationMessage("Do you want to always preview the changes for rename refactoring?",
+            "Yes", "No").then(async (answer) => {
+                if (!answer) {
+                    return;
+                }
+
+                if (answer === "Yes") {
+                    workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysPreview, ConfigurationTarget.Global);
+                } else if (answer === "No") {
+                    workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysAutoApply, ConfigurationTarget.Global);
+                }
+            });
+    }
 }
 
 function isJavaFile(uri: Uri): boolean {
