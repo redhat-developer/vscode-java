@@ -3,7 +3,7 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, languages, IndentAction, ProgressLocation, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, Position as LSPosition, Location as LSLocation, StreamInfo, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, Emitter } from 'vscode-languageclient';
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
@@ -261,8 +261,14 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient.registerProposedFeatures();
 				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
 
-				context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS, async () => {
-					return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
+				context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS, async (status: FeatureStatus) => {
+					const config = getJavaConfiguration();
+					const section = 'project.promptImportOnStartup';
+					const st = FeatureStatus[status];
+					await config.update(section, st, ConfigurationTarget.Global);
+					if (status !== FeatureStatus.disabled) {
+						return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
+					}
 				}));
 				const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
 				context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));

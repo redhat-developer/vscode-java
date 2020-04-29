@@ -539,6 +539,17 @@
           "description": "Enable/disable a warning about the impending requirement of Java 11.",
           "default": true,
           "scope": "window"
+        },
+        "java.project.promptImportOnStartup": {
+          "type": "string",
+          "enum": [
+            "disabled",
+            "interactive",
+            "automatic"
+          ],
+          "default": "interactive",
+          "description": "Specifies whether to import the Java projects when on startup.",
+          "scope": "application"
         }
       }
     },
