@@ -8,6 +8,16 @@ export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
 }
 
+export function isPreferenceOverridden(section: string): boolean {
+	const config = workspace.getConfiguration();
+	return config.inspect(section).workspaceFolderValue !== undefined ||
+			config.inspect(section).workspaceFolderLanguageValue !== undefined ||
+			config.inspect(section).workspaceValue !== undefined ||
+			config.inspect(section).workspaceLanguageValue !== undefined ||
+			config.inspect(section).globalValue !== undefined ||
+			config.inspect(section).globalLanguageValue !== undefined;
+}
+
 export function deleteDirectory(dir) {
 	if (fs.existsSync(dir)) {
 		fs.readdirSync(dir).forEach((child) => {
