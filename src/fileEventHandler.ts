@@ -14,10 +14,10 @@ let pendingEditPromise: Promise<LsWorkspaceEdit>;
 
 const PREFERENCE_KEY = "java.refactor.renameFromFileExplorer";
 const enum Preference {
-    Never = "Never",
-    AlwaysAutoApply = "AlwaysAutoApply",
-    AlwaysPreview = "AlwaysPreview",
-    Prompt = "Prompt"
+    Never = "never",
+    AlwaysAutoApply = "autoApply",
+    AlwaysPreview = "preview",
+    Prompt = "prompt"
 }
 
 export function setServerStatus(ready: boolean) {
@@ -223,18 +223,18 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
 
 function askForConfirmation() {
     if (needsConfirmRenameRefactoring()) {
-        window.showInformationMessage("Do you want to always preview the changes for rename refactoring?",
-            "Yes", "No").then(async (answer) => {
-                if (!answer) {
-                    return;
-                }
+        window.showInformationMessage("Do you want to automatically apply refactoring when renaming?",
+            "Refactor automatically", "Always preview changes").then(async (answer) => {
+            if (!answer) {
+                return;
+            }
 
-                if (answer === "Yes") {
-                    workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysPreview, ConfigurationTarget.Global);
-                } else if (answer === "No") {
-                    workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysAutoApply, ConfigurationTarget.Global);
-                }
-            });
+            if (answer === "Refactor automatically") {
+                workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysAutoApply, ConfigurationTarget.Global);
+            } else if (answer === "Always preview changes") {
+                workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysPreview, ConfigurationTarget.Global);
+            }
+        });
     }
 }
 
