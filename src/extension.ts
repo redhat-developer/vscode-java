@@ -8,6 +8,7 @@ import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageCl
 import { onExtensionChange, collectJavaExtensions } from './plugin';
 import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
 import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from './documentSymbols';
+import { goToDefinitionCommand, goToDefinitionProvider } from './goToDefinition';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import {
@@ -260,6 +261,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
 				languageClient.registerProposedFeatures();
 				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
+				const goToDefinition: goToDefinitionCommand = goToDefinitionProvider(languageClient);
 
 				const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
 				context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
@@ -297,7 +299,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									getProjectSettings,
 									getClasspaths,
 									isTestFile,
-									onDidClasspathUpdate
+									onDidClasspathUpdate,
+									goToDefinition: goToDefinition
 								});
 								snippetProvider.setActivation(false);
 								fileEventHandler.setServerStatus(true);
@@ -313,7 +316,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									getProjectSettings,
 									getClasspaths,
 									isTestFile,
-									onDidClasspathUpdate
+									onDidClasspathUpdate,
+									goToDefinition: goToDefinition
 								});
 								fileEventHandler.setServerStatus(true);
 								break;

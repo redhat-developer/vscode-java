@@ -1,4 +1,5 @@
 import { getDocumentSymbolsCommand } from './documentSymbols';
+import { goToDefinitionCommand } from './goToDefinition';
 import { RequirementsData } from './requirements';
 import { TextDocumentPositionParams } from 'vscode-languageclient';
 import { CancellationToken, Command, ProviderResult, Uri, Event } from 'vscode';
@@ -56,7 +57,7 @@ export type ClasspathResult = {
  */
 export type isTestFileCommand = (uri: string) => Promise<boolean>;
 
-export const ExtensionApiVersion = '0.4';
+export const ExtensionApiVersion = '0.5';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -77,4 +78,5 @@ export interface ExtensionAPI {
 	 *   3. The Uri points to the project root path.
 	 */
 	readonly onDidClasspathUpdate: Event<Uri>;
+	readonly goToDefinition: goToDefinitionCommand;
 }
