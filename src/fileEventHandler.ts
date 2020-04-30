@@ -231,6 +231,11 @@ function askForConfirmation() {
 
             if (answer === "Refactor automatically") {
                 workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysAutoApply, ConfigurationTarget.Global);
+                try {
+                    commands.executeCommand("refactorPreview.apply");
+                } catch (error) {
+                    console.error(error);
+                }
             } else if (answer === "Always preview changes") {
                 workspace.getConfiguration().update(PREFERENCE_KEY, Preference.AlwaysPreview, ConfigurationTarget.Global);
             }
