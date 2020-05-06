@@ -32,11 +32,14 @@ export function registerSemanticTokensProvider(context: vscode.ExtensionContext)
 
 class SemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
     async provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SemanticTokens> {
-        const response = await vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.PROVIDE_SEMANTIC_TOKENS, document.uri.toString());
+        const response = <any> await vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.PROVIDE_SEMANTIC_TOKENS, document.uri.toString());
         if (token.isCancellationRequested) {
             return undefined;
         }
-        return response as vscode.SemanticTokens;
+        if (!response || !response.data) {
+            return undefined;
+        }
+        return new vscode.SemanticTokens(new Uint32Array(response.data), response.resultId);
     }
 }
 
