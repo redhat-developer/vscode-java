@@ -179,7 +179,6 @@ async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
 
         if (edit) {
             askForConfirmation();
-            await new Promise((resolve) =>setTimeout(resolve, 400)); // wait for the document lifecycle events to be synced to the server.
             const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates", e.files);
             workspace.applyEdit(codeEdit);
         }
