@@ -21,6 +21,7 @@ const EXCLUDE_FILE_CONFIG = 'configuration.checkProjectSettingsExclusions';
 export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // java.actionsOnPaste.organizeImports
 
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
+const gradleWrapperPromptDialogs = [];
 
 export function onConfigurationChange(languageClient: LanguageClient, context: ExtensionContext) {
 	return workspace.onDidChangeConfiguration(params => {
@@ -123,13 +124,13 @@ export function getJavaEncoding(): string {
 }
 
 export async function checkJavaPreferences(context: ExtensionContext) {
+	const allow = 'Allow';
+	const disallow = 'Disallow';
 	let javaHome = workspace.getConfiguration().inspect<string>('java.home').workspaceValue;
 	let isVerified = javaHome === undefined || javaHome === null;
 	if (isVerified) {
 		javaHome = getJavaConfiguration().get('home');
 	}
-	const allow = 'Allow';
-	const disallow = 'Disallow';
 	const key = getKey(IS_WORKSPACE_JDK_ALLOWED, context.storagePath, javaHome);
 	const globalState = context.globalState;
 	if (!isVerified) {
@@ -203,4 +204,44 @@ export enum ServerMode {
 export function getJavaServerMode(): ServerMode {
 	return workspace.getConfiguration().get('java.server.launchMode')
 		|| ServerMode.HYBRID;
+}
+
+export function setGradleWrapperChecksum(wrapper: string, sha256?: string) {
+	const opened = gradleWrapperPromptDialogs.filter(v => (v === sha256));
+	if (opened !== null && opened.length > 0) {
+		return;
+	}
+	gradleWrapperPromptDialogs.push(sha256);
+	const allow = 'Trust';
+	const disallow = 'Do not trust';
+	window.showErrorMessage(`"Security Warning! The gradle wrapper '${wrapper}'" [sha256 '${sha256}'] [could be malicious](https://github.com/redhat-developer/vscode-java/wiki/Gradle-Support#suspicious.wrapper). Should it be trusted?";`, disallow, allow)
+		.then(async selection => {
+			let allowed;
+			if (selection === allow) {
+				allowed = true;
+			} else if (selection === disallow) {
+				allowed = false;
+			} else {
+				unregisterGradleWrapperPromptDialog(sha256);
+				return false;
+			}
+			const key = "java.imports.gradle.wrapper.checksums";
+			let property: any = workspace.getConfiguration().inspect<string>(key).globalValue;
+			if (!Array.isArray(property)) {
+				property = [];
+			}
+			const entry = property.filter(p => (p.sha256 === sha256));
+			if (entry === null || entry.length === 0) {
+				property.push({ sha256: sha256, allowed: allowed });
+				workspace.getConfiguration().update(key, property, ConfigurationTarget.Global);
+			}
+			unregisterGradleWrapperPromptDialog(sha256);
+		});
+}
+
+function unregisterGradleWrapperPromptDialog(sha256: string) {
+	const index = gradleWrapperPromptDialogs.indexOf(sha256);
+	if (index > -1) {
+		gradleWrapperPromptDialogs.splice(index, 1);
+	}
 }
