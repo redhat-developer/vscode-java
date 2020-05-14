@@ -180,6 +180,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						moveRefactoringSupport: true,
 						clientHoverProvider: true,
 						clientDocumentSymbolProvider: true,
+						buildCommandSupport: true,
 					},
 					triggerFiles,
 				},
