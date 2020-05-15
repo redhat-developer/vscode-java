@@ -655,24 +655,6 @@
           "description": "Enable/disable the semantic highlighting.",
           "scope": "window"
         },
-        "java.refactor.renameFromFileExplorer": {
-          "type": "string",
-          "enum": [
-            "never",
-            "autoApply",
-            "preview",
-            "prompt"
-          ],
-          "enumDescriptions": [
-            "Don't enable refactoring for rename operations on File Explorer.",
-            "Always automatically update the imports and package declarations.",
-            "Always preview the changes before applying.",
-            "Ask user to confirm whether to bypass refactor preview."
-          ],
-          "description": "Specifies whether to update imports and package declarations when renaming files from File Explorer.",
-          "default": "prompt",
-          "scope": "window"
-        },
         "java.imports.gradle.wrapper.checksums": {
           "type": "array",
           "items": {

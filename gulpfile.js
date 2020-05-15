@@ -55,8 +55,7 @@ gulp.task('generate_standard_test_folder', function(done) {
 	fse.ensureDirSync(path.join(tempTestFolder, '.vscode'));
 	fse.writeJSONSync(testSettings, {
 		"java.server.launchMode": "Standard",
-		"java.configuration.updateBuildConfiguration": "automatic",
-		"refactor.renameFromFileExplorer": "autoApply",
+		"java.configuration.updateBuildConfiguration": "automatic"
 	});
 	done();
 });
