@@ -1,8 +1,9 @@
 'use strict';
 
+import * as debounce from 'debounce-promise';
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget, Disposable } from 'vscode';
 import { LanguageClient, WorkspaceEdit as LsWorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit } from 'vscode-languageclient';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -13,8 +14,6 @@ import { userInfo } from 'os';
 import * as stringInterpolate from 'fmtr';
 
 let serverReady: boolean = false;
-let pendingEditPromise: Promise<LsWorkspaceEdit>;
-
 const PREFERENCE_KEY = "java.refactor.renameFromFileExplorer";
 const enum Preference {
     Never = "never",
@@ -27,18 +26,12 @@ export function setServerStatus(ready: boolean) {
     serverReady = ready;
 }
 
-export function registerFileEventHandlers(client: LanguageClient, context: ExtensionContext, ) {
+export function registerFileEventHandlers(client: LanguageClient, context: ExtensionContext) {
     if (workspace.onDidCreateFiles) {// Theia doesn't support workspace.onDidCreateFiles yet
         context.subscriptions.push(workspace.onDidCreateFiles(handleNewJavaFiles));
     }
 
-    if (workspace.onDidRenameFiles) {
-        context.subscriptions.push(workspace.onDidRenameFiles((e: FileRenameEvent) => handleRenameFiles(e, client)));
-    }
-
-    if (workspace.onWillRenameFiles) {
-        context.subscriptions.push(workspace.onWillRenameFiles((e: FileWillRenameEvent) => handleWillRenameFiles(e, client)));
-    }
+    context.subscriptions.push(new RenameFilesHandler(client));
 }
 
 async function handleNewJavaFiles(e: FileCreateEvent) {
@@ -145,114 +138,170 @@ function needsConfirmRenameRefactoring(): boolean {
     return workspace.getConfiguration().get<Preference>(PREFERENCE_KEY) === Preference.Prompt;
 }
 
-async function handleWillRenameFiles(e: FileWillRenameEvent, client: LanguageClient) {
-    if (!serverReady || !isRenameRefactoringEnabled()) {
-        return;
-    }
-
-    /**
-     * The refactor package name needs to be counted out before the rename, so use onWillRenameFiles
-     * listener for package rename cases.
-     *
-     * In addition, the client only gives 5s to the file event participants by default, which comes
-     * with a setting files.participants.timeout. If the computation has not been completed within
-     * that time limit, waitUntil will auto return and then emit didRename event.
-     *
-     * For these reasons, the onWillRenameFiles listener just computes the workspace edit and saves
-     * it to a temporary variable. The onDidRenameFiles listener will check whether there is ongoing
-     * computation, wait for it to complete, and then preview and apply the edit.
-     */
-    e.waitUntil(new Promise(async (resolve) => {
-        try {
-            const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = [];
-            for (const file of e.files) {
-                if (await isPackageWillRename(file.oldUri, file.newUri)) {
-                    javaRenameEvents.push({
-                        oldUri: file.oldUri.toString(),
-                        newUri: file.newUri.toString(),
-                    });
-                }
-            }
-
-            if (!javaRenameEvents.length) {
-                return;
-            }
-
-            pendingEditPromise = client.sendRequest(WillRenameFiles.type, {
-                files: javaRenameEvents
-            });
-            await pendingEditPromise;
-        } catch (err) {
-            // ignore
-        } finally {
-            resolve();
-        }
-    }));
+interface RenameResult {
+    edit: Promise<LsWorkspaceEdit>;
+    files: Array<{ oldUri: Uri, newUri: Uri }>;
 }
 
-async function handleRenameFiles(e: FileRenameEvent, client: LanguageClient) {
-    if (!serverReady || !isRenameRefactoringEnabled()) {
-        return;
-    }
+class RenameFilesHandler implements Disposable {
+    private disposables: Disposable[] = [];
+    private pendingRenameResult: RenameResult;
+    private pendingWillRenameEvents: Set<{ oldUri: Uri, newUri: Uri }> = new Set();
+    private pendingEventCount: number = 0;
+    private willRenameTrigger: () => Promise<void>;
 
-    // If the edit is already computed by onWillRename listeners, then apply it directly.
-    if (pendingEditPromise) {
-        const edit = await window.withProgress<LsWorkspaceEdit>({ location: ProgressLocation.Window }, async (p) => {
-            return new Promise(async (resolve) => {
-                p.report({ message: "Computing rename updates..." });
-                let edit: LsWorkspaceEdit;
-                try {
-                    edit = await pendingEditPromise;
-                } catch (err) {
-                    // do nothing.
-                } finally {
-                    pendingEditPromise = null;
-                    resolve(edit);
-                }
-            });
-        });
-
-        if (edit) {
-            askForConfirmation();
-            const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates", e.files);
-            workspace.applyEdit(codeEdit);
+    public constructor(private readonly client: LanguageClient) {
+        if (workspace.onDidRenameFiles) {
+            workspace.onDidRenameFiles(this.didRenameFilesListener, this, this.disposables);
         }
 
-        return;
-    }
-
-    const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = [];
-    for (const file of e.files) {
-        if (await isJavaFileRename(file.oldUri, file.newUri)) {
-            javaRenameEvents.push({
-                oldUri: file.oldUri.toString(),
-                newUri: file.newUri.toString(),
-            });
+        if (workspace.onWillRenameFiles) {
+            this.willRenameTrigger = debounce(this.flushFileWillRenameEvent, 50);
+            workspace.onWillRenameFiles(this.willRenameFilesListener, this, this.disposables);
         }
     }
 
-    if (!javaRenameEvents.length) {
-        return;
+    public dispose() {
+        for (const disposable of this.disposables) {
+            disposable.dispose();
+        }
     }
 
-    window.withProgress({ location: ProgressLocation.Window }, async (p) => {
-        return new Promise(async (resolve, reject) => {
-            p.report({ message: "Computing rename updates..." });
+    private async willRenameFilesListener(e: FileWillRenameEvent): Promise<void> {
+        if (!serverReady || !isRenameRefactoringEnabled()) {
+            return;
+        }
+
+        e.files.forEach(file => this.pendingWillRenameEvents.add(file));
+        /**
+         * When renaming a package or moving files on the File Explorer, the refactoring update
+         * needs to be computed before the rename or move operation happens. The reason is that
+         * the code references on these files are hard to resolve when they are already moved to
+         * new locations. For these two cases, use onWillRenameFiles listener to compute the
+         * refactoring textedit in advance.
+         *
+         * In addition, vscode only gives a default 5 seconds to the waitUntil callback, which
+         * is controlled by a setting "files.participants.timeout". If the computation hasn't
+         * been completed within that time limit, waitUntil will auto return and then emit the
+         * didRename event. Due to the timeout limit, it's unreliable to return the workspace
+         * edit directly to the waitUntil.
+         *
+         * As a workaround, the onWillRenameFiles listener just triggers a move request to the
+         * language server to start computing the workspace edit, waits there as long as possible
+         * and saves the result promise to a temporary variable. If the result is not ready within
+         * the given timeout limit, the onDidRenameFiles listener will continue waiting for the
+         * promise to be resolved, then preview and apply the edit.
+         */
+        e.waitUntil(new Promise(async (resolve) => {
             try {
-                const edit = await client.sendRequest(DidRenameFiles.type, {
-                    files: javaRenameEvents
-                });
-
-                const codeEdit = asPreviewWorkspaceEdit(edit, client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates");
-                if (codeEdit) {
-                    askForConfirmation();
-                    workspace.applyEdit(codeEdit);
-                }
+                // When moving multiple files at the same time, vscode didn't group such events
+                // toghter. Instead, it sends multiple willRenameEvents to the listener one by
+                // one. As a workaround, we will use debounce to group them together.
+                await this.willRenameTrigger.apply(this);
+            } catch (err) {
+                // ignore
             } finally {
                 resolve();
             }
+        }));
+    }
+
+    private async flushFileWillRenameEvent(): Promise<void> {
+        const pendingEventsCopy = Array.from(this.pendingWillRenameEvents);
+        this.pendingWillRenameEvents.clear();
+        this.pendingEventCount = pendingEventsCopy.length;
+
+        const javaRenameEvents: Array<{oldUri: string, newUri: string}> = [];
+        for (const file of pendingEventsCopy) {
+            if (await isPackageWillRename(file.oldUri, file.newUri)
+                || await isJavaWillMove(file.oldUri, file.newUri)) {
+                javaRenameEvents.push({
+                    oldUri: file.oldUri.toString(),
+                    newUri: file.newUri.toString(),
+                });
+            }
+        }
+
+        if (!javaRenameEvents.length) {
+            return;
+        }
+
+        const editPromise = this.client.sendRequest(WillRenameFiles.type, {
+            files: javaRenameEvents
         });
-    });
+        this.pendingRenameResult = {
+            edit: editPromise,
+            files: pendingEventsCopy,
+        };
+
+        await editPromise;
+    }
+
+    private async didRenameFilesListener(e: FileRenameEvent): Promise<void> {
+        if (!serverReady || !isRenameRefactoringEnabled()) {
+            return;
+        }
+
+        this.pendingEventCount = this.pendingEventCount - e.files.length;
+        // If the edit is already computed by onWillRename listeners, then apply it directly.
+        if (this.pendingRenameResult) {
+            if (this.pendingEventCount > 0) { // wait for all didRename events from the pending group to arrive.
+                return;
+            }
+
+            const result = this.pendingRenameResult;
+            this.pendingRenameResult = null;
+            window.withProgress({ location: ProgressLocation.Window }, async (p) => {
+                p.report({ message: "Computing rename updates..." });
+                const edit = await result.edit;
+                if (edit) {
+                    const timeId = setTimeout(() => {
+                        clearTimeout(timeId);
+                        askForConfirmation();
+                        const codeEdit = asPreviewWorkspaceEdit(edit, this.client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates", result.files);
+                        workspace.applyEdit(codeEdit);
+                    }, 1000);
+                }
+            });
+        } else {
+            this.flushFileRenameEvent(e);
+        }
+    }
+
+    private async flushFileRenameEvent(e: FileRenameEvent): Promise<void> {
+        const javaRenameEvents: Array<{oldUri: string, newUri: string}> = [];
+        for (const file of e.files) {
+            if (await isJavaFileRename(file.oldUri, file.newUri)) {
+                javaRenameEvents.push({
+                    oldUri: file.oldUri.toString(),
+                    newUri: file.newUri.toString(),
+                });
+            }
+        }
+
+        if (!javaRenameEvents.length) {
+            return;
+        }
+
+        window.withProgress({ location: ProgressLocation.Window }, async (p) => {
+            return new Promise(async (resolve, reject) => {
+                p.report({ message: "Computing rename updates..." });
+                try {
+                    const edit = await this.client.sendRequest(DidRenameFiles.type, {
+                        files: javaRenameEvents
+                    });
+
+                    const codeEdit = asPreviewWorkspaceEdit(edit, this.client.protocol2CodeConverter, isPreviewRenameRefactoring(), "Rename updates");
+                    if (codeEdit) {
+                        askForConfirmation();
+                        workspace.applyEdit(codeEdit);
+                    }
+                } finally {
+                    resolve();
+                }
+            });
+        });
+    }
 }
 
 function askForConfirmation() {
@@ -307,6 +356,11 @@ async function isJavaFileRename(oldUri: Uri, newUri: Uri): Promise<boolean> {
 
 async function isPackageWillRename(oldUri: Uri, newUri: Uri): Promise<boolean> {
     return isInSameDirectory(oldUri, newUri) && await isDirectory(oldUri);
+}
+
+async function isJavaWillMove(oldUri: Uri, newUri: Uri): Promise<boolean> {
+    return await isFile(oldUri) && isJavaFile(oldUri) && isJavaFile(newUri)
+        && !isInSameDirectory(oldUri, newUri);
 }
 
 function isInSameDirectory(oldUri: Uri, newUri: Uri): boolean {

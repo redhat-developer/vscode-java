@@ -569,12 +569,12 @@
             "prompt"
           ],
           "enumDescriptions": [
-            "Don't enable refactoring for rename operations on File Explorer.",
+            "Don't enable refactoring for rename and move operations on File Explorer.",
             "Always automatically update the imports and package declarations.",
             "Always preview the changes before applying.",
             "Ask user to confirm whether to bypass refactor preview."
           ],
-          "description": "Specifies whether to update imports and package declarations when renaming files from File Explorer.",
+          "description": "Specifies whether to update imports and package declarations when you rename or move files from File Explorer.",
           "default": "prompt",
           "scope": "window"
         },
@@ -844,6 +844,7 @@
     "tslint": "tslint -p ."
   },
   "devDependencies": {
+    "@types/debounce-promise": "^3.1.2",
     "@types/fs-extra": "^8.0.0",
     "@types/glob": "5.0.30",
     "@types/lodash.findindex": "^4.6.6",
@@ -867,6 +868,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "debounce-promise": "^3.1.2",
     "expand-home-dir": "^0.0.3",
     "find-java-home": "1.1.0",
     "fmtr": "^1.1.2",
