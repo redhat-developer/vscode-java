@@ -8,7 +8,7 @@ export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
 
 /**
  * Gets the project settings.
- * @param uri Uri of the source/class file that needs to be queried.
+ * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
  * @param OptionKeys the settings we want to query, for example: ["org.eclipse.jdt.core.compiler.compliance", "org.eclipse.jdt.core.compiler.source"]
  * @returns An object with all the optionKeys.
  * @throws Will throw errors if the Uri does not belong to any project.
@@ -18,7 +18,7 @@ export type getProjectSettingsCommand = (uri: string, SettingKeys: string[]) => 
 
 /**
  * Gets the classpaths and modulepaths.
- * @param uri Uri of the source/class file that needs to be queried.
+ * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
  * @param options Query options.
  * @returns ClasspathResult containing both classpaths and modulepaths.
  * @throws Will throw errors if the Uri does not belong to any project.
@@ -50,7 +50,7 @@ export type ClasspathResult = {
 
 /**
  * Checks if the input uri is a test source file or not.
- * @param uri Uri of the source file that needs to be queried.
+ * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
  * @returns `true` if the input uri is a test file in its belonging project, otherwise returns false.
  * @throws Will throw errors if the Uri does not belong to any project.
  */
@@ -71,10 +71,9 @@ export interface ExtensionAPI {
 	 * An event which fires on classpath update.
 	 *
 	 * Note:
-	 *   1. This event will only fire for Maven/Gradle projects.
-	 *   2. This event will fire when the project's configuration file (e.g. pom.xml for Maven) get changed,
+	 *   1. This event will fire when the project's configuration file (e.g. pom.xml for Maven) get changed,
 	 *      but the classpaths might still be the same as before.
-	 *   3. The Uri points to the project root path.
+	 *   2. The Uri points to the project root path.
 	 */
 	readonly onDidClasspathUpdate: Event<Uri>;
 }
