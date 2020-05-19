@@ -34,6 +34,7 @@ import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { registerClientProviders, ClientHoverProvider } from './providerDispatcher';
 import * as fileEventHandler from './fileEventHandler';
 import { registerSemanticTokensProvider } from './semanticTokenProvider';
+import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 
 let languageClient: LanguageClient;
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
@@ -286,6 +287,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						switch (report.type) {
 							case 'ServiceReady':
 								syntaxClient.stop();
+								runtimeStatusBarProvider.initialize(onDidClasspathUpdate);
 								break;
 							case 'Started':
 								serverStatus.updateServerStatus(ServerStatusKind.Ready);
