@@ -30,7 +30,8 @@
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle",
-    "workspaceContains:.classpath"
+    "workspaceContains:.classpath",
+    "onCommand:java.project.import"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -555,7 +556,7 @@
       },
       {
         "command": "java.project.import",
-        "title": "Import Java projects in workspacce",
+        "title": "Import Java projects in workspace",
         "category": "Java"
       },
       {
