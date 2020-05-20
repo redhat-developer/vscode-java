@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.62.0 (May 21th 2020)
+ * enhancement - Refactor package name. See [#823](https://github.com/redhat-developer/vscode-java/issues/823).
+ * enhancement - Provide goToDefinition API . See [#1416](https://github.com/redhat-developer/vscode-java/issues/1416).
+ * enhancement - Use default JVM when importing gradle project. See [#1426](https://github.com/redhat-developer/vscode-java/issues/1426).
+ * enhancement - Show Java source level in the status bar. See [#1457](https://github.com/redhat-developer/vscode-java/pull/1457).
+ * enhancement - Check for suspicious gradle-wrapper.jar
+. See [#1440](https://github.com/redhat-developer/vscode-java/pull/1440).
+ * bug fix - Highlighting is incorrect after imports are automatically inserted. See [#1423](https://github.com/redhat-developer/vscode-java/issues/1423).
+ * bug fix - Get and Set method generation through intellicode generates javadoc when shouldn't. See [#1411](https://github.com/redhat-developer/vscode-java/issues/1411).
+ * bug fix - Semantic highlighting doesn't like java.* packages. See [#1434](https://github.com/redhat-developer/vscode-java/issues/1434).
+ * bug fix - Discard the stale workingcopies that belonged to the deleted folder. See [JLS#1439](https://github.com/eclipse/eclipse.jdt.ls/pull/1439).
+
 ## 0.61.0 (April 30th 2020)
 
  * enhancement - organize imports should resolve static imports as well. See [#1386](https://github.com/redhat-developer/vscode-java/issues/1386).
