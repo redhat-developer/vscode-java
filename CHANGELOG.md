@@ -1,6 +1,7 @@
 # Change Log
 
 ## 0.62.0 (May 21th 2020)
+ * enhancement - Expose import projects command. See [#746](https://github.com/redhat-developer/vscode-java/pull/746).
  * enhancement - Refactor package name. See [#823](https://github.com/redhat-developer/vscode-java/issues/823).
  * enhancement - Provide goToDefinition API . See [#1416](https://github.com/redhat-developer/vscode-java/issues/1416).
  * enhancement - Use default JVM when importing gradle project. See [#1426](https://github.com/redhat-developer/vscode-java/issues/1426).
