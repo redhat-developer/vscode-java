@@ -453,7 +453,7 @@
         },
         "java.configuration.runtimes": {
           "type": "array",
-          "label": "Map Java Execution Environments to local JDKs",
+          "description": "Map Java Execution Environments to local JDKs.",
           "items": {
             "type": "object",
             "default": {},
@@ -476,29 +476,28 @@
                   "JavaSE-13",
                   "JavaSE-14"
                 ],
-                "label": "Java Execution Environment name. Must be unique"
+                "description": "Java Execution Environment name. Must be unique."
               },
               "path": {
                 "type": "string",
-                "label": "JDK path.\nOn Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\""
+                "description": "JDK path.\nOn Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"."
               },
               "sources": {
                 "type": "string",
-                "label": "JDK sources."
+                "description": "JDK sources path."
               },
               "javadoc": {
                 "type": "string",
-                "label": "JDK javadoc."
+                "description": "JDK javadoc path."
               },
               "default": {
                 "type": "boolean",
-                "label": "Is default runtime? Only one runtime can be default."
+                "description": "Is default runtime? Only one runtime can be default."
               }
             },
             "additionalProperties": false
           },
           "default": [],
-          "description": "Java Execution Environments -> Runtimes.",
           "scope": "machine"
         },
         "java.server.launchMode": {

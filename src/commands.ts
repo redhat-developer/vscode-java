@@ -185,6 +185,10 @@ export namespace Commands {
      */
     export const IS_TEST_FILE = 'java.project.isTestFile';
     /**
+     * Get all java projects root path in URI format
+     */
+    export const GET_ALL_JAVA_PROJECTS = 'java.project.getAll';
+    /**
      * Temporary command for Semantic Highlighting. To remove when LSP v3.16 is ready.
      */
     export const PROVIDE_SEMANTIC_TOKENS = 'java.project.provideSemanticTokens';
