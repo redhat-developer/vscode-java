@@ -165,6 +165,7 @@ New in 0.62.0:
   - `autoApply`: Always automatically update the imports and package declarations.
   - `preview`: Always preview the changes before applying.
   - `prompt`: Ask user to confirm whether to bypass refactor preview.
+* `java.imports.gradle.wrapper.checksums`: Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers.
 
 Semantic Highlighting
 ===============

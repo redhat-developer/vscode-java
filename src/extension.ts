@@ -23,7 +23,7 @@ import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import * as net from 'net';
 import { getJavaConfiguration, deleteDirectory } from './utils';
-import { onConfigurationChange, excludeProjectSettingsFiles, getJavaServerMode, ServerMode } from './settings';
+import { onConfigurationChange, excludeProjectSettingsFiles, getJavaServerMode, ServerMode, setGradleWrapperChecksum } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
@@ -133,6 +133,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	enableJavadocSymbols();
 
+	const GRADLE_CHECKSUM = "gradle/checksum/prompt";
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -182,6 +183,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						moveRefactoringSupport: true,
 						clientHoverProvider: true,
 						clientDocumentSymbolProvider: true,
+						gradleChecksumWrapperPromptSupport: true
 					},
 					triggerFiles,
 				},
@@ -374,6 +376,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					languageClient.onNotification(ServerNotification.type, (params) => {
 						commands.executeCommand(params.command, ...params.arguments);
 					});
+
+					context.subscriptions.push(commands.registerCommand(GRADLE_CHECKSUM, (wrapper: string, sha256: string) => {
+						setGradleWrapperChecksum(wrapper, sha256);
+					}));
 
 					context.subscriptions.push(commands.registerCommand(Commands.SHOW_JAVA_REFERENCES, (uri: string, position: LSPosition, locations: LSLocation[]) => {
 						commands.executeCommand(Commands.SHOW_REFERENCES, Uri.parse(uri), languageClient.protocol2CodeConverter.asPosition(position), locations.map(languageClient.protocol2CodeConverter.asLocation));
@@ -633,6 +639,7 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 		projectConfigurationUpdate(languageClient, uri);
 	}
 }
+
 function isJavaConfigFile(path: String) {
 	return path.endsWith('pom.xml') || path.endsWith('.gradle');
 }
