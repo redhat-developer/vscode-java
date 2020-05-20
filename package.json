@@ -453,7 +453,7 @@
         },
         "java.configuration.runtimes": {
           "type": "array",
-          "description": "Map Java Execution Environments to local JDKs",
+          "description": "Map Java Execution Environments to local JDKs.",
           "items": {
             "type": "object",
             "default": {},
@@ -476,19 +476,19 @@
                   "JavaSE-13",
                   "JavaSE-14"
                 ],
-                "description": "Java Execution Environment name. Must be unique"
+                "description": "Java Execution Environment name. Must be unique."
               },
               "path": {
                 "type": "string",
-                "description": "JDK path.\nOn Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\""
+                "description": "JDK path.\nOn Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"."
               },
               "sources": {
                 "type": "string",
-                "description": "JDK sources."
+                "description": "JDK sources path."
               },
               "javadoc": {
                 "type": "string",
-                "description": "JDK javadoc."
+                "description": "JDK javadoc path."
               },
               "default": {
                 "type": "boolean",

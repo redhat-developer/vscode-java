@@ -1,15 +1,15 @@
 'use strict';
 
-import { StatusBarItem, window, StatusBarAlignment, TextEditor, Uri, commands, Event, FileSystemProvider } from "vscode";
+import { StatusBarItem, window, StatusBarAlignment, TextEditor, Uri, commands, Event, workspace } from "vscode";
 import { Commands } from "./commands";
 import { Disposable } from "vscode-languageclient";
 import * as path from "path";
-import { getJavaRuntimeFromVersion } from "./javaRuntime";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
 	private javaProjects: Map<string, IProjectInfo>;
 	private fileProjectMapping: Map<string, string>;
+	private storagePath: string;
 	private disposables: Disposable[];
 
 	constructor() {
@@ -18,7 +18,9 @@ class RuntimeStatusBarProvider implements Disposable {
 		this.disposables = [];
 	}
 
-	public async initialize(onClasspathUpdate: Event<Uri>): Promise<void> {
+	public async initialize(onClasspathUpdate: Event<Uri>, storagePath: string): Promise<void> {
+		// ignore the hash part to make it compatible in debug mode.
+		this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
 		this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 0);
 		let projectUriStrings: string[];
 		try {
@@ -62,35 +64,42 @@ class RuntimeStatusBarProvider implements Disposable {
 		}
 	}
 
-	private findBelongingProject(uri: Uri): string {
-		if (this.fileProjectMapping.has(uri.fsPath)) {
-			return this.fileProjectMapping.get(uri.fsPath);
+	private findOwnerProject(uri: Uri): string {
+		let ownerProjectPath: string | undefined = this.fileProjectMapping.get(uri.fsPath);
+		if (ownerProjectPath) {
+			return ownerProjectPath;
 		}
 
-		let belongingProjectPath: string;
+		const isInWorkspaceFolder: boolean = !!workspace.getWorkspaceFolder(uri);
 		for (const projectPath of this.javaProjects.keys()) {
+			if (!isInWorkspaceFolder && this.isDefaultProjectPath(projectPath)) {
+				ownerProjectPath = projectPath;
+				break;
+			}
+
 			if (uri.fsPath.startsWith(projectPath)) {
-				if (!belongingProjectPath) {
-					belongingProjectPath = projectPath;
+				if (!ownerProjectPath) {
+					ownerProjectPath = projectPath;
 					continue;
 				}
 
-				if (projectPath.length > belongingProjectPath.length) {
-					belongingProjectPath = projectPath;
+				if (projectPath.length > ownerProjectPath.length) {
+					ownerProjectPath = projectPath;
 				}
 			}
 		}
 
-		if (belongingProjectPath) {
-			this.fileProjectMapping.set(uri.fsPath, belongingProjectPath);
+		if (ownerProjectPath) {
+			this.fileProjectMapping.set(uri.fsPath, ownerProjectPath);
 		}
 
-		return belongingProjectPath;
+		return ownerProjectPath;
 	}
 
 	private async getProjectInfo(projectPath: string): Promise<IProjectInfo> {
-		if (this.javaProjects.get(projectPath)) {
-			return this.javaProjects.get(projectPath);
+		let projectInfo: IProjectInfo = this.javaProjects.get(projectPath);
+		if (projectInfo) {
+			return projectInfo;
 		}
 
 		try {
@@ -100,7 +109,7 @@ class RuntimeStatusBarProvider implements Disposable {
 				return undefined;
 			}
 
-			const projectInfo: IProjectInfo = { sourceLevel };
+			projectInfo = { sourceLevel };
 			this.javaProjects.set(projectPath, projectInfo);
 			return projectInfo;
 
@@ -118,7 +127,7 @@ class RuntimeStatusBarProvider implements Disposable {
 		}
 
 		const uri: Uri = textEditor.document.uri;
-		const projectPath: string = this.findBelongingProject(uri);
+		const projectPath: string = this.findOwnerProject(uri);
 		if (!projectPath) {
 			this.statusBarItem.hide();
 			return;
@@ -130,8 +139,20 @@ class RuntimeStatusBarProvider implements Disposable {
 			return;
 		}
 
-		this.statusBarItem.text = getJavaRuntimeFromVersion(projectInfo.sourceLevel);
+		this.statusBarItem.text = this.getJavaRuntimeFromVersion(projectInfo.sourceLevel);
 		this.statusBarItem.show();
+	}
+
+	private isDefaultProjectPath(fsPath: string) {
+		return fsPath.startsWith(this.storagePath) && fsPath.indexOf("jdt.ls-java-project") > -1;
+	}
+
+	private getJavaRuntimeFromVersion(ver: string) {
+		if (ver === "1.5") {
+			return "J2SE-1.5";
+		}
+
+		return `JavaSE-${ver}`;
 	}
 }
 

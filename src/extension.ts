@@ -287,7 +287,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						switch (report.type) {
 							case 'ServiceReady':
 								syntaxClient.stop();
-								runtimeStatusBarProvider.initialize(onDidClasspathUpdate);
+								runtimeStatusBarProvider.initialize(onDidClasspathUpdate, context.storagePath);
 								break;
 							case 'Started':
 								serverStatus.updateServerStatus(ServerStatusKind.Ready);
