@@ -266,6 +266,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
 				const goToDefinition: goToDefinitionCommand = goToDefinitionProvider(languageClient);
 
+				context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS, async () => {
+					return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
+				}));
 				const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
 				context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
 

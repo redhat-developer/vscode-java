@@ -30,7 +30,8 @@
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle",
-    "workspaceContains:.classpath"
+    "workspaceContains:.classpath",
+    "onCommand:java.project.import"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -594,6 +595,11 @@
       {
         "command": "java.projectConfiguration.update",
         "title": "Update project configuration",
+        "category": "Java"
+      },
+      {
+        "command": "java.project.import",
+        "title": "Import Java projects in workspace",
         "category": "Java"
       },
       {

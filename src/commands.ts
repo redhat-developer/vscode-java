@@ -113,6 +113,10 @@ export namespace Commands {
      */
     export const LIST_SOURCEPATHS = 'java.project.listSourcePaths';
     /**
+     * Import new projects
+     */
+    export const IMPORT_PROJECTS = 'java.project.import';
+    /**
      * Override or implements the methods from the supertypes.
      */
     export const OVERRIDE_METHODS_PROMPT = 'java.action.overrideMethodsPrompt';
