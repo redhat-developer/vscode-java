@@ -9,7 +9,7 @@ class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
 	private javaProjects: Map<string, IProjectInfo>;
 	private fileProjectMapping: Map<string, string>;
-	private storagePath: string;
+	private storagePath: string | undefined;
 	private disposables: Disposable[];
 
 	constructor() {
@@ -18,9 +18,12 @@ class RuntimeStatusBarProvider implements Disposable {
 		this.disposables = [];
 	}
 
-	public async initialize(onClasspathUpdate: Event<Uri>, storagePath: string): Promise<void> {
+	public async initialize(onClasspathUpdate: Event<Uri>, storagePath?: string): Promise<void> {
 		// ignore the hash part to make it compatible in debug mode.
-		this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
+		if (storagePath) {
+			this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
+		}
+
 		this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 0);
 		let projectUriStrings: string[];
 		try {
@@ -144,7 +147,9 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	private isDefaultProjectPath(fsPath: string) {
-		return fsPath.startsWith(this.storagePath) && fsPath.indexOf("jdt.ls-java-project") > -1;
+		// this.storagePath === undefined indicates that it's in standalone file mode
+		return !this.storagePath ||
+			fsPath.startsWith(this.storagePath) && fsPath.indexOf("jdt.ls-java-project") > -1;
 	}
 
 	private getJavaRuntimeFromVersion(ver: string) {
