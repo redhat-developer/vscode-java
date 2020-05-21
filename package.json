@@ -581,7 +581,7 @@
             "uniqueItems": true
           },
           "description": "Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers",
-          "default": null,
+          "default": [],
           "scope": "application"
         }
       }
