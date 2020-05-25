@@ -10,7 +10,9 @@ export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
 /**
  * Gets the project settings.
  * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
- * @param OptionKeys the settings we want to query, for example: ["org.eclipse.jdt.core.compiler.compliance", "org.eclipse.jdt.core.compiler.source"]
+ * @param OptionKeys the settings we want to query, for example: ["org.eclipse.jdt.core.compiler.compliance", "org.eclipse.jdt.core.compiler.source"].
+ *                   Besides the options defined in JavaCore, the following keys can also be used:
+ *                   - "org.eclipse.jdt.ls.vm.location": Get the location of the VM assigned to build the given Java project
  * @returns An object with all the optionKeys.
  * @throws Will throw errors if the Uri does not belong to any project.
  */

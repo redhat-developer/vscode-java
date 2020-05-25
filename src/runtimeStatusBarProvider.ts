@@ -41,7 +41,6 @@ class RuntimeStatusBarProvider implements Disposable {
 			command: "workbench.action.openSettings",
 			arguments: ["java.configuration.runtimes"],
 		};
-		this.statusBarItem.tooltip = "Configure Java Runtime";
 
 		this.disposables.push(window.onDidChangeActiveTextEditor((textEditor) => {
 			this.updateItem(textEditor);
@@ -100,19 +99,18 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	private async getProjectInfo(projectPath: string): Promise<IProjectInfo> {
-		let projectInfo: IProjectInfo = this.javaProjects.get(projectPath);
+		let projectInfo: IProjectInfo | undefined = this.javaProjects.get(projectPath);
 		if (projectInfo) {
 			return projectInfo;
 		}
 
 		try {
-			const settings: {} = await commands.executeCommand<{}>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, Uri.file(projectPath).toString(), ["org.eclipse.jdt.core.compiler.source"]);
-			const sourceLevel: string = settings["org.eclipse.jdt.core.compiler.source"];
-			if (!sourceLevel) {
-				return undefined;
-			}
+			const settings: {} = await commands.executeCommand<{}>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, Uri.file(projectPath).toString(), [SOURCE_LEVEL_KEY, VM_INSTALL_PATH]);
+			projectInfo = {
+				sourceLevel: settings[SOURCE_LEVEL_KEY],
+				vmInstallPath: settings[VM_INSTALL_PATH]
+			};
 
-			projectInfo = { sourceLevel };
 			this.javaProjects.set(projectPath, projectInfo);
 			return projectInfo;
 
@@ -143,6 +141,7 @@ class RuntimeStatusBarProvider implements Disposable {
 		}
 
 		this.statusBarItem.text = this.getJavaRuntimeFromVersion(projectInfo.sourceLevel);
+		this.statusBarItem.tooltip = projectInfo.vmInstallPath ? projectInfo.vmInstallPath : "Configure Java Runtime";
 		this.statusBarItem.show();
 	}
 
@@ -153,6 +152,10 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	private getJavaRuntimeFromVersion(ver: string) {
+		if (!ver) {
+			return "";
+		}
+
 		if (ver === "1.5") {
 			return "J2SE-1.5";
 		}
@@ -163,6 +166,10 @@ class RuntimeStatusBarProvider implements Disposable {
 
 interface IProjectInfo {
 	sourceLevel: string;
+	vmInstallPath: string;
 }
+
+const SOURCE_LEVEL_KEY = "org.eclipse.jdt.core.compiler.source";
+const VM_INSTALL_PATH = "org.eclipse.jdt.ls.core.vm.location";
 
 export const runtimeStatusBarProvider: RuntimeStatusBarProvider = new RuntimeStatusBarProvider();
