@@ -158,9 +158,15 @@ function resolveConfiguration(context, configDir) {
 }
 
 function startedInDebugMode(): boolean {
-	const args = (process as any).execArgv;
+	const args = (process as any).execArgv as string[];
+	return hasDebugFlag(args);
+}
+
+// exported for tests
+export function hasDebugFlag(args: string[]): boolean {
 	if (args) {
-		return args.some((arg) => /^--debug=?/.test(arg) || /^--debug-brk=?/.test(arg) || /^--inspect-brk=?/.test(arg));
+		// See https://nodejs.org/en/docs/guides/debugging-getting-started/
+		return args.some( arg => /^--inspect/.test(arg) || /^--debug/.test(arg));
 	}
 	return false;
 }

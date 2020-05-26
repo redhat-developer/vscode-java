@@ -125,4 +125,15 @@ suite('Java Language Extension', () => {
 		assert.equal(requirements.parseMajorVersion('version "9.0.1"'), 9);
 		assert.equal(requirements.parseMajorVersion('version "10-ea"'), 10);
 	});
+
+	test('should detect debug flag', () => {
+		assert(!java.hasDebugFlag(['debug', '-debug']));
+		assert(java.hasDebugFlag(['foo', '--inspect']));
+		assert(java.hasDebugFlag(['foo', '--inspect=127.0.0.1:1234']));
+		assert(java.hasDebugFlag(['foo', '--inspect-brk']));
+		assert(java.hasDebugFlag(['foo', '--inspect-brk=127.0.0.1:1234']));
+		// deprecated flags
+		assert(java.hasDebugFlag(['foo', '--debug=1234']));
+		assert(java.hasDebugFlag(['foo', '--debug-brk=1234']));
+	});
 });
