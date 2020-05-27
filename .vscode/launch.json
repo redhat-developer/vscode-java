@@ -8,6 +8,9 @@
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
+			"env": {
+				"DEBUG_VSCODE_JAVA":"true"
+			},
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
@@ -23,7 +26,8 @@
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
-				"SERVER_PORT": "3333"
+				"SERVER_PORT": "3333",
+				"DEBUG_VSCODE_JAVA":"true"
 			},
 			"preLaunchTask": "npm: watch"
 		},
@@ -37,7 +41,8 @@
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
-				"JDTLS_CLIENT_PORT": "5036"
+				"JDTLS_CLIENT_PORT": "5036",
+				"DEBUG_VSCODE_JAVA":"true"
 			},
 			"preLaunchTask": "npm: watch"
 		},
@@ -51,7 +56,8 @@
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
-				"SYNTAXLS_CLIENT_PORT": "5037"
+				"SYNTAXLS_CLIENT_PORT": "5037",
+				"DEBUG_VSCODE_JAVA":"true"
 			},
 			"preLaunchTask": "npm: watch"
 		},
@@ -66,7 +72,8 @@
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
 				"JDTLS_CLIENT_PORT": "5036",
-				"SYNTAXLS_CLIENT_PORT": "5037"
+				"SYNTAXLS_CLIENT_PORT": "5037",
+				"DEBUG_VSCODE_JAVA":"true"
 			},
 			"preLaunchTask": "npm: watch"
 		},
