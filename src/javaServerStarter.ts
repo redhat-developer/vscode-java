@@ -117,7 +117,8 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		configDir = isSyntaxServer ? 'config_ss_linux' : 'config_linux';
 	}
 	params.push('-configuration');
-	if (DEBUG) { // Dev Mode: keep the config.ini in the installation location
+	if (startedFromSources()) { // Dev Mode: keep the config.ini in the installation location
+		console.log(`Starting jdt.ls ${isSyntaxServer?'(syntax)' : '(standard)'} from vscode-java sources`);
 		params.push(path.resolve(__dirname, '../server', configDir));
 	} else {
 		params.push(resolveConfiguration(context, configDir));
@@ -160,6 +161,10 @@ function resolveConfiguration(context, configDir) {
 function startedInDebugMode(): boolean {
 	const args = (process as any).execArgv as string[];
 	return hasDebugFlag(args);
+}
+
+function startedFromSources(): boolean {
+	return process.env['DEBUG_VSCODE_JAVA'] === 'true';
 }
 
 // exported for tests
