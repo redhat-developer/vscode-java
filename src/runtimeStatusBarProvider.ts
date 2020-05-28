@@ -46,14 +46,14 @@ class RuntimeStatusBarProvider implements Disposable {
 			this.updateItem(textEditor);
 		}));
 
-		onProjectsImport(async (uris: Uri[]) => {
+		this.disposables.push(onProjectsImport(async (uris: Uri[]) => {
 			for (const uri of uris) {
 				this.javaProjects.set(uri.fsPath, this.javaProjects.get(uri.fsPath));
 			}
 			await this.updateItem(window.activeTextEditor);
-		});
+		}));
 
-		onClasspathUpdate(async (e: Uri) => {
+		this.disposables.push(onClasspathUpdate(async (e: Uri) => {
 			for (const projectPath of this.javaProjects.keys()) {
 				if (path.relative(projectPath, e.fsPath) === '') {
 					this.javaProjects.set(projectPath, undefined);
@@ -61,7 +61,7 @@ class RuntimeStatusBarProvider implements Disposable {
 					return;
 				}
 			}
-		});
+		}));
 
 		await this.updateItem(window.activeTextEditor);
 	}
