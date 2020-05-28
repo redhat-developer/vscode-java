@@ -13,7 +13,7 @@ import * as requirements from './requirements';
 import { Commands } from './commands';
 import {
 	StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest, ServerNotification,
-	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute
+	SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, EventNotification, EventType
 } from './protocol';
 import { ExtensionAPI, ExtensionApiVersion, ClasspathQueryOptions, ClasspathResult, registerHoverCommand } from './extension.api';
 import * as buildpath from './buildpath';
@@ -284,6 +284,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					return await commands.executeCommand<boolean>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IS_TEST_FILE, uri);
 				};
 
+				const _onDidProjectsImport = new Emitter<Uri[]>();
+				const onDidProjectsImport = _onDidProjectsImport.event;
+
 				const _onDidClasspathUpdate = new Emitter<Uri>();
 				const onDidClasspathUpdate = _onDidClasspathUpdate.event;
 
@@ -292,7 +295,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						switch (report.type) {
 							case 'ServiceReady':
 								syntaxClient.stop();
-								runtimeStatusBarProvider.initialize(onDidClasspathUpdate, context.storagePath);
+								runtimeStatusBarProvider.initialize(onDidClasspathUpdate, onDidProjectsImport, context.storagePath);
 								break;
 							case 'Started':
 								serverStatus.updateServerStatus(ServerStatusKind.Ready);
@@ -307,6 +310,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									getClasspaths,
 									isTestFile,
 									onDidClasspathUpdate,
+									onDidProjectsImport,
 									goToDefinition: goToDefinition
 								});
 								snippetProvider.setActivation(false);
@@ -324,6 +328,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									getClasspaths,
 									isTestFile,
 									onDidClasspathUpdate,
+									onDidProjectsImport,
 									goToDefinition: goToDefinition
 								});
 								fileEventHandler.setServerStatus(true);
@@ -338,11 +343,29 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					languageClient.onNotification(ProgressReportNotification.type, (progress) => {
 						serverTasks.updateServerTask(progress);
 					});
-					languageClient.onNotification(ActionableNotification.type, (notification) => {
-						if (notification.message === "__CLASSPATH_UPDATED__") {
-							_onDidClasspathUpdate.fire(Uri.parse(notification.data));
-							return;
+
+					languageClient.onNotification(EventNotification.type, (notification) => {
+						switch (notification.eventType) {
+							case EventType.ClasspathUpdated:
+								_onDidClasspathUpdate.fire(Uri.parse(notification.data));
+								break;
+							case EventType.ProjectsImported:
+								const projectUris: Uri[] = [];
+								if (notification.data) {
+									for (const uriString of notification.data) {
+										projectUris.push(Uri.parse(uriString));
+									}
+								}
+								if (projectUris.length > 0) {
+									_onDidProjectsImport.fire(projectUris);
+								}
+								break;
+							default:
+								break;
 						}
+					});
+
+					languageClient.onNotification(ActionableNotification.type, (notification) => {
 						let show = null;
 						switch (notification.severity) {
 							case MessageType.Log:
