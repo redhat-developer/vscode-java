@@ -35,6 +35,7 @@ import { registerClientProviders, ClientHoverProvider } from './providerDispatch
 import * as fileEventHandler from './fileEventHandler';
 import { registerSemanticTokensProvider } from './semanticTokenProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
+import { provideCompletionItemsCommand, completionItemsProvider } from './provideCompletionItems';
 
 let languageClient: LanguageClient;
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
@@ -265,6 +266,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				languageClient.registerProposedFeatures();
 				const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider(languageClient);
 				const goToDefinition: goToDefinitionCommand = goToDefinitionProvider(languageClient);
+				const provideCompletionItems: provideCompletionItemsCommand = completionItemsProvider(languageClient);
 
 				context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS, async () => {
 					return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
@@ -307,7 +309,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									getClasspaths,
 									isTestFile,
 									onDidClasspathUpdate,
-									goToDefinition: goToDefinition
+									goToDefinition: goToDefinition,
+									provideCompletionItems: provideCompletionItems,
 								});
 								snippetProvider.setActivation(false);
 								fileEventHandler.setServerStatus(true);
@@ -324,7 +327,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									getClasspaths,
 									isTestFile,
 									onDidClasspathUpdate,
-									goToDefinition: goToDefinition
+									goToDefinition: goToDefinition,
+									provideCompletionItems: provideCompletionItems,
 								});
 								fileEventHandler.setServerStatus(true);
 								break;

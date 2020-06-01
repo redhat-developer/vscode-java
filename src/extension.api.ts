@@ -3,6 +3,7 @@ import { goToDefinitionCommand } from './goToDefinition';
 import { RequirementsData } from './requirements';
 import { TextDocumentPositionParams } from 'vscode-languageclient';
 import { CancellationToken, Command, ProviderResult, Uri, Event } from 'vscode';
+import { provideCompletionItemsCommand } from './provideCompletionItems';
 
 export type provideHoverCommandFn = (params: TextDocumentPositionParams, token: CancellationToken) => ProviderResult<Command[] | undefined>;
 export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
@@ -59,7 +60,7 @@ export type ClasspathResult = {
  */
 export type isTestFileCommand = (uri: string) => Promise<boolean>;
 
-export const ExtensionApiVersion = '0.5';
+export const ExtensionApiVersion = '0.6';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -80,4 +81,5 @@ export interface ExtensionAPI {
 	 */
 	readonly onDidClasspathUpdate: Event<Uri>;
 	readonly goToDefinition: goToDefinitionCommand;
+	readonly provideCompletionItems: provideCompletionItemsCommand
 }
