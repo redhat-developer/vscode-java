@@ -81,5 +81,5 @@ export interface ExtensionAPI {
 	 */
 	readonly onDidClasspathUpdate: Event<Uri>;
 	readonly goToDefinition: goToDefinitionCommand;
-	readonly provideCompletionItems: provideCompletionItemsCommand
+	readonly provideCompletionItems: provideCompletionItemsCommand;
 }
