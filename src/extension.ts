@@ -35,7 +35,7 @@ import { registerClientProviders, ClientHoverProvider } from './providerDispatch
 import * as fileEventHandler from './fileEventHandler';
 import { registerSemanticTokensProvider } from './semanticTokenProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
-import { getCompletionItemsCommand, completionItemsProvider } from './completionItems'
+import { getCompletionItemsCommand, completionItemsProvider } from './completionItems';
 
 let languageClient: LanguageClient;
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
