@@ -79,5 +79,10 @@ export interface ExtensionAPI {
 	 *   2. The Uri points to the project root path.
 	 */
 	readonly onDidClasspathUpdate: Event<Uri>;
+	/**
+	 * An event fires on projects imported.
+	 * The Uris in the array point to the project root path.
+	 */
+	readonly onDidProjectsImport: Event<Uri[]>;
 	readonly goToDefinition: goToDefinitionCommand;
 }

@@ -55,6 +55,11 @@ export enum FeatureStatus {
     automatic = 2,
 }
 
+export enum EventType {
+    ClasspathUpdated = 100,
+    ProjectsImported = 200,
+}
+
 export enum CompileWorkspaceStatus {
     FAILED = 0,
     SUCCEED = 1,
@@ -84,6 +89,11 @@ export interface ActionableMessage {
 	commands?: Command[];
 }
 
+export interface EventNotification {
+    eventType: EventType;
+    data?: any;
+}
+
 export namespace StatusNotification {
 	export const type = new NotificationType<StatusReport, void >('language/status');
 }
@@ -102,6 +112,10 @@ export namespace ProjectConfigurationUpdateRequest {
 
 export namespace ActionableNotification {
     export const type = new NotificationType<ActionableMessage, void>('language/actionableNotification');
+}
+
+export namespace EventNotification {
+    export const type = new NotificationType<EventNotification, void>('language/eventNotification');
 }
 
 export namespace CompileWorkspaceRequest {
