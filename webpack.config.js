@@ -6,6 +6,9 @@ const path = require('path');
 
 /**@type {import('webpack').Configuration}*/
 const config = {
+	watchOptions:{
+		ignored: /node_modules/
+	},
     target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
     node: {
         __dirname: false,
