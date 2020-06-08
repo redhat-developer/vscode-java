@@ -8,13 +8,19 @@ import {
 	DefinitionRequest,
 	LanguageClient,
 } from 'vscode-languageclient';
+import { getClient } from './extension';
 
 type GoToDefinitionResponse = Location | Location[] | LocationLink[] | null;
 
 export type goToDefinitionCommand = (params: DefinitionParams, token?: CancellationToken) => Promise<GoToDefinitionResponse>;
 
-export function goToDefinitionProvider(languageClient: LanguageClient): goToDefinitionCommand {
+export function goToDefinitionProvider(): goToDefinitionCommand {
     return async (params: DefinitionParams, token?: CancellationToken): Promise<GoToDefinitionResponse> => {
+        const languageClient: LanguageClient | undefined = await getClient();
+        if (!languageClient) {
+            return null;
+        }
+
         if (token !== undefined) {
             return languageClient.sendRequest(DefinitionRequest.type, params, token);
         }

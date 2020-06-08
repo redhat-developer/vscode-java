@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { beautifyDocument } from '../src/snippetCompletionProvider';
+import { beautifyDocument } from '../../src/snippetCompletionProvider';
 import { MarkdownString } from 'vscode';
 
 suite('Snippet Completion Provider', () => {
