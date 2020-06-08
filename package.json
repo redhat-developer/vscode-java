@@ -742,6 +742,10 @@
         {
           "command": "java.show.server.task.status",
           "when": "serverMode != LightWeight"
+        },
+        {
+          "command": "java.server.mode.switch",
+          "when": "serverMode != Standard"
         }
       ]
     }

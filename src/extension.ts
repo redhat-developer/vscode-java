@@ -305,6 +305,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					snippetProvider.setActivation(false);
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context.storagePath);
+					commands.executeCommand('setContext', 'serverMode', event);
 				}
 			});
 		});
