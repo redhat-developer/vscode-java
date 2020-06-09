@@ -60,7 +60,7 @@ export type ClasspathResult = {
  */
 export type isTestFileCommand = (uri: string) => Promise<boolean>;
 
-export const ExtensionApiVersion = '0.5';
+export const ExtensionApiVersion = '0.6';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
