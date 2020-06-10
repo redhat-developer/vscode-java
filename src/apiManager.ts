@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionAPI, registerHoverCommand, ClasspathQueryOptions, ClasspathResult, ExtensionApiVersion } from "./extension.api";
+import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, ExtensionApiVersion } from "./extension.api";
 import { RequirementsData } from "./requirements";
 import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from "./documentSymbols";
 import { goToDefinitionCommand, goToDefinitionProvider } from "./goToDefinition";
@@ -8,18 +8,16 @@ import { commands, Uri } from "vscode";
 import { Commands } from "./commands";
 import { Emitter } from "vscode-languageclient";
 import { ServerMode, getJavaServerMode } from "./settings";
-import { hoverProvider } from "./providerDispatcher";
+import { registerHoverCommand } from "./hoverAction";
 
 class ApiManager {
 
     private api: ExtensionAPI;
     private onDidClasspathUpdateEmitter: Emitter<Uri> = new Emitter<Uri>();
-    private onWillChangeServerMode: Emitter<ServerMode> = new Emitter<ServerMode>();
-    private onDidChangeServerMode: Emitter<ServerMode> = new Emitter<ServerMode>();
+    private onDidServerModeChange: Emitter<ServerMode> = new Emitter<ServerMode>();
     private onDidProjectsImport: Emitter<Uri[]> = new Emitter<Uri[]>();
 
     public initialize(requirements: RequirementsData): void {
-        const registerHoverCommand: registerHoverCommand = hoverProvider.registerHoverCommand;
         const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
         const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
 
@@ -36,24 +34,22 @@ class ApiManager {
         };
 
         const onDidClasspathUpdate = this.onDidClasspathUpdateEmitter.event;
-        const onWillChangeServerMode = this.onWillChangeServerMode.event;
-        const onDidChangeServerMode = this.onDidChangeServerMode.event;
+        const onDidServerModeChange = this.onDidServerModeChange.event;
         const onDidProjectsImport = this.onDidProjectsImport.event;
 
         this.api = {
             apiVersion: ExtensionApiVersion,
             javaRequirement: requirements,
-            status: null,
-            registerHoverCommand,
+            status: "Starting",
+            registerHoverCommand: registerHoverCommand,
             getDocumentSymbols,
             goToDefinition,
             getProjectSettings,
             getClasspaths,
             isTestFile,
             onDidClasspathUpdate,
-            serverMode: getJavaServerMode() === ServerMode.STANDARD ? ServerMode.STANDARD : ServerMode.LIGHTWEIGHT,
-            onWillChangeServerMode,
-            onDidChangeServerMode,
+            serverMode: this.initializeServerMode(),
+            onDidServerModeChange,
             onDidProjectsImport,
         };
     }
@@ -66,19 +62,15 @@ class ApiManager {
         return this.api;
     }
 
-    public emitDidClasspathUpdate(event: Uri): void {
+    public fireDidClasspathUpdate(event: Uri): void {
         this.onDidClasspathUpdateEmitter.fire(event);
     }
 
-    public emitDidChangeServerMode(event: ServerMode): void {
-        this.onDidChangeServerMode.fire(event);
+    public fireDidServerModeChange(event: ServerMode): void {
+        this.onDidServerModeChange.fire(event);
     }
 
-    public emitWillChangeServerMode(event: ServerMode): void {
-        this.onWillChangeServerMode.fire(event);
-    }
-
-    public emitDidProjectsImport(event: Uri[]): void {
+    public fireDidProjectsImport(event: Uri[]): void {
         this.onDidProjectsImport.fire(event);
     }
 
@@ -88,6 +80,16 @@ class ApiManager {
 
     public updateStatus(status: "Started" | "Error"): void {
         this.api.status = status;
+    }
+
+    private initializeServerMode(): ServerMode {
+        const serverLaunchMode: ServerMode = getJavaServerMode();
+        if (serverLaunchMode === ServerMode.HYBRID) {
+            // In Hybrid mode, the API will only be resolved when standard server is ready.
+            return ServerMode.STANDARD;
+        } else {
+            return serverLaunchMode;
+        }
     }
 }
 

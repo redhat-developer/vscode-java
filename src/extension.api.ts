@@ -65,7 +65,7 @@ export const ExtensionApiVersion = '0.6';
 export interface ExtensionAPI {
 	readonly apiVersion: string;
 	readonly javaRequirement: RequirementsData;
-	status: "Started" | "Error" | null;
+	status: "Starting" | "Started" | "Error";
 	readonly registerHoverCommand: registerHoverCommand;
 	readonly getDocumentSymbols: getDocumentSymbolsCommand;
 	readonly getProjectSettings: getProjectSettingsCommand;
@@ -86,13 +86,14 @@ export interface ExtensionAPI {
 	 */
 	readonly onDidProjectsImport: Event<Uri[]>;
 	readonly goToDefinition: goToDefinitionCommand;
-	serverMode: ServerMode;
 	/**
-	 * An event which fires before switching the server mode.
+	 * Indicates the current active mode for Java Language Server. Possible modes are:
+	 * - "Standard"
+	 * - "LightWeight"
 	 */
-	readonly onWillChangeServerMode: Event<ServerMode>;
+	serverMode: ServerMode;
 	/**
 	 * An event which fires when the server mode has been switched.
 	 */
-	readonly onDidChangeServerMode: Event<ServerMode>;
+	readonly onDidServerModeChange: Event<ServerMode>;
 }

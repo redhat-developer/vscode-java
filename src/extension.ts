@@ -9,8 +9,6 @@ import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import {
-	StatusNotification } from './protocol';
 import { ExtensionAPI } from './extension.api';
 import { getJavaConfiguration, deleteDirectory } from './utils';
 import { onConfigurationChange, getJavaServerMode, ServerMode } from './settings';
@@ -199,9 +197,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
-					syntaxClient.initialize(requirements, clientOptions);
+					syntaxClient.initialize(requirements, clientOptions, resolve);
 				} else {
-					syntaxClient.initialize(requirements, clientOptions, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
+					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
 				}
 			}
 
@@ -230,30 +228,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			if (requireStandardServer) {
 				standardClient.start();
-			}
-
-			// TODO: Currently only resolve the promise when the server mode is explicitly set to lightweight.
-			// This is to avoid breakings
-			if (serverMode === ServerMode.LIGHTWEIGHT) {
-				const lightWeightClient: LanguageClient = syntaxClient.getClient();
-				lightWeightClient.onReady().then(() => {
-					lightWeightClient.onNotification(StatusNotification.type, (report) => {
-						switch (report.type) {
-							case 'Started':
-								apiManager.updateServerMode(ServerMode.LIGHTWEIGHT);
-								apiManager.updateStatus("Started");
-								resolve(apiManager.getApiInstance());
-								break;
-							case 'Error':
-								apiManager.updateServerMode(ServerMode.LIGHTWEIGHT);
-								apiManager.updateStatus("Error");
-								resolve(apiManager.getApiInstance());
-								break;
-							default:
-								break;
-						}
-					});
-				});
 			}
 
 			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
@@ -288,7 +262,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					return;
 				}
 
-				apiManager.emitWillChangeServerMode(ServerMode.STANDARD);
 				standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 				standardClient.start();
 			});
@@ -300,8 +273,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			fileEventHandler.registerFileEventHandlers(standardClient.getClient(), context);
 
-			apiManager.getApiInstance().onDidChangeServerMode((event: ServerMode) => {
+			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
 				if (event === ServerMode.STANDARD) {
+					syntaxClient.stop();
 					snippetProvider.setActivation(false);
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context.storagePath);

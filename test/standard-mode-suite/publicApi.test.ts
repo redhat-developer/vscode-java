@@ -140,8 +140,7 @@ suite('Public APIs - Standard', () => {
 
 	test('onWillChangeServerMode & onDidChangeServerMode should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		assert.ok(api.onWillChangeServerMode);
-		assert.ok(api.onDidChangeServerMode);
+		assert.ok(api.onDidServerModeChange);
 	});
 
 	test('onDidProjectsImport should work', async function () {

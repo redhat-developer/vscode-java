@@ -1,9 +1,8 @@
 'use strict';
 
 import { LanguageClient, DocumentSymbolRequest, SymbolInformation as clientSymbolInformation, DocumentSymbol as clientDocumentSymbol, HoverRequest } from "vscode-languageclient";
-import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, ProviderResult, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover } from "vscode";
+import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover } from "vscode";
 import { ClassFileContentsRequest } from "./protocol";
-import { provideHoverCommandFn } from "./extension.api";
 import { createClientHoverProvider } from "./hoverAction";
 import { getClient } from "./extension";
 import { apiManager } from "./apiManager";
@@ -18,6 +17,7 @@ export interface ProviderHandle {
 }
 
 export function registerClientProviders(context: ExtensionContext, options: ProviderOptions): ProviderHandle {
+	const hoverProvider = new ClientHoverProvider();
 	context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
 
 	const symbolProvider = createDocumentSymbolProvider();
@@ -32,10 +32,6 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 
 export class ClientHoverProvider implements HoverProvider {
 	private delegateProvider;
-
-	initializeForStandardServer(standardClient: LanguageClient, context: ExtensionContext) {
-		this.delegateProvider = createClientHoverProvider(standardClient, context);
-	}
 
 	async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
 		const languageClient: LanguageClient | undefined = await getClient();
@@ -53,18 +49,13 @@ export class ClientHoverProvider implements HoverProvider {
 			const hoverResponse = await languageClient.sendRequest(HoverRequest.type, params);
 			return languageClient.protocol2CodeConverter.asHover(hoverResponse);
 		} else if (serverMode === ServerMode.STANDARD) {
+			if (!this.delegateProvider) {
+				this.delegateProvider = createClientHoverProvider(languageClient);
+			}
 			return this.delegateProvider.provideHover(document, position, token);
 		}
 	}
-
-	registerHoverCommand(callback: provideHoverCommandFn) {
-		if (this.delegateProvider) {
-			this.delegateProvider.registerHoverCommand(callback);
-		}
-	}
 }
-
-export const hoverProvider = new ClientHoverProvider();
 
 function createJDTContentProvider(options: ProviderOptions): TextDocumentContentProvider {
 	return <TextDocumentContentProvider>{

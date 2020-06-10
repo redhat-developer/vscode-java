@@ -127,21 +127,12 @@ suite('Public APIs - LightWeight', () => {
 	 */
 	test('onWillChangeServerMode & onDidChangeServerMode should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		let onWillChangeServerModeCount: number = 0;
-		let onWillChangeServerModeTik: number = -1;
 		let onDidChangeServerModeCount: number = 0;
-		let onDidChangeServerModeTik: number = -1;
 
 		await new Promise(async (resolve) => {
-			api.onWillChangeServerMode((mode) => {
-				onWillChangeServerModeCount++;
-				onWillChangeServerModeTik = new Date().getTime();
-				assert.equal(mode, ServerMode.STANDARD);
-			});
 
-			api.onDidChangeServerMode((mode) => {
+			api.onDidServerModeChange((mode) => {
 				onDidChangeServerModeCount++;
-				onDidChangeServerModeTik = new Date().getTime();
 				assert.equal(mode, ServerMode.STANDARD);
 				return resolve();
 			});
@@ -149,11 +140,7 @@ suite('Public APIs - LightWeight', () => {
 			await commands.executeCommand(Commands.SWITCH_SERVER_MODE);
 		});
 
-		assert.equal(onWillChangeServerModeCount, 1);
 		assert.equal(onDidChangeServerModeCount, 1);
-		assert.ok(onWillChangeServerModeTik > 0);
-		assert.ok(onDidChangeServerModeTik > 0);
-		assert.ok(onDidChangeServerModeTik > onWillChangeServerModeTik, "'onDidChangeServerMode' should happen after 'onWillChangeServerMode'");
 	});
 
 	suiteTeardown(async function() {

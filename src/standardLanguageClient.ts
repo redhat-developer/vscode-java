@@ -14,7 +14,6 @@ import { RequirementsData } from "./requirements";
 import * as net from 'net';
 import { getJavaConfiguration } from "./utils";
 import { logger } from "./log";
-import { hoverProvider } from "./providerDispatcher";
 import { registerSemanticTokensProvider } from "./semanticTokenProvider";
 import * as buildPath from './buildpath';
 import * as sourceAction from './sourceAction';
@@ -22,6 +21,7 @@ import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import { serverTasks } from "./serverTasks";
 import { apiManager } from "./apiManager";
+import { ExtensionAPI } from "./extension.api";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -31,7 +31,7 @@ export class StandardLanguageClient {
 	private languageClient: LanguageClient;
 	private initialized: boolean = false;
 
-	public initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve): void {
+	public initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve: (value: ExtensionAPI) => void): void {
 		if (this.initialized) {
 			return;
 		}
@@ -85,8 +85,10 @@ export class StandardLanguageClient {
 			this.languageClient.onNotification(StatusNotification.type, (report) => {
 				switch (report.type) {
 					case 'ServiceReady':
-						apiManager.updateServerMode(ServerMode.STANDARD);
-						apiManager.emitDidChangeServerMode(ServerMode.STANDARD);
+						if (apiManager.getApiInstance().serverMode !== ServerMode.STANDARD) {
+							apiManager.updateServerMode(ServerMode.STANDARD);
+							apiManager.fireDidServerModeChange(ServerMode.STANDARD);
+						}
 						break;
 					case 'Started':
 						serverStatus.updateServerStatus(ServerStatusKind.Ready);
@@ -114,7 +116,7 @@ export class StandardLanguageClient {
 			this.languageClient.onNotification(EventNotification.type, (notification) => {
 				switch (notification.eventType) {
 					case EventType.ClasspathUpdated:
-						apiManager.emitDidClasspathUpdate(Uri.parse(notification.data));
+						apiManager.fireDidClasspathUpdate(Uri.parse(notification.data));
 						break;
 					case EventType.ProjectsImported:
 						const projectUris: Uri[] = [];
@@ -124,7 +126,7 @@ export class StandardLanguageClient {
 							}
 						}
 						if (projectUris.length > 0) {
-							apiManager.emitDidProjectsImport(projectUris);
+							apiManager.fireDidProjectsImport(projectUris);
 						}
 						break;
 					default:
@@ -211,6 +213,14 @@ export class StandardLanguageClient {
 				applyWorkspaceEdit(obj, this.languageClient);
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, (location: any) => {
+				const range = this.languageClient.protocol2CodeConverter.asRange(location.range);
+				window.showTextDocument(Uri.parse(decodeBase64(location.uri)), {
+					preserveFocus: true,
+					selection: range,
+				});
+			}));
+
 			context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean) => {
 				return window.withProgress({ location: ProgressLocation.Window }, async p => {
 					if (typeof isFullCompile !== 'boolean') {
@@ -292,8 +302,6 @@ export class StandardLanguageClient {
 			// temporary implementation Semantic Highlighting before it is part of LSP
 			registerSemanticTokensProvider(context);
 		});
-
-		hoverProvider.initializeForStandardServer(this.languageClient, context);
 	}
 
 	public start(): void {
@@ -361,4 +369,8 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 	if (status !== FeatureStatus.disabled) {
 		projectConfigurationUpdate(languageClient, uri);
 	}
+}
+
+function decodeBase64(text: string): string {
+    return Buffer.from(text, 'base64').toString('ascii');
 }
