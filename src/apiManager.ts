@@ -14,8 +14,8 @@ class ApiManager {
 
     private api: ExtensionAPI;
     private onDidClasspathUpdateEmitter: Emitter<Uri> = new Emitter<Uri>();
-    private onDidServerModeChange: Emitter<ServerMode> = new Emitter<ServerMode>();
-    private onDidProjectsImport: Emitter<Uri[]> = new Emitter<Uri[]>();
+    private onDidServerModeChangeEmitter: Emitter<ServerMode> = new Emitter<ServerMode>();
+    private onDidProjectsImportEmitter: Emitter<Uri[]> = new Emitter<Uri[]>();
 
     public initialize(requirements: RequirementsData): void {
         const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
@@ -34,8 +34,8 @@ class ApiManager {
         };
 
         const onDidClasspathUpdate = this.onDidClasspathUpdateEmitter.event;
-        const onDidServerModeChange = this.onDidServerModeChange.event;
-        const onDidProjectsImport = this.onDidProjectsImport.event;
+        const onDidServerModeChange = this.onDidServerModeChangeEmitter.event;
+        const onDidProjectsImport = this.onDidProjectsImportEmitter.event;
 
         this.api = {
             apiVersion: ExtensionApiVersion,
@@ -67,11 +67,11 @@ class ApiManager {
     }
 
     public fireDidServerModeChange(event: ServerMode): void {
-        this.onDidServerModeChange.fire(event);
+        this.onDidServerModeChangeEmitter.fire(event);
     }
 
     public fireDidProjectsImport(event: Uri[]): void {
-        this.onDidProjectsImport.fire(event);
+        this.onDidProjectsImportEmitter.fire(event);
     }
 
     public updateServerMode(mode: ServerMode): void {

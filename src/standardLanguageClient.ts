@@ -85,10 +85,8 @@ export class StandardLanguageClient {
 			this.languageClient.onNotification(StatusNotification.type, (report) => {
 				switch (report.type) {
 					case 'ServiceReady':
-						if (apiManager.getApiInstance().serverMode !== ServerMode.STANDARD) {
-							apiManager.updateServerMode(ServerMode.STANDARD);
-							apiManager.fireDidServerModeChange(ServerMode.STANDARD);
-						}
+						apiManager.updateServerMode(ServerMode.STANDARD);
+						apiManager.fireDidServerModeChange(ServerMode.STANDARD);
 						break;
 					case 'Started':
 						serverStatus.updateServerStatus(ServerStatusKind.Ready);
