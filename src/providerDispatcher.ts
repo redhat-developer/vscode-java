@@ -4,7 +4,7 @@ import { LanguageClient, DocumentSymbolRequest, SymbolInformation as clientSymbo
 import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover } from "vscode";
 import { ClassFileContentsRequest } from "./protocol";
 import { createClientHoverProvider } from "./hoverAction";
-import { getClient } from "./extension";
+import { getActiveLanguageClient } from "./extension";
 import { apiManager } from "./apiManager";
 import { ServerMode } from "./settings";
 
@@ -34,7 +34,7 @@ export class ClientHoverProvider implements HoverProvider {
 	private delegateProvider;
 
 	async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
-		const languageClient: LanguageClient | undefined = await getClient();
+		const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
 
 		if (!languageClient) {
 			return undefined;
@@ -61,7 +61,7 @@ function createJDTContentProvider(options: ProviderOptions): TextDocumentContent
 	return <TextDocumentContentProvider>{
 		onDidChange: options.contentProviderEvent,
 		provideTextDocumentContent: async (uri: Uri, token: CancellationToken): Promise<string> => {
-			const languageClient: LanguageClient | undefined = await getClient();
+			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
 
 			if (!languageClient) {
 				return '';
@@ -77,7 +77,7 @@ function createJDTContentProvider(options: ProviderOptions): TextDocumentContent
 function createDocumentSymbolProvider(): DocumentSymbolProvider {
 	return <DocumentSymbolProvider>{
 		provideDocumentSymbols: async (document: TextDocument, token: CancellationToken): Promise<SymbolInformation[] | DocumentSymbol[]> => {
-			const languageClient: LanguageClient | undefined = await getClient();
+			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
 
 			if (!languageClient) {
 				return [];

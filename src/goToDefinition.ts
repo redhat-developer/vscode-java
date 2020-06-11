@@ -8,7 +8,7 @@ import {
 	DefinitionRequest,
 	LanguageClient,
 } from 'vscode-languageclient';
-import { getClient } from './extension';
+import { getActiveLanguageClient } from './extension';
 
 type GoToDefinitionResponse = Location | Location[] | LocationLink[] | null;
 
@@ -16,7 +16,7 @@ export type goToDefinitionCommand = (params: DefinitionParams, token?: Cancellat
 
 export function goToDefinitionProvider(): goToDefinitionCommand {
     return async (params: DefinitionParams, token?: CancellationToken): Promise<GoToDefinitionResponse> => {
-        const languageClient: LanguageClient | undefined = await getClient();
+        const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
         if (!languageClient) {
             return null;
         }

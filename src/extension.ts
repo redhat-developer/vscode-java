@@ -298,7 +298,7 @@ export function deactivate(): void {
 	syntaxClient.stop();
 }
 
-export async function getClient(): Promise<LanguageClient | undefined> {
+export async function getActiveLanguageClient(): Promise<LanguageClient | undefined> {
 	let languageClient: LanguageClient;
 
 	const api: ExtensionAPI = apiManager.getApiInstance();

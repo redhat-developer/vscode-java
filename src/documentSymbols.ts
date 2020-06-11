@@ -8,7 +8,7 @@ import {
     LanguageClient,
     SymbolInformation
 } from "vscode-languageclient";
-import { getClient } from "./extension";
+import { getActiveLanguageClient } from "./extension";
 
 type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;
 
@@ -16,7 +16,7 @@ export type getDocumentSymbolsCommand = (params: DocumentSymbolParams, token?: C
 
 export function getDocumentSymbolsProvider(): getDocumentSymbolsCommand {
     return async (params: DocumentSymbolParams, token?: CancellationToken): Promise<DocumentSymbolsResponse> => {
-        const languageClient: LanguageClient | undefined = await getClient();
+        const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
         if (!languageClient) {
             return [];
         }
