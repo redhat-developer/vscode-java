@@ -745,7 +745,7 @@
         },
         {
           "command": "java.server.mode.switch",
-          "when": "serverMode == Lightweight"
+          "when": "serverMode == LightWeight"
         }
       ]
     }
