@@ -48,7 +48,7 @@ class ApiManager {
             getClasspaths,
             isTestFile,
             onDidClasspathUpdate,
-            serverMode: this.initializeServerMode(),
+            serverMode: getJavaServerMode(),
             onDidServerModeChange,
             onDidProjectsImport,
         };
@@ -80,16 +80,6 @@ class ApiManager {
 
     public updateStatus(status: "Started" | "Error"): void {
         this.api.status = status;
-    }
-
-    private initializeServerMode(): ServerMode {
-        const serverLaunchMode: ServerMode = getJavaServerMode();
-        if (serverLaunchMode === ServerMode.HYBRID) {
-            // In Hybrid mode, the API will only be resolved when standard server is ready.
-            return ServerMode.STANDARD;
-        } else {
-            return serverLaunchMode;
-        }
     }
 }
 

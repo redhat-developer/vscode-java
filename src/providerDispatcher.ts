@@ -41,18 +41,18 @@ export class ClientHoverProvider implements HoverProvider {
 		}
 
 		const serverMode: ServerMode = apiManager.getApiInstance().serverMode;
-		if (serverMode === ServerMode.LIGHTWEIGHT) {
+		if (serverMode === ServerMode.STANDARD) {
+			if (!this.delegateProvider) {
+				this.delegateProvider = createClientHoverProvider(languageClient);
+			}
+			return this.delegateProvider.provideHover(document, position, token);
+		} else {
 			const params = {
 				textDocument: languageClient.code2ProtocolConverter.asTextDocumentIdentifier(document),
 				position: languageClient.code2ProtocolConverter.asPosition(position)
 			};
 			const hoverResponse = await languageClient.sendRequest(HoverRequest.type, params);
 			return languageClient.protocol2CodeConverter.asHover(hoverResponse);
-		} else if (serverMode === ServerMode.STANDARD) {
-			if (!this.delegateProvider) {
-				this.delegateProvider = createClientHoverProvider(languageClient);
-			}
-			return this.delegateProvider.provideHover(document, position, token);
 		}
 	}
 }

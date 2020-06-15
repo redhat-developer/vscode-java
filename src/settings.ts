@@ -23,7 +23,7 @@ export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // ja
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 const gradleWrapperPromptDialogs = [];
 
-export function onConfigurationChange(languageClient: LanguageClient, context: ExtensionContext) {
+export function onConfigurationChange() {
 	return workspace.onDidChangeConfiguration(params => {
 		if (!params.affectsConfiguration('java')) {
 			return;

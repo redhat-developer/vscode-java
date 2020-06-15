@@ -181,7 +181,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									java: getJavaConfig(requirements.java_home),
 								}
 							});
-							onConfigurationChange(standardClient.getClient(), context);
 						}
 					}
 				},
@@ -251,7 +250,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
-			context.subscriptions.push(onConfigurationChange(standardClient.getClient(), context));
+			context.subscriptions.push(onConfigurationChange());
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
@@ -302,10 +301,10 @@ export async function getActiveLanguageClient(): Promise<LanguageClient | undefi
 	let languageClient: LanguageClient;
 
 	const api: ExtensionAPI = apiManager.getApiInstance();
-	if (api.serverMode === ServerMode.LIGHTWEIGHT) {
-		languageClient = syntaxClient.getClient();
-	} else if (api.serverMode === ServerMode.STANDARD) {
+	if (api.serverMode === ServerMode.STANDARD) {
 		languageClient = standardClient.getClient();
+	} else {
+		languageClient = syntaxClient.getClient();
 	}
 
 	if (!languageClient) {
