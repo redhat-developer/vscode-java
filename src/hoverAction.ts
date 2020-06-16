@@ -1,20 +1,17 @@
 'use strict';
 
-import { commands, ExtensionContext, HoverProvider, languages, CancellationToken, Hover, Position, TextDocument, MarkdownString, window, Uri, MarkedString, Command } from "vscode";
+import { HoverProvider, CancellationToken, Hover, Position, TextDocument, MarkdownString, MarkedString, Command } from "vscode";
 import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
 import { Commands as javaCommands } from "./commands";
 import { FindLinks } from "./protocol";
 import { provideHoverCommandFn } from "./extension.api";
 import { logger } from "./log";
 
-export function createClientHoverProvider(languageClient: LanguageClient, context: ExtensionContext): JavaHoverProvider {
+export function createClientHoverProvider(languageClient: LanguageClient): JavaHoverProvider {
     const hoverProvider: JavaHoverProvider = new JavaHoverProvider(languageClient);
-    hoverProvider.registerHoverCommand(async (params: TextDocumentPositionParams, token: CancellationToken) => {
+    registerHoverCommand(async (params: TextDocumentPositionParams, token: CancellationToken) => {
         return await provideHoverCommand(languageClient, params, token);
     });
-    context.subscriptions.push(commands.registerCommand(javaCommands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, (location: any) => {
-        navigateToSuperImplementation(languageClient, location);
-    }));
 
     return hoverProvider;
 }
@@ -45,24 +42,16 @@ async function provideHoverCommand(languageClient: LanguageClient, params: TextD
     }
 }
 
-function navigateToSuperImplementation(languageClient: LanguageClient, location: any) {
-    const range = languageClient.protocol2CodeConverter.asRange(location.range);
-    window.showTextDocument(Uri.parse(decodeBase64(location.uri)), {
-        preserveFocus: true,
-        selection: range,
-    });
-}
-
 function encodeBase64(text: string): string {
     return Buffer.from(text).toString('base64');
 }
 
-function decodeBase64(text: string): string {
-    return Buffer.from(text, 'base64').toString('ascii');
+const hoverCommandRegistry: provideHoverCommandFn[] = [];
+export function registerHoverCommand(callback: provideHoverCommandFn): void {
+    hoverCommandRegistry.push(callback);
 }
 
 class JavaHoverProvider implements HoverProvider {
-    private _hoverRegistry: provideHoverCommandFn[] = [];
 
     constructor(readonly languageClient: LanguageClient) {
     }
@@ -94,13 +83,9 @@ class JavaHoverProvider implements HoverProvider {
         return new Hover(contents, range);
     }
 
-    registerHoverCommand(callback: provideHoverCommandFn) {
-        this._hoverRegistry.push(callback);
-    }
-
     private async getContributedHoverCommands(params: TextDocumentPositionParams, token: CancellationToken): Promise<Command[]> {
         const contributedCommands: Command[] = [];
-        for (const provideFn of this._hoverRegistry) {
+        for (const provideFn of hoverCommandRegistry) {
             try {
                 if (token.isCancellationRequested) {
                     break;

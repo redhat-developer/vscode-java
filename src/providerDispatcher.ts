@@ -1,15 +1,14 @@
 'use strict';
 
 import { LanguageClient, DocumentSymbolRequest, SymbolInformation as clientSymbolInformation, DocumentSymbol as clientDocumentSymbol, HoverRequest } from "vscode-languageclient";
-import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, ProviderResult, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover } from "vscode";
-import { SyntaxLanguageClient } from "./syntaxLanguageClient";
+import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover } from "vscode";
 import { ClassFileContentsRequest } from "./protocol";
-import { provideHoverCommandFn } from "./extension.api";
 import { createClientHoverProvider } from "./hoverAction";
+import { getActiveLanguageClient } from "./extension";
+import { apiManager } from "./apiManager";
+import { ServerMode } from "./settings";
 
 export interface ProviderOptions {
-	standardClient: LanguageClient;
-	syntaxClient?: SyntaxLanguageClient;
 	contentProviderEvent: Event<Uri>;
 }
 
@@ -18,10 +17,10 @@ export interface ProviderHandle {
 }
 
 export function registerClientProviders(context: ExtensionContext, options: ProviderOptions): ProviderHandle {
-	const hoverProvider = new ClientHoverProvider(options, context);
+	const hoverProvider = new ClientHoverProvider();
 	context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
 
-	const symbolProvider = createDocumentSymbolProvider(options);
+	const symbolProvider = createDocumentSymbolProvider();
 	context.subscriptions.push(languages.registerDocumentSymbolProvider('java', symbolProvider));
 
 	const jdtProvider = createJDTContentProvider(options);
@@ -34,30 +33,26 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 export class ClientHoverProvider implements HoverProvider {
 	private delegateProvider;
 
-	constructor(private options: ProviderOptions, context: ExtensionContext) {
-		if (options.standardClient) {
-			this.delegateProvider = createClientHoverProvider(options.standardClient, context);
-		}
-	}
-
 	async provideHover(document: TextDocument, position: Position, token: CancellationToken): Promise<Hover> {
-		if (this.options.syntaxClient && this.options.syntaxClient.isAlive()) {
-			const languageClient: LanguageClient = this.options.syntaxClient.getClient();
-			await languageClient.onReady();
+		const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+
+		if (!languageClient) {
+			return undefined;
+		}
+
+		const serverMode: ServerMode = apiManager.getApiInstance().serverMode;
+		if (serverMode === ServerMode.STANDARD) {
+			if (!this.delegateProvider) {
+				this.delegateProvider = createClientHoverProvider(languageClient);
+			}
+			return this.delegateProvider.provideHover(document, position, token);
+		} else {
 			const params = {
 				textDocument: languageClient.code2ProtocolConverter.asTextDocumentIdentifier(document),
 				position: languageClient.code2ProtocolConverter.asPosition(position)
 			};
 			const hoverResponse = await languageClient.sendRequest(HoverRequest.type, params);
 			return languageClient.protocol2CodeConverter.asHover(hoverResponse);
-		} else if (this.delegateProvider) {
-			return this.delegateProvider.provideHover(document, position, token);
-		}
-	}
-
-	registerHoverCommand(callback: provideHoverCommandFn) {
-		if (this.delegateProvider) {
-			this.delegateProvider.registerHoverCommand(callback);
 		}
 	}
 }
@@ -66,12 +61,12 @@ function createJDTContentProvider(options: ProviderOptions): TextDocumentContent
 	return <TextDocumentContentProvider>{
 		onDidChange: options.contentProviderEvent,
 		provideTextDocumentContent: async (uri: Uri, token: CancellationToken): Promise<string> => {
-			let languageClient: LanguageClient = options.standardClient;
-			if (options.syntaxClient && options.syntaxClient.isAlive() && uri.fragment === "syntaxserver") {
-				languageClient = options.syntaxClient.getClient();
+			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+
+			if (!languageClient) {
+				return '';
 			}
 
-			await languageClient.onReady();
 			return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
 				return v || '';
 			});
@@ -79,15 +74,15 @@ function createJDTContentProvider(options: ProviderOptions): TextDocumentContent
 	};
 }
 
-function createDocumentSymbolProvider(options: ProviderOptions): DocumentSymbolProvider {
+function createDocumentSymbolProvider(): DocumentSymbolProvider {
 	return <DocumentSymbolProvider>{
 		provideDocumentSymbols: async (document: TextDocument, token: CancellationToken): Promise<SymbolInformation[] | DocumentSymbol[]> => {
-			let languageClient: LanguageClient = options.standardClient;
-			if (options.syntaxClient && options.syntaxClient.isAlive()) {
-				languageClient = options.syntaxClient.getClient();
+			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+
+			if (!languageClient) {
+				return [];
 			}
 
-			await languageClient.onReady();
 			const params = {
 				textDocument: languageClient.code2ProtocolConverter.asTextDocumentIdentifier(document),
 			};

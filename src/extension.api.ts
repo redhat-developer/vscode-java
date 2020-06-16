@@ -3,12 +3,13 @@ import { goToDefinitionCommand } from './goToDefinition';
 import { RequirementsData } from './requirements';
 import { TextDocumentPositionParams } from 'vscode-languageclient';
 import { CancellationToken, Command, ProviderResult, Uri, Event } from 'vscode';
+import { ServerMode } from './settings';
 
 export type provideHoverCommandFn = (params: TextDocumentPositionParams, token: CancellationToken) => ProviderResult<Command[] | undefined>;
 export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
 
 /**
- * Gets the project settings.
+ * Gets the project settings. This API is not supported in light weight server mode so far.
  * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
  * @param OptionKeys the settings we want to query, for example: ["org.eclipse.jdt.core.compiler.compliance", "org.eclipse.jdt.core.compiler.source"].
  *                   Besides the options defined in JavaCore, the following keys can also be used:
@@ -20,7 +21,7 @@ export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
 export type getProjectSettingsCommand = (uri: string, SettingKeys: string[]) => Promise<Object>;
 
 /**
- * Gets the classpaths and modulepaths.
+ * Gets the classpaths and modulepaths. This API is not supported in light weight server mode so far.
  * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
  * @param options Query options.
  * @returns ClasspathResult containing both classpaths and modulepaths.
@@ -52,26 +53,26 @@ export type ClasspathResult = {
 };
 
 /**
- * Checks if the input uri is a test source file or not.
+ * Checks if the input uri is a test source file or not. This API is not supported in light weight server mode so far.
  * @param uri Uri of the file that needs to be queried. Accepted uris are: source file, class file and project root path.
  * @returns `true` if the input uri is a test file in its belonging project, otherwise returns false.
  * @throws Will throw errors if the Uri does not belong to any project.
  */
 export type isTestFileCommand = (uri: string) => Promise<boolean>;
 
-export const ExtensionApiVersion = '0.5';
+export const ExtensionApiVersion = '0.6';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
 	readonly javaRequirement: RequirementsData;
-	readonly status: "Started" | "Error";
+	status: "Starting" | "Started" | "Error";
 	readonly registerHoverCommand: registerHoverCommand;
 	readonly getDocumentSymbols: getDocumentSymbolsCommand;
 	readonly getProjectSettings: getProjectSettingsCommand;
 	readonly getClasspaths: getClasspathsCommand;
 	readonly isTestFile: isTestFileCommand;
 	/**
-	 * An event which fires on classpath update.
+	 * An event which fires on classpath update. This API is not supported in light weight server mode so far.
 	 *
 	 * Note:
 	 *   1. This event will fire when the project's configuration file (e.g. pom.xml for Maven) get changed,
@@ -80,9 +81,19 @@ export interface ExtensionAPI {
 	 */
 	readonly onDidClasspathUpdate: Event<Uri>;
 	/**
-	 * An event fires on projects imported.
+	 * An event fires on projects imported. This API is not supported in light weight server mode so far.
 	 * The Uris in the array point to the project root path.
 	 */
 	readonly onDidProjectsImport: Event<Uri[]>;
 	readonly goToDefinition: goToDefinitionCommand;
+	/**
+	 * Indicates the current active mode for Java Language Server. Possible modes are:
+	 * - "Standard"
+	 * - "LightWeight"
+	 */
+	serverMode: ServerMode;
+	/**
+	 * An event which fires when the server mode has been switched.
+	 */
+	readonly onDidServerModeChange: Event<ServerMode>;
 }

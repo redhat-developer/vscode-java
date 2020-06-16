@@ -4,6 +4,7 @@ import { StatusBarItem, window, StatusBarAlignment, TextEditor, Uri, commands, E
 import { Commands } from "./commands";
 import { Disposable } from "vscode-languageclient";
 import * as path from "path";
+import { apiManager } from "./apiManager";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -18,7 +19,7 @@ class RuntimeStatusBarProvider implements Disposable {
 		this.disposables = [];
 	}
 
-	public async initialize(onClasspathUpdate: Event<Uri>, onProjectsImport: Event<Uri[]>, storagePath?: string): Promise<void> {
+	public async initialize(storagePath?: string): Promise<void> {
 		// ignore the hash part to make it compatible in debug mode.
 		if (storagePath) {
 			this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
@@ -46,14 +47,14 @@ class RuntimeStatusBarProvider implements Disposable {
 			this.updateItem(textEditor);
 		}));
 
-		this.disposables.push(onProjectsImport(async (uris: Uri[]) => {
+		this.disposables.push(apiManager.getApiInstance().onDidProjectsImport(async (uris: Uri[]) => {
 			for (const uri of uris) {
 				this.javaProjects.set(uri.fsPath, this.javaProjects.get(uri.fsPath));
 			}
 			await this.updateItem(window.activeTextEditor);
 		}));
 
-		this.disposables.push(onClasspathUpdate(async (e: Uri) => {
+		this.disposables.push(apiManager.getApiInstance().onDidClasspathUpdate(async (e: Uri) => {
 			for (const projectPath of this.javaProjects.keys()) {
 				if (path.relative(projectPath, e.fsPath) === '') {
 					this.javaProjects.set(projectPath, undefined);
