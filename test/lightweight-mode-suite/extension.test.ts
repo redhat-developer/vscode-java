@@ -21,11 +21,11 @@ suite('Java Language Extension - LightWeight', () => {
 				Commands.OPEN_FORMATTER,
 				Commands.CLEAN_WORKSPACE,
 				Commands.SWITCH_SERVER_MODE,
-			];
+			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
-			});
-			assert.equal(foundJavaCommands.length , JAVA_COMMANDS.length, 'Some Java commands are not registered properly or a new command is not added to the test');
+			}).sort();
+			assert.deepEqual(foundJavaCommands, JAVA_COMMANDS, 'Some Java commands are not registered properly or a new command is not added to the test.');
 		});
 	});
 });
