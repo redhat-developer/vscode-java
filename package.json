@@ -751,7 +751,8 @@
     }
   },
   "resolutions": {
-    "minimist": "^1.2.5"
+    "minimist": "^1.2.5",
+    "yargs-parser": "^18.1.2"
   },
   "scripts": {
     "preinstall": "npx npm-force-resolutions",
@@ -777,6 +778,7 @@
     "gulp-download": "0.0.1",
     "lodash.findindex": "^4.6.0",
     "lodash.template": ">=4.5.0",
+    "minimist": ">=1.2.5",
     "mocha": "^5.2.0",
     "ts-loader": "^5.3.1",
     "tslint": "^5.11.0",
@@ -784,8 +786,7 @@
     "typescript-tslint-plugin": "^0.3.1",
     "vscode-test": "^1.4.0",
     "webpack": "^4.27.1",
-    "webpack-cli": "^3.1.2",
-    "minimist": ">=1.2.5"
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {
     "vscode-languageclient": "6.0.0-next.9",
