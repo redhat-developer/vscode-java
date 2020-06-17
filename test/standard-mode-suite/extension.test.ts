@@ -22,8 +22,9 @@ suite('Java Language Extension - Standard', () => {
 	});
 
 	test('should register all java commands', () => {
-		if (env['SKIP_COMMANDS_TEST']) {
+		if (env['SKIP_COMMANDS_TEST'] === 'true') {
 			console.log('Skipping "should register all java commands"');
+			return;
 		}
 
 		return vscode.commands.getCommands(true).then((commands) =>
