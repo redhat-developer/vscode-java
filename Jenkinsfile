@@ -49,9 +49,7 @@ node('rhel8'){
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
 		sh "npm run compile" //compile the test code too
-		// UI Tests are currently frozen on Jenkins, even after running on RHEL8
-		// temporarily disabling them
-		// sh "npm test --silent"
+		sh "npm test --silent"
 	}
 
 	stage 'Upload vscode-java to staging'

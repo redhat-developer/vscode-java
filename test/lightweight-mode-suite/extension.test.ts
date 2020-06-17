@@ -25,7 +25,7 @@ suite('Java Language Extension - LightWeight', () => {
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
 			}).sort();
-			assert.deepEqual(foundJavaCommands, JAVA_COMMANDS, 'Some Java commands are not registered properly or a new command is not added to the test.');
+			assert.deepEqual(foundJavaCommands, JAVA_COMMANDS, `Some Java commands are not registered properly or a new command is not added to the test.\nActual: ${foundJavaCommands}\nExpected: ${JAVA_COMMANDS}`);
 		});
 	});
 });
