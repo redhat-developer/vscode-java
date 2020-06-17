@@ -22,7 +22,7 @@ suite('Java Language Extension - Standard', () => {
 	});
 
 	test('should register all java commands', () => {
-		if (env['SKIP_COMMANDS_TEST'] === 'true') {
+		if (env['SKIP_COMMANDS_TEST']) {
 			console.log('Skipping "should register all java commands"');
 		}
 
