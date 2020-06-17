@@ -1,6 +1,24 @@
 # Change Log
 
-## 0.62.0 (May 21th 2020)
+## 0.63.0 (June 18th, 2020)
+ * enhancement - Avoid unnecessary Gradle re-synch on restart. See [JLS#1485](https://github.com/eclipse/eclipse.jdt.ls/pull/1485).
+ * enhancement - Optimize default VM management to avoid unnecessary project updates. See [JLS#1484](https://github.com/eclipse/eclipse.jdt.ls/pull/1484).
+ * enhancement - Update to Eclipse 4.16. See [JLS#1478](https://github.com/eclipse/eclipse.jdt.ls/pull/1478).
+ * enhancement - Support annotations in semantic highlighting. See [JLS#1477](https://github.com/eclipse/eclipse.jdt.ls/pull/1477).
+ * enhancement - Wait for jobs to complete when resolving the classpaths. See [JLS#1476](https://github.com/eclipse/eclipse.jdt.ls/pull/1476).
+ * enhancement - Java runtimes should be configured before projects are imported. See [JLS#1474](https://github.com/eclipse/eclipse.jdt.ls/issues/1474).
+ * enhancement - Export the public APIs in light weight mode. See [#1480](https://github.com/redhat-developer/vscode-java/issues/1480).
+ * enhancement - Enable code completion for syntax server. See [#1463](https://github.com/eclipse/eclipse.jdt.ls/pull/1463).
+ * enhancement - IBuildSupport extension point. See [JLS#1455](https://github.com/eclipse/eclipse.jdt.ls/pull/1455).
+ * enhancement - Show VM install location on hover. See [#1464](https://github.com/redhat-developer/vscode-java/pull/1464).
+ * bug fix - Fix NPE in BaseDocumentLifeCycleHandler.publishDiagnostics. See [#1473](https://github.com/eclipse/eclipse.jdt.ls/pull/1473).
+ * bug fix - Organize import on save should not select ambiguous static import. See [#1459](https://github.com/eclipse/eclipse.jdt.ls/pull/1459).
+ * bug fix - Link in javadoc causes an error. See [#1437](https://github.com/redhat-developer/vscode-java/issues/1437).
+ * build - Improve 'launching from source' detection. See [#1473](https://github.com/redhat-developer/vscode-java/pull/1473).
+ * build - Fix debug mode detection. See [#1467](https://github.com/redhat-developer/vscode-java/pull/1467).
+ * build - Ignore /node_modules/ when webpack is watching sources. See [#1487](https://github.com/redhat-developer/vscode-java/pull/1487).
+
+## 0.62.0 (May 21th, 2020)
  * enhancement - Expose import projects command. See [#746](https://github.com/redhat-developer/vscode-java/pull/746).
  * enhancement - Refactor package name. See [#823](https://github.com/redhat-developer/vscode-java/issues/823).
  * enhancement - Provide goToDefinition API . See [#1416](https://github.com/redhat-developer/vscode-java/issues/1416).
@@ -13,7 +31,7 @@
  * bug fix - Semantic highlighting doesn't like java.* packages. See [#1434](https://github.com/redhat-developer/vscode-java/issues/1434).
  * bug fix - Discard the stale workingcopies that belonged to the deleted folder. See [JLS#1439](https://github.com/eclipse/eclipse.jdt.ls/pull/1439).
 
-## 0.61.0 (April 30th 2020)
+## 0.61.0 (April 30th, 2020)
 
  * enhancement - organize imports should resolve static imports as well. See [#1386](https://github.com/redhat-developer/vscode-java/issues/1386).
  * enhancement - prompt to enable semantic hightlighting on startup. See [#1419](https://github.com/redhat-developer/vscode-java/pull/1419).
@@ -29,7 +47,7 @@
  * bug fix - syntax highlighting is not working with comment. See [#338](https://github.com/redhat-developer/vscode-java/issues/338).
  * bug fix - syntax highlighting is not working on special named classes. See [#299](https://github.com/redhat-developer/vscode-java/issues/299).
 
-## 0.60.0 (April 16th 2020)
+## 0.60.0 (April 16th, 2020)
  * enhancement - support semantic tokens. See [#1393](https://github.com/redhat-developer/vscode-java/pull/1393).
  * enhancement - preview the updates before applying the changes caused by file rename. See [#1375](https://github.com/redhat-developer/vscode-java/pull/1375).
  * enhancement - display a warning about the impending requirement of Java 11 to run the extension. See [#1366](https://github.com/redhat-developer/vscode-java/issues/1366).
@@ -41,11 +59,11 @@
  * bug fix - fix checkJavaVersion for Windows. See [#1360](https://github.com/redhat-developer/vscode-java/pull/1360).
  * bug fix - extracted element can not be renamed. See [#1391](https://github.com/redhat-developer/vscode-java/issues/1391).
 
-## 0.59.1 (April 3rd 2020)
+## 0.59.1 (April 3rd, 2020)
 * enhancement - sort formatter settings. See [#1359](https://github.com/redhat-developer/vscode-java/pull/1359).
 * bug fix - fixed failure to start 0.59 in theia 1.0.0/dev - onDidCreateFiles is not a function in workspace. See [#1363](https://github.com/redhat-developer/vscode-java/issues/1363).
 
-## 0.59.0 (April 1st 2020)
+## 0.59.0 (April 1st, 2020)
  * enhancement - Enable Java 14 support. See [#1300](https://github.com/redhat-developer/vscode-java/pull/1300).
  * enhancement - Support for JDK 14 for Gradle projects. See [#1338](https://github.com/redhat-developer/vscode-java/issues/1338).
  * enhancement - Provide `record` snippet. See [JLS#1393](https://github.com/eclipse/eclipse.jdt.ls/issues/1393).
