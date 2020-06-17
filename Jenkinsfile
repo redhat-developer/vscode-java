@@ -49,6 +49,7 @@ node('rhel8'){
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
 		sh "npm run compile" //compile the test code too
+		env.SKIP_COMMANDS_TEST="true"
 		sh "npm test --silent"
 	}
 

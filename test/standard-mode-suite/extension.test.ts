@@ -6,6 +6,7 @@ import * as plugin from '../../src/plugin';
 import * as java from '../../src/javaServerStarter';
 import * as requirements from '../../src/requirements';
 import { Commands } from '../../src/commands';
+import { env } from 'process';
 
 // tslint:disable: only-arrow-functions
 suite('Java Language Extension - Standard', () => {
@@ -21,6 +22,10 @@ suite('Java Language Extension - Standard', () => {
 	});
 
 	test('should register all java commands', () => {
+		if (env['SKIP_COMMANDS_TEST'] === 'true') {
+			console.log('Skipping "should register all java commands"');
+		}
+
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const JAVA_COMMANDS = [
