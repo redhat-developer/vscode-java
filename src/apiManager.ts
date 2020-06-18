@@ -20,8 +20,8 @@ class ApiManager {
 
     public initialize(requirements: RequirementsData): void {
         const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
-		const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
-		const getCompletionItems: getCompletionItemsCommand = completionItemsProvider();
+        const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
+        const getCompletionItems: getCompletionItemsCommand = completionItemsProvider();
 
         const getProjectSettings = async (uri: string, SettingKeys: string[]) => {
             return await commands.executeCommand<Object>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, uri, SettingKeys);
@@ -45,8 +45,8 @@ class ApiManager {
             status: "Starting",
             registerHoverCommand: registerHoverCommand,
             getDocumentSymbols,
-			goToDefinition,
-			getCompletionItems,
+            goToDefinition,
+            getCompletionItems,
             getProjectSettings,
             getClasspaths,
             isTestFile,
