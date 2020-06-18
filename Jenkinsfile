@@ -12,7 +12,7 @@ def buildVscodeExtension(){
 	sh "npm run vscode:prepublish"
 }
 
-node('rhel7'){
+node('rhel8'){
 	stage 'Build JDT LS'
 
 	env.JAVA_HOME="${tool 'openjdk-1.8'}"
@@ -26,7 +26,7 @@ node('rhel7'){
 	stash name: 'server_distro', includes :files[0].path
 }
 
-node('rhel7'){
+node('rhel8'){
 	stage 'Checkout vscode-java code'
 	deleteDir()
 	git url: 'https://github.com/redhat-developer/vscode-java.git'
@@ -49,6 +49,7 @@ node('rhel7'){
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
 		sh "npm run compile" //compile the test code too
+		env.SKIP_COMMANDS_TEST="true"
 		sh "npm test --silent"
 	}
 
@@ -58,7 +59,7 @@ node('rhel7'){
 	stash name:'vsix', includes:files[0].path
 }
 
-node('rhel7'){
+node('rhel8'){
 	if(publishToMarketPlace.equals('true')){
 		timeout(time:5, unit:'DAYS') {
 			input message:'Approve deployment?', submitter: 'fbricon'

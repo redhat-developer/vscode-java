@@ -78,11 +78,32 @@
 			"preLaunchTask": "npm: watch"
 		},
 		{
-			"name": "Launch Tests",
+			"name": "Launch Tests - Standard Mode",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
+			"args": [
+				"${workspaceFolder}/test/resources/projects/maven/salut",
+				"--disable-extensions",
+				"--extensionDevelopmentPath=${workspaceRoot}",
+				"--extensionTestsPath=${workspaceRoot}/out/test/standard-mode-suite"
+			],
+			"stopOnEntry": false,
+			"sourceMaps": true,
+			"outFiles": ["${workspaceRoot}/out/**/*.js"],
+			"preLaunchTask": "npm: compile"
+		},
+		{
+			"name": "Launch Tests - Lightweight Mode",
+			"type": "extensionHost",
+			"request": "launch",
+			"runtimeExecutable": "${execPath}",
+			"args": [
+				"${workspaceFolder}/test/resources/projects/maven/salut",
+				"--disable-extensions",
+				"--extensionDevelopmentPath=${workspaceRoot}",
+				"--extensionTestsPath=${workspaceRoot}/out/test/lightweight-mode-suite"
+			],
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/out/**/*.js"],

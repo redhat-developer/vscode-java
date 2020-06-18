@@ -200,4 +200,8 @@ export namespace Commands {
      * Temporary command to fetch Semantic Tokens Legend. To remove when LSP v3.16 is ready.
      */
     export const GET_SEMANTIC_TOKENS_LEGEND = 'java.project.getSemanticTokensLegend';
+    /**
+     * Command to switch between standard mode and lightweight mode.
+     */
+    export const SWITCH_SERVER_MODE = 'java.server.mode.switch';
 }
