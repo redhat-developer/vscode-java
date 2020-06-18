@@ -9,6 +9,7 @@ import { Commands } from "./commands";
 import { Emitter } from "vscode-languageclient";
 import { ServerMode, getJavaServerMode } from "./settings";
 import { registerHoverCommand } from "./hoverAction";
+import { getCompletionItemsCommand, completionItemsProvider } from "./completionItems";
 
 class ApiManager {
 
@@ -19,7 +20,8 @@ class ApiManager {
 
     public initialize(requirements: RequirementsData): void {
         const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
-        const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
+		const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
+		const getCompletionItems: getCompletionItemsCommand = completionItemsProvider();
 
         const getProjectSettings = async (uri: string, SettingKeys: string[]) => {
             return await commands.executeCommand<Object>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, uri, SettingKeys);
@@ -43,7 +45,8 @@ class ApiManager {
             status: "Starting",
             registerHoverCommand: registerHoverCommand,
             getDocumentSymbols,
-            goToDefinition,
+			goToDefinition,
+			getCompletionItems,
             getProjectSettings,
             getClasspaths,
             isTestFile,

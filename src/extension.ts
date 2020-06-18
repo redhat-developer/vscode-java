@@ -21,7 +21,6 @@ import { StandardLanguageClient } from './standardLanguageClient';
 import { apiManager } from './apiManager';
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
-import { getCompletionItemsCommand, completionItemsProvider } from './completionItems';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
