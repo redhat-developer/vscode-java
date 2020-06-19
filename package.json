@@ -354,7 +354,7 @@
         },
         "java.format.settings.url": {
           "type": "string",
-          "description": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
+          "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
           "default": null,
           "scope": "window"
         },
