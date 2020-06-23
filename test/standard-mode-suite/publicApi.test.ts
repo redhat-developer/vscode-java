@@ -138,7 +138,7 @@ suite('Public APIs - Standard', () => {
 		assert.equal(api.serverMode, ServerMode.STANDARD);
 	});
 
-	test('onWillChangeServerMode & onDidChangeServerMode should work', async function () {
+	test('onDidServerModeChange should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		assert.ok(api.onDidServerModeChange);
 	});

@@ -1,17 +1,20 @@
 import * as net from "net";
-import { LanguageClientOptions, StreamInfo, LanguageClient, ServerOptions, DidChangeConfigurationNotification } from "vscode-languageclient";
+import { LanguageClientOptions, StreamInfo, LanguageClient, ServerOptions, DidChangeConfigurationNotification, Disposable } from "vscode-languageclient";
 import { OutputInfoCollector, ClientErrorHandler, getJavaConfig } from "./extension";
 import { logger } from "./log";
 import { getJavaServerMode, ServerMode } from "./settings";
 import { StatusNotification } from "./protocol";
 import { apiManager } from "./apiManager";
 import { ExtensionAPI } from "./extension.api";
+import { StatusBarAlignment, window } from "vscode";
+import { Commands } from "./commands";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 
 export class SyntaxLanguageClient {
 	private languageClient: LanguageClient;
 	private stopping: boolean = false;
+	private disposables: Disposable[] = [];
 
 	public initialize(requirements, clientOptions: LanguageClientOptions, resolve: (value: ExtensionAPI) => void, serverOptions?: ServerOptions) {
 		const newClientOptions: LanguageClientOptions = Object.assign({}, clientOptions, {
@@ -72,6 +75,8 @@ export class SyntaxLanguageClient {
 					});
 				});
 			}
+
+			this.registerUIComponents();
 		}
 	}
 
@@ -95,5 +100,25 @@ export class SyntaxLanguageClient {
 
 	public getClient(): LanguageClient {
 		return this.languageClient;
+	}
+
+	public registerUIComponents(): void {
+		const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
+		item.text = "LightWeight Mode";
+		item.command = {
+			title: "Switch to Standard mode",
+			command: Commands.SWITCH_SERVER_MODE,
+			arguments: [ServerMode.STANDARD],
+		};
+		item.tooltip = "Click to switch to Standard mode";
+		item.show();
+		this.disposables.push(item);
+	}
+
+	public disposeUIComponents(): void {
+		for (const disposable of this.disposables) {
+			disposable.dispose();
+		}
+		this.disposables = [];
 	}
 }
