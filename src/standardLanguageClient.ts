@@ -14,7 +14,6 @@ import { RequirementsData } from "./requirements";
 import * as net from 'net';
 import { getJavaConfiguration } from "./utils";
 import { logger } from "./log";
-import { registerSemanticTokensProvider } from "./semanticTokenProvider";
 import * as buildPath from './buildpath';
 import * as sourceAction from './sourceAction';
 import * as refactorAction from './refactorAction';
@@ -296,9 +295,6 @@ export class StandardLanguageClient {
 				});
 			}
 			excludeProjectSettingsFiles();
-
-			// temporary implementation Semantic Highlighting before it is part of LSP
-			registerSemanticTokensProvider(context);
 		});
 	}
 
