@@ -741,11 +741,11 @@
         },
         {
           "command": "java.show.server.task.status",
-          "when": "serverMode != LightWeight"
+          "when": "java:serverMode != LightWeight"
         },
         {
           "command": "java.server.mode.switch",
-          "when": "serverMode == LightWeight"
+          "when": "java:serverMode == LightWeight"
         }
       ]
     }
