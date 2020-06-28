@@ -135,8 +135,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const syntaxServerWorkspacePath = path.resolve(storagePath + '/ss_ws');
 
 			const serverMode = getJavaServerMode();
-			// TODO: deptecated this in the future, use 'java:serverMode' instead
-			commands.executeCommand('setContext', 'serverMode', serverMode);
 			commands.executeCommand('setContext', 'java:serverMode', serverMode);
 			const isDebugModeByClientPort = !!process.env['SYNTAXLS_CLIENT_PORT'] || !!process.env['JDTLS_CLIENT_PORT'];
 			const requireSyntaxServer = (serverMode !== ServerMode.STANDARD) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
@@ -280,8 +278,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					snippetProvider.setActivation(false);
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context.storagePath);
-					// TODO: deptecated this in the future, use 'java:serverMode' instead
-					commands.executeCommand('setContext', 'serverMode', event);
 					commands.executeCommand('setContext', 'java:serverMode', serverMode);
 				}
 			});
