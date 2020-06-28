@@ -158,14 +158,16 @@ The following settings are supported:
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
 * `java.semanticHighlighting.enabled`: Enable/disable [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java files. Defaults to `false`.
 * `java.requirements.JDK11Warning`: Enable/disable a warning about the impending requirement of Java 11. Defaults to `true`.
-
-New in 0.62.0:
 * `java.refactor.renameFromFileExplorer`: Specifies whether to update imports and package declarations when renaming files from File Explorer. Defaults to `prompt`.
   - `never`: Don't enable refactoring for rename operations on File Explorer.
   - `autoApply`: Always automatically update the imports and package declarations.
   - `preview`: Always preview the changes before applying.
   - `prompt`: Ask user to confirm whether to bypass refactor preview.
 * `java.imports.gradle.wrapper.checksums`: Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers.
+
+New in 0.64.0:
+* `java.project.importOnFirstTimeStartup`: Specifies whether to import the Java projects in workspace on first-time startup. Supported values are `disabled` (never imports), `interactive` (asks to import or not), `automatic` (always imports).
+* `java.project.importHint`: Enable/disable the information for switching server mode when the user skips importing the Java projects on startup. Defaults to `true`.
 
 Semantic Highlighting
 ===============

@@ -596,7 +596,7 @@
         },
         "java.project.importHint": {
           "type": "boolean",
-          "description": "Enable/disable the information for switching server mode when the user skips import the Java projects on startup.",
+          "description": "Enable/disable the information for switching server mode when the user skips importing the Java projects on startup.",
           "default": true,
           "scope": "application"
         }
