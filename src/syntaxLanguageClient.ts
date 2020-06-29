@@ -104,13 +104,13 @@ export class SyntaxLanguageClient {
 
 	public registerUIComponents(): void {
 		const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-		item.text = "LightWeight Mode";
+		item.text = "$(rocket)";
 		item.command = {
 			title: "Switch to Standard mode",
 			command: Commands.SWITCH_SERVER_MODE,
 			arguments: [ServerMode.STANDARD],
 		};
-		item.tooltip = "Click to switch to Standard mode";
+		item.tooltip = "Click to switch the Java language server to standard mode";
 		item.show();
 		this.disposables.push(item);
 	}

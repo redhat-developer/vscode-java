@@ -46,7 +46,7 @@ export function ensureExists(folder) {
 	}
 }
 
-export function getInclusionFilePatterns(): string[] {
+export function getBuildFilePatterns(): string[] {
 	const config = getJavaConfiguration();
 	const isMavenImporterEnabled: boolean = config.get<boolean>("import.maven.enabled");
 	const isGradleImporterEnabled: boolean = config.get<boolean>("import.gradle.enabled");
@@ -73,7 +73,7 @@ export function getInclusionPatternsFromNegatedExclusion(): string[] {
 	return patterns;
 }
 
-export function getInclusionBlob(filePatterns: string[], basePatterns?: string[]): string {
+export function convertToGlob(filePatterns: string[], basePatterns?: string[]): string {
 	if (!filePatterns || filePatterns.length === 0) {
 		return "";
 	}

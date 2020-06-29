@@ -11,7 +11,7 @@ import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
 import { ExtensionAPI } from './extension.api';
-import { getJavaConfiguration, deleteDirectory, getInclusionFilePatterns, getInclusionPatternsFromNegatedExclusion, getInclusionBlob, getExclusionBlob } from './utils';
+import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
 import { onConfigurationChange, getJavaServerMode, ServerMode } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
@@ -263,7 +263,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (force) {
 					choice = "Yes";
 				} else {
-					choice = await window.showInformationMessage("Are you sure you want to switch to the Standard mode of Java Language Server?", "Yes", "No");
+					choice = await window.showInformationMessage("Are you sure you want to switch the Java language server to standard mode?", "Yes", "No");
 				}
 
 				if (choice === "Yes") {
@@ -321,14 +321,14 @@ async function isStandardServerRequired(): Promise<boolean> {
 	} else if (importOnStartup === "interactive") {
 		// Since the VS Code API does not support put negeted exclusion pattern in findFiles(), we need to first parse the
 		// negeted exclusion to inclusion and do the search. (If negeted exclusion pattern is set by user)
-		const inclusionPatterns: string[] = getInclusionFilePatterns();
+		const inclusionPatterns: string[] = getBuildFilePatterns();
 		const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
 		if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
-				(await workspace.findFiles(getInclusionBlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
+				(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
 			return await promptUserForStandardServer(config);
 		} else {
 			// Nothing found in negeted exclusion pattern, do a normal search then.
-			const inclusionBlob: string = getInclusionBlob(inclusionPatterns);
+			const inclusionBlob: string = convertToGlob(inclusionPatterns);
 			const exclusionBlob: string = getExclusionBlob();
 			if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
 				return await promptUserForStandardServer(config);

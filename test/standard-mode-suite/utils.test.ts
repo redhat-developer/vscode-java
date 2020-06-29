@@ -1,7 +1,7 @@
 'use strict';
 
 import * as assert from 'assert';
-import { getJavaConfiguration, getInclusionFilePatterns, getInclusionPatternsFromNegatedExclusion, getExclusionBlob, getInclusionBlob } from '../../src/utils';
+import { getJavaConfiguration, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, getExclusionBlob, convertToGlob } from '../../src/utils';
 import { WorkspaceConfiguration } from 'vscode';
 
 let exclusion: string[];
@@ -22,29 +22,29 @@ suite('Utils Test', () => {
 		isGradleImporterEnabled = config.get<boolean>(IMPORT_GRADLE_ENABLED, true);
 	});
 
-	test('getInclusionFilePatterns() - Maven importer is enabled', async function () {
+	test('getBuildFilePatterns() - Maven importer is enabled', async function () {
 		await config.update(IMPORT_MAVEN_ENABLED, true);
 		await config.update(IMPORT_GRADLE_ENABLED, false);
 
-		const result: string[] = getInclusionFilePatterns();
+		const result: string[] = getBuildFilePatterns();
 
 		assert.deepEqual(result, ["**/pom.xml"]);
 	});
 
-	test('getInclusionFilePatterns() - all importers are enabled', async function () {
+	test('getBuildFilePatterns() - all importers are enabled', async function () {
 		await config.update(IMPORT_MAVEN_ENABLED, true);
 		await config.update(IMPORT_GRADLE_ENABLED, true);
 
-		const result: string[] = getInclusionFilePatterns();
+		const result: string[] = getBuildFilePatterns();
 
 		assert.deepEqual(result, ["**/pom.xml", "**/build.gradle"]);
 	});
 
-	test('getInclusionFilePatterns() - no importers is enabled', async function () {
+	test('getBuildFilePatterns() - no importers is enabled', async function () {
 		await config.update(IMPORT_MAVEN_ENABLED, false);
 		await config.update(IMPORT_GRADLE_ENABLED, false);
 
-		const result: string[] = getInclusionFilePatterns();
+		const result: string[] = getBuildFilePatterns();
 
 		assert.deepEqual(result, []);
 	});
@@ -103,18 +103,18 @@ suite('Utils Test', () => {
 		assert.equal(result, "{**/node_modules/**,**/.metadata/**,**/archetype-resources/**,**/META-INF/maven/**}");
 	});
 
-	test('getInclusionBlob() - no file patterns', async function () {
-		const result: string = getInclusionBlob([]);
+	test('convertToGlob() - no file patterns', async function () {
+		const result: string = convertToGlob([]);
 		assert.equal(result, "");
 	});
 
-	test('getInclusionBlob() - no base patterns', async function () {
-		const result: string = getInclusionBlob(["**/pom.xml", "**/build.gradle"]);
+	test('convertToGlob() - no base patterns', async function () {
+		const result: string = convertToGlob(["**/pom.xml", "**/build.gradle"]);
 		assert.equal(result, "{**/pom.xml,**/build.gradle}");
 	});
 
-	test('getInclusionBlob() - have base patterns', async function () {
-		const result: string = getInclusionBlob(["**/pom.xml"], ["**/node_modules/test/**"]);
+	test('convertToGlob() - have base patterns', async function () {
+		const result: string = convertToGlob(["**/pom.xml"], ["**/node_modules/test/**"]);
 		assert.equal(result, "{**/node_modules/test/**/**/pom.xml}");
 	});
 
