@@ -166,8 +166,8 @@ The following settings are supported:
 * `java.imports.gradle.wrapper.checksums`: Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers.
 
 New in 0.64.0:
-* `java.project.importOnFirstTimeStartup`: Specifies whether to import the Java projects in workspace for the first-time startup in hybrid mode. Supported values are `disabled` (never imports), `interactive` (asks to import or not), `automatic` (always imports). Default to `interactive`.
-* `java.project.importHint`: Enable/disable the information for switching server mode when the user skips importing the Java projects on startup. Defaults to `true`.
+* `java.project.importOnFirstTimeStartup`: Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time. Supported values are `disabled` (never imports), `interactive` (asks to import or not), `automatic` (always imports). Default to `interactive`.
+* `java.project.importHint`: Enable/disable the server-mode switch information, when Java projects import is skipped on startup. Defaults to `true`.
 
 Semantic Highlighting
 ===============

@@ -591,12 +591,12 @@
             "automatic"
           ],
           "default": "interactive",
-          "description": "Specifies whether to import the Java projects in workspace for the first-time startup in hybrid mode.",
+          "description": "Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time.",
           "scope": "application"
         },
         "java.project.importHint": {
           "type": "boolean",
-          "description": "Enable/disable the information for switching server mode when the user skips importing the Java projects on startup.",
+          "description": "Enable/disable the server-mode switch information, when Java projects import is skipped on startup.",
           "default": true,
           "scope": "application"
         }

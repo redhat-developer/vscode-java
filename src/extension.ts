@@ -263,7 +263,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (force) {
 					choice = "Yes";
 				} else {
-					choice = await window.showInformationMessage("Are you sure you want to switch the Java language server to standard mode?", "Yes", "No");
+					choice = await window.showInformationMessage("Are you sure you want to switch the Java language server to Standard mode?", "Yes", "No");
 				}
 
 				if (choice === "Yes") {
@@ -319,8 +319,8 @@ async function isStandardServerRequired(): Promise<boolean> {
 	if (importOnStartup === "disabled") {
 		return false;
 	} else if (importOnStartup === "interactive") {
-		// Since the VS Code API does not support put negeted exclusion pattern in findFiles(), we need to first parse the
-		// negeted exclusion to inclusion and do the search. (If negeted exclusion pattern is set by user)
+		// Since the VS Code API does not support put negated exclusion pattern in findFiles(), we need to first parse the
+		// negated exclusion to inclusion and do the search. (If negated exclusion pattern is set by user)
 		const inclusionPatterns: string[] = getBuildFilePatterns();
 		const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
 		if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&

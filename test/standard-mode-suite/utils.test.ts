@@ -49,7 +49,7 @@ suite('Utils Test', () => {
 		assert.deepEqual(result, []);
 	});
 
-	test('getInclusionPatternsFromNegatedExclusion() - no negeted exclusions', async function () {
+	test('getInclusionPatternsFromNegatedExclusion() - no negated exclusions', async function () {
 		await config.update(IMPORT_EXCLUSION, [
 			"**/node_modules/**",
 			"**/.metadata/**",
@@ -62,7 +62,7 @@ suite('Utils Test', () => {
 		assert.deepEqual(result, []);
 	});
 
-	test('getInclusionPatternsFromNegatedExclusion() - have negeted exclusions', async function () {
+	test('getInclusionPatternsFromNegatedExclusion() - has negated exclusions', async function () {
 		await config.update(IMPORT_EXCLUSION, [
 			"**/node_modules/**",
 			"!**/node_modules/test/**",
@@ -76,7 +76,7 @@ suite('Utils Test', () => {
 		assert.deepEqual(result, ["**/node_modules/test/**"]);
 	});
 
-	test('getExclusionBlob() - no negeted exclusions', async function () {
+	test('getExclusionBlob() - no negated exclusions', async function () {
 		await config.update(IMPORT_EXCLUSION, [
 			"**/node_modules/**",
 			"**/.metadata/**",
@@ -89,7 +89,7 @@ suite('Utils Test', () => {
 		assert.equal(result, "{**/node_modules/**,**/.metadata/**,**/archetype-resources/**,**/META-INF/maven/**}");
 	});
 
-	test('getExclusionBlob() - have negeted exclusions', async function () {
+	test('getExclusionBlob() - has negated exclusions', async function () {
 		await config.update(IMPORT_EXCLUSION, [
 			"**/node_modules/**",
 			"!**/node_modules/test/**",
@@ -113,7 +113,7 @@ suite('Utils Test', () => {
 		assert.equal(result, "{**/pom.xml,**/build.gradle}");
 	});
 
-	test('convertToGlob() - have base patterns', async function () {
+	test('convertToGlob() - has base patterns', async function () {
 		const result: string = convertToGlob(["**/pom.xml"], ["**/node_modules/test/**"]);
 		assert.equal(result, "{**/node_modules/test/**/**/pom.xml}");
 	});
