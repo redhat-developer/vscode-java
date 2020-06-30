@@ -282,8 +282,8 @@
         },
         "java.completion.maxResults": {
           "type": "integer",
-          "default": 50,
-          "description": "Maximum number of completion results (not including snippets).\nSetting 0 will disable the limit and return all results. Be aware the performance will be very negatively impacted.",
+          "default": 0,
+          "markdownDescription": "Maximum number of completion results (not including snippets).\n`0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit.",
           "scope": "window"
         },
         "java.completion.enabled": {

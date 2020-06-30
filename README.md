@@ -144,7 +144,7 @@ The following settings are supported:
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 * `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
-* `java.completion.maxResults`: Maximum number of completion results (not including snippets).Setting 0 will disable the limit and return all results. Be aware the performance will be very negatively impacted.
+* `java.completion.maxResults`: Maximum number of completion results (not including snippets). `0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit..
 * `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
 * `java.configuration.runtimes`: Map Java Execution Environments to local JDKs.
 * `java.import.gradle.user.home`: setting for GRADLE_USER_HOME.
