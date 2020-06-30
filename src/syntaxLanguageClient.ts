@@ -110,7 +110,7 @@ export class SyntaxLanguageClient {
 			command: Commands.SWITCH_SERVER_MODE,
 			arguments: [ServerMode.STANDARD],
 		};
-		item.tooltip = "Click to switch the Java language server to standard mode";
+		item.tooltip = "Java language server is running in LightWeight mode, click to switch to Standard mode";
 		item.show();
 		this.disposables.push(item);
 	}

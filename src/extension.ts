@@ -327,7 +327,7 @@ async function isStandardServerRequired(): Promise<boolean> {
 				(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
 			return await promptUserForStandardServer(config);
 		} else {
-			// Nothing found in negeted exclusion pattern, do a normal search then.
+			// Nothing found in negated exclusion pattern, do a normal search then.
 			const inclusionBlob: string = convertToGlob(inclusionPatterns);
 			const exclusionBlob: string = getExclusionBlob();
 			if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
@@ -353,7 +353,8 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			const dontShowAgain: string = "Don't Show Again";
 			const showHint: boolean = config.get(importHintSection);
 			if (showHint) {
-				const message: string = "Java Language Server is running in LightWeight mode. Click the button 'LightWeight Mode' in the status bar if you want to import the projects later.";
+				const showRocketEmoji: boolean = process.platform === "win32" || process.platform === "darwin";
+				const message: string = `Java Language Server is running in LightWeight mode. Click the 'Rocket' button${showRocketEmoji ? ': 🚀' : ''} in the status bar if you want to import the projects later.`;
 				window.showInformationMessage(message, dontShowAgain)
 					.then(selection => {
 						if (selection && selection === dontShowAgain) {
