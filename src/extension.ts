@@ -354,7 +354,7 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			const showHint: boolean = config.get(importHintSection);
 			if (showHint) {
 				const showRocketEmoji: boolean = process.platform === "win32" || process.platform === "darwin";
-				const message: string = `Java Language Server is running in LightWeight mode. Click the 'Rocket' button${showRocketEmoji ? ': 🚀' : ''} in the status bar if you want to import the projects later.`;
+				const message: string = `Java Language Server is running in LightWeight mode. Click the ${showRocketEmoji ? '🚀' : 'Rocket'} icon in the status bar if you want to import the projects later.`;
 				window.showInformationMessage(message, dontShowAgain)
 					.then(selection => {
 						if (selection && selection === dontShowAgain) {
