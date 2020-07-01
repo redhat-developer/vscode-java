@@ -149,7 +149,7 @@ class RuntimeStatusBarProvider implements Disposable {
 		}
 
 		this.statusBarItem.text = this.getJavaRuntimeFromVersion(projectInfo.sourceLevel);
-		this.statusBarItem.tooltip = `Language Level: ${this.statusBarItem.text}${projectInfo.vmInstallPath ? ` <${projectInfo.vmInstallPath}>` : ""}`;
+		this.statusBarItem.tooltip = projectInfo.vmInstallPath ? `Language Level: ${this.statusBarItem.text} <${projectInfo.vmInstallPath}>` : "Configure Java Runtime";
 		this.statusBarItem.show();
 	}
 
