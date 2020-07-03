@@ -294,7 +294,18 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			});
 
 			if (serverMode === ServerMode.HYBRID && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
-				requireStandardServer = await isStandardServerRequired(resolve);
+				const config = getJavaConfiguration();
+				const importOnStartupSection: string = "project.importOnFirstTimeStartup";
+				const importOnStartup = config.get(importOnStartupSection);
+				if (importOnStartup === "disabled") {
+					syntaxClient.resolveApi(resolve);
+					requireStandardServer = false;
+				} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
+					syntaxClient.resolveApi(resolve);
+					requireStandardServer = await promptUserForStandardServer(config);
+				} else {
+					requireStandardServer = true;
+				}
 			}
 
 			if (requireStandardServer) {
@@ -310,41 +321,24 @@ function startStandardServer(context: ExtensionContext, requirements: requiremen
 	syntaxClient.disposeUIComponents();
 }
 
-async function isStandardServerRequired(resolve: (value: ExtensionAPI) => void): Promise<boolean> {
-	const config = getJavaConfiguration();
-	const importOnStartupSection: string = "project.importOnFirstTimeStartup";
-	const importOnStartup = config.get(importOnStartupSection);
-
-	/**
-	 * Following conditions indicates the language server will keep running in LightWeight mode,
-	 * until the Standard mode is ready (user needs explicitly select to switch to the Standard mode).
-	 * - importOnStartup === "disabled"
-	 * - need to prompt user for starting standard server
-	 */
-	if (importOnStartup === "disabled") {
-		syntaxClient.resolveApi(resolve);
-		return false;
-	} else if (importOnStartup === "interactive") {
-		// Since the VS Code API does not support put negated exclusion pattern in findFiles(), we need to first parse the
-		// negated exclusion to inclusion and do the search. (If negated exclusion pattern is set by user)
-		const inclusionPatterns: string[] = getBuildFilePatterns();
-		const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
-		if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
-				(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
-			syntaxClient.resolveApi(resolve);
-			return await promptUserForStandardServer(config);
-		} else {
-			// Nothing found in negated exclusion pattern, do a normal search then.
-			const inclusionBlob: string = convertToGlob(inclusionPatterns);
-			const exclusionBlob: string = getExclusionBlob();
-			if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
-				syntaxClient.resolveApi(resolve);
-				return await promptUserForStandardServer(config);
-			}
-		}
+async function workspaceContainsBuildFiles(): Promise<boolean> {
+	// Since the VS Code API does not support put negated exclusion pattern in findFiles(), we need to first parse the
+	// negated exclusion to inclusion and do the search. (If negated exclusion pattern is set by user)
+	const inclusionPatterns: string[] = getBuildFilePatterns();
+	const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
+	if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
+			(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
+		return true;
 	}
 
-	return true;
+	// Nothing found in negated exclusion pattern, do a normal search then.
+	const inclusionBlob: string = convertToGlob(inclusionPatterns);
+	const exclusionBlob: string = getExclusionBlob();
+	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
+		return true;
+	}
+
+	return false;
 }
 
 async function promptUserForStandardServer(config: WorkspaceConfiguration): Promise<boolean> {
