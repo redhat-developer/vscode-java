@@ -30,8 +30,7 @@
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle",
-    "workspaceContains:.classpath",
-    "onCommand:java.project.import"
+    "workspaceContains:.classpath"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -582,6 +581,23 @@
           },
           "description": "Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers",
           "default": [],
+          "scope": "application"
+        },
+        "java.project.importOnFirstTimeStartup": {
+          "type": "string",
+          "enum": [
+            "disabled",
+            "interactive",
+            "automatic"
+          ],
+          "default": "interactive",
+          "description": "Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time.",
+          "scope": "application"
+        },
+        "java.project.importHint": {
+          "type": "boolean",
+          "description": "Enable/disable the server-mode switch information, when Java projects import is skipped on startup.",
+          "default": true,
           "scope": "application"
         }
       }

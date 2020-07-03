@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, ExtensionApiVersion } from "./extension.api";
+import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, ExtensionApiVersion, ClientStatus } from "./extension.api";
 import { RequirementsData } from "./requirements";
 import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from "./documentSymbols";
 import { goToDefinitionCommand, goToDefinitionProvider } from "./goToDefinition";
@@ -40,7 +40,7 @@ class ApiManager {
         this.api = {
             apiVersion: ExtensionApiVersion,
             javaRequirement: requirements,
-            status: "Starting",
+            status: ClientStatus.Starting,
             registerHoverCommand: registerHoverCommand,
             getDocumentSymbols,
             goToDefinition,
@@ -78,7 +78,7 @@ class ApiManager {
         this.api.serverMode = mode;
     }
 
-    public updateStatus(status: "Started" | "Error"): void {
+    public updateStatus(status: ClientStatus): void {
         this.api.status = status;
     }
 }

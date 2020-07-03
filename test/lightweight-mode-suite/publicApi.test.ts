@@ -125,7 +125,7 @@ suite('Public APIs - LightWeight', () => {
 	 * Note: This case will switch the server mode to standard. Please make sure it is run
 	 * as the last one whenever you want to add new cases for the lightweight mode.
 	 */
-	test('onWillChangeServerMode & onDidChangeServerMode should work', async function () {
+	test('onDidServerModeChange should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		let onDidChangeServerModeCount: number = 0;
 
@@ -133,14 +133,18 @@ suite('Public APIs - LightWeight', () => {
 
 			api.onDidServerModeChange((mode) => {
 				onDidChangeServerModeCount++;
-				assert.equal(mode, ServerMode.STANDARD);
-				return resolve();
+				if (onDidChangeServerModeCount === 1) {
+					assert.equal(mode, ServerMode.HYBRID);
+				} else if (onDidChangeServerModeCount === 2) {
+					assert.equal(mode, ServerMode.STANDARD);
+					return resolve();
+				}
 			});
 
-			await commands.executeCommand(Commands.SWITCH_SERVER_MODE);
+			await commands.executeCommand(Commands.SWITCH_SERVER_MODE, "Standard", true/*force*/);
 		});
 
-		assert.equal(onDidChangeServerModeCount, 1);
+		assert.equal(onDidChangeServerModeCount, 2);
 	});
 
 	suiteTeardown(async function() {

@@ -20,7 +20,7 @@ import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import { serverTasks } from "./serverTasks";
 import { apiManager } from "./apiManager";
-import { ExtensionAPI } from "./extension.api";
+import { ExtensionAPI, ClientStatus } from "./extension.api";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -28,10 +28,10 @@ const GRADLE_CHECKSUM = "gradle/checksum/prompt";
 export class StandardLanguageClient {
 
 	private languageClient: LanguageClient;
-	private initialized: boolean = false;
+	private status: ClientStatus = ClientStatus.Uninitialized;
 
 	public initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve: (value: ExtensionAPI) => void): void {
-		if (this.initialized) {
+		if (this.status !== ClientStatus.Uninitialized) {
 			return;
 		}
 
@@ -39,6 +39,7 @@ export class StandardLanguageClient {
 		item.text = '$(sync~spin)';
 		item.command = Commands.SHOW_SERVER_TASK_STATUS;
 		item.show();
+		context.subscriptions.push(item);
 
 		if (workspace.getConfiguration().get("java.showBuildStatusOnStart.enabled")) {
 			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
@@ -88,14 +89,16 @@ export class StandardLanguageClient {
 						apiManager.fireDidServerModeChange(ServerMode.STANDARD);
 						break;
 					case 'Started':
+						this.status = ClientStatus.Started;
 						serverStatus.updateServerStatus(ServerStatusKind.Ready);
 						commands.executeCommand('setContext', 'javaLSReady', true);
-						apiManager.updateStatus('Started');
+						apiManager.updateStatus(ClientStatus.Started);
 						resolve(apiManager.getApiInstance());
 						break;
 					case 'Error':
+						this.status = ClientStatus.Error;
 						serverStatus.updateServerStatus(ServerStatusKind.Error);
-						apiManager.updateStatus('Error');
+						apiManager.updateStatus(ClientStatus.Error);
 						resolve(apiManager.getApiInstance());
 						break;
 					case 'Starting':
@@ -173,7 +176,7 @@ export class StandardLanguageClient {
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 
-		this.initialized = true;
+		this.status = ClientStatus.Initialized;
 	}
 
 	private registerCommandsForStandardServer(context: ExtensionContext, jdtEventEmitter: EventEmitter<Uri>): void {
@@ -299,19 +302,25 @@ export class StandardLanguageClient {
 	}
 
 	public start(): void {
-		if (this.languageClient) {
+		if (this.languageClient && this.status === ClientStatus.Initialized) {
 			this.languageClient.start();
+			this.status = ClientStatus.Starting;
 		}
 	}
 
 	public stop() {
 		if (this.languageClient) {
 			this.languageClient.stop();
+			this.status = ClientStatus.Stopping;
 		}
 	}
 
 	public getClient(): LanguageClient {
 		return this.languageClient;
+	}
+
+	public getClientStatus(): ClientStatus {
+		return this.status;
 	}
 }
 

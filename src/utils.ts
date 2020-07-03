@@ -45,3 +45,70 @@ export function ensureExists(folder) {
 		fs.mkdirSync(folder);
 	}
 }
+
+export function getBuildFilePatterns(): string[] {
+	const config = getJavaConfiguration();
+	const isMavenImporterEnabled: boolean = config.get<boolean>("import.maven.enabled");
+	const isGradleImporterEnabled: boolean = config.get<boolean>("import.gradle.enabled");
+	const patterns: string[] = [];
+	if (isMavenImporterEnabled) {
+		patterns.push("**/pom.xml");
+	}
+	if (isGradleImporterEnabled) {
+		patterns.push("**/build.gradle");
+	}
+
+	return patterns;
+}
+
+export function getInclusionPatternsFromNegatedExclusion(): string[] {
+	const config = getJavaConfiguration();
+	const exclusions: string[] = config.get<string[]>("import.exclusions", []);
+	const patterns: string[] = [];
+	for (const exclusion of exclusions) {
+		if (exclusion.startsWith("!")) {
+			patterns.push(exclusion.substr(1));
+		}
+	}
+	return patterns;
+}
+
+export function convertToGlob(filePatterns: string[], basePatterns?: string[]): string {
+	if (!filePatterns || filePatterns.length === 0) {
+		return "";
+	}
+
+	if (!basePatterns || basePatterns.length === 0) {
+		return parseToStringGlob(filePatterns);
+	}
+
+	const patterns: string[] = [];
+	for (const basePattern of basePatterns) {
+		for (const filePattern of filePatterns) {
+			patterns.push(path.join(basePattern, `/${filePattern}`).replace(/\\/g, "/"));
+		}
+	}
+	return parseToStringGlob(patterns);
+}
+
+export function getExclusionBlob(): string {
+	const config = getJavaConfiguration();
+	const exclusions: string[] = config.get<string[]>("import.exclusions", []);
+	const patterns: string[] = [];
+	for (const exclusion of exclusions) {
+		if (exclusion.startsWith("!")) {
+			continue;
+		}
+
+		patterns.push(exclusion);
+	}
+	return parseToStringGlob(patterns);
+}
+
+function parseToStringGlob(patterns: string[]): string {
+	if (!patterns || patterns.length === 0) {
+		return "";
+	}
+
+	return `{${patterns.join(",")}}`;
+}

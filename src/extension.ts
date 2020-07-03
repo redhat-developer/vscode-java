@@ -3,14 +3,15 @@
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern } from 'vscode';
+import * as fse from 'fs-extra';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification } from 'vscode-languageclient';
 import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { ExtensionAPI } from './extension.api';
-import { getJavaConfiguration, deleteDirectory } from './utils';
+import { ExtensionAPI, ClientStatus } from './extension.api';
+import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
 import { onConfigurationChange, getJavaServerMode, ServerMode } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
@@ -131,7 +132,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 		throw error;
 	}).then(async (requirements) => {
 		const triggerFiles = await getTriggerFiles();
-		return new Promise<ExtensionAPI>((resolve) => {
+		return new Promise<ExtensionAPI>(async (resolve) => {
 			const workspacePath = path.resolve(storagePath + '/jdt_ws');
 			const syntaxServerWorkspacePath = path.resolve(storagePath + '/ss_ws');
 
@@ -139,7 +140,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			commands.executeCommand('setContext', 'java:serverMode', serverMode);
 			const isDebugModeByClientPort = !!process.env['SYNTAXLS_CLIENT_PORT'] || !!process.env['JDTLS_CLIENT_PORT'];
 			const requireSyntaxServer = (serverMode !== ServerMode.STANDARD) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
-			const requireStandardServer = (serverMode !== ServerMode.LIGHTWEIGHT) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
+			let requireStandardServer = (serverMode !== ServerMode.LIGHTWEIGHT) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
 
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
@@ -196,16 +197,15 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				outputChannelName: extensionName
 			};
 
+			apiManager.initialize(requirements);
+
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions, resolve);
 				} else {
 					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
 				}
-			}
-
-			if (requireStandardServer) {
-				standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
+				syntaxClient.start();
 			}
 
 			context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
@@ -220,16 +220,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				};
 				return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params);
 			}));
-
-			apiManager.initialize(requirements);
-
-			if (requireSyntaxServer) {
-				syntaxClient.start();
-			}
-
-			if (requireStandardServer) {
-				standardClient.start();
-			}
 
 			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
 			if (cleanWorkspaceExists) {
@@ -256,15 +246,32 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
+			 * @param force: just for test purpose.
 			 */
-			commands.registerCommand(Commands.SWITCH_SERVER_MODE, (switchTo: ServerMode) => {
+			commands.registerCommand(Commands.SWITCH_SERVER_MODE, async (switchTo: ServerMode, force: boolean = false) => {
+				const clientStatus: ClientStatus = standardClient.getClientStatus();
+				if (clientStatus === ClientStatus.Starting || clientStatus === ClientStatus.Started) {
+					return;
+				}
+
 				const api: ExtensionAPI = apiManager.getApiInstance();
 				if (api.serverMode === switchTo || api.serverMode === ServerMode.STANDARD) {
 					return;
 				}
 
-				standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
-				standardClient.start();
+				let choice: string;
+				if (force) {
+					choice = "Yes";
+				} else {
+					choice = await window.showInformationMessage("Are you sure you want to switch the Java language server to Standard mode?", "Yes", "No");
+				}
+
+				if (choice === "Yes") {
+					// Before standard server is ready, we are in hybrid.
+					apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
+					apiManager.fireDidServerModeChange(ServerMode.HYBRID);
+					startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+				}
 			});
 
 			const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
@@ -285,8 +292,80 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
+
+			if (serverMode === ServerMode.HYBRID && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
+				const config = getJavaConfiguration();
+				const importOnStartupSection: string = "project.importOnFirstTimeStartup";
+				const importOnStartup = config.get(importOnStartupSection);
+				if (importOnStartup === "disabled") {
+					syntaxClient.resolveApi(resolve);
+					requireStandardServer = false;
+				} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
+					syntaxClient.resolveApi(resolve);
+					requireStandardServer = await promptUserForStandardServer(config);
+				} else {
+					requireStandardServer = true;
+				}
+			}
+
+			if (requireStandardServer) {
+				startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+			}
 		});
 	});
+}
+
+function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
+	standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
+	standardClient.start();
+	syntaxClient.disposeUIComponents();
+}
+
+async function workspaceContainsBuildFiles(): Promise<boolean> {
+	// Since the VS Code API does not support put negated exclusion pattern in findFiles(), we need to first parse the
+	// negated exclusion to inclusion and do the search. (If negated exclusion pattern is set by user)
+	const inclusionPatterns: string[] = getBuildFilePatterns();
+	const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
+	if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
+			(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
+		return true;
+	}
+
+	// Nothing found in negated exclusion pattern, do a normal search then.
+	const inclusionBlob: string = convertToGlob(inclusionPatterns);
+	const exclusionBlob: string = getExclusionBlob();
+	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
+		return true;
+	}
+
+	return false;
+}
+
+async function promptUserForStandardServer(config: WorkspaceConfiguration): Promise<boolean> {
+	const choice: string = await window.showInformationMessage("The workspace contains Java projects, would you like to import them?", "Yes", "Always", "Later");
+	switch (choice) {
+		case "Always":
+			await config.update("project.importOnFirstTimeStartup", "automatic");
+			return true;
+		case "Yes":
+			return true;
+		case "Later":
+		default:
+			const importHintSection: string = "project.importHint";
+			const dontShowAgain: string = "Don't Show Again";
+			const showHint: boolean = config.get(importHintSection);
+			if (showHint) {
+				const showRocketEmoji: boolean = process.platform === "win32" || process.platform === "darwin";
+				const message: string = `Java Language Server is running in LightWeight mode. Click the ${showRocketEmoji ? '🚀' : 'Rocket'} icon in the status bar if you want to import the projects later.`;
+				window.showInformationMessage(message, dontShowAgain)
+					.then(selection => {
+						if (selection && selection === dontShowAgain) {
+							config.update(importHintSection, false, ConfigurationTarget.Global);
+						}
+					});
+			}
+			return false;
+	}
 }
 
 export function getJavaConfig(javaHome: string) {
