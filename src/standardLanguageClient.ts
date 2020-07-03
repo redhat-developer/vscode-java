@@ -20,7 +20,7 @@ import * as refactorAction from './refactorAction';
 import * as pasteAction from './pasteAction';
 import { serverTasks } from "./serverTasks";
 import { apiManager } from "./apiManager";
-import { ExtensionAPI } from "./extension.api";
+import { ExtensionAPI, ClientStatus } from "./extension.api";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -92,12 +92,13 @@ export class StandardLanguageClient {
 						this.status = ClientStatus.Started;
 						serverStatus.updateServerStatus(ServerStatusKind.Ready);
 						commands.executeCommand('setContext', 'javaLSReady', true);
-						apiManager.updateStatus('Started');
+						apiManager.updateStatus(ClientStatus.Started);
 						resolve(apiManager.getApiInstance());
 						break;
 					case 'Error':
+						this.status = ClientStatus.Error;
 						serverStatus.updateServerStatus(ServerStatusKind.Error);
-						apiManager.updateStatus('Error');
+						apiManager.updateStatus(ClientStatus.Error);
 						resolve(apiManager.getApiInstance());
 						break;
 					case 'Starting':
@@ -310,7 +311,7 @@ export class StandardLanguageClient {
 	public stop() {
 		if (this.languageClient) {
 			this.languageClient.stop();
-			this.status = ClientStatus.Stopped;
+			this.status = ClientStatus.Stopping;
 		}
 	}
 
@@ -321,14 +322,6 @@ export class StandardLanguageClient {
 	public getClientStatus(): ClientStatus {
 		return this.status;
 	}
-}
-
-export enum ClientStatus {
-	Uninitialized,
-	Initialized,
-	Starting,
-	Started,
-	Stopped,
 }
 
 function logNotification(message: string) {

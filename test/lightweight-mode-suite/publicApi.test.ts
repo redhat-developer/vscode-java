@@ -133,14 +133,18 @@ suite('Public APIs - LightWeight', () => {
 
 			api.onDidServerModeChange((mode) => {
 				onDidChangeServerModeCount++;
-				assert.equal(mode, ServerMode.STANDARD);
-				return resolve();
+				if (onDidChangeServerModeCount === 1) {
+					assert.equal(mode, ServerMode.HYBRID);
+				} else if (onDidChangeServerModeCount === 2) {
+					assert.equal(mode, ServerMode.STANDARD);
+					return resolve();
+				}
 			});
 
 			await commands.executeCommand(Commands.SWITCH_SERVER_MODE, "Standard", true/*force*/);
 		});
 
-		assert.equal(onDidChangeServerModeCount, 1);
+		assert.equal(onDidChangeServerModeCount, 2);
 	});
 
 	suiteTeardown(async function() {

@@ -85,7 +85,7 @@ export function convertToGlob(filePatterns: string[], basePatterns?: string[]): 
 	const patterns: string[] = [];
 	for (const basePattern of basePatterns) {
 		for (const filePattern of filePatterns) {
-			patterns.push(path.join(basePattern, `/${filePattern}`).replace("/\\/g", "/"));
+			patterns.push(path.join(basePattern, `/${filePattern}`).replace(/\\/g, "/"));
 		}
 	}
 	return parseToStringGlob(patterns);

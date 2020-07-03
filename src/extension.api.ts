@@ -60,12 +60,21 @@ export type ClasspathResult = {
  */
 export type isTestFileCommand = (uri: string) => Promise<boolean>;
 
+export enum ClientStatus {
+	Uninitialized = "Uninitialized",
+	Initialized = "Initialized",
+	Starting = "Starting",
+	Started = "Started",
+	Error = "Error",
+	Stopping = "Stopping",
+}
+
 export const ExtensionApiVersion = '0.6';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
 	readonly javaRequirement: RequirementsData;
-	status: "Starting" | "Started" | "Error";
+	status: ClientStatus;
 	readonly registerHoverCommand: registerHoverCommand;
 	readonly getDocumentSymbols: getDocumentSymbolsCommand;
 	readonly getProjectSettings: getProjectSettingsCommand;

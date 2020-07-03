@@ -10,7 +10,7 @@ import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { Commands } from './commands';
-import { ExtensionAPI } from './extension.api';
+import { ExtensionAPI, ClientStatus } from './extension.api';
 import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
 import { onConfigurationChange, getJavaServerMode, ServerMode } from './settings';
 import { logger, initializeLogFile } from './log';
@@ -18,7 +18,7 @@ import glob = require('glob');
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { registerClientProviders } from './providerDispatcher';
 import * as fileEventHandler from './fileEventHandler';
-import { StandardLanguageClient, ClientStatus } from './standardLanguageClient';
+import { StandardLanguageClient } from './standardLanguageClient';
 import { apiManager } from './apiManager';
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
@@ -269,6 +269,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (choice === "Yes") {
 					// Before standard server is ready, we are in hybrid.
 					apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
+					apiManager.fireDidServerModeChange(ServerMode.HYBRID);
 					startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
 				}
 			});
@@ -293,14 +294,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			});
 
 			if (serverMode === ServerMode.HYBRID && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
-				requireStandardServer = await isStandardServerRequired();
+				requireStandardServer = await isStandardServerRequired(resolve);
 			}
 
 			if (requireStandardServer) {
 				startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
-			} else {
-				apiManager.getApiInstance().serverMode = ServerMode.LIGHTWEIGHT;
-				apiManager.fireDidServerModeChange(ServerMode.LIGHTWEIGHT);
 			}
 		});
 	});
@@ -312,11 +310,19 @@ function startStandardServer(context: ExtensionContext, requirements: requiremen
 	syntaxClient.disposeUIComponents();
 }
 
-async function isStandardServerRequired(): Promise<boolean> {
+async function isStandardServerRequired(resolve: (value: ExtensionAPI) => void): Promise<boolean> {
 	const config = getJavaConfiguration();
 	const importOnStartupSection: string = "project.importOnFirstTimeStartup";
 	const importOnStartup = config.get(importOnStartupSection);
+
+	/**
+	 * Following conditions indicates the language server will keep running in LightWeight mode,
+	 * until the Standard mode is ready (user needs explicitly select to switch to the Standard mode).
+	 * - importOnStartup === "disabled"
+	 * - need to prompt user for starting standard server
+	 */
 	if (importOnStartup === "disabled") {
+		syntaxClient.resolveApi(resolve);
 		return false;
 	} else if (importOnStartup === "interactive") {
 		// Since the VS Code API does not support put negated exclusion pattern in findFiles(), we need to first parse the
@@ -325,12 +331,14 @@ async function isStandardServerRequired(): Promise<boolean> {
 		const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
 		if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
 				(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
+			syntaxClient.resolveApi(resolve);
 			return await promptUserForStandardServer(config);
 		} else {
 			// Nothing found in negated exclusion pattern, do a normal search then.
 			const inclusionBlob: string = convertToGlob(inclusionPatterns);
 			const exclusionBlob: string = getExclusionBlob();
 			if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
+				syntaxClient.resolveApi(resolve);
 				return await promptUserForStandardServer(config);
 			}
 		}

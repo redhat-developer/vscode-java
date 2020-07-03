@@ -5,7 +5,7 @@ import { logger } from "./log";
 import { getJavaServerMode, ServerMode } from "./settings";
 import { StatusNotification } from "./protocol";
 import { apiManager } from "./apiManager";
-import { ExtensionAPI } from "./extension.api";
+import { ExtensionAPI, ClientStatus } from "./extension.api";
 import { StatusBarAlignment, window } from "vscode";
 import { Commands } from "./commands";
 
@@ -13,7 +13,7 @@ const extensionName = "Language Support for Java (Syntax Server)";
 
 export class SyntaxLanguageClient {
 	private languageClient: LanguageClient;
-	private stopping: boolean = false;
+	private status: ClientStatus = ClientStatus.Uninitialized;
 	private disposables: Disposable[] = [];
 
 	public initialize(requirements, clientOptions: LanguageClientOptions, resolve: (value: ExtensionAPI) => void, serverOptions?: ServerOptions) {
@@ -55,39 +55,41 @@ export class SyntaxLanguageClient {
 
 			// TODO: Currently only resolve the promise when the server mode is explicitly set to lightweight.
 			// This is to avoid breakings
-			if (getJavaServerMode() === ServerMode.LIGHTWEIGHT) {
-				this.languageClient.onReady().then(() => {
-					this.languageClient.onNotification(StatusNotification.type, (report) => {
-						switch (report.type) {
-							case 'Started':
-								apiManager.updateServerMode(ServerMode.LIGHTWEIGHT);
-								apiManager.updateStatus("Started");
-								resolve(apiManager.getApiInstance());
-								break;
-							case 'Error':
-								apiManager.updateServerMode(ServerMode.LIGHTWEIGHT);
-								apiManager.updateStatus("Error");
-								resolve(apiManager.getApiInstance());
-								break;
-							default:
-								break;
-						}
-					});
+			this.languageClient.onReady().then(() => {
+				this.languageClient.onNotification(StatusNotification.type, (report) => {
+					switch (report.type) {
+						case 'Started':
+							this.status = ClientStatus.Started;
+							apiManager.updateStatus(ClientStatus.Started);
+							break;
+						case 'Error':
+							this.status = ClientStatus.Error;
+							apiManager.updateStatus(ClientStatus.Error);
+							break;
+						default:
+							break;
+					}
+					if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
+						this.resolveApiOnReady(resolve);
+					}
 				});
-			}
+			});
 
 			this.registerUIComponents();
 		}
+
+		this.status = ClientStatus.Initialized;
 	}
 
 	public start(): void {
 		if (this.languageClient) {
 			this.languageClient.start();
+			this.status = ClientStatus.Starting;
 		}
 	}
 
 	public stop() {
-		this.stopping = true;
+		this.status = ClientStatus.Stopping;
 		if (this.languageClient) {
 			this.languageClient.stop();
 			this.languageClient = null;
@@ -95,7 +97,7 @@ export class SyntaxLanguageClient {
 	}
 
 	public isAlive(): boolean {
-		return !!this.languageClient && !this.stopping;
+		return !!this.languageClient && this.status !== ClientStatus.Stopping;
 	}
 
 	public getClient(): LanguageClient {
@@ -120,5 +122,17 @@ export class SyntaxLanguageClient {
 			disposable.dispose();
 		}
 		this.disposables = [];
+	}
+
+	public resolveApi(resolve: (value: ExtensionAPI) => void) {
+		apiManager.getApiInstance().serverMode = ServerMode.LIGHTWEIGHT;
+		apiManager.fireDidServerModeChange(ServerMode.LIGHTWEIGHT);
+		this.resolveApiOnReady(resolve);
+	}
+
+	private resolveApiOnReady(resolve: (value: ExtensionAPI) => void): void {
+		if ([ClientStatus.Started, ClientStatus.Error].includes(this.status)) {
+			resolve(apiManager.getApiInstance());
+		}
 	}
 }
