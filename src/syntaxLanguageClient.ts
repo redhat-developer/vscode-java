@@ -124,7 +124,7 @@ export class SyntaxLanguageClient {
 		this.disposables = [];
 	}
 
-	public resolveApi(resolve: (value: ExtensionAPI) => void) {
+	public resolveApi(resolve: (value: ExtensionAPI) => void): void {
 		apiManager.getApiInstance().serverMode = ServerMode.LIGHTWEIGHT;
 		apiManager.fireDidServerModeChange(ServerMode.LIGHTWEIGHT);
 		this.resolveApiOnReady(resolve);
