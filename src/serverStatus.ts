@@ -1,3 +1,5 @@
+'use strict';
+
 import { EventEmitter } from "vscode";
 import { serverTasks } from "./serverTasks";
 
@@ -21,11 +23,6 @@ function fireEvent() {
 }
 
 export namespace serverStatus {
-	export enum ServerStatus {
-		Ready = "Ready",
-		Error = "Error",
-		Busy = "Busy",
-	}
 
 	export const onServerStatusChanged = _emitter.event;
 
