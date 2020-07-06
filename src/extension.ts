@@ -23,6 +23,7 @@ import { apiManager } from './apiManager';
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { registerSemanticTokensProvider } from './semanticTokenProvider';
+import { serverStatusBarProvider } from './serverStatusBarProvider';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -206,6 +207,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
 				}
 				syntaxClient.start();
+				serverStatusBarProvider.showLightWeightStatus();
 			}
 
 			context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
@@ -276,6 +278,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
 			context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
+			context.subscriptions.push(serverStatusBarProvider);
+			context.subscriptions.push(runtimeStatusBarProvider);
 
 			registerClientProviders(context, { contentProviderEvent: jdtEventEmitter.event });
 
@@ -318,7 +322,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
 	standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 	standardClient.start();
-	syntaxClient.disposeUIComponents();
+	serverStatusBarProvider.showStandardStatus();
 }
 
 async function workspaceContainsBuildFiles(): Promise<boolean> {

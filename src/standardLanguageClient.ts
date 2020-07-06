@@ -21,6 +21,7 @@ import * as pasteAction from './pasteAction';
 import { serverTasks } from "./serverTasks";
 import { apiManager } from "./apiManager";
 import { ExtensionAPI, ClientStatus } from "./extension.api";
+import { serverStatusBarProvider } from "./serverStatusBarProvider";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -35,12 +36,6 @@ export class StandardLanguageClient {
 			return;
 		}
 
-		const item = window.createStatusBarItem(StatusBarAlignment.Right, Number.MIN_VALUE);
-		item.text = '$(sync~spin)';
-		item.command = Commands.SHOW_SERVER_TASK_STATUS;
-		item.show();
-		context.subscriptions.push(item);
-
 		if (workspace.getConfiguration().get("java.showBuildStatusOnStart.enabled")) {
 			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 		}
@@ -48,11 +43,11 @@ export class StandardLanguageClient {
 		serverStatus.initialize();
 		serverStatus.onServerStatusChanged(status => {
 			if (status === ServerStatusKind.Busy) {
-				item.text = '$(sync~spin)';
+				serverStatusBarProvider.setBusy();
 			} else if (status === ServerStatusKind.Error) {
-				item.text = '$(thumbsdown)';
+				serverStatusBarProvider.setError();
 			} else {
-				item.text = '$(thumbsup)';
+				serverStatusBarProvider.setReady();
 			}
 		});
 
@@ -106,7 +101,7 @@ export class StandardLanguageClient {
 						// message goes to progress report instead
 						break;
 				}
-				item.tooltip = report.message;
+				serverStatusBarProvider.updateTooltip(report.message);
 			});
 
 			this.languageClient.onNotification(ProgressReportNotification.type, (progress) => {
