@@ -43,11 +43,11 @@ export class StandardLanguageClient {
 		serverStatus.initialize();
 		serverStatus.onServerStatusChanged(status => {
 			if (status === ServerStatusKind.Busy) {
-				serverStatusBarProvider.updateText('$(sync~spin)');
+				serverStatusBarProvider.setBusy();
 			} else if (status === ServerStatusKind.Error) {
-				serverStatusBarProvider.updateText('$(thumbsdown)');
+				serverStatusBarProvider.setError();
 			} else {
-				serverStatusBarProvider.updateText('$(thumbsup)');
+				serverStatusBarProvider.setReady();
 			}
 		});
 

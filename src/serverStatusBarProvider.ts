@@ -34,6 +34,18 @@ class ServerStatusBarProvider implements Disposable {
 		this.statusBarItem.text = text;
 	}
 
+	public setBusy(): void {
+		this.statusBarItem.text = '$(sync~spin)';
+	}
+
+	public setError(): void {
+		this.statusBarItem.text = '$(thumbsdown)';
+	}
+
+	public setReady(): void {
+		this.statusBarItem.text = '$(thumbsup)';
+	}
+
 	public updateTooltip(tooltip: string): void {
 		this.statusBarItem.tooltip = tooltip;
 	}
