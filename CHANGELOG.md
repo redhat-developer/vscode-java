@@ -1,5 +1,20 @@
 # Change Log
 
+## 0.64.0 (July 7th, 2020)
+ * enhancement - Give more information in the language level status bar item. See [#1508](https://github.com/redhat-developer/vscode-java/pull/1508).
+ * enhancement - Register the semantic token provider after standard server is ready. See [#1505](https://github.com/redhat-developer/vscode-java/pull/1505).
+ * enhancement - Use java:serverMode to avoid conflicts. See [#1504](https://github.com/redhat-developer/vscode-java/pull/1504).
+ * enhancement - delay resolution of additional text edits. See [#1503](https://github.com/redhat-developer/vscode-java/pull/1503).
+ * enhancement - Ask users to import projects when opening a new folder. See [#1501](https://github.com/redhat-developer/vscode-java/pull/1501).
+ * enhancement - Improve Java LS shutdown. See [JLS#1495](https://github.com/eclipse/eclipse.jdt.ls/pull/1495).
+ * enhancement - Update Buildship to 3.1.5. See [JLS#1494](https://github.com/eclipse/eclipse.jdt.ls/pull/1494).
+ * bug fix - Unprocessed markdown in settings. See [#1498](https://github.com/redhat-developer/vscode-java/issues/1498).
+ * bug fix - Gradle 6.4 wrapper incorrectly marked as potentially malicious. See [#1492](https://github.com/redhat-developer/vscode-java/issues/1492).
+ * bug fix - Prepare rename breaks if you have edited the symbol just before the call. See [JLS#1483](https://github.com/eclipse/eclipse.jdt.ls/issues/1483).
+ * debt - Decouple the status bar item from each language client to a centralized one. See [#1506](https://github.com/redhat-developer/vscode-java/issues/1506).
+ * build - npm audit fix. See [#1496](https://github.com/redhat-developer/vscode-java/pull/1496).
+ 
+
 ## 0.63.0 (June 18th, 2020)
  * enhancement - Avoid unnecessary Gradle re-synch on restart. See [JLS#1485](https://github.com/eclipse/eclipse.jdt.ls/pull/1485).
  * enhancement - Optimize default VM management to avoid unnecessary project updates. See [JLS#1484](https://github.com/eclipse/eclipse.jdt.ls/pull/1484).
