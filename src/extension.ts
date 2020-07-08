@@ -349,7 +349,7 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 	const choice: string = await window.showInformationMessage("The workspace contains Java projects, would you like to import them?", "Yes", "Always", "Later");
 	switch (choice) {
 		case "Always":
-			await config.update("project.importOnFirstTimeStartup", "automatic");
+			await config.update("project.importOnFirstTimeStartup", "automatic", ConfigurationTarget.Global);
 			return true;
 		case "Yes":
 			return true;
