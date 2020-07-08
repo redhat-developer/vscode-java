@@ -83,7 +83,6 @@ node('rhel8'){
 
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
 		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
-		def vsix = findFiles(glob: '**.vsix')
 		sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
 	}// if publishToMarketPlace
 }
