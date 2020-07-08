@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.64.1 (July 8th, 2020)
+* bug fix - No response when clicking 'Always' on import. See [#1513](https://github.com/redhat-developer/vscode-java/pull/1513).
+
 ## 0.64.0 (July 7th, 2020)
  * enhancement - Give more information in the language level status bar item. See [#1508](https://github.com/redhat-developer/vscode-java/pull/1508).
  * enhancement - Register the semantic token provider after standard server is ready. See [#1505](https://github.com/redhat-developer/vscode-java/pull/1505).
