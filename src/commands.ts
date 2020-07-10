@@ -204,4 +204,6 @@ export namespace Commands {
      * Command to switch between standard mode and lightweight mode.
      */
     export const SWITCH_SERVER_MODE = 'java.server.mode.switch';
+
+    export const LEARN_MORE_ABOUT_REFACTORING = '_java.learnMoreAboutRefactorings';
 }

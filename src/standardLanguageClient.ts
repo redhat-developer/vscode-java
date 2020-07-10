@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionContext, window, StatusBarAlignment, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, languages, CodeActionKind } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
@@ -12,6 +12,7 @@ import { onExtensionChange } from "./plugin";
 import { serverTaskPresenter } from "./serverTaskPresenter";
 import { RequirementsData } from "./requirements";
 import * as net from 'net';
+import * as path from 'path';
 import { getJavaConfiguration } from "./utils";
 import { logger } from "./log";
 import * as buildPath from './buildpath';
@@ -23,6 +24,8 @@ import { apiManager } from "./apiManager";
 import { ExtensionAPI, ClientStatus } from "./extension.api";
 import { serverStatusBarProvider } from "./serverStatusBarProvider";
 import * as fileEventHandler from './fileEventHandler';
+import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvider";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -295,6 +298,13 @@ export class StandardLanguageClient {
 				});
 			}
 			excludeProjectSettingsFiles();
+
+			context.subscriptions.push(markdownPreviewProvider);
+			context.subscriptions.push(languages.registerCodeActionsProvider({ scheme: 'file', language: 'java' }, new RefactorDocumentProvider(), RefactorDocumentProvider.metadata));
+			context.subscriptions.push(commands.registerCommand(Commands.LEARN_MORE_ABOUT_REFACTORING, async (kind: CodeActionKind) => {
+				const sectionId: string = javaRefactorKinds.get(kind) || '';
+				markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.LEARN_MORE_ABOUT_REFACTORING}.md`)), 'Java Refactoring', sectionId, context);
+			}));
 		});
 	}
 
