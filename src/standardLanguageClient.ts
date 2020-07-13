@@ -22,6 +22,7 @@ import { serverTasks } from "./serverTasks";
 import { apiManager } from "./apiManager";
 import { ExtensionAPI, ClientStatus } from "./extension.api";
 import { serverStatusBarProvider } from "./serverStatusBarProvider";
+import * as fileEventHandler from './fileEventHandler';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -170,6 +171,7 @@ export class StandardLanguageClient {
 		});
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
+		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
 
 		this.status = ClientStatus.Initialized;
 	}
