@@ -283,8 +283,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			registerClientProviders(context, { contentProviderEvent: jdtEventEmitter.event });
 
-			fileEventHandler.registerFileEventHandlers(standardClient.getClient(), context);
-
 			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
 				if (event === ServerMode.STANDARD) {
 					syntaxClient.stop();
