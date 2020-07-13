@@ -40,6 +40,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             || command === 'assignField'
             || command === 'convertVariableToField'
             || command === 'invertVariable'
+            || command === 'introduceParameter'
             || command === 'convertAnonymousClassToNestedCommand') {
             const currentEditor = window.activeTextEditor;
             if (!currentEditor || !currentEditor.options) {
