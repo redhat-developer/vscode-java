@@ -248,7 +248,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
-			 * @param force: just for test purpose.
+			 * @param force force to switch server mode without asking
 			 */
 			commands.registerCommand(Commands.SWITCH_SERVER_MODE, async (switchTo: ServerMode, force: boolean = false) => {
 				const clientStatus: ClientStatus = standardClient.getClientStatus();
@@ -355,6 +355,10 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			return true;
 		case "Later":
 		default:
+			const standardClientStatus: ClientStatus = standardClient.getClientStatus();
+			if (standardClientStatus !== ClientStatus.Uninitialized) {
+				return false;
+			}
 			const importHintSection: string = "project.importHint";
 			const dontShowAgain: string = "Don't Show Again";
 			const showHint: boolean = config.get(importHintSection);
