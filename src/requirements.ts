@@ -85,29 +85,10 @@ function checkJavaVersion(javaHome: string): Promise<number> {
         const javaBin = path.join(javaHome, "bin", JAVA_FILENAME);
         cp.execFile(javaBin, ['-version'], {}, (error, stdout, stderr) => {
             const javaVersion = parseMajorVersion(stderr);
-            if (javaVersion < 8) {
-                openJDKDownload(reject, 'Java 8 or more recent is required to run. Please download and install a recent JDK');
-            } else {
-                if (javaVersion < 11) {
-                    const section = "requirements.JDK11Warning";
-                    const dontShowAgain = "Don't Show Again";
-                    const getJDK = "Get the Java Development Kit";
-                    const jdkWarning = getJavaConfiguration().get(section);
-                    if (jdkWarning) {
-                        const message = `Java 11 [will soon be the minimum requirement](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#jdk11.requirement) to run. Consider installing a recent JDK now.`;
-                        window.showInformationMessage(`${message}`, getJDK, dontShowAgain)
-                            .then(selection => {
-                                if (selection === dontShowAgain) {
-                                    getJavaConfiguration().update(section, false, ConfigurationTarget.Global);
-                                }
-                                if (selection === getJDK) {
-                                    commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(getJdkUrl()));
-                                }
-                            });
-                    }
-                }
-                resolve(javaVersion);
+            if (javaVersion < 11) {
+                openJDKDownload(reject, 'Java 11 or more recent is required to run. Please download and install a recent JDK');
             }
+            resolve(javaVersion);
         });
     });
 }

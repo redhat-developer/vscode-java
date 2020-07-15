@@ -12,7 +12,7 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a recent Java Development Kit (latest Java 8 is the current minimum requirement, but [Java 11  will soon be required](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#jdk11.requirement)).
+    * Download and install a recent Java Development Kit (latest Java 11 is the current minimum requirement).
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
@@ -164,8 +164,6 @@ The following settings are supported:
   - `preview`: Always preview the changes before applying.
   - `prompt`: Ask user to confirm whether to bypass refactor preview.
 * `java.imports.gradle.wrapper.checksums`: Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers.
-
-New in 0.64.0:
 * `java.project.importOnFirstTimeStartup`: Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time. Supported values are `disabled` (never imports), `interactive` (asks to import or not), `automatic` (always imports). Default to `interactive`.
 * `java.project.importHint`: Enable/disable the server-mode switch information, when Java projects import is skipped on startup. Defaults to `true`.
 

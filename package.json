@@ -533,12 +533,6 @@
           "description": "Enable/disable the semantic highlighting.",
           "scope": "window"
         },
-        "java.requirements.JDK11Warning": {
-          "type": "boolean",
-          "description": "Enable/disable a warning about the impending requirement of Java 11.",
-          "default": true,
-          "scope": "window"
-        },
         "java.refactor.renameFromFileExplorer": {
           "type": "string",
           "enum": [
