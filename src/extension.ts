@@ -320,6 +320,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 }
 
 function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
+	if (standardClient.getClientStatus() !== ClientStatus.Uninitialized) {
+		return;
+	}
 	standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 	standardClient.start();
 	serverStatusBarProvider.showStandardStatus();
@@ -355,14 +358,10 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			return true;
 		case "Later":
 		default:
-			const standardClientStatus: ClientStatus = standardClient.getClientStatus();
-			if (standardClientStatus !== ClientStatus.Uninitialized) {
-				return false;
-			}
 			const importHintSection: string = "project.importHint";
 			const dontShowAgain: string = "Don't Show Again";
 			const showHint: boolean = config.get(importHintSection);
-			if (showHint) {
+			if (showHint && standardClient.getClientStatus() === ClientStatus.Uninitialized) {
 				const showRocketEmoji: boolean = process.platform === "win32" || process.platform === "darwin";
 				const message: string = `Java Language Server is running in LightWeight mode. Click the ${showRocketEmoji ? '🚀' : 'Rocket'} icon in the status bar if you want to import the projects later.`;
 				window.showInformationMessage(message, dontShowAgain)

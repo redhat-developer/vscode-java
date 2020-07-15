@@ -24,12 +24,10 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public showStandardStatus(): void {
-		if (this.statusBarItem.text === StatusIcon.LightWeight) {
-			this.statusBarItem.text = StatusIcon.Busy;
-			this.statusBarItem.command = Commands.SHOW_SERVER_TASK_STATUS;
-			this.statusBarItem.tooltip = "";
-			this.statusBarItem.show();
-		}
+		this.statusBarItem.text = StatusIcon.Busy;
+		this.statusBarItem.command = Commands.SHOW_SERVER_TASK_STATUS;
+		this.statusBarItem.tooltip = "";
+		this.statusBarItem.show();
 	}
 
 	public updateText(text: string): void {
