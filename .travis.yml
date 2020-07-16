@@ -1,15 +1,17 @@
 sudo: false
 
-language: node_js
-node_js:
-- "node"
+language: java
 
 matrix:
   include:
-    - os: linux
-      dist: trusty
-      jdk: openjdk11
-    - os: osx
+  - os: linux
+    dist: trusty
+    jdk: openjdk11
+    env:
+      - JDK_HOME=~/openjdk11 # force launching JLS using JDK11
+  - os: osx
+    osx_image: xcode10.1
+    jdk: oraclejdk11
 
 before_install:
 - if [ $TRAVIS_OS_NAME == "linux" ]; then
@@ -32,7 +34,5 @@ install:
 - ls -ll java-*vsix
 
 script:
-- export JAVA_HOME=$HOME/openjdk11
-- $TRAVIS_BUILD_DIR/install-jdk.sh --install openjdk11 --target $JAVA_HOME
 - npm run tslint
 - npm test --silent
