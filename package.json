@@ -179,13 +179,13 @@
           "type": "string",
           "default": null,
           "description": "Arguments to pass to Gradle.",
-          "scope": "window"
+          "scope": "machine"
         },
         "java.import.gradle.jvmArguments": {
           "type": "string",
           "default": null,
           "description": "JVM arguments to pass to Gradle.",
-          "scope": "window"
+          "scope": "machine"
         },
         "java.import.gradle.user.home": {
           "type": "string",
