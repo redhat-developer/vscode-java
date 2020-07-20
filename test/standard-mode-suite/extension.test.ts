@@ -102,6 +102,7 @@ suite('Java Language Extension - Standard', () => {
 		const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../test/resources/packageExample.json'), 'utf8'));
 		const fakedExtension = {
 			id: 'test',
+			extensionUri: null,
 			extensionPath: '',
 			isActive: true,
 			packageJSON,

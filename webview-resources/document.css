@@ -1,0 +1,19 @@
+.btn {
+	border: 0;
+	color: var(--vscode-button-foreground);
+	background-color: var(--vscode-button-background);
+}
+
+.btn svg {
+	fill: var(--vscode-button-foreground);
+}
+
+.btn:hover {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.floating-bottom-right {
+	position: fixed;
+	bottom: 1rem;
+	right: 1rem;
+}
