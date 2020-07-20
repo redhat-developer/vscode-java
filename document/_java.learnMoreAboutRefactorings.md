@@ -18,6 +18,7 @@
   - [Inline constant](#inline-constant)
   - [Inline local variable](#inline-local-variable)
   - [Inline method](#inline-method)
+- [Introduce Parameter](#introduce-parameter)
 - Invert boolean
   - [Invert conditions](#invert-conditions)
   - [Invert local variable](#invert-local-variable)
@@ -440,6 +441,33 @@ public void method() {
 > Also see: [Extract to method](#extract-to-method)
 
 ---
+
+## Introduce Parameter
+Replaces an expression with a reference to a new method parameter, and updates all callers of the method to pass the expression as the value of that parameter.
+
+### Example
+Let's introduce a new parameter for the method `public void addUser()`.
+
+#### Before
+```java
+public void buildRegistry() {
+  addUser();
+}
+
+public void addUser() {
+  fUsers.add("Administrator");
+}
+```
+#### After
+```java
+public void buildRegistry() {
+  addUser("Administrator");
+}
+
+public void addUser(String name) {
+  fUsers.add(name);
+}
+```
 
 ## Invert conditions
 Inverts the boolean expression in the conditions.

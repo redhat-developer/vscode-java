@@ -14,6 +14,7 @@ export const javaRefactorKinds: Map<CodeActionKind, string> = new Map([
     [CodeActionKind.RefactorInline, 'inline-constant'],
     [CodeActionKind.Refactor.append('move'), 'move'],
     [CodeActionKind.Refactor.append('assign'), 'assign-to-variable'],
+    [CodeActionKind.Refactor.append('introduce').append('parameter'), 'introduce-parameter']
 ]);
 
 export class RefactorDocumentProvider implements CodeActionProvider {
