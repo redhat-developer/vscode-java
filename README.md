@@ -109,11 +109,14 @@ The following settings are supported:
 * `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).
 * `java.import.exclusions` : Exclude folders from import via glob patterns. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.
 * `java.import.gradle.enabled` : Enable/disable the Gradle importer.
-* `java.import.gradle.home`: setting for GRADLE_HOME.
+* Specify the Gradle distribution used by the Java extension:
+  * `java.import.gradle.wrapper.enabled`: Use Gradle from the 'gradle-wrapper.properties' file. Defaults to `true`.
+  * `java.import.gradle.version`: Use Gradle from the specific version if the Gradle wrapper is missing or disabled.
+  * `java.import.gradle.home`: Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.
 * `java.import.gradle.arguments`: Arguments to pass to Gradle.
 * `java.import.gradle.jvmArguments`: JVM arguments to pass to Gradle.
-* `java.import.gradle.wrapper.enabled`: Enable/disable the Gradle wrapper.
-* `java.import.gradle.version`: Gradle version, used if the gradle wrapper is missing or disabled.
+* `java.import.gradle.user.home`: setting for GRADLE_USER_HOME.
+* `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
 * `java.import.maven.enabled` : Enable/disable the Maven importer.
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
 * `java.maxConcurrentBuilds`: Set max simultaneous project builds.
@@ -145,9 +148,7 @@ The following settings are supported:
 * `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
 * `java.completion.maxResults`: Maximum number of completion results (not including snippets). `0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit..
-* `java.import.gradle.offline.enabled`: Enable/disable the Gradle offline mode. Defaults to `false`.
 * `java.configuration.runtimes`: Map Java Execution Environments to local JDKs.
-* `java.import.gradle.user.home`: setting for GRADLE_USER_HOME.
 * `java.server.launchMode`:
   - `Standard`: Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc...
   - `LightWeight`: Starts a syntax server with lower start-up cost. Only provides syntax features such as outline, navigation, javadoc, syntax errors. The lightweight mode won't load thirdparty extensions, such as java test runner, java debugger, etc.

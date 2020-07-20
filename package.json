@@ -136,19 +136,25 @@
         "java.import.gradle.wrapper.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable/disable the Gradle wrapper.",
+          "description": "Use Gradle from the 'gradle-wrapper.properties' file.",
+          "scope": "window"
+        },
+        "java.import.gradle.version": {
+          "type": "string",
+          "default": null,
+          "description": "Use Gradle from the specific version if the Gradle wrapper is missing or disabled.",
+          "scope": "window"
+        },
+        "java.import.gradle.home": {
+          "type": "string",
+          "default": null,
+          "description": "Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.",
           "scope": "window"
         },
         "java.import.gradle.offline.enabled": {
           "type": "boolean",
           "default": false,
           "description": "Enable/disable the Gradle offline mode.",
-          "scope": "window"
-        },
-        "java.import.gradle.version": {
-          "type": "string",
-          "default": null,
-          "description": "Gradle version, used if the gradle wrapper is missing or disabled.",
           "scope": "window"
         },
         "java.import.gradle.arguments": {
@@ -161,12 +167,6 @@
           "type": "string",
           "default": null,
           "description": "JVM arguments to pass to Gradle.",
-          "scope": "window"
-        },
-        "java.import.gradle.home": {
-          "type": "string",
-          "default": null,
-          "description": "Setting for GRADLE_HOME.",
           "scope": "window"
         },
         "java.import.gradle.user.home": {
