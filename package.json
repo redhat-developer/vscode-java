@@ -34,6 +34,108 @@
   ],
   "main": "./dist/extension",
   "contributes": {
+    "semanticTokenTypes": [
+      {
+        "id": "namespace",
+        "description": "Style for packages."
+      },
+      {
+        "id": "type",
+        "description": "Style for types."
+      },
+      {
+        "id": "class",
+        "superType": "type",
+        "description": "Style for classes."
+      },
+      {
+        "id": "interface",
+        "superType": "type",
+        "description": "Style for interfaces."
+      },
+      {
+        "id": "enum",
+        "superType": "type",
+        "description": "Style for enums."
+      },
+      {
+        "id": "annotation",
+        "superType": "type",
+        "description": "Style for annotations."
+      },
+      {
+        "id": "typeParameter",
+        "superType": "type",
+        "description": "Style for type parameters."
+      },
+      {
+        "id": "member",
+        "description": "Style for members."
+      },
+      {
+        "id": "function",
+        "superType": "member",
+        "description": "Style for methods."
+      },
+      {
+        "id": "annotationMember",
+        "superType": "function",
+        "description": "Style for annotation members."
+      },
+      {
+        "id": "property",
+        "superType": "member",
+        "description": "Style for fields."
+      },
+      {
+        "id": "enumMember",
+        "superType": "property",
+        "description": "Style for enum members."
+      },
+      {
+        "id": "variable",
+        "description": "Style for variables."
+      },
+      {
+        "id": "parameter",
+        "superType": "variable",
+        "description": "Style for parameters."
+      }
+    ],
+    "semanticTokenModifiers": [
+      {
+        "id": "static",
+        "description": "Style for symbols that are static."
+      },
+      {
+        "id": "readonly",
+        "description": "Style for symbols that are final."
+      },
+      {
+        "id": "deprecated",
+        "description": "Style for symbols that are deprecated."
+      },
+      {
+        "id": "public",
+        "description": "Style for symbols that are public"
+      },
+      {
+        "id": "private",
+        "description": "Style for symbols that are private."
+      },
+      {
+        "id": "protected",
+        "description": "Style for symbols that are protected"
+      },
+      {
+        "id": "abstract",
+        "description": "Style for symbols that are abstract"
+      },
+      {
+        "id": "declaration",
+        "description": "Style for symbols that are declarations."
+      }
+    ],
     "languages": [
       {
         "id": "java",
