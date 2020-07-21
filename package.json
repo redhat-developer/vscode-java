@@ -34,6 +34,18 @@
   ],
   "main": "./dist/extension",
   "contributes": {
+    "semanticTokenTypes": [
+      {
+        "id": "annotation",
+        "superType": "type",
+        "description": "Style for annotations."
+      },
+      {
+        "id": "annotationMember",
+        "superType": "function",
+        "description": "Style for annotation members."
+      }
+    ],
     "languages": [
       {
         "id": "java",
