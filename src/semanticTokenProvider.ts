@@ -21,7 +21,11 @@ export function registerSemanticTokensProvider(context: vscode.ExtensionContext)
     }
     if (isSemanticHighlightingEnabled()) {
         getSemanticTokensLegend().then(legend => {
-            const semanticTokensProviderDisposable = vscode.languages.registerDocumentSemanticTokensProvider({ scheme: 'file', language: 'java' }, semanticTokensProvider, legend);
+            const documentSelector = [
+                { scheme: 'file', language: 'java' },
+                { scheme: 'jdt', language: 'java' }
+            ];
+            const semanticTokensProviderDisposable = vscode.languages.registerDocumentSemanticTokensProvider(documentSelector, semanticTokensProvider, legend);
             context.subscriptions.push(semanticTokensProviderDisposable);
             onceSemanticTokenEnabledChange(context, semanticTokensProviderDisposable);
         });
