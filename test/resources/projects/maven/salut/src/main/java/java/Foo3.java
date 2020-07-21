@@ -18,4 +18,9 @@ public class Foo3 {
 		System.out.println(this.properties);
 		System.out.println(util);
 	}
+
+	@Override
+	public String toString() {
+		return "Foo3 [properties=" + properties + "]";
+	}
 }

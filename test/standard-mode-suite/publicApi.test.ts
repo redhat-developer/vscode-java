@@ -58,7 +58,7 @@ suite('Public APIs - Standard', () => {
 				continue;
 			}
 			symbolDetected = true;
-			assert.equal((symbol as DocumentSymbol).children.length, 3);
+			assert.equal((symbol as DocumentSymbol).children.length, 4);
 		}
 		if (!symbolDetected) {
 			assert.fail('Failed to get document symbols');

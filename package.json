@@ -689,6 +689,11 @@
         "command": "java.show.server.task.status",
         "title": "Show Build Job Status",
         "category": "Java"
+      },
+      {
+        "command": "java.action.navigateToSuperImplementation",
+        "title": "Go to Super Implementation",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -736,6 +741,11 @@
           "command": "java.projectConfiguration.update",
           "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
           "group": "1_javaactions"
+        },
+        {
+          "command": "java.action.navigateToSuperImplementation",
+          "when": "javaLSReady && editorTextFocus && editorLangId == java",
+          "group": "navigation@90"
         }
       ],
       "commandPalette": [
@@ -746,6 +756,10 @@
         {
           "command": "java.project.import",
           "when": "javaLSReady"
+        },
+        {
+          "command": "java.action.navigateToSuperImplementation",
+          "when": "javaLSReady && editorLangId == java"
         },
         {
           "command": "java.workspace.compile",
