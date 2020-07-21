@@ -1,5 +1,22 @@
 # Change Log
 
+## 0.65.0 (July 22nd, 2020)
+ * enhancement - **Require Java 11 to run the extension**. See [#1524](https://github.com/redhat-developer/vscode-java/pull/1524).
+ * enhancement - Expose the `java.import.gradle.java.home` preference. See [#1536](https://github.com/redhat-developer/vscode-java/issues/1536) & [JLS#1512](https://github.com/eclipse/eclipse.jdt.ls/pull/1512).
+ * enhancement - Add semantic tokens to class files. See [#1538](https://github.com/redhat-developer/vscode-java/issues/1538).
+ * enhancement - Adjust the Gradle settings scope to enhance security. See [#1535](https://github.com/redhat-developer/vscode-java/pull/1535).
+ * enhancement - Tune the user settings about specifying gradle distribution. See [#1534](https://github.com/redhat-developer/vscode-java/pull/1534).
+ * enhancement - Prevent tab key appending asterisk for import autocompletion. See [#1532](https://github.com/redhat-developer/vscode-java/issues/1532).
+ * enhancement - Do not show hint when standard server is already activated. See [#1522](https://github.com/redhat-developer/vscode-java/pull/1522).
+ * enhancement - Add `Introduce Parameter...` code action. See [#1521](https://github.com/redhat-developer/vscode-java/pull/1521).
+ * enhancement - Semantic highlighting improvements. See [#1488](https://github.com/redhat-developer/vscode-java/issues/1488).
+ * enhancement - Add Go to Super Implementation to context menu and command palette. See [#1395](https://github.com/redhat-developer/vscode-java/pull/1395).
+ * enhancement - Support refactoring documentation. See [#1334](https://github.com/redhat-developer/vscode-java/pull/1334).
+ * bug fix - NPE in CodeActionHandler.getProblemId L.221. See [JLS#1502](https://github.com/eclipse/eclipse.jdt.ls/issues/1502).
+ * bug fix - fixed Rename from File Explorer. See [#1517](https://github.com/redhat-developer/vscode-java/issues/1517).
+ * bug fix - Incorrect semantic highlighting for complex constructor invocations. See [#1514](https://github.com/redhat-developer/vscode-java/issues/1514).
+ * build - Bump lodash from 4.17.15 to 4.17.19. See [#1525](https://github.com/redhat-developer/vscode-java/pull/1525).
+
 ## 0.64.1 (July 8th, 2020)
 * bug fix - No response when clicking 'Always' on import. See [#1513](https://github.com/redhat-developer/vscode-java/pull/1513).
 
