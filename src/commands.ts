@@ -30,6 +30,11 @@ export namespace Commands {
     export const SHOW_REFERENCES = 'editor.action.showReferences';
 
     /**
+     * Go to editor location
+     */
+    export const GOTO_LOCATION = 'editor.action.goToLocations';
+
+    /**
      * Update project configuration
      */
     export const CONFIGURATION_UPDATE = 'java.projectConfiguration.update';

@@ -1,12 +1,12 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, languages, CodeActionKind } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
 import { getJavaConfig, applyWorkspaceEdit } from "./extension";
-import { StreamInfo, LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType } from "vscode-languageclient";
-import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType } from "./protocol";
+import { StreamInfo, LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams } from "vscode-languageclient";
+import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks } from "./protocol";
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange } from "./plugin";
 import { serverTaskPresenter } from "./serverTaskPresenter";
@@ -213,12 +213,50 @@ export class StandardLanguageClient {
 				applyWorkspaceEdit(obj, this.languageClient);
 			}));
 
-			context.subscriptions.push(commands.registerCommand(Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, (location: any) => {
-				const range = this.languageClient.protocol2CodeConverter.asRange(location.range);
-				window.showTextDocument(Uri.parse(decodeBase64(location.uri)), {
-					preserveFocus: true,
-					selection: range,
-				});
+			context.subscriptions.push(commands.registerCommand(Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, async (location: LinkLocation | Uri) => {
+				let superImplLocation: Location | undefined;
+
+				if (!location) { // comes from command palette
+					if (window.activeTextEditor?.document.languageId !== "java") {
+						return;
+					}
+					location = window.activeTextEditor.document.uri;
+				}
+
+				if (location instanceof Uri) { // comes from context menu
+					const params: TextDocumentPositionParams = {
+						textDocument: {
+							uri: location.toString(),
+						},
+						position: this.languageClient.code2ProtocolConverter.asPosition(window.activeTextEditor.selection.active),
+					};
+					const response = await this.languageClient.sendRequest(FindLinks.type, {
+						type: 'superImplementation',
+						position: params,
+					});
+
+					if (response && response.length > 0) {
+						const superImpl = response[0];
+						superImplLocation = new Location(
+							Uri.parse(superImpl.uri),
+							this.languageClient.protocol2CodeConverter.asRange(superImpl.range)
+						);
+					}
+				} else { // comes from hover information
+					superImplLocation = new Location(
+						Uri.parse(decodeBase64(location.uri)),
+						this.languageClient.protocol2CodeConverter.asRange(location.range),
+					);
+				}
+
+				if (superImplLocation) {
+					return window.showTextDocument(superImplLocation.uri, {
+						preserveFocus: true,
+						selection: superImplLocation.range,
+					});
+				} else {
+					return showNoLocationFound('No super implementation found');
+				}
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean) => {
@@ -383,4 +421,15 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 
 function decodeBase64(text: string): string {
     return Buffer.from(text, 'base64').toString('ascii');
+}
+
+function showNoLocationFound(message: string): void {
+	commands.executeCommand(
+		Commands.GOTO_LOCATION,
+		window.activeTextEditor.document.uri,
+		window.activeTextEditor.selection.active,
+		[],
+		'goto',
+		message
+	);
 }
