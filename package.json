@@ -163,6 +163,12 @@
           "description": "Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.",
           "scope": "window"
         },
+        "java.import.gradle.java.home": {
+          "type": "string",
+          "default": null,
+          "description": "The location to the JVM used to run the Gradle daemon.",
+          "scope": "machine"
+        },
         "java.import.gradle.offline.enabled": {
           "type": "boolean",
           "default": false,
