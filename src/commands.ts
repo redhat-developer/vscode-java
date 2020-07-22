@@ -35,6 +35,11 @@ export namespace Commands {
     export const GOTO_LOCATION = 'editor.action.goToLocations';
 
     /**
+     * Render markdown string to html string
+     */
+    export const MARKDOWN_API_RENDER = 'markdown.api.render';
+
+    /**
      * Update project configuration
      */
     export const CONFIGURATION_UPDATE = 'java.projectConfiguration.update';

@@ -1,9 +1,12 @@
 import { Disposable, WebviewPanel, window, ViewColumn, commands, Uri, Webview, ExtensionContext, env } from "vscode";
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { Commands } from "./commands";
 
 class MarkdownPreviewProvider implements Disposable {
     private panel: WebviewPanel | undefined;
+    // a cache maps document path to rendered html
+    private documentCache: Map<string, string> = new Map<string, string>();
     private disposables: Disposable[] = [];
 
     public async show(markdownFilePath: string, title: string, section: string, context: ExtensionContext): Promise<void> {
@@ -41,9 +44,13 @@ class MarkdownPreviewProvider implements Disposable {
     protected async getHtmlContent(webview: Webview, markdownFilePath: string, section: string, context: ExtensionContext): Promise<string> {
         const nonce: string = this.getNonce();
         const styles: string = this.getStyles(webview, context);
-        let markdownString: string = await fse.readFile(markdownFilePath, 'utf8');
-        markdownString = markdownString.replace(/__VSCODE_ENV_APPNAME_PLACEHOLDER__/, env.appName);
-        const body: string = await commands.executeCommand('markdown.api.render', markdownString);
+        let body: string | undefined = this.documentCache.get(markdownFilePath);
+        if (!body) {
+            let markdownString: string = await fse.readFile(markdownFilePath, 'utf8');
+            markdownString = markdownString.replace(/__VSCODE_ENV_APPNAME_PLACEHOLDER__/, env.appName);
+            body = await commands.executeCommand(Commands.MARKDOWN_API_RENDER, markdownString);
+            this.documentCache.set(markdownFilePath, body);
+        }
         return `
             <!DOCTYPE html>
             <html>
