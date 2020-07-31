@@ -611,6 +611,15 @@
           "description": "Enable/disable the server-mode switch information, when Java projects import is skipped on startup.",
           "default": true,
           "scope": "application"
+        },
+        "java.project.resourceFilters": {
+          "type": "array",
+          "default": [
+            "node_modules",
+            ".git"
+          ],
+          "description": "Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, [\"node_modules\",\".git\"] will exclude all files and folders named 'node_modules' or '.git'. Defaults to [\"node_modules\",\".git\"].",
+          "scope": "window"
         }
       }
     },
