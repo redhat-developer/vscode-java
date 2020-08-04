@@ -76,9 +76,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
             const packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
             if (packageName) {
                 snippets.push(`package ${packageName};`);
-                if (!isPackageInfo) {
-                    snippets.push("");
-                }
+                snippets.push("");
             }
         }
         if (!isPackageInfo) {
@@ -91,6 +89,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
             }
             snippets.push("\t${0}");
             snippets.push("}");
+            snippets.push("");
         }
         const textEditor = await window.showTextDocument(textDocuments[i]);
         textEditor.insertSnippet(new SnippetString(snippets.join("\n")));
