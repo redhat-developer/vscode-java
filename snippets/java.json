@@ -17,6 +17,13 @@
 		],
 		"description": "Public constructor"
 	},
+	"Println": {
+		"prefix": "sysout",
+		"body": [
+			"System.out.println('$1');",
+		],
+		"description": "Print line on console "
+	},
 	"trycatch": {
 		"prefix": "try_catch",
 		"body": [
