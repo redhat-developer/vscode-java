@@ -287,7 +287,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
 				if (event === ServerMode.STANDARD) {
 					syntaxClient.stop();
-					snippetProvider.setActivation(false);
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context.storagePath);
 					// temporary implementation Semantic Highlighting before it is part of LSP
