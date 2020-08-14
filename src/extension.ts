@@ -270,9 +270,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 
 				if (choice === "Yes") {
-					// Before standard server is ready, we are in hybrid.
-					apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
-					apiManager.fireDidServerModeChange(ServerMode.HYBRID);
 					startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
 				}
 			});
@@ -321,6 +318,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
 	if (standardClient.getClientStatus() !== ClientStatus.Uninitialized) {
 		return;
+	}
+	if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
+		// Before standard server is ready, we are in hybrid.
+		apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
+		apiManager.fireDidServerModeChange(ServerMode.HYBRID);
 	}
 	standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 	standardClient.start();
