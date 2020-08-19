@@ -157,7 +157,7 @@ The following settings are supported:
   Default launch mode is `Hybrid`. Legacy mode is `Standard`
 * `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
-* `java.semanticHighlighting.enabled`: Enable/disable [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java files. Defaults to `false`.
+* `java.semanticHighlighting.enabled`: Enable/disable [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java files. Defaults to `true`.
 * `java.requirements.JDK11Warning`: Enable/disable a warning about the impending requirement of Java 11. Defaults to `true`.
 * `java.refactor.renameFromFileExplorer`: Specifies whether to update imports and package declarations when renaming files from File Explorer. Defaults to `prompt`.
   - `never`: Don't enable refactoring for rename operations on File Explorer.
@@ -174,10 +174,6 @@ New in 0.65.0:
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) is controlled by the `java.semanticHighlighting.enabled` preference. When enabled, it fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience different small issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing.
-
-You will be prompted to enable or disable it on startup:
-
-![](https://user-images.githubusercontent.com/148698/80595049-65d2f000-8a24-11ea-8d9c-19b05b9cac15.png)
 
 Troubleshooting
 ===============
