@@ -77,7 +77,7 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 				items.unshift(changeItem.global);
 			}
 
-			window.showInformationMessage(`Do you want to exclude the ${env.appName} Java project settings files (.classpath, .project. .settings, .factorypath) from the file explorer?`, ...items).then((result) => {
+			window.showInformationMessage(`Do you want to exclude the ${env.appName} Java project settings files (.classpath, .project, .settings, .factorypath) from the file explorer?`, ...items).then((result) => {
 				if (result === changeItem.global) {
 					excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
 					for (const hiddenFile of needExcludeFiles) {
