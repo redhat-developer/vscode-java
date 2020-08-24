@@ -5,7 +5,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
 import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
@@ -217,11 +217,21 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					console.warn(`The command: ${command} is not supported in LightWeight mode. See: https://github.com/redhat-developer/vscode-java/issues/1480`);
 					return;
 				}
+				let token: CancellationToken;
+				let commandArgs: any[] = rest;
+				if (rest && rest.length && CancellationToken.is(rest[rest.length - 1])) {
+					token = rest[rest.length - 1];
+					commandArgs = rest.slice(0, rest.length - 1);
+				}
 				const params: ExecuteCommandParams = {
 					command,
-					arguments: rest
+					arguments: commandArgs
 				};
-				return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params);
+				if (token) {
+					return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params, token);
+				} else {
+					return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params);
+				}
 			}));
 
 			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
