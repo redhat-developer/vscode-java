@@ -8,9 +8,9 @@ import { ServerMode } from '../../src/settings';
 import * as fse from 'fs-extra';
 import { getJavaConfiguration } from '../../src/utils';
 import { Commands } from '../../src/commands';
+import { constants } from '../common';
 
-const projectFsPath: string = path.join(__dirname, '..', '..', '..', 'test', 'resources', 'projects', 'maven', 'salut');
-const pomPath: string = path.join(projectFsPath, 'pom.xml');
+const pomPath: string = path.join(constants.projectFsPath, 'pom.xml');
 
 // tslint:disable: only-arrow-functions
 suite('Public APIs - LightWeight', () => {
@@ -45,7 +45,7 @@ suite('Public APIs - LightWeight', () => {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		const symbols = await api.getDocumentSymbols({
 			textDocument: {
-				uri: Uri.file(path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
+				uri: Uri.file(path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
 			},
 		});
 		let symbolDetected: boolean = false;
@@ -64,7 +64,7 @@ suite('Public APIs - LightWeight', () => {
 	test('getProjectSettings should not work in lightweight mode', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		const projectSetting: {} = await api.getProjectSettings(
-			Uri.file(projectFsPath).toString(),
+			Uri.file(constants.projectFsPath).toString(),
 			['org.eclipse.jdt.core.compiler.compliance', 'org.eclipse.jdt.core.compiler.source'],
 		);
 		assert.ok(projectSetting === undefined);
@@ -72,13 +72,13 @@ suite('Public APIs - LightWeight', () => {
 
 	test('getClasspaths should not work in lightweight mode', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		const classpathResult: ClasspathResult = await api.getClasspaths(Uri.file(projectFsPath).toString(), {scope: 'runtime'});
+		const classpathResult: ClasspathResult = await api.getClasspaths(Uri.file(constants.projectFsPath).toString(), {scope: 'runtime'});
 		assert.ok(classpathResult === undefined);
 	});
 
 	test('isTestFile should not work in lightweight mode', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		const isTest: boolean = await api.isTestFile(Uri.file(path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo.java')).toString());
+		const isTest: boolean = await api.isTestFile(Uri.file(path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo.java')).toString());
 		assert.ok(isTest === undefined);
 	});
 
@@ -91,14 +91,14 @@ suite('Public APIs - LightWeight', () => {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		const definition = await api.goToDefinition({
 			textDocument: {
-				uri: Uri.file(path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
+				uri: Uri.file(path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
 			},
 			position: {
 				line: 17,
 				character: 34
 			},
 		});
-		assert.ok(Uri.parse(definition[0].uri).fsPath,  path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java'));
+		assert.ok(Uri.parse(definition[0].uri).fsPath,  path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java'));
 		assert.deepEqual(definition[0].range, {
 			start: {
 				character: 21,

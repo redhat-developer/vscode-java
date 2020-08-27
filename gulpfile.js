@@ -3,7 +3,12 @@ const gulp = require('gulp');
 const cp = require('child_process');
 const decompress = require('gulp-decompress');
 const download = require('gulp-download');
+const fse = require('fs-extra');
+const path = require('path');
 const server_dir = '../eclipse.jdt.ls';
+const originalTestFolder = path.join(__dirname, 'test', 'resources', 'projects', 'maven', 'salut');
+const tempTestFolder = path.join(__dirname, 'test-temp');
+const testSettings = path.join(tempTestFolder, '.vscode', 'settings.json');
 //...
 
 gulp.task('download_server', function(done) {
@@ -42,6 +47,31 @@ gulp.task('dev_server', function(done) {
 
 gulp.task('watch_server',function(done) {
 	gulp.watch(server_dir+'/org.eclipse.jdt.ls.core/**/*.java',['dev_server']);
+	done();
+});
+
+gulp.task('generate_standard_test_folder', function(done) {
+	fse.copySync(originalTestFolder, tempTestFolder);
+	fse.ensureDirSync(path.join(tempTestFolder, '.vscode'));
+	fse.writeJSONSync(testSettings, {
+		"java.server.launchMode": "Standard",
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"refactor.renameFromFileExplorer": "autoApply",
+	});
+	done();
+});
+
+gulp.task('generate_lightweight_test_folder', function(done) {
+	fse.copySync(originalTestFolder, tempTestFolder);
+	fse.ensureDirSync(path.join(tempTestFolder, '.vscode'));
+	fse.writeJSONSync(testSettings, {
+		"java.server.launchMode": "LightWeight",
+	});
+	done();
+});
+
+gulp.task('clean_test_folder', function(done) {
+	fse.removeSync(tempTestFolder);
 	done();
 });
 

@@ -30,6 +30,37 @@
                 "kind": "build",
                 "isDefault": true
             }
+        },
+        {
+            "type": "gulp",
+            "label": "cleanTestFolder",
+            "task": "clean_test_folder",
+        },
+        {
+            "type": "gulp",
+            "label": "generateStandardTestFolder",
+            "task": "generate_standard_test_folder"
+        },
+        {
+            "type": "gulp",
+            "label": "generateLightweightTestFolder",
+            "task": "generate_lightweight_test_folder"
+        },
+        {
+            "label": "prepareStandardTest",
+            "dependsOn": [
+                "cleanTestFolder",
+                "generateStandardTestFolder",
+                "npm: compile"
+            ]
+        },
+        {
+            "label": "prepareLightweightTest",
+            "dependsOn": [
+                "cleanTestFolder",
+                "generateLightweightTestFolder",
+                "npm: compile"
+            ]
         }
     ]
 }
