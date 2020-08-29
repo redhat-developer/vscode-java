@@ -359,7 +359,7 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 }
 
 async function promptUserForStandardServer(config: WorkspaceConfiguration): Promise<boolean> {
-	const choice: string = await window.showInformationMessage("The workspace contains Java projects, would you like to import them?", "Yes", "Always", "Later");
+	const choice: string = await window.showInformationMessage("The workspace contains Java projects. Would you like to import them?", "Yes", "Always", "Later");
 	switch (choice) {
 		case "Always":
 			await config.update("project.importOnFirstTimeStartup", "automatic", ConfigurationTarget.Global);
