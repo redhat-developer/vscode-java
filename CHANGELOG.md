@@ -14,7 +14,7 @@
  * bug fix - Document 'Hybrid' serverMode value in api. See [#1586](https://github.com/redhat-developer/vscode-java/pull/1586).
  * bug fix - Duplicate snippets displayed in lightweight mode. See [#1579](https://github.com/redhat-developer/vscode-java/issues/1579).
  * bug fix - Incorrect semantic tokens for some wildcard import statements. See [#1545](https://github.com/redhat-developer/vscode-java/issues/1545).
- * documentation - Remove mention of java.requirements.JDK11Warning from READMESee [#1603](https://github.com/redhat-developer/vscode-java/pull/1603).
+ * documentation - Remove mention of java.requirements.JDK11Warning from README. See [#1603](https://github.com/redhat-developer/vscode-java/pull/1603).
  * build - Add test case for rename file. See [#1574](https://github.com/redhat-developer/vscode-java/pull/1574).
  * build - Fixed some vulnerable dependencies. See [#1576](https://github.com/redhat-developer/vscode-java/pull/1576).
  * build - Bump elliptic from 6.4.1 to 6.5.3. See [#1554](https://github.com/redhat-developer/vscode-java/pull/1554).
