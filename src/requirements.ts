@@ -86,7 +86,7 @@ function checkJavaVersion(javaHome: string): Promise<number> {
         cp.execFile(javaBin, ['-version'], {}, (error, stdout, stderr) => {
             const javaVersion = parseMajorVersion(stderr);
             if (javaVersion < 11) {
-                openJDKDownload(reject, 'Java 11 or more recent is required to run. Please download and install a recent JDK');
+                openJDKDownload(reject, 'Java 11 or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring [`java.configuration.runtimes`](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)');
             }
             resolve(javaVersion);
         });
