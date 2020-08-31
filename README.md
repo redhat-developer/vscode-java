@@ -158,7 +158,6 @@ The following settings are supported:
 * `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
 * `java.semanticHighlighting.enabled`: Enable/disable [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java files. Defaults to `true`.
-* `java.requirements.JDK11Warning`: Enable/disable a warning about the impending requirement of Java 11. Defaults to `true`.
 * `java.refactor.renameFromFileExplorer`: Specifies whether to update imports and package declarations when renaming files from File Explorer. Defaults to `prompt`.
   - `never`: Don't enable refactoring for rename operations on File Explorer.
   - `autoApply`: Always automatically update the imports and package declarations.
