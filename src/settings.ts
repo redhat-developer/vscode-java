@@ -198,7 +198,8 @@ export function getJavaagentFlag(vmargs) {
 export enum ServerMode {
 	STANDARD = 'Standard',
 	LIGHTWEIGHT = 'LightWeight',
-	HYBRID = 'Hybrid'
+	HYBRID = 'Hybrid',
+	DISABLED = 'Disabled'
 }
 
 export function getJavaServerMode(): ServerMode {
