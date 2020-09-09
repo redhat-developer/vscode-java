@@ -28,7 +28,7 @@ class MarkdownPreviewProvider implements Disposable {
 
         this.panel.iconPath = Uri.file(path.join(context.extensionPath, 'icons', 'icon128.png'));
         this.panel.webview.html = await this.getHtmlContent(this.panel.webview, markdownFilePath, section, context);
-
+        this.panel.title = title;
         this.panel.reveal(this.panel.viewColumn);
     }
 

@@ -24,6 +24,7 @@ import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { registerSemanticTokensProvider } from './semanticTokenProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
+import { markdownPreviewProvider } from "./markdownPreviewProvider";
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -112,6 +113,10 @@ export class OutputInfoCollector implements OutputChannel {
 }
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+	context.subscriptions.push(markdownPreviewProvider);
+	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
+		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
+	}));
 
 	let storagePath = context.storagePath;
 	if (!storagePath) {

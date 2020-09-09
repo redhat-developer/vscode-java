@@ -620,6 +620,18 @@
           ],
           "description": "Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, [\"node_modules\",\".git\"] will exclude all files and folders named 'node_modules' or '.git'. Defaults to [\"node_modules\",\".git\"].",
           "scope": "window"
+        },
+        "java.templates.fileHeader": {
+          "type": "array",
+          "markdownDescription": "Specifies the file header snippets for new Java file. Support ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+          "scope": "window",
+          "default": []
+        },
+        "java.templates.typeComment": {
+          "type": "array",
+          "markdownDescription": "Specifies the type comment snippets for new Java type. Support ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+          "scope": "window",
+          "default": []
         }
       }
     },
@@ -840,11 +852,12 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "vscode-languageclient": "6.0.0-next.9",
-    "find-java-home": "1.1.0",
     "expand-home-dir": "^0.0.3",
+    "find-java-home": "1.1.0",
+    "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.3",
+    "vscode-languageclient": "6.0.0-next.9",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
   }
