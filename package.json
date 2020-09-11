@@ -623,13 +623,13 @@
         },
         "java.templates.fileHeader": {
           "type": "array",
-          "markdownDescription": "Specifies the file header snippets for new Java file. Support ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+          "markdownDescription": "Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
           "scope": "window",
           "default": []
         },
         "java.templates.typeComment": {
           "type": "array",
-          "markdownDescription": "Specifies the type comment snippets for new Java type. Support ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+          "markdownDescription": "Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
           "scope": "window",
           "default": []
         }
