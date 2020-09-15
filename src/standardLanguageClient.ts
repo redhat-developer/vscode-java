@@ -337,7 +337,6 @@ export class StandardLanguageClient {
 			}
 			excludeProjectSettingsFiles();
 
-			context.subscriptions.push(markdownPreviewProvider);
 			context.subscriptions.push(languages.registerCodeActionsProvider({ scheme: 'file', language: 'java' }, new RefactorDocumentProvider(), RefactorDocumentProvider.metadata));
 			context.subscriptions.push(commands.registerCommand(Commands.LEARN_MORE_ABOUT_REFACTORING, async (kind: CodeActionKind) => {
 				const sectionId: string = javaRefactorKinds.get(kind) || '';
