@@ -6,6 +6,7 @@
  * enhancement - [feature request] allow `var` to be fully specified with using 'Show Fixes'. See [#1573](https://github.com/redhat-developer/vscode-java/issues/1573).
  * enhancement - Allow devs to override default snippets. See [#1470](https://github.com/redhat-developer/vscode-java/issues/1470).
  * bug fix - autocompletion on inherited interface method inserts wrong code. See [#1593](https://github.com/redhat-developer/vscode-java/issues/1593).
+ * bug fix - Filename extension is .class when saving Untitled file to Java. See [#1618](https://github.com/redhat-developer/vscode-java/issues/1618).
  * build - Update TP to use Eclipse 2020-09 RC2. See [JLS#1546](https://github.com/eclipse/eclipse.jdt.ls/pull/1546).
 
 ## 0.66.0 (September 1st, 2020)
