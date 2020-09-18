@@ -64,7 +64,8 @@ suite('Java Language Extension - Standard', () => {
 				Commands.SHOW_JAVA_REFERENCES,
 				Commands.SHOW_SERVER_TASK_STATUS,
 				Commands.SWITCH_SERVER_MODE,
-				Commands.UPDATE_SOURCE_ATTACHMENT
+				Commands.UPDATE_SOURCE_ATTACHMENT,
+				Commands.RUNTIME_VALIDATION_OPEN
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
