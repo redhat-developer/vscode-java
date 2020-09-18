@@ -113,6 +113,9 @@ export class OutputInfoCollector implements OutputChannel {
 }
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+	context.subscriptions.push(commands.registerCommand(Commands.RUNTIME_VALIDATION_OPEN, () => {
+		commands.executeCommand("workbench.action.openSettings", "java.configuration.runtimes");
+	}));
 	context.subscriptions.push(markdownPreviewProvider);
 	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
@@ -179,7 +182,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						clientDocumentSymbolProvider: true,
 						gradleChecksumWrapperPromptSupport: true,
 						resolveAdditionalTextEditsSupport: true,
-						advancedIntroduceParameterRefactoringSupport: true
+						advancedIntroduceParameterRefactoringSupport: true,
+						actionableRuntimeNotificationSupport: true
 					},
 					triggerFiles,
 				},
