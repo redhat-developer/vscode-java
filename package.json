@@ -45,6 +45,28 @@
         "id": "annotationMember",
         "superType": "function",
         "description": "Style for annotation members."
+      },
+      {
+        "id": "modifier",
+        "superType": "keyword",
+        "description": "Style for modifier keywords."
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "java",
+        "scopes": {
+          "annotation": [
+            "storage.type.annotation.java"
+          ],
+          "annotationMember": [
+            "entity.name.annotationMember.java",
+            "constant.other.key.java"
+          ],
+          "modifier": [
+            "storage.modifier.java"
+          ]
+        }
       }
     ],
     "languages": [
