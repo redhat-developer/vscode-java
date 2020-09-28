@@ -179,7 +179,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						clientDocumentSymbolProvider: true,
 						gradleChecksumWrapperPromptSupport: true,
 						resolveAdditionalTextEditsSupport: true,
-						advancedIntroduceParameterRefactoringSupport: true
+						advancedIntroduceParameterRefactoringSupport: true,
+						actionableRuntimeNotificationSupport: true
 					},
 					triggerFiles,
 				},

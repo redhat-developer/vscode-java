@@ -501,7 +501,8 @@
               },
               "path": {
                 "type": "string",
-                "description": "JDK path.\nOn Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"."
+                "pattern": ".*(?<!\\/bin|\\/bin\\/|\\\\bin|\\\\bin\\\\)$",
+                "description": "JDK home path. Should be the JDK installation directory, not the Java bin path.\n On Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"."
               },
               "sources": {
                 "type": "string",
