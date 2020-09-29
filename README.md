@@ -73,11 +73,6 @@ If you need to compile your projects against a different JDK version, it's recom
     "path": "/path/to/jdk-11",
   },
   {
-    "name": "JavaSE-14",
-    "path": "/path/to/jdk-14",
-    "default": true
-  },
-  {
     "name": "JavaSE-15",
     "path": "/path/to/jdk-15",
     "default": true
@@ -173,8 +168,6 @@ The following settings are supported:
 * `java.project.importHint`: Enable/disable the server-mode switch information, when Java projects import is skipped on startup. Defaults to `true`.
 * `java.import.gradle.java.home`: Specifies the location to the JVM used to run the Gradle daemon.
 * `java.project.resourceFilters`: Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, ["node_modules",".git"] will exclude all files and folders named 'node_modules' or '.git'. Defaults to ["node_modules",".git"].
-
-New in 0.67.0:
 * `java.templates.fileHeader`: Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 

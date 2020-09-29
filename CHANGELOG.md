@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.68.0 (September 30th, 2020)
+ * enhancement - JavaFX application produce warning. See [#120](https://github.com/redhat-developer/vscode-java/issues/120).
+ * enhancement - Add support for JDK 15. See [#1627](https://github.com/redhat-developer/vscode-java/issues/1627).
+ * enhancement - Embed latest Java textmate grammar. See [#1637](https://github.com/redhat-developer/vscode-java/issues/1637).
+ * enhancement - Change the code action kind 'Change modifiers to final where possible' to Source Action. See [#1617](https://github.com/redhat-developer/vscode-java/issues/1617).
+ * enhancement - `java.configuration.runtimes` option configuration error will not prompt an error. See [#1614](https://github.com/redhat-developer/vscode-java/issues/1614).
+ * enhancement - [Feature Request] Provide more code action options on save. See [#1379](https://github.com/redhat-developer/vscode-java/issues/1379).
+ * bug fix - Since July update cause java highlight break. See [#1597](https://github.com/redhat-developer/vscode-java/issues/1597).
+ * bug fix - Corner case in parsing major version of JDK. See [#1331](https://github.com/redhat-developer/vscode-java/issues/1331).
+
 ## 0.67.0 (September 16th, 2020)
  * enhancement - Importing mixed (maven,gradle,eclipse) projects. See [#1344](https://github.com/redhat-developer/vscode-java/issues/1344).
  * enhancement - Better expose the "Anonymous to nested class" refactoring. See [JLS#1541](https://github.com/eclipse/eclipse.jdt.ls/pull/1541).
