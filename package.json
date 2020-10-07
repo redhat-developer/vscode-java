@@ -641,6 +641,12 @@
           "markdownDescription": "Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
           "scope": "window",
           "default": []
+        },
+        "java.references.includeAccessors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include getter, setter and builder/constructor when finding references.",
+          "scope": "window"
         }
       }
     },
