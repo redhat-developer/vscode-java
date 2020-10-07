@@ -171,6 +171,9 @@ The following settings are supported:
 * `java.templates.fileHeader`: Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 
+New in 0.69.0:
+* `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) is controlled by the `java.semanticHighlighting.enabled` preference. When enabled, it fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience different small issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing.
