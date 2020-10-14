@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.69.0 (October 15th, 2020)
+ * enhancement - Embed m2e 1.17. See [JLS#1562](https://github.com/eclipse/eclipse.jdt.ls/pull/1562).
+ * enhancement - Add code actions to add sealed/final/non-sealed modifier on a permitted type declaration. See [JLS#1555](https://github.com/eclipse/eclipse.jdt.ls/issues/1555).
+ * enhancement - Created type doesn't implement sealed interface. See [JLS#1553](https://github.com/eclipse/eclipse.jdt.ls/issues/1553).
+ * enhancement - Improve semantic token modifiers. See [JLS#1539](https://github.com/eclipse/eclipse.jdt.ls/pull/1539).
+ * enhancement - Find references to fields via getters/setters. See [#1646](https://github.com/redhat-developer/vscode-java/pull/1646).
+ * bug fix - StringIndexOutOfBoundsException while computing hover and folding range. See [#1644](https://github.com/redhat-developer/vscode-java/issues/1644).
+
 ## 0.68.0 (September 30th, 2020)
  * enhancement - JavaFX application produce warning. See [#120](https://github.com/redhat-developer/vscode-java/issues/120).
  * enhancement - Add support for JDK 15. See [#1627](https://github.com/redhat-developer/vscode-java/issues/1627).
