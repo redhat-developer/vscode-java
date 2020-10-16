@@ -1,5 +1,51 @@
 # Change Log
 
+## 0.69.0 (October 15th, 2020)
+ * enhancement - Embed m2e 1.17. See [JLS#1562](https://github.com/eclipse/eclipse.jdt.ls/pull/1562).
+ * enhancement - Add code actions to add sealed/final/non-sealed modifier on a permitted type declaration. See [JLS#1555](https://github.com/eclipse/eclipse.jdt.ls/issues/1555).
+ * enhancement - Created type doesn't implement sealed interface. See [JLS#1553](https://github.com/eclipse/eclipse.jdt.ls/issues/1553).
+ * enhancement - Improve semantic token modifiers. See [JLS#1539](https://github.com/eclipse/eclipse.jdt.ls/pull/1539).
+ * enhancement - Find references to fields via getters/setters. See [#1646](https://github.com/redhat-developer/vscode-java/pull/1646).
+ * bug fix - StringIndexOutOfBoundsException while computing hover and folding range. See [#1644](https://github.com/redhat-developer/vscode-java/issues/1644).
+
+## 0.68.0 (September 30th, 2020)
+ * enhancement - JavaFX application produce warning. See [#120](https://github.com/redhat-developer/vscode-java/issues/120).
+ * enhancement - Add support for JDK 15. See [#1627](https://github.com/redhat-developer/vscode-java/issues/1627).
+ * enhancement - Embed latest Java textmate grammar. See [#1637](https://github.com/redhat-developer/vscode-java/issues/1637).
+ * enhancement - Change the code action kind 'Change modifiers to final where possible' to Source Action. See [#1617](https://github.com/redhat-developer/vscode-java/issues/1617).
+ * enhancement - `java.configuration.runtimes` option configuration error will not prompt an error. See [#1614](https://github.com/redhat-developer/vscode-java/issues/1614).
+ * enhancement - [Feature Request] Provide more code action options on save. See [#1379](https://github.com/redhat-developer/vscode-java/issues/1379).
+ * bug fix - Since July update cause java highlight break. See [#1597](https://github.com/redhat-developer/vscode-java/issues/1597).
+ * bug fix - Corner case in parsing major version of JDK. See [#1331](https://github.com/redhat-developer/vscode-java/issues/1331).
+
+## 0.67.0 (September 16th, 2020)
+ * enhancement - Importing mixed (maven,gradle,eclipse) projects. See [#1344](https://github.com/redhat-developer/vscode-java/issues/1344).
+ * enhancement - Better expose the "Anonymous to nested class" refactoring. See [JLS#1541](https://github.com/eclipse/eclipse.jdt.ls/pull/1541).
+ * enhancement - [feature request] allow `var` to be fully specified with using 'Show Fixes'. See [#1573](https://github.com/redhat-developer/vscode-java/issues/1573).
+ * enhancement - Allow devs to override default snippets. See [#1470](https://github.com/redhat-developer/vscode-java/issues/1470).
+ * bug fix - autocompletion on inherited interface method inserts wrong code. See [#1593](https://github.com/redhat-developer/vscode-java/issues/1593).
+ * bug fix - Filename extension is .class when saving Untitled file to Java. See [#1618](https://github.com/redhat-developer/vscode-java/issues/1618).
+ * build - Update TP to use Eclipse 2020-09 RC2. See [JLS#1546](https://github.com/eclipse/eclipse.jdt.ls/pull/1546).
+
+## 0.66.0 (September 1st, 2020)
+ * enhancement - new `java.import.resourceFilter` preference to filter folders when refreshing workspace. See [#1460](https://github.com/redhat-developer/vscode-java/issues/1460).
+ * enhancement - enabled semantic highlighting by default. See [#1584](https://github.com/redhat-developer/vscode-java/pull/1584).
+ * enhancement - Show a more detailed message about Java 11 requirement. See [#1602](https://github.com/redhat-developer/vscode-java/pull/1602).
+ * enhancement - Support CancellationToken when calling LSP workspaceCommand. See [#1591](https://github.com/redhat-developer/vscode-java/pull/1591).
+ * enhancement - Updated to Eclipse 2020-09-M3. See [JLS#1534](https://github.com/eclipse/eclipse.jdt.ls/pull/1534).
+ * enhancement - Added `,` as signature trigger char. See [JLS#1522](https://github.com/eclipse/eclipse.jdt.ls/pull/1522).
+ * enhancement - Fixed newline in snippet for new Java files. See [#1564](https://github.com/redhat-developer/vscode-java/issues/1564).
+ * performance - faster source action resolution. See [JLS#1533](https://github.com/eclipse/eclipse.jdt.ls/pull/1533).
+ * typo - fixed typo in notification message. See [#1570](https://github.com/redhat-developer/vscode-java/pull/1570).
+ * typo - fixed Punctuation in import message. See [#1599](https://github.com/redhat-developer/vscode-java/pull/1599).
+ * bug fix - Document 'Hybrid' serverMode value in api. See [#1586](https://github.com/redhat-developer/vscode-java/pull/1586).
+ * bug fix - Duplicate snippets displayed in lightweight mode. See [#1579](https://github.com/redhat-developer/vscode-java/issues/1579).
+ * bug fix - Incorrect semantic tokens for some wildcard import statements. See [#1545](https://github.com/redhat-developer/vscode-java/issues/1545).
+ * documentation - Remove mention of java.requirements.JDK11Warning from README. See [#1603](https://github.com/redhat-developer/vscode-java/pull/1603).
+ * build - Add test case for rename file. See [#1574](https://github.com/redhat-developer/vscode-java/pull/1574).
+ * build - Fixed some vulnerable dependencies. See [#1576](https://github.com/redhat-developer/vscode-java/pull/1576).
+ * build - Bump elliptic from 6.4.1 to 6.5.3. See [#1554](https://github.com/redhat-developer/vscode-java/pull/1554).
+
 ## 0.65.0 (July 22nd, 2020)
  * enhancement - **Require Java 11 to run the extension**. See [#1524](https://github.com/redhat-developer/vscode-java/pull/1524).
  * enhancement - Expose the `java.import.gradle.java.home` preference. See [#1536](https://github.com/redhat-developer/vscode-java/issues/1536) & [JLS#1512](https://github.com/eclipse/eclipse.jdt.ls/pull/1512).
@@ -33,7 +79,6 @@
  * bug fix - Prepare rename breaks if you have edited the symbol just before the call. See [JLS#1483](https://github.com/eclipse/eclipse.jdt.ls/issues/1483).
  * debt - Decouple the status bar item from each language client to a centralized one. See [#1506](https://github.com/redhat-developer/vscode-java/issues/1506).
  * build - npm audit fix. See [#1496](https://github.com/redhat-developer/vscode-java/pull/1496).
- 
 
 ## 0.63.0 (June 18th, 2020)
  * enhancement - Avoid unnecessary Gradle re-synch on restart. See [JLS#1485](https://github.com/eclipse/eclipse.jdt.ls/pull/1485).

@@ -64,7 +64,8 @@ suite('Java Language Extension - Standard', () => {
 				Commands.SHOW_JAVA_REFERENCES,
 				Commands.SHOW_SERVER_TASK_STATUS,
 				Commands.SWITCH_SERVER_MODE,
-				Commands.UPDATE_SOURCE_ATTACHMENT
+				Commands.UPDATE_SOURCE_ATTACHMENT,
+				Commands.RUNTIME_VALIDATION_OPEN
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
@@ -120,6 +121,7 @@ suite('Java Language Extension - Standard', () => {
 	test('should parse Java version', () => {
 		// Test boundaries
 		assert.equal(requirements.parseMajorVersion(null), 0);
+		assert.equal(requirements.parseMajorVersion(undefined), 0);
 		assert.equal(requirements.parseMajorVersion(''), 0);
 		assert.equal(requirements.parseMajorVersion('foo'), 0);
 		assert.equal(requirements.parseMajorVersion('version'), 0);
@@ -127,11 +129,11 @@ suite('Java Language Extension - Standard', () => {
 		assert.equal(requirements.parseMajorVersion('version "NaN"'), 0);
 
 		// Test the real stuff
-		assert.equal(requirements.parseMajorVersion('version "1.7"'), 7);
-		assert.equal(requirements.parseMajorVersion('version "1.8.0_151"'), 8);
-		assert.equal(requirements.parseMajorVersion('version "9"'), 9);
-		assert.equal(requirements.parseMajorVersion('version "9.0.1"'), 9);
-		assert.equal(requirements.parseMajorVersion('version "10-ea"'), 10);
+		assert.equal(requirements.parseMajorVersion('1.7'), 7);
+		assert.equal(requirements.parseMajorVersion('1.8.0_151'), 8);
+		assert.equal(requirements.parseMajorVersion('9'), 9);
+		assert.equal(requirements.parseMajorVersion('9.0.1'), 9);
+		assert.equal(requirements.parseMajorVersion('10-ea'), 10);
 	});
 
 	test('should detect debug flag', () => {

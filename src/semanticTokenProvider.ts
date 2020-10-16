@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { Commands } from './commands';
-import { getJavaConfiguration, isPreferenceOverridden } from './utils';
+import { getJavaConfiguration } from './utils';
 
 const semanticHighlightingKey = 'java.semanticHighlighting.enabled';
 
@@ -8,17 +8,7 @@ export function registerSemanticTokensProvider(context: vscode.ExtensionContext)
     if (!vscode.languages.registerDocumentSemanticTokensProvider) { // in case Theia doesn't support this API
         return;
     }
-    if (!isPreferenceOverridden(semanticHighlightingKey)) {
-        const enable = "Enable";
-        const disable = "Disable";
-        vscode.window.showInformationMessage("Enable [Semantic highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java by default?", enable, disable).then(selection => {
-            if (selection === enable) {
-                vscode.workspace.getConfiguration().update(semanticHighlightingKey, true, vscode.ConfigurationTarget.Global);
-            } else if (selection === disable) {
-                vscode.workspace.getConfiguration().update(semanticHighlightingKey, false, vscode.ConfigurationTarget.Global);
-            }
-        });
-    }
+
     if (isSemanticHighlightingEnabled()) {
         getSemanticTokensLegend().then(legend => {
             const documentSelector = [
@@ -36,7 +26,14 @@ export function registerSemanticTokensProvider(context: vscode.ExtensionContext)
 
 class SemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
     async provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SemanticTokens> {
+        const versionBeforeRequest: number = document.version;
         const response = <any> await vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.PROVIDE_SEMANTIC_TOKENS, document.uri.toString());
+        const versionAfterRequest: number = document.version;
+
+        if (versionBeforeRequest !== versionAfterRequest) {
+            await waitForDocumentChangesToEnd(document);
+            throw new Error("busy");
+        }
         if (token.isCancellationRequested) {
             return undefined;
         }
@@ -45,6 +42,19 @@ class SemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
         }
         return new vscode.SemanticTokens(new Uint32Array(response.data), response.resultId);
     }
+}
+
+function waitForDocumentChangesToEnd(document: vscode.TextDocument): Promise<void> {
+    let version = document.version;
+    return new Promise((resolve) => {
+        const iv = setInterval(() => {
+            if (document.version === version) {
+                clearInterval(iv);
+                resolve();
+            }
+            version = document.version;
+        }, 400);
+    });
 }
 
 const semanticTokensProvider = new SemanticTokensProvider();

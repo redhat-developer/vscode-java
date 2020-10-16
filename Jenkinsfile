@@ -12,7 +12,7 @@ def buildVscodeExtension(){
 	sh "npm run vscode:prepublish"
 }
 
-node('rhel8'){
+node('rhel7'){
 	stage 'Build JDT LS'
 
 	env.JAVA_HOME="${tool 'openjdk-11'}"
@@ -26,7 +26,7 @@ node('rhel8'){
 	stash name: 'server_distro', includes :files[0].path
 }
 
-node('rhel8'){
+node('rhel7'){
 	stage 'Checkout vscode-java code'
 	deleteDir()
 	git url: 'https://github.com/redhat-developer/vscode-java.git'
@@ -59,10 +59,10 @@ node('rhel8'){
 	stash name:'vsix', includes:files[0].path
 }
 
-node('rhel8'){
+node('rhel7'){
 	if(publishToMarketPlace.equals('true')){
 		timeout(time:5, unit:'DAYS') {
-			input message:'Approve deployment?', submitter: 'fbricon'
+			input message:'Approve deployment?', submitter: 'fbricon,rgrunber'
 		}
 
 		stage "Publish to Marketplaces"

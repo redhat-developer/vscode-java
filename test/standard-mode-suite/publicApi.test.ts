@@ -8,10 +8,10 @@ import { ServerMode } from '../../src/settings';
 import * as fse from 'fs-extra';
 import { getJavaConfiguration } from '../../src/utils';
 import { Commands } from '../../src/commands';
+import { constants } from '../common';
 
-const projectFsPath: string = path.join(__dirname, '..', '..', '..', 'test', 'resources', 'projects', 'maven', 'salut');
-const pomPath: string = path.join(projectFsPath, 'pom.xml');
-const gradleTestFolder: string = path.join(projectFsPath, 'testGradle');
+const pomPath: string = path.join(constants.projectFsPath, 'pom.xml');
+const gradleTestFolder: string = path.join(constants.projectFsPath, 'testGradle');
 
 // tslint:disable: only-arrow-functions
 suite('Public APIs - Standard', () => {
@@ -49,7 +49,7 @@ suite('Public APIs - Standard', () => {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		const symbols = await api.getDocumentSymbols({
 			textDocument: {
-				uri: Uri.file(path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
+				uri: Uri.file(path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
 			},
 		});
 		let symbolDetected: boolean = false;
@@ -68,7 +68,7 @@ suite('Public APIs - Standard', () => {
 	test('getProjectSettings should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		const projectSetting: {} = await api.getProjectSettings(
-			Uri.file(projectFsPath).toString(),
+			Uri.file(constants.projectFsPath).toString(),
 			['org.eclipse.jdt.core.compiler.compliance', 'org.eclipse.jdt.core.compiler.source'],
 		);
 		assert.equal(projectSetting['org.eclipse.jdt.core.compiler.compliance'], '1.7');
@@ -77,7 +77,7 @@ suite('Public APIs - Standard', () => {
 
 	test('getClasspaths should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		let classpathResult: ClasspathResult = await api.getClasspaths(Uri.file(projectFsPath).toString(), {scope: 'runtime'});
+		let classpathResult: ClasspathResult = await api.getClasspaths(Uri.file(constants.projectFsPath).toString(), {scope: 'runtime'});
 		assert.equal(classpathResult.classpaths.length, 2);
 		for (const classpath of classpathResult.classpaths) {
 			if (classpath.endsWith('test-classes')) {
@@ -85,13 +85,13 @@ suite('Public APIs - Standard', () => {
 			}
 		}
 
-		classpathResult = await api.getClasspaths(Uri.file(projectFsPath).toString(), {scope: 'test'});
+		classpathResult = await api.getClasspaths(Uri.file(constants.projectFsPath).toString(), {scope: 'test'});
 		assert.equal(classpathResult.classpaths.length, 3);
 	});
 
 	test('isTestFile should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		const isTest: boolean = await api.isTestFile(Uri.file(path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo.java')).toString());
+		const isTest: boolean = await api.isTestFile(Uri.file(path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo.java')).toString());
 		assert.ok(!isTest);
 	});
 
@@ -101,7 +101,7 @@ suite('Public APIs - Standard', () => {
 
 		await new Promise(async (resolve) => {
 			api.onDidClasspathUpdate((uri) => {
-				assert.equal(path.relative(uri.fsPath, projectFsPath), '');
+				assert.equal(path.relative(uri.fsPath, constants.projectFsPath), '');
 				return resolve();
 			});
 			await fse.writeFile(pomPath,
@@ -113,14 +113,14 @@ suite('Public APIs - Standard', () => {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		const definition = await api.goToDefinition({
 			textDocument: {
-				uri: Uri.file(path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
+				uri: Uri.file(path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java')).toString(),
 			},
 			position: {
 				line: 17,
 				character: 34
 			},
 		});
-		assert.ok(Uri.parse(definition[0].uri).fsPath,  path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java'));
+		assert.ok(Uri.parse(definition[0].uri).fsPath,  path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java'));
 		assert.deepEqual(definition[0].range, {
 			start: {
 				character: 21,

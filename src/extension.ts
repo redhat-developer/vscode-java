@@ -5,7 +5,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
 import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
@@ -24,6 +24,7 @@ import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { registerSemanticTokensProvider } from './semanticTokenProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
+import { markdownPreviewProvider } from "./markdownPreviewProvider";
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -112,6 +113,10 @@ export class OutputInfoCollector implements OutputChannel {
 }
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+	context.subscriptions.push(markdownPreviewProvider);
+	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
+		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
+	}));
 
 	let storagePath = context.storagePath;
 	if (!storagePath) {
@@ -174,7 +179,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						clientDocumentSymbolProvider: true,
 						gradleChecksumWrapperPromptSupport: true,
 						resolveAdditionalTextEditsSupport: true,
-						advancedIntroduceParameterRefactoringSupport: true
+						advancedIntroduceParameterRefactoringSupport: true,
+						actionableRuntimeNotificationSupport: true
 					},
 					triggerFiles,
 				},
@@ -217,11 +223,21 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					console.warn(`The command: ${command} is not supported in LightWeight mode. See: https://github.com/redhat-developer/vscode-java/issues/1480`);
 					return;
 				}
+				let token: CancellationToken;
+				let commandArgs: any[] = rest;
+				if (rest && rest.length && CancellationToken.is(rest[rest.length - 1])) {
+					token = rest[rest.length - 1];
+					commandArgs = rest.slice(0, rest.length - 1);
+				}
 				const params: ExecuteCommandParams = {
 					command,
-					arguments: rest
+					arguments: commandArgs
 				};
-				return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params);
+				if (token) {
+					return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params, token);
+				} else {
+					return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params);
+				}
 			}));
 
 			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
@@ -270,9 +286,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 
 				if (choice === "Yes") {
-					// Before standard server is ready, we are in hybrid.
-					apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
-					apiManager.fireDidServerModeChange(ServerMode.HYBRID);
 					startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
 				}
 			});
@@ -287,7 +300,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
 				if (event === ServerMode.STANDARD) {
 					syntaxClient.stop();
-					snippetProvider.setActivation(false);
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context.storagePath);
 					// temporary implementation Semantic Highlighting before it is part of LSP
@@ -322,6 +334,11 @@ function startStandardServer(context: ExtensionContext, requirements: requiremen
 	if (standardClient.getClientStatus() !== ClientStatus.Uninitialized) {
 		return;
 	}
+	if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
+		// Before standard server is ready, we are in hybrid.
+		apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
+		apiManager.fireDidServerModeChange(ServerMode.HYBRID);
+	}
 	standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 	standardClient.start();
 	serverStatusBarProvider.showStandardStatus();
@@ -348,7 +365,7 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 }
 
 async function promptUserForStandardServer(config: WorkspaceConfiguration): Promise<boolean> {
-	const choice: string = await window.showInformationMessage("The workspace contains Java projects, would you like to import them?", "Yes", "Always", "Later");
+	const choice: string = await window.showInformationMessage("The workspace contains Java projects. Would you like to import them?", "Yes", "Always", "Later");
 	switch (choice) {
 		case "Always":
 			await config.update("project.importOnFirstTimeStartup", "automatic", ConfigurationTarget.Global);

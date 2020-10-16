@@ -3,19 +3,19 @@
 import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemKind, SnippetString, MarkdownString } from "vscode";
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import { apiManager } from "./apiManager";
+import { ClientStatus } from "./extension.api";
 
 export class SnippetCompletionProvider implements CompletionItemProvider {
 
     private snippets: {};
-    private activation: boolean;
 
     public constructor() {
-        this.activation = true;
         this.snippets = fse.readJSONSync(path.join(__dirname, '..', 'snippets', 'server.json'));
     }
 
     public async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionItem[]> {
-        if (!this.activation) {
+        if (apiManager.getApiInstance().status === ClientStatus.Started) {
             return [];
         }
 
@@ -31,10 +31,6 @@ export class SnippetCompletionProvider implements CompletionItemProvider {
             snippetItems.push(snippetItem);
         }
         return snippetItems;
-    }
-
-    public setActivation(activation: boolean): void {
-        this.activation = activation;
     }
 }
 

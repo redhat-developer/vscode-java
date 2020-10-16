@@ -44,6 +44,10 @@ export class StandardLanguageClient {
 			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 		}
 
+		context.subscriptions.push(commands.registerCommand(Commands.RUNTIME_VALIDATION_OPEN, () => {
+			commands.executeCommand("workbench.action.openSettings", "java.configuration.runtimes");
+		}));
+
 		serverStatus.initialize();
 		serverStatus.onServerStatusChanged(status => {
 			if (status === ServerStatusKind.Busy) {
@@ -337,7 +341,6 @@ export class StandardLanguageClient {
 			}
 			excludeProjectSettingsFiles();
 
-			context.subscriptions.push(markdownPreviewProvider);
 			context.subscriptions.push(languages.registerCodeActionsProvider({ scheme: 'file', language: 'java' }, new RefactorDocumentProvider(), RefactorDocumentProvider.metadata));
 			context.subscriptions.push(commands.registerCommand(Commands.LEARN_MORE_ABOUT_REFACTORING, async (kind: CodeActionKind) => {
 				const sectionId: string = javaRefactorKinds.get(kind) || '';

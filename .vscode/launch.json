@@ -83,7 +83,7 @@
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
-				"${workspaceFolder}/test/resources/projects/maven/salut",
+				"${workspaceFolder}/test-temp/",
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceRoot}",
 				"--extensionTestsPath=${workspaceRoot}/out/test/standard-mode-suite"
@@ -91,7 +91,8 @@
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/out/**/*.js"],
-			"preLaunchTask": "npm: compile"
+			"preLaunchTask": "prepareStandardTest",
+			"postDebugTask": "cleanTestFolder"
 		},
 		{
 			"name": "Launch Tests - Lightweight Mode",
@@ -99,7 +100,7 @@
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
 			"args": [
-				"${workspaceFolder}/test/resources/projects/maven/salut",
+				"${workspaceFolder}/test-temp/",
 				"--disable-extensions",
 				"--extensionDevelopmentPath=${workspaceRoot}",
 				"--extensionTestsPath=${workspaceRoot}/out/test/lightweight-mode-suite"
@@ -107,7 +108,8 @@
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": ["${workspaceRoot}/out/**/*.js"],
-			"preLaunchTask": "npm: compile"
+			"preLaunchTask": "prepareLightweightTest",
+			"postDebugTask": "cleanTestFolder"
 		}
 	]
 }

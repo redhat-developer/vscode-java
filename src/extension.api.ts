@@ -98,6 +98,7 @@ export interface ExtensionAPI {
 	/**
 	 * Indicates the current active mode for Java Language Server. Possible modes are:
 	 * - "Standard"
+	 * - "Hybrid"
 	 * - "LightWeight"
 	 */
 	serverMode: ServerMode;

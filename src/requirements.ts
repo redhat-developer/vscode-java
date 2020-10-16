@@ -80,34 +80,75 @@ function checkJavaRuntime(context: ExtensionContext): Promise<string> {
     });
 }
 
-function checkJavaVersion(javaHome: string): Promise<number> {
+async function checkJavaVersion(javaHome: string): Promise<number> {
+    let javaVersion = await checkVersionInReleaseFile(javaHome);
+    if (!javaVersion) {
+        javaVersion = await checkVersionByCLI(javaHome);
+    }
+    return new Promise<number>((resolve, reject) => {
+        if (javaVersion < 11) {
+            openJDKDownload(reject, 'Java 11 or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring [`java.configuration.runtimes`](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)');
+        }
+        return resolve(javaVersion);
+    });
+}
+
+/**
+ * Get version by checking file JAVA_HOME/release
+ */
+async function checkVersionInReleaseFile(javaHome: string): Promise<number> {
+    if (!javaHome) {
+        return 0;
+    }
+    const releaseFile = path.join(javaHome, "release");
+    if (!await fse.pathExists(releaseFile)) {
+        return 0;
+    }
+
+    try {
+        const content = await fse.readFile(releaseFile);
+        const regexp = /^JAVA_VERSION="(.*)"/gm;
+        const match = regexp.exec(content.toString());
+        if (!match) {
+            return 0;
+        }
+        const majorVersion = parseMajorVersion(match[1]);
+        return majorVersion;
+    } catch (error) {
+        // ignore
+    }
+    return 0;
+}
+
+/**
+ * Get version by parsing `JAVA_HOME/bin/java -version`
+ */
+function checkVersionByCLI(javaHome: string): Promise<number> {
     return new Promise((resolve, reject) => {
         const javaBin = path.join(javaHome, "bin", JAVA_FILENAME);
         cp.execFile(javaBin, ['-version'], {}, (error, stdout, stderr) => {
-            const javaVersion = parseMajorVersion(stderr);
-            if (javaVersion < 11) {
-                openJDKDownload(reject, 'Java 11 or more recent is required to run. Please download and install a recent JDK');
+            const regexp = /version "(.*)"/g;
+            const match = regexp.exec(stderr);
+            if (!match) {
+                return resolve(0);
             }
+            const javaVersion = parseMajorVersion(match[1]);
             resolve(javaVersion);
         });
     });
 }
 
-export function parseMajorVersion(content: string): number {
-    let regexp = /version "(.*)"/g;
-    let match = regexp.exec(content);
-    if (!match) {
+export function parseMajorVersion(version: string): number {
+    if (!version) {
         return 0;
     }
-    let version = match[1];
     // Ignore '1.' prefix for legacy Java versions
     if (version.startsWith('1.')) {
         version = version.substring(2);
     }
-
     // look into the interesting bits now
-    regexp = /\d+/g;
-    match = regexp.exec(version);
+    const regexp = /\d+/g;
+    const match = regexp.exec(version);
     let javaVersion = 0;
     if (match) {
         javaVersion = parseInt(match[0]);

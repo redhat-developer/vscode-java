@@ -8,6 +8,9 @@ import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
 import { DidRenameFiles, WillRenameFiles } from './protocol';
 import { Converter as ProtocolConverter } from 'vscode-languageclient/lib/protocolConverter';
+import { getJavaConfiguration } from './utils';
+import { userInfo } from 'os';
+import * as stringInterpolate from 'fmtr';
 
 let serverReady: boolean = false;
 let pendingEditPromise: Promise<LsWorkspaceEdit>;
@@ -67,21 +70,52 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
         }
     }
 
+    const formatNumber = (num => num > 9 ? String(num) : `0${num}`);
     for (let i = 0; i < emptyFiles.length; i++) {
         const typeName: string = resolveTypeName(textDocuments[i].fileName);
         const isPackageInfo = typeName === 'package-info';
         const isModuleInfo = typeName === 'module-info';
-        const snippets: string[] = [];
+        const date = new Date();
+        const context: any = {
+            file_name: path.basename(textDocuments[i].fileName),
+            package_name: "",
+            type_name: typeName,
+            user: userInfo().username,
+            date: date.toLocaleDateString(),
+            time: date.toLocaleTimeString(),
+            year: date.getFullYear(),
+            month: formatNumber(date.getMonth()),
+            day: formatNumber(date.getDay()),
+            hour: formatNumber(date.getHours()),
+            minute: formatNumber(date.getMinutes()),
+        };
+
         if (!isModuleInfo) {
-            const packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
-            if (packageName) {
-                snippets.push(`package ${packageName};`);
-                if (!isPackageInfo) {
-                    snippets.push("");
-                }
+            context.package_name = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
+        }
+
+        const snippets: string[] = [];
+        const fileHeader = getJavaConfiguration().get<string[]>("templates.fileHeader");
+        if (fileHeader && fileHeader.length) {
+            for (const template of fileHeader) {
+                snippets.push(stringInterpolate(template, context));
+            }
+        }
+
+        if (!isModuleInfo) {
+            if (context.package_name) {
+                snippets.push(`package ${context.package_name};`);
+                snippets.push("");
             }
         }
         if (!isPackageInfo) {
+            const typeComment = getJavaConfiguration().get<string[]>("templates.typeComment");
+            if (typeComment && typeComment.length) {
+                for (const template of typeComment) {
+                    snippets.push(stringInterpolate(template, context));
+                }
+            }
+
             if (isModuleInfo) {
                 snippets.push(`module \${1:name} {`);
             } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
@@ -91,6 +125,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
             }
             snippets.push("\t${0}");
             snippets.push("}");
+            snippets.push("");
         }
         const textEditor = await window.showTextDocument(textDocuments[i]);
         textEditor.insertSnippet(new SnippetString(snippets.join("\n")));
