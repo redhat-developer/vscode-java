@@ -101,7 +101,7 @@ The following settings are supported:
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
 * `java.configuration.updateBuildConfiguration` : Specifies how modifications on build files update the Java classpath/configuration. Supported values are `disabled` (nothing happens), `interactive` (asks about updating on every modification), `automatic` (updating is automatically triggered).
-* `java.configuration.maven.userSettings` : Path to Maven's settings.xml.
+* `java.configuration.maven.userSettings` : Path to Maven's user settings.xml.
 * `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
 * `java.referencesCodeLens.enabled` : Enable/disable the references code lenses.
 * `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
@@ -170,9 +170,10 @@ The following settings are supported:
 * `java.project.resourceFilters`: Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, ["node_modules",".git"] will exclude all files and folders named 'node_modules' or '.git'. Defaults to ["node_modules",".git"].
 * `java.templates.fileHeader`: Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
-
-New in 0.69.0:
 * `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
+
+New in 0.70.0:
+* `java.configuration.maven.globalSettings` : Path to Maven's global settings.xml.
 
 Semantic Highlighting
 ===============
