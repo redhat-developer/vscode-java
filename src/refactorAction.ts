@@ -2,7 +2,7 @@
 
 import { existsSync } from 'fs';
 import * as path from 'path';
-import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
+import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
 import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols } from './protocol';
@@ -70,6 +70,30 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
 
                     commandArguments.push(initializeIn);
                 }
+            } else if (command === 'extractMethod') {
+                if (commandInfo && Array.isArray(commandInfo)) {
+                    const options: IExpressionItem[] = [];
+                    for (const command of commandInfo) {
+                        const extractMethodItem: IExpressionItem = {
+                            label: command.name,
+                            length: command.length,
+                            startPosition: command.startPosition,
+                        };
+                        options.push(extractMethodItem);
+                    }
+                    let resultItem: IExpressionItem;
+                    if (options.length === 1) {
+                        resultItem = options[0];
+                    } else if (options.length > 1) {
+                        resultItem = await window.showQuickPick<IExpressionItem>(options, {
+                            placeHolder: "Choose the expression to extract",
+                        });
+                    }
+                    if (!resultItem) {
+                        return;
+                    }
+                    commandArguments.push(resultItem);
+                }
             }
 
             const result: RefactorWorkspaceEdit = await languageClient.sendRequest(GetRefactorEditRequest.type, {
@@ -94,6 +118,12 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             await moveType(languageClient, params, commandInfo);
         }
     }));
+}
+
+interface IExpressionItem extends QuickPickItem {
+	label: string;
+	length: number;
+	startPosition: number;
 }
 
 async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: RefactorWorkspaceEdit) {
