@@ -233,7 +233,13 @@
         "java.configuration.maven.userSettings": {
           "type": "string",
           "default": null,
-          "description": "Path to Maven's settings.xml",
+          "description": "Path to Maven's user settings.xml",
+          "scope": "window"
+        },
+        "java.configuration.maven.globalSettings": {
+          "type": "string",
+          "default": null,
+          "description": "Path to Maven's global settings.xml",
           "scope": "window"
         },
         "java.format.enabled": {
