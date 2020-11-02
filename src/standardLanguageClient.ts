@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, CancellationToken } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
@@ -263,7 +263,7 @@ export class StandardLanguageClient {
 				}
 			}));
 
-			context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean) => {
+			context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean, token?: CancellationToken) => {
 				return window.withProgress({ location: ProgressLocation.Window }, async p => {
 					if (typeof isFullCompile !== 'boolean') {
 						const selection = await window.showQuickPick(['Incremental', 'Full'], { placeHolder: 'please choose compile type:' });
@@ -271,7 +271,18 @@ export class StandardLanguageClient {
 					}
 					p.report({ message: 'Compiling workspace...' });
 					const start = new Date().getTime();
-					const res = await this.languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
+					let res: CompileWorkspaceStatus;
+					try {
+						res = token ? await this.languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile, token)
+							: await this.languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
+					} catch (error) {
+						if (error && error.code === -32800) { // Check if the request is cancelled.
+							res = CompileWorkspaceStatus.CANCELLED;
+						} else {
+							throw error;
+						}
+					}
+
 					const elapsed = new Date().getTime() - start;
 					const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
 					return new Promise((resolve, reject) => {
