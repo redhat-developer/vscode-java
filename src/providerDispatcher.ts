@@ -51,7 +51,7 @@ export class ClientHoverProvider implements HoverProvider {
 				textDocument: languageClient.code2ProtocolConverter.asTextDocumentIdentifier(document),
 				position: languageClient.code2ProtocolConverter.asPosition(position)
 			};
-			const hoverResponse = await languageClient.sendRequest(HoverRequest.type, params);
+			const hoverResponse = await languageClient.sendRequest(HoverRequest.type, params, token);
 			return languageClient.protocol2CodeConverter.asHover(hoverResponse);
 		}
 	}
@@ -86,7 +86,7 @@ function createDocumentSymbolProvider(): DocumentSymbolProvider {
 			const params = {
 				textDocument: languageClient.code2ProtocolConverter.asTextDocumentIdentifier(document),
 			};
-			const symbolResponse = await languageClient.sendRequest(DocumentSymbolRequest.type, params);
+			const symbolResponse = await languageClient.sendRequest(DocumentSymbolRequest.type, params, token);
 			if (!symbolResponse || !symbolResponse.length) {
 				return [];
 			}
