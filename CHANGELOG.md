@@ -11,7 +11,7 @@
  * bug fix - Changing java.semanticHighlighting.enabled does not consistently update semantic tokens. See [JLS#1678](https://github.com/redhat-developer/vscode-java/issues/1678).
  * bug fix - Method references are given the CompletionItemKind.Module type by the completion provider. See [#1661](https://github.com/redhat-developer/vscode-java/issues/1661).
  * other - Update Target Platform to Eclipse 2020-12 M1. See [JLS#1567](https://github.com/eclipse/eclipse.jdt.ls/issues/1567).
-* other - Pass the cancellationtoken to the client request registered by provider. See [#1668](https://github.com/redhat-developer/vscode-java/pull/1668).
+ * other - Pass the cancellationtoken to the client request registered by provider. See [#1668](https://github.com/redhat-developer/vscode-java/pull/1668).
 
 ## 0.69.0 (October 15th, 2020)
  * enhancement - Embed m2e 1.17. See [JLS#1562](https://github.com/eclipse/eclipse.jdt.ls/pull/1562).
