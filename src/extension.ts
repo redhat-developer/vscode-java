@@ -174,6 +174,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						generateConstructorsPromptSupport: true,
 						generateDelegateMethodsPromptSupport: true,
 						advancedExtractRefactoringSupport: true,
+						inferSelectionSupport: ["extractMethod"],
 						moveRefactoringSupport: true,
 						clientHoverProvider: true,
 						clientDocumentSymbolProvider: true,

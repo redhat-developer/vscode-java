@@ -5,7 +5,7 @@ import * as path from 'path';
 import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, InferSelection, GetInferSelectionRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -71,13 +71,21 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     commandArguments.push(initializeIn);
                 }
             } else if (command === 'extractMethod') {
-                if (commandInfo && Array.isArray(commandInfo)) {
+                if (!params || !params.range) {
+                    return;
+                }
+                if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
+                    const expressions: InferSelection[] = await languageClient.sendRequest(GetInferSelectionRequest.type, {
+                        command: command,
+                        context: params,
+                        options: formattingOptions,
+                    });
                     const options: IExpressionItem[] = [];
-                    for (const command of commandInfo) {
+                    for (const expression of expressions) {
                         const extractMethodItem: IExpressionItem = {
-                            label: command.name,
-                            length: command.length,
-                            startPosition: command.startPosition,
+                            label: expression.name,
+                            length: expression.length,
+                            startPosition: expression.startPosition,
                         };
                         options.push(extractMethodItem);
                     }
@@ -92,7 +100,12 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     if (!resultItem) {
                         return;
                     }
-                    commandArguments.push(resultItem);
+                    const resultExpression: InferSelection = {
+                        name: resultItem.label,
+                        length: resultItem.length,
+                        startPosition: resultItem.startPosition,
+                    };
+                    commandArguments.push(resultExpression);
                 }
             }
 
