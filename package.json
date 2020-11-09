@@ -899,7 +899,7 @@
   },
   "dependencies": {
     "expand-home-dir": "^0.0.3",
-    "fabric8-analytics-lsp-server": "file:../../crda/fabric8-analytics-lsp-server/output",
+    "fabric8-analytics-lsp-server": "0.4.2",
     "find-java-home": "1.1.0",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
