@@ -19,6 +19,8 @@ import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { registerClientProviders } from './providerDispatcher';
 import * as fileEventHandler from './fileEventHandler';
 import { StandardLanguageClient } from './standardLanguageClient';
+import { SecurityLanguageClient } from './securityLanguageClient';
+import { prepareExecutable as prepareAnalyticsExecutable } from './analyticsServerStarter';
 import { apiManager } from './apiManager';
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
@@ -28,6 +30,8 @@ import { markdownPreviewProvider } from "./markdownPreviewProvider";
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
+const securityClient: SecurityLanguageClient = new SecurityLanguageClient();
+
 const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
 const extensionName = 'Language Support for Java';
@@ -207,6 +211,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			apiManager.initialize(requirements);
 
+			securityClient.initialize(clientOptions, prepareAnalyticsExecutable(context));
+			securityClient.start();
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions, resolve);

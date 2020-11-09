@@ -14,10 +14,13 @@ const config = {
         __dirname: false,
         __filename: false,
     },
-    entry: './src/extension.ts', // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+    entry: { // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
+        'extension': './src/extension.ts',
+        'analytics-lsp-server': './node_modules/fabric8-analytics-lsp-server/server.js',
+    }, 
     output: { // the bundle is stored in the 'dist' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
         path: path.resolve(__dirname, 'dist'),
-        filename: 'extension.js',
+        filename: '[name].js',
         libraryTarget: "commonjs2",
         devtoolModuleFilenameTemplate: "../[resource-path]",
     },
@@ -29,11 +32,15 @@ const config = {
         extensions: ['.ts', '.js'],
     },
     module: {
-        rules: [{
+        rules: [{test: /\.js$/,
+            enforce: 'pre',
+            use: ['source-map-loader'],
+        }, 
+        {
             test: /\.ts$/,
             exclude: /node_modules/,
             use: [{
-                loader: 'ts-loader',
+                loader: 'ts-loader'
             }]
         }]
     },

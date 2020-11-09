@@ -888,6 +888,7 @@
     "lodash.template": ">=4.5.0",
     "minimist": ">=1.2.5",
     "mocha": "^8.1.1",
+    "source-map-loader": "^1.1.2",
     "ts-loader": "^5.3.1",
     "tslint": "^5.11.0",
     "typescript": "^3.7.3",
@@ -898,6 +899,7 @@
   },
   "dependencies": {
     "expand-home-dir": "^0.0.3",
+    "fabric8-analytics-lsp-server": "file:../../crda/fabric8-analytics-lsp-server/output",
     "find-java-home": "1.1.0",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
