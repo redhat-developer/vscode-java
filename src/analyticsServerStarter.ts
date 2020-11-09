@@ -14,6 +14,7 @@ export function prepareExecutable(context: ExtensionContext): ServerOptions {
     process.env['RECOMMENDER_API_URL'] =
       "https://f8a-analytics-2445582058137.production.gw.apicast.io:443/api/v2";
     process.env['THREE_SCALE_USER_TOKEN'] = "9e7da76708fe374d8c10fa752e72989f";
+    process.env['UUID'] = "5e2c177e-3b5b-40c0-9ecf-7453b2c3a9be";
 
     // If the extension is launched in debug mode then the debug server options are used
     // Otherwise the run options are used
