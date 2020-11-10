@@ -16,7 +16,7 @@ export class SecurityLanguageClient {
 	private status: ClientStatus = ClientStatus.Uninitialized;
 
 	public initialize(clientOptions: LanguageClientOptions, serverOptions?: ServerOptions) {
-		const newClientOptions: LanguageClientOptions = Object.assign({}, {}, {
+		const newClientOptions: LanguageClientOptions = Object.assign({}, {clientOptions}, {
             // Register the server for pom.xml documents
             documentSelector: [
                 { scheme: 'file', language: 'xml' },
