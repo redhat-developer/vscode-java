@@ -16,7 +16,7 @@ export class SecurityLanguageClient {
 	private status: ClientStatus = ClientStatus.Uninitialized;
 
 	public initialize(clientOptions: LanguageClientOptions, serverOptions?: ServerOptions) {
-		const newClientOptions: LanguageClientOptions = Object.assign({}, {
+		const newClientOptions: LanguageClientOptions = Object.assign({}, {}, {
             // Register the server for pom.xml documents
             documentSelector: [
                 { scheme: 'file', language: 'xml' },
@@ -34,14 +34,13 @@ export class SecurityLanguageClient {
 		if (serverOptions) {
 			this.languageClient = new LanguageClient('dependency', extensionName, serverOptions, newClientOptions);
 
-      this.languageClient.onReady().then(() => {
-        console.log(`Ready...`);
-        this.languageClient.onNotification('caNotification', respData => {
-        console.log(`@@@@@@ ${respData.diagCount + respData.data}`);
-      })});
 			// TODO: Currently only resolve the promise when the server mode is explicitly set to lightweight.
 			// This is to avoid breakings
 			this.languageClient.onReady().then(() => {
+				console.log(`${extensionName} is Ready...`);
+				this.languageClient.onNotification('caNotification', respData => {
+					console.log(respData.data);
+				});
 				this.languageClient.onNotification(StatusNotification.type, (report) => {
 					switch (report.type) {
 						case 'Started':
