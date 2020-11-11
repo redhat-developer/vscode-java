@@ -5,7 +5,7 @@ import * as path from 'path';
 import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, InferSelection, GetInferSelectionRequest } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, InferSelection, InferSelectionRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -75,17 +75,16 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     return;
                 }
                 if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
-                    const expressions: InferSelection[] = await languageClient.sendRequest(GetInferSelectionRequest.type, {
+                    const expressions: InferSelection[] = await languageClient.sendRequest(InferSelectionRequest.type, {
                         command: command,
                         context: params,
-                        options: formattingOptions,
                     });
                     const options: IExpressionItem[] = [];
                     for (const expression of expressions) {
                         const extractMethodItem: IExpressionItem = {
                             label: expression.name,
                             length: expression.length,
-                            startPosition: expression.startPosition,
+                            offset: expression.offset,
                         };
                         options.push(extractMethodItem);
                     }
@@ -103,7 +102,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     const resultExpression: InferSelection = {
                         name: resultItem.label,
                         length: resultItem.length,
-                        startPosition: resultItem.startPosition,
+                        offset: resultItem.offset,
                     };
                     commandArguments.push(resultExpression);
                 }
@@ -136,7 +135,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
 interface IExpressionItem extends QuickPickItem {
 	label: string;
 	length: number;
-	startPosition: number;
+	offset: number;
 }
 
 async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: RefactorWorkspaceEdit) {

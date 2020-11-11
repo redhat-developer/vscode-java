@@ -332,17 +332,16 @@ export namespace GetRefactorEditRequest {
 export interface InferSelection {
     name: string;
     length: number;
-    startPosition: number;
+    offset: number;
 }
 
-export interface GetInferSelectionParams {
+export interface InferSelectionParams {
     command: string;
     context: CodeActionParams;
-    options: FormattingOptions;
 }
 
-export namespace GetInferSelectionRequest {
-    export const type = new RequestType<GetInferSelectionParams, InferSelection[], void, void>('java/getInferSelection');
+export namespace InferSelectionRequest {
+    export const type = new RequestType<InferSelectionParams, InferSelection[], void, void>('java/inferSelection');
 }
 
 export interface PackageNode {
