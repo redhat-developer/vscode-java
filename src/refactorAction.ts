@@ -5,7 +5,7 @@ import * as path from 'path';
 import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, InferSelection, InferSelectionRequest } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -75,7 +75,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     return;
                 }
                 if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
-                    const expressions: InferSelection[] = await languageClient.sendRequest(InferSelectionRequest.type, {
+                    const expressions: SelectionInfo[] = await languageClient.sendRequest(InferSelectionRequest.type, {
                         command: command,
                         context: params,
                     });
@@ -99,7 +99,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     if (!resultItem) {
                         return;
                     }
-                    const resultExpression: InferSelection = {
+                    const resultExpression: SelectionInfo = {
                         name: resultItem.label,
                         length: resultItem.length,
                         offset: resultItem.offset,
