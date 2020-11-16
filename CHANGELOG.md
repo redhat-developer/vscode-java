@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.71.0 (November 18th, 2020)
+ * bug fix - Quarkus: generated sources are not accessible. See [#1675](https://github.com/redhat-developer/vscode-java/issues/1675)
+ * other - Improve tracing capability of m2e through m2e.logback.configuration.. See [JLS#1589](https://github.com/eclipse/eclipse.jdt.ls/pull/1589).
+ * other - Infer expressions if there is no selection range when extracting method. See [#1680](https://github.com/redhat-developer/vscode-java/pull/1680).
+
 ## 0.70.0 (November 4th, 2020)
  * enhancement - Hide inline variable/constant commands when no reference found. See [JLS#1573](https://github.com/eclipse/eclipse.jdt.ls/pull/1573) and [JLS#1575](https://github.com/eclipse/eclipse.jdt.ls/pull/1575).
  * enhancement - Convert a lambda expression to method reference. See [#1448](https://github.com/redhat-developer/vscode-java/issues/1448).
