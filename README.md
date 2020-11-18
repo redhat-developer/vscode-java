@@ -51,15 +51,16 @@ See the [changelog](CHANGELOG.md) for the latest release. You might also find us
 
 Setting the JDK
 ===============
-The path to the Java Development Kit is searched in the following order:
+## Java Tooling JDK
+This JDK will be used to launch the Java Language Server. And by default, will also be used to compile your projects.
 
-- the `java.home` setting in VS Code settings (workspace then user settings)
+The path to the Java Development Kit can be specified by the `java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
+
 - the `JDK_HOME` environment variable
 - the `JAVA_HOME` environment variable
 - on the current system path
 
-This JDK will be used to launch the Java Language Server. And by default, will be used to compile your projects.
-
+## Project JDKs
 If you need to compile your projects against a different JDK version, it's recommended you configure the `java.configuration.runtimes` property in your user settings, eg:
 
 ```json

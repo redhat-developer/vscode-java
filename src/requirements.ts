@@ -9,7 +9,7 @@ import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
 import { checkJavaPreferences } from './settings';
 import { getJavaConfiguration } from './utils';
-import { findJavaHomes, getJavaVersion } from './findJavaRuntimes';
+import { findJavaHomes, getJavaVersion, JavaRuntime } from './findJavaRuntimes';
 
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
@@ -57,10 +57,11 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         } else {
             // java.home not specified, search valid JDKs from env.JAVA_HOME, env.PATH, Registry(Window), Common directories
             const javaRuntimes = await findJavaHomes();
-            const requiredJdk = javaRuntimes.find(r => r.version >= REQUIRED_JDK_VERSION);
-            if (requiredJdk) {
-                javaHome = requiredJdk.home;
-                javaVersion = requiredJdk.version;
+            const validJdks = javaRuntimes.filter(r => r.version >= REQUIRED_JDK_VERSION);
+            if (validJdks.length > 0) {
+                sortJdksBySource(validJdks);
+                javaHome = validJdks[0].home;
+                javaVersion = validJdks[0].version;
             }
         }
 
@@ -70,6 +71,20 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
 
         resolve({ java_home: javaHome, java_version: javaVersion });
     });
+}
+
+function sortJdksBySource(jdks: JavaRuntime[]) {
+    const rankedJdks = jdks as Array<JavaRuntime & { rank: number }>;
+    const sources = ["env.JDK_HOME", "env.JAVA_HOME", "env.PATH"];
+    for (const [index, source] of sources.entries()) {
+        for (const jdk of rankedJdks) {
+            if (jdk.rank === undefined && jdk.sources.includes(source)) {
+                jdk.rank = index;
+            }
+        }
+    }
+    rankedJdks.filter(jdk => jdk.rank === undefined).forEach(jdk => jdk.rank = sources.length);
+    rankedJdks.sort((a, b) => a.rank - b.rank);
 }
 
 function checkJavaRuntime(context: ExtensionContext): Promise<string> {
