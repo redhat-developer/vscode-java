@@ -9,11 +9,12 @@ import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
 import { checkJavaPreferences } from './settings';
 import { getJavaConfiguration } from './utils';
+import { findJavaHomes, getJavaVersion } from './findJavaRuntimes';
 
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
 const JAVA_FILENAME = 'java' + (isWindows ? '.exe' : '');
-
+const REQUIRED_JDK_VERSION = 11;
 export interface RequirementsData {
     java_home: string;
     java_version: number;
@@ -33,9 +34,42 @@ interface ErrorData {
  *
  */
 export async function resolveRequirements(context: ExtensionContext): Promise<RequirementsData> {
-    const javaHome = await checkJavaRuntime(context);
-    const javaVersion = await checkJavaVersion(javaHome);
-    return Promise.resolve({ java_home: javaHome, java_version: javaVersion });
+    return new Promise(async (resolve, reject) => {
+        let source: string;
+        let javaVersion: number = 0;
+        let javaHome = await checkJavaPreferences(context);
+        if (javaHome) {
+            // java.home explictly specified
+            source = `java.home variable defined in ${env.appName} settings`;
+            javaHome = expandHomeDir(javaHome);
+            if (!await fse.pathExists(javaHome)) {
+                invalidJavaHome(reject, `The ${source} points to a missing or inaccessible folder (${javaHome})`);
+            } else if (!await fse.pathExists(path.resolve(javaHome, 'bin', JAVAC_FILENAME))) {
+                let msg: string;
+                if (await fse.pathExists(path.resolve(javaHome, JAVAC_FILENAME))) {
+                    msg = `'bin' should be removed from the ${source} (${javaHome})`;
+                } else {
+                    msg = `The ${source} (${javaHome}) does not point to a JDK.`;
+                }
+                invalidJavaHome(reject, msg);
+            }
+            javaVersion = await getJavaVersion(javaHome);
+        } else {
+            // java.home not specified, search valid JDKs from env.JAVA_HOME, env.PATH, Registry(Window), Common directories
+            const javaRuntimes = await findJavaHomes();
+            const requiredJdk = javaRuntimes.find(r => r.version >= REQUIRED_JDK_VERSION);
+            if (requiredJdk) {
+                javaHome = requiredJdk.home;
+                javaVersion = requiredJdk.version;
+            }
+        }
+
+        if (javaVersion < REQUIRED_JDK_VERSION) {
+            openJDKDownload(reject, `Java ${REQUIRED_JDK_VERSION} or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)`);
+        }
+
+        resolve({ java_home: javaHome, java_version: javaVersion });
+    });
 }
 
 function checkJavaRuntime(context: ExtensionContext): Promise<string> {
