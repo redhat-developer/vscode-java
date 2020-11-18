@@ -26,8 +26,9 @@ export async function findJavaHomes(): Promise<JavaRuntime[]> {
     const ret: JavaRuntime[] = [];
     const jdkMap = new Map<string, string[]>();
 
-    updateJDKs(jdkMap, await fromJavaHomeEnv(), "env.JAVA_HOME");
-    updateJDKs(jdkMap, await fromPathEnv(), "env.PATH");
+    updateJDKs(jdkMap, await fromEnv("JDK_HOME"), "env.JDK_HOME");
+    updateJDKs(jdkMap, await fromEnv("JAVA_HOME"), "env.JAVA_HOME");
+    updateJDKs(jdkMap, await fromPath(), "env.PATH");
     updateJDKs(jdkMap, await fromWindowsRegistry(), "WindowsRegistry");
     updateJDKs(jdkMap, await fromCommonPlaces(), "DefaultLocation");
 
@@ -59,10 +60,10 @@ function updateJDKs(map: Map<string, string[]>, newJdks: string[], source: strin
     }
 }
 
-async function fromJavaHomeEnv(): Promise<string[]> {
+async function fromEnv(name: string): Promise<string[]> {
     const ret: string[] = [];
-    if (process.env.JAVA_HOME) {
-        const javaHome = await verifyJavaHome(process.env.JAVA_HOME, JAVAC_FILENAME);
+    if (process.env[name]) {
+        const javaHome = await verifyJavaHome(process.env[name], JAVAC_FILENAME);
         if (javaHome) {
             ret.push(javaHome);
         }
@@ -70,7 +71,7 @@ async function fromJavaHomeEnv(): Promise<string[]> {
     return ret;
 }
 
-async function fromPathEnv(): Promise<string[]> {
+async function fromPath(): Promise<string[]> {
     const ret: string[] = [];
 
     const paths = process.env.PATH ? process.env.PATH.split(path.delimiter).filter(Boolean) : [];
