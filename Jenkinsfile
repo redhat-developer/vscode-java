@@ -27,6 +27,8 @@ node('rhel7'){
 }
 
 node('rhel7'){
+	env.JAVA_HOME="${tool 'openjdk-11'}"
+	env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
 	stage 'Checkout vscode-java code'
 	deleteDir()
 	git url: 'https://github.com/redhat-developer/vscode-java.git'
