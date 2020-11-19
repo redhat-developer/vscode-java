@@ -244,7 +244,6 @@ export async function verifyJavaHome(raw: string, javaFilename: string): Promise
     const targetJavaFile = await findLinkedFile(path.resolve(dir, "bin", javaFilename));
     const proposed = path.dirname(path.dirname(targetJavaFile));
     if (await fse.pathExists(proposed)
-        && (await fse.lstat(proposed)).isDirectory()
         && await fse.pathExists(path.resolve(proposed, "bin", javaFilename))
     ) {
         return proposed;
