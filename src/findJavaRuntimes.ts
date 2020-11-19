@@ -10,6 +10,7 @@ const expandHomeDir = require("expand-home-dir");
 const WinReg = require("winreg-utf8");
 const isWindows: boolean = process.platform.indexOf("win") === 0;
 const isMac: boolean = process.platform.indexOf("darwin") === 0;
+const isLinux: boolean = process.platform.indexOf("linux") === 0;
 const JAVAC_FILENAME = "javac" + (isWindows ? ".exe" : "");
 const JAVA_FILENAME = "java" + (isWindows ? ".exe" : "");
 
@@ -232,6 +233,24 @@ async function fromCommonPlaces(): Promise<string[]> {
                 if (javaHome) {
                     ret.push(javaHome);
                 }
+            }
+        }
+    }
+
+    // common place for Linux
+    if (isLinux) {
+        const jvmStore = "/usr/lib/jvm";
+        let jvms: string[] = [];
+        try {
+            jvms = await fse.readdir(jvmStore);
+        } catch (error) {
+            // ignore
+        }
+        for (const jvm of jvms) {
+            const proposed = path.join(jvmStore, jvm);
+            const javaHome = await verifyJavaHome(proposed, JAVAC_FILENAME);
+            if (javaHome) {
+                ret.push(javaHome);
             }
         }
     }
