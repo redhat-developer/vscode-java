@@ -3,6 +3,7 @@
 ## 0.71.0 (November 19th, 2020)
  * bug fix - Quarkus: generated sources are not accessible. See [#1675](https://github.com/redhat-developer/vscode-java/issues/1675)
  * bug fix - Error in every java file after updating to macOS Big Sur. See [#1700](https://github.com/redhat-developer/vscode-java/issues/1700).
+ * bug fix - Fix jdk detection: cover symlink folder on Linux. See [#1704](https://github.com/redhat-developer/vscode-java/pull/1704).
  * other - Improve tracing capability of m2e through m2e.logback.configuration.. See [JLS#1589](https://github.com/eclipse/eclipse.jdt.ls/pull/1589).
  * other - Infer expressions if there is no selection range when extracting method. See [#1680](https://github.com/redhat-developer/vscode-java/pull/1680).
 
