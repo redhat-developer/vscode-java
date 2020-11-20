@@ -688,47 +688,47 @@
     "commands": [
       {
         "command": "java.server.mode.switch",
-        "title": "Switch to Standard mode",
+        "title": "Switch to Standard Mode",
         "category": "Java"
       },
       {
         "command": "java.projectConfiguration.update",
-        "title": "Update project configuration",
+        "title": "Update Project",
         "category": "Java"
       },
       {
         "command": "java.project.import",
-        "title": "Import Java projects in workspace",
+        "title": "Import Java Projects into Workspace",
         "category": "Java"
       },
       {
         "command": "java.open.serverLog",
-        "title": "Open Java language server log file",
+        "title": "Open Java Language Server Log File",
         "category": "Java"
       },
       {
         "command": "java.open.clientLog",
-        "title": "Open Java extension log file",
+        "title": "Open Java Extension Log File",
         "category": "Java"
       },
       {
         "command": "java.open.logs",
-        "title": "Open all log files",
+        "title": "Open All Log Files",
         "category": "Java"
       },
       {
         "command": "java.workspace.compile",
-        "title": "Force Java compilation",
+        "title": "Force Java Compilation",
         "category": "Java"
       },
       {
         "command": "java.open.formatter.settings",
-        "title": "Open Java formatter settings",
+        "title": "Open Java Formatter Settings",
         "category": "Java"
       },
       {
         "command": "java.clean.workspace",
-        "title": "Clean the Java language server workspace",
+        "title": "Clean Java Language Server Workspace",
         "category": "Java"
       },
       {
@@ -748,7 +748,7 @@
       },
       {
         "command": "java.project.listSourcePaths",
-        "title": "List all Java source paths",
+        "title": "List All Java Source Paths",
         "category": "Java"
       },
       {
