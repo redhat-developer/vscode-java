@@ -379,7 +379,8 @@
           "description": "Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.",
           "default": [
             "java.awt.*",
-            "com.sun.*"
+            "com.sun.*",
+            "sun.*"
           ],
           "scope": "window"
         },
