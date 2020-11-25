@@ -70,7 +70,10 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
 
                     commandArguments.push(initializeIn);
                 }
-            } else if (command === 'extractMethod') {
+            } else if (command === 'extractMethod'
+                || command === 'extractVariableAllOccurrence'
+                || command === 'extractVariable'
+                || command === 'extractConstant') {
                 if (!params || !params.range) {
                     return;
                 }
@@ -81,12 +84,12 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     });
                     const options: IExpressionItem[] = [];
                     for (const expression of expressions) {
-                        const extractMethodItem: IExpressionItem = {
+                        const extractItem: IExpressionItem = {
                             label: expression.name,
                             length: expression.length,
                             offset: expression.offset,
                         };
-                        options.push(extractMethodItem);
+                        options.push(extractItem);
                     }
                     let resultItem: IExpressionItem;
                     if (options.length === 1) {
