@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 def installBuildRequirements(){
-	def nodeHome = tool 'nodejs-10.9.0'
+	def nodeHome = tool 'nodejs-12.13.1'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
 	sh "npm install -g vsce"
