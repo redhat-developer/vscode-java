@@ -85,13 +85,21 @@ The default runtime will be used when you open standalone Java files.
 Available commands
 ==========================
 The following commands are available:
-- `Java:Update Project configuration` (`Shift+Alt+U`):  is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
-- `Java:Open Java language server log file`: opens the Java Language Server log file, useful for troubleshooting problems.
-- `Java:Open Java extension log file`: opens the Java extension log file, useful for troubleshooting problems.
-- `Java:Force Java compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
-- `Java:Open Java formatter settings`: Open the Eclipse formatter settings. Creates a new settings file if none exists.
-- `Java:Clean the Java language server workspace`: Clean the Java language server workspace.
-- `Java:Attach Source`: Attach a jar/zip source to the currently opened binary class file. This command is only available in the editor context menu.
+- `Switch to Standard Mode`: switches the Java Language Server to `Standard` mode. This command is only available when the Java Language Server is in `LightWeight` mode.
+- `Java: Update Project` (`Shift+Alt+U`): is available when the editor is focused on a Maven pom.xml or a Gradle file. It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
+- `Java: Import Java Projects into Workspace`: detects and imports all the Java projects into the Java Language Server workspace.
+- `Java: Open Java Language Server Log File`: opens the Java Language Server log file, useful for troubleshooting problems.
+- `Java: Open Java Extension Log File`: opens the Java extension log file, useful for troubleshooting problems.
+- `Java: Open All Log Files`: opens both the Java Language Server log file and the Java extension log file.
+- `Java: Force Java Compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
+- `Java: Open Java Formatter Settings`: opens the Eclipse formatter settings. Creates a new settings file if none exists.
+- `Java: Clean Java Language Server Workspace`: cleans the Java language server workspace.
+- `Java: Attach Source`: attaches a jar/zip source to the currently opened binary class file. This command is only available in the editor context menu.
+- `Java: Add Folder to Java Source Path`: adds the selected folder to its project source path. This command is only available in the file explorer context menu and only works for unmanaged folders.
+- `Java: Remove Folder from Java Source Path`: removes the selected folder from its project source path. This command is only available in the file explorer context menu and only works for unmanaged folders.
+- `Java: List All Java Source Paths`: lists all the Java source paths recognized by the Java Language Server workspace.
+- `Java: Show Build Job Status`: shows the Java Language Server job status in Visual Studio Code terminal.
+- `Java: Go to Super Implementation`: goes to the super implementation for the current selected symbol in editor.
 
 Supported VS Code settings
 ==========================
