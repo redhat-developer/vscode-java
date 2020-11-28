@@ -119,9 +119,9 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
             if (isModuleInfo) {
                 snippets.push(`module \${1:name} {`);
             } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
-                snippets.push(`public \${1|class,interface,enum|} ${typeName} {`);
+                snippets.push(`public \${1|class,interface,enum,abstract class,@interface|} ${typeName} {`);
             } else {
-                snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}()|} {`);
+                snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|} {`);
             }
             snippets.push("\t${0}");
             snippets.push("}");
