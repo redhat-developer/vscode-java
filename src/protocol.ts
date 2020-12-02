@@ -333,6 +333,7 @@ export interface SelectionInfo {
     name: string;
     length: number;
     offset: number;
+    params?: string[];
 }
 
 export interface InferSelectionParams {

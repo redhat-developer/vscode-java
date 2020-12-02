@@ -52,22 +52,38 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                 insertSpaces: <boolean> currentEditor.options.insertSpaces,
             };
             const commandArguments: any[] = [];
-            if (command === 'extractField' || command === 'convertVariableToField') {
-                if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
-                    const scopes: any[] = commandInfo.initializedScopes;
-                    let initializeIn: string;
-                    if (scopes.length === 1) {
-                        initializeIn = scopes[0];
-                    } else if (scopes.length > 1) {
-                        initializeIn = await window.showQuickPick(scopes, {
-                            placeHolder: "Initialize the field in",
-                        });
-
+            if (command === 'extractField') {
+                if (!params || !params.range) {
+                    return;
+                }
+                if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
+                    const expression: SelectionInfo = await getExpression(command, params, languageClient);
+                    if (!expression) {
+                        return;
+                    }
+                    if (expression.params && Array.isArray(expression.params)) {
+                        const initializeIn = await resolveScopes(expression.params);
                         if (!initializeIn) {
                             return;
                         }
+                        commandArguments.push(initializeIn);
                     }
-
+                    commandArguments.push(expression);
+                } else {
+                    if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
+                        const initializeIn = await resolveScopes(commandInfo.initializedScopes);
+                        if (!initializeIn) {
+                            return;
+                        }
+                        commandArguments.push(initializeIn);
+                    }
+                }
+            } else if (command === 'convertVariableToField') {
+                if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
+                    const initializeIn = await resolveScopes(commandInfo.initializedScopes);
+                    if (!initializeIn) {
+                        return;
+                    }
                     commandArguments.push(initializeIn);
                 }
             } else if (command === 'extractMethod'
@@ -78,36 +94,11 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     return;
                 }
                 if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
-                    const expressions: SelectionInfo[] = await languageClient.sendRequest(InferSelectionRequest.type, {
-                        command: command,
-                        context: params,
-                    });
-                    const options: IExpressionItem[] = [];
-                    for (const expression of expressions) {
-                        const extractItem: IExpressionItem = {
-                            label: expression.name,
-                            length: expression.length,
-                            offset: expression.offset,
-                        };
-                        options.push(extractItem);
-                    }
-                    let resultItem: IExpressionItem;
-                    if (options.length === 1) {
-                        resultItem = options[0];
-                    } else if (options.length > 1) {
-                        resultItem = await window.showQuickPick<IExpressionItem>(options, {
-                            placeHolder: "Choose the expression to extract",
-                        });
-                    }
-                    if (!resultItem) {
+                    const expression = await getExpression(command, params, languageClient);
+                    if (!expression) {
                         return;
                     }
-                    const resultExpression: SelectionInfo = {
-                        name: resultItem.label,
-                        length: resultItem.length,
-                        offset: resultItem.offset,
-                    };
-                    commandArguments.push(resultExpression);
+                    commandArguments.push(expression);
                 }
             }
 
@@ -135,10 +126,62 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
     }));
 }
 
+async function resolveScopes(scopes: any[]): Promise<any | undefined> {
+    let initializeIn: string;
+    if (scopes.length === 1) {
+        initializeIn = scopes[0];
+    } else if (scopes.length > 1) {
+        initializeIn = await window.showQuickPick(scopes, {
+            placeHolder: "Initialize the field in",
+        });
+
+        if (!initializeIn) {
+            return undefined;
+        }
+    }
+    return initializeIn;
+}
+
+async function getExpression(command: string, params: any, languageClient: LanguageClient): Promise<SelectionInfo | undefined> {
+    const expressions: SelectionInfo[] = await languageClient.sendRequest(InferSelectionRequest.type, {
+        command: command,
+        context: params,
+    });
+    const options: IExpressionItem[] = [];
+    for (const expression of expressions) {
+        const extractItem: IExpressionItem = {
+            label: expression.name,
+            length: expression.length,
+            offset: expression.offset,
+            params: expression.params,
+        };
+        options.push(extractItem);
+    }
+    let resultItem: IExpressionItem;
+    if (options.length === 1) {
+        resultItem = options[0];
+    } else if (options.length > 1) {
+        resultItem = await window.showQuickPick<IExpressionItem>(options, {
+            placeHolder: "Choose the expression to extract",
+        });
+    }
+    if (!resultItem) {
+        return undefined;
+    }
+    const resultExpression: SelectionInfo = {
+        name: resultItem.label,
+        length: resultItem.length,
+        offset: resultItem.offset,
+        params: resultItem.params,
+    };
+    return resultExpression;
+}
+
 interface IExpressionItem extends QuickPickItem {
 	label: string;
 	length: number;
 	offset: number;
+	params?: string[];
 }
 
 async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: RefactorWorkspaceEdit) {
