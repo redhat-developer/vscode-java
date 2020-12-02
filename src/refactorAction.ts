@@ -62,7 +62,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                         return;
                     }
                     if (expression.params && Array.isArray(expression.params)) {
-                        const initializeIn = await resolveScopes(expression.params, expression.name);
+                        const initializeIn = await resolveScopes(expression.params);
                         if (!initializeIn) {
                             return;
                         }
@@ -126,13 +126,13 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
     }));
 }
 
-async function resolveScopes(scopes: any[], expression?: string): Promise<any | undefined> {
+async function resolveScopes(scopes: any[]): Promise<any | undefined> {
     let initializeIn: string;
     if (scopes.length === 1) {
         initializeIn = scopes[0];
     } else if (scopes.length > 1) {
         initializeIn = await window.showQuickPick(scopes, {
-            placeHolder: (expression === undefined) ? "Initialize the field in" : `For extracting "${expression}" to field, initialize the field in`,
+            placeHolder: "Initialize the field in",
         });
 
         if (!initializeIn) {
@@ -164,25 +164,23 @@ async function getExpression(command: string, params: any, languageClient: Langu
         let commandMessage: string;
         switch (command) {
             case 'extractMethod':
-                commandMessage = 'extracting to method';
+                commandMessage = 'extract to method';
                 break;
             case 'extractVariableAllOccurrence':
-                commandMessage = 'extracting to variable with replacing all occurrences';
-                break;
             case 'extractVariable':
-                commandMessage = 'extracting to variable';
+                commandMessage = 'extract to variable';
                 break;
             case 'extractConstant':
-                commandMessage = 'extracting to constant';
+                commandMessage = 'extract to constant';
                 break;
             case 'extractField':
-                commandMessage = 'extracting to field';
+                commandMessage = 'extract to field';
                 break;
             default:
                 return undefined;
         }
         resultItem = await window.showQuickPick<IExpressionItem>(options, {
-            placeHolder: `Choose the expression for ${commandMessage}`,
+            placeHolder: `Select an expression you want to ${commandMessage}`,
         });
     }
     if (!resultItem) {
