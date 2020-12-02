@@ -161,8 +161,26 @@ async function getExpression(command: string, params: any, languageClient: Langu
     if (options.length === 1) {
         resultItem = options[0];
     } else if (options.length > 1) {
+        let commandMessage: string;
+        switch (command) {
+            case 'extractMethod':
+                commandMessage = 'extract to method';
+                break;
+            case 'extractVariableAllOccurrence':
+            case 'extractVariable':
+                commandMessage = 'extract to variable';
+                break;
+            case 'extractConstant':
+                commandMessage = 'extract to constant';
+                break;
+            case 'extractField':
+                commandMessage = 'extract to field';
+                break;
+            default:
+                return undefined;
+        }
         resultItem = await window.showQuickPick<IExpressionItem>(options, {
-            placeHolder: "Choose the expression to extract",
+            placeHolder: `Select an expression you want to ${commandMessage}`,
         });
     }
     if (!resultItem) {
@@ -391,7 +409,7 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
     if (commandInfo.enclosingTypeName) {
         exclude.add(commandInfo.enclosingTypeName);
         // 55: Type, 71: Enum, 81: AnnotationType
-        if (commandInfo.memberType === 55 || commandInfo.memeberType === 71
+        if (commandInfo.memberType === 55 || commandInfo.memberType === 71
             || commandInfo.memberType === 81) {
             exclude.add(`${commandInfo.enclosingTypeName}.${commandInfo.displayName}`);
         }
