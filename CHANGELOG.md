@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.72.0 (December 2nd, 2020)
+ * enhancement - Support inferSelection when extract to variable. See [#1717](https://github.com/redhat-developer/vscode-java/pull/1717).
+ * enhancement - Support inferSelection when extract to field. See [#1721](https://github.com/redhat-developer/vscode-java/pull/1721).
+ * bug fix - jdt.ls distro is 10MB heavier because of com.ibm.icu_64.2.0.v20190507-1337.jar. See [JLS#1351](https://github.com/eclipse/eclipse.jdt.ls/issues/1351).
+ * bug fix - Java LS crashes on WSL Alpine. See [#1711](https://github.com/redhat-developer/vscode-java/issues/1711).
+ * bug fix - End of File exception when opening completion in empty file. See [JLS#1611](https://github.com/eclipse/eclipse.jdt.ls/issues/1611).
+ * other - Update Target Platform to use Eclipse 2020-12 M3. See [JLS#1616](https://github.com/eclipse/eclipse.jdt.ls/pull/1616).
+ * other - Improve the performance of inferSelection. See [JLS#1609](https://github.com/eclipse/eclipse.jdt.ls/pull/1609).
+ * other - Allow creation of `abstract class` and `@interface` from "New Java Class" command. See [#1722](https://github.com/redhat-developer/vscode-java/issues/1722).
+ * other - Spelling error: Update project configuration. See [#1649](https://github.com/redhat-developer/vscode-java/issues/1649).
+
 ## 0.71.0 (November 19th, 2020)
  * bug fix - Quarkus: generated sources are not accessible. See [#1675](https://github.com/redhat-developer/vscode-java/issues/1675)
  * bug fix - Error in every java file after updating to macOS Big Sur. See [#1700](https://github.com/redhat-developer/vscode-java/issues/1700).
