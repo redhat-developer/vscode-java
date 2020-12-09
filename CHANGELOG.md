@@ -23,7 +23,7 @@
  * enhancement - Hide inline variable/constant commands when no reference found. See [JLS#1573](https://github.com/eclipse/eclipse.jdt.ls/pull/1573) and [JLS#1575](https://github.com/eclipse/eclipse.jdt.ls/pull/1575).
  * enhancement - Convert a lambda expression to method reference. See [#1448](https://github.com/redhat-developer/vscode-java/issues/1448).
  * enhancement - Provide method for converting callstack entry to location. See [JLS#1202](https://github.com/eclipse/eclipse.jdt.ls/issues/1202).
- * enhancement - Change scope of 'java.home' to machine-overridable. See [#1676](https://github.com/redhat-developer/vscode-java/pull/1676).
+ * enhancement - Change scope of 'java.home' to machine-overridable. See [CVE-2020-17159](https://msrc.microsoft.com/update-guide/vulnerability/CVE-2020-17159) and [#1676](https://github.com/redhat-developer/vscode-java/pull/1676).
  * enhancement - Declare semantic token type for modifier keywords. See [#1636](https://github.com/redhat-developer/vscode-java/pull/1636).
  * enhancement - Add the java.configuration.maven.globalSettings property. See [#1365](https://github.com/redhat-developer/vscode-java/issues/1365).
  * bug fix - GTD is not working if referenced library is updated without file name change. See [JLS#1577](https://github.com/eclipse/eclipse.jdt.ls/issues/1577).
