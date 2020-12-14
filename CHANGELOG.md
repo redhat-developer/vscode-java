@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.73.0 (December 17th, 2020)
+ * bug fix - Open a Java file from unmanaged folder, the status bar didn't show language level info. See [#1735](https://github.com/redhat-developer/vscode-java/issues/1735).
+ * bug fix - Long completionItem/resolve and TimeoutException. See [JLS#1624](https://github.com/eclipse/eclipse.jdt.ls/issues/1624).
+ * bug fix - Add support to INFO log level. See [JLS#1623](https://github.com/eclipse/eclipse.jdt.ls/pull/1623).
+ * bug fix - Filter 'sun' packages out of completion type results. See [#1731](https://github.com/redhat-developer/vscode-java/pull/1731).
+ * bug fix - Dependencies weren't recognized after being added in gradle project. See [#1714](https://github.com/redhat-developer/vscode-java/issues/1714).
+ * bug fix - Detect Gradle project by settings.gradle as well. See [#1528](https://github.com/redhat-developer/vscode-java/issues/1528).
+
 ## 0.72.0 (December 2nd, 2020)
  * enhancement - Support inferSelection when extract to variable. See [#1717](https://github.com/redhat-developer/vscode-java/pull/1717).
  * enhancement - Support inferSelection when extract to field. See [#1721](https://github.com/redhat-developer/vscode-java/pull/1721).
