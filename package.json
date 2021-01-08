@@ -227,7 +227,13 @@
         "java.maven.downloadSources": {
           "type": "boolean",
           "default": false,
-          "description": "Enable/disable eager download of Maven source artifacts.",
+          "description": "Enable/disable download of Maven source artifacts as part of importing Maven projects.",
+          "scope": "window"
+        },
+        "java.eclipse.downloadSources": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable download of Maven source artifacts for Eclipse projects.",
           "scope": "window"
         },
         "java.maven.updateSnapshots": {
