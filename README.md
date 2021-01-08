@@ -142,7 +142,7 @@ The following settings are supported:
 * `java.format.comments.enabled` : Includes the comments during code formatting.
 * `java.format.onType.enabled` : Enable/disable on-type formatting (triggered on `;`, `}` or `<return>`).
 * `java.foldingRange.enabled`: Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.
-* `java.maven.downloadSources`: Enable/disable eager download of Maven source artifacts.
+* `java.maven.downloadSources`: Enable/disable download of Maven source artifacts as part of importing Maven projects.
 * `java.maven.updateSnapshots`: Force update of Snapshots/Releases. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useInstanceof`: Use 'instanceof' to compare types when generating the hashCode and equals methods. Defaults to `false`.
 * `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
@@ -180,9 +180,11 @@ The following settings are supported:
 * `java.templates.fileHeader`: Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
-
-New in 0.70.0:
 * `java.configuration.maven.globalSettings` : Path to Maven's global settings.xml.
+
+New in 0.74.0:
+* `java.eclipse.downloadSources` : Enable/disable download of Maven source artifacts for Eclipse projects.
+
 
 Semantic Highlighting
 ===============
