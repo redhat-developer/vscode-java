@@ -9,6 +9,7 @@ import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageCl
 import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
+import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
 import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
@@ -126,6 +127,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	initializeLogFile(clientLogFile);
 
 	enableJavadocSymbols();
+
+	initializeRecommendation(context);
 
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
