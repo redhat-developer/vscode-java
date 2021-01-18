@@ -732,6 +732,12 @@
           "default": true,
           "description": "Include getter, setter and builder/constructor when finding references.",
           "scope": "window"
+        },
+        "java.references.includeDecompiledSources": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include the decompiled sources when finding references.",
+          "scope": "window"
         }
       }
     },
