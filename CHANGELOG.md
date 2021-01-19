@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.74.0 (January 20th, 2021)
+ * enhancement - Download sources for classes in jars with maven coordinates. See [#1664](https://github.com/redhat-developer/vscode-java/issues/1664).
+ * bug fix - Some refactors are missing when the location has diagnostics. See [JLS#1642](https://github.com/eclipse/eclipse.jdt.ls/issues/1642).
+ * bug fix - Should not enable preview compiler options if the tooling doesn't support the early access JDK. See [JLS#1644](https://github.com/eclipse/eclipse.jdt.ls/issues/1644).
+ * bug fix - Importing projects should follow "java.import.exclusions" setting to stop scanning the specified directories. See [#1698](https://github.com/redhat-developer/vscode-java/issues/1698).
+ * build - Update target platform to use Eclipse 2020-12 Release. See [JLS#1639](https://github.com/eclipse/eclipse.jdt.ls/pull/1639).
+ * build - Fix some dependency vulnerabilities. See [#1772](https://github.com/redhat-developer/vscode-java/pull/1772).
+
 ## 0.73.0 (December 17th, 2020)
  * bug fix - Open a Java file from unmanaged folder, the status bar didn't show language level info. See [#1735](https://github.com/redhat-developer/vscode-java/issues/1735).
  * bug fix - Long completionItem/resolve and TimeoutException. See [JLS#1624](https://github.com/eclipse/eclipse.jdt.ls/issues/1624).
