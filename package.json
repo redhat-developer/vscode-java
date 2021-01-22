@@ -321,6 +321,12 @@
           "additionalProperties": false,
           "scope": "window"
         },
+        "java.project.outputPath": {
+          "type": "string",
+          "markdownDescription": "A relative path to the workspace where stores the compiled output. This setting is **Only** effective in the **WORKSPACE** scope and **Only** applies to folders containing .java files, but **NOT** managed by build tools like Maven/Gradle. ",
+          "default": "",
+          "scope": "window"
+        },
         "java.contentProvider.preferred": {
           "type": "string",
           "description": "Preferred content provider (a 3rd party decompiler id, usually)",

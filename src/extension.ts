@@ -396,6 +396,9 @@ export function getJavaConfig(javaHome: string) {
 	const origConfig = getJavaConfiguration();
 	const javaConfig = JSON.parse(JSON.stringify(origConfig));
 	javaConfig.home = javaHome;
+	// Since output path is a project specific setting. To avoid pollute other project,
+	// we avoid reading the value from the global scope.
+	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
 	return javaConfig;
 }
 
