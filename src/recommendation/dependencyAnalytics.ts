@@ -6,8 +6,8 @@ import * as vscode from "vscode";
 import { IHandler } from "./handler";
 
 const EXTENSION_NAME = "redhat.fabric8-analytics";
-const MARKETPLACE_URL = `https://marketplace.visualstudio.com/items?itemName=${EXTENSION_NAME}`;
-const RECOMMENDATION_MESSAGE = `[Dependency Analytics](${MARKETPLACE_URL}) extension is recommended to get insights about pom.xml.`;
+const GH_ORG_URL = `https://github.com/fabric8-analytics`;
+const RECOMMENDATION_MESSAGE = `[Dependency Analytics](${GH_ORG_URL}) extension is recommended to get security insights about pom.xml.`;
 
 function isPomDotXml(uri: vscode.Uri) {
 	return !!uri.path && uri.path.toLowerCase().endsWith("pom.xml");
