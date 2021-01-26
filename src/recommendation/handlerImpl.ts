@@ -7,10 +7,6 @@ import { IHandler } from "./handler";
 
 const KEY_RECOMMENDATION_USER_CHOICE_MAP = "recommendationUserChoice";
 
-function isExtensionInstalled( extName: string) {
-	return !!vscode.extensions.getExtension(extName);
-}
-
 async function installExtensionCmdHandler(extensionName: string, displayName: string) {
 	return vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Installing ${displayName||extensionName}...`}, progress => {
 		return vscode.commands.executeCommand("workbench.extensions.installExtension", extensionName);
@@ -25,8 +21,12 @@ export class HandlerImpl implements IHandler {
 		this.context = context;
 	}
 
+	isExtensionInstalled( extName: string): boolean {
+		return !!vscode.extensions.getExtension(extName);
+	}
+
 	async handle(extName: string, message: string): Promise<void> {
-		if (isExtensionInstalled(extName)) {
+		if (this.isExtensionInstalled(extName)) {
 			return;
 		}
 

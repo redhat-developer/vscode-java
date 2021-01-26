@@ -14,6 +14,9 @@ function isPomDotXml(uri: vscode.Uri) {
 }
 
 export function initialize (context: vscode.ExtensionContext, handler: IHandler): void {
+	if (handler.isExtensionInstalled(EXTENSION_NAME)) {
+		return;
+	}
 	context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(e => {
 		if (isPomDotXml(e.uri)) {
 			handler.handle(EXTENSION_NAME, RECOMMENDATION_MESSAGE);
