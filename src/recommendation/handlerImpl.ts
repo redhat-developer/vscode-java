@@ -21,7 +21,7 @@ export class HandlerImpl implements IHandler {
 		this.context = context;
 	}
 
-	isExtensionInstalled( extName: string): boolean {
+	isExtensionInstalled(extName: string): boolean {
 		return !!vscode.extensions.getExtension(extName);
 	}
 
