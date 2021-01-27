@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
 import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
@@ -313,7 +313,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				const config = getJavaConfiguration();
 				const importOnStartupSection: string = "project.importOnFirstTimeStartup";
 				const importOnStartup = config.get(importOnStartupSection);
-				if (importOnStartup === "disabled") {
+				if (importOnStartup === "disabled" ||
+					env.uiKind === UIKind.Web && env.appName.includes("Visual Studio Code")) {
 					syntaxClient.resolveApi(resolve);
 					requireStandardServer = false;
 				} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
