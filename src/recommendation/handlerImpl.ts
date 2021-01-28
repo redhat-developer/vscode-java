@@ -15,14 +15,31 @@ async function installExtensionCmdHandler(extensionName: string, displayName: st
 	});
 }
 
+enum UserChoice {
+	Install = "Install",
+	Never = "Never",
+	Later = "Later",
+}
+
 export class HandlerImpl implements IHandler {
-	context: vscode.ExtensionContext;
+	userChoice: any;
+	storeUserChoice: any;
 	constructor(context: vscode.ExtensionContext) {
-		this.context = context;
+		this.userChoice = () => {
+			return context.globalState.get(KEY_RECOMMENDATION_USER_CHOICE_MAP, {});
+		};
+
+		this.storeUserChoice = (choice: object) => {
+			context.globalState.update(KEY_RECOMMENDATION_USER_CHOICE_MAP, choice);
+		};
 	}
 
 	isExtensionInstalled(extName: string): boolean {
 		return !!vscode.extensions.getExtension(extName);
+	}
+
+	canRecommendExtension(extName: string): boolean {
+		return this.userChoice()[extName] !== UserChoice.Never && !this.isExtensionInstalled(extName);
 	}
 
 	async handle(extName: string, message: string): Promise<void> {
@@ -30,19 +47,18 @@ export class HandlerImpl implements IHandler {
 			return;
 		}
 
-		const action = ["Install", "Never", "Later"];
-		const choice: { [key: string]: string; } = this.context.globalState.get(KEY_RECOMMENDATION_USER_CHOICE_MAP, {});
-		if (choice && choice[extName] === action[1]) {
+		const choice = this.userChoice();
+		if (choice[extName] === UserChoice.Never) {
 			return;
 		}
 
-		const answer = await vscode.window.showInformationMessage(message, ...action);
-		if (answer === action[0]) {
+		const actions: Array<string> = Object.keys(UserChoice);
+		const answer = await vscode.window.showInformationMessage(message, ...actions);
+		if (answer === UserChoice.Install) {
 			await installExtensionCmdHandler(extName, extName);
 		}
 
 		choice[extName] = answer;
-
-		this.context.globalState.update(KEY_RECOMMENDATION_USER_CHOICE_MAP, choice);
+		this.storeUserChoice(choice);
 	}
 }

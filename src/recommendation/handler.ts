@@ -2,5 +2,5 @@
 
 export interface IHandler {
 	handle(extName: string, message: string): Promise<void>;
-	isExtensionInstalled(extName: string): boolean;
+	canRecommendExtension(extName: string): boolean;
 }
