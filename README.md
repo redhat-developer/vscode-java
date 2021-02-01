@@ -111,7 +111,7 @@ The following settings are supported:
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
 * `java.configuration.updateBuildConfiguration` : Specifies how modifications on build files update the Java classpath/configuration. Supported values are `disabled` (nothing happens), `interactive` (asks about updating on every modification), `automatic` (updating is automatically triggered).
 * `java.configuration.maven.userSettings` : Path to Maven's user settings.xml.
-* `java.configuration.checkProjectSettingsExclusions`: Checks if the extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) should be excluded from the file explorer. Defaults to `true`.
+* `java.configuration.checkProjectSettingsExclusions`: Controls whether to exclude extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) from the file explorer. Defaults to `true`.
 * `java.referencesCodeLens.enabled` : Enable/disable the references code lenses.
 * `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
 * `java.signatureHelp.enabled` : Enable/disable signature help support (triggered on `(`).

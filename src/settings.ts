@@ -74,18 +74,18 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 			const excludedInspectedValue = config.inspect('exclude');
 			const checkExclusionInWorkspace = javaConfig.inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
 			if (checkExclusionInWorkspace) {
-				excludedInspectedValue.workspaceValue = excludedInspectedValue.workspaceValue || {};
+				const workspaceValue = excludedInspectedValue.workspaceValue || {};
 				for (const hiddenFile of needExcludeFiles) {
-					excludedInspectedValue.workspaceValue[hiddenFile] = true;
+					workspaceValue[hiddenFile] = true;
 				}
-				config.update('exclude', excludedInspectedValue.workspaceValue, ConfigurationTarget.Workspace);
+				config.update('exclude', workspaceValue, ConfigurationTarget.Workspace);
 			} else {
 				// by default save to global settings
-				excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
+				const globalValue = excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
 				for (const hiddenFile of needExcludeFiles) {
-					excludedInspectedValue.globalValue[hiddenFile] = true;
+					globalValue[hiddenFile] = true;
 				}
-				config.update('exclude', excludedInspectedValue.globalValue, ConfigurationTarget.Global);
+				config.update('exclude', globalValue, ConfigurationTarget.Global);
 			}
 		}
 	}
