@@ -56,8 +56,9 @@ export function excludeProjectSettingsFiles() {
 }
 
 function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
-	const excudedConfig = getJavaConfiguration().get(EXCLUDE_FILE_CONFIG);
-	if (excudedConfig) {
+	const javaConfig = getJavaConfiguration();
+	const checkExclusionConfig = javaConfig.get(EXCLUDE_FILE_CONFIG);
+	if (checkExclusionConfig) {
 		const config = workspace.getConfiguration('files', workspaceUri);
 		const excludedValue: Object = config.get('exclude');
 		const needExcludeFiles: string[] = [];
@@ -71,30 +72,21 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 		}
 		if (needUpdate) {
 			const excludedInspectedValue = config.inspect('exclude');
-			const items = [changeItem.workspace, changeItem.never];
-			// Workspace file.exclude is undefined
-			if (!excludedInspectedValue.workspaceValue) {
-				items.unshift(changeItem.global);
-			}
-
-			window.showInformationMessage(`Do you want to exclude the ${env.appName} Java project settings files (.classpath, .project, .settings, .factorypath) from the file explorer?`, ...items).then((result) => {
-				if (result === changeItem.global) {
-					excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
-					for (const hiddenFile of needExcludeFiles) {
-						excludedInspectedValue.globalValue[hiddenFile] = true;
-					}
-					config.update('exclude', excludedInspectedValue.globalValue, ConfigurationTarget.Global);
-				} if (result === changeItem.workspace) {
-					excludedInspectedValue.workspaceValue = excludedInspectedValue.workspaceValue || {};
-					for (const hiddenFile of needExcludeFiles) {
-						excludedInspectedValue.workspaceValue[hiddenFile] = true;
-					}
-					config.update('exclude', excludedInspectedValue.workspaceValue, ConfigurationTarget.Workspace);
-				} else if (result === changeItem.never) {
-					const storeInWorkspace = getJavaConfiguration().inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
-					getJavaConfiguration().update(EXCLUDE_FILE_CONFIG, false, storeInWorkspace ? ConfigurationTarget.Workspace : ConfigurationTarget.Global);
+			const checkExclusionInWorkspace = javaConfig.inspect(EXCLUDE_FILE_CONFIG).workspaceValue;
+			if (checkExclusionInWorkspace) {
+				const workspaceValue = excludedInspectedValue.workspaceValue || {};
+				for (const hiddenFile of needExcludeFiles) {
+					workspaceValue[hiddenFile] = true;
 				}
-			});
+				config.update('exclude', workspaceValue, ConfigurationTarget.Workspace);
+			} else {
+				// by default save to global settings
+				const globalValue = excludedInspectedValue.globalValue = excludedInspectedValue.globalValue || {};
+				for (const hiddenFile of needExcludeFiles) {
+					globalValue[hiddenFile] = true;
+				}
+				config.update('exclude', globalValue, ConfigurationTarget.Global);
+			}
 		}
 	}
 }

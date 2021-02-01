@@ -137,7 +137,7 @@
         "java.configuration.checkProjectSettingsExclusions": {
           "type": "boolean",
           "default": true,
-          "description": "Checks if the extension-generated project settings files (.project, .classpath, .factorypath, .settings/) should be excluded from the file explorer.",
+          "description": "Controls whether to exclude extension-generated project settings files (.project, .classpath, .factorypath, .settings/) from the file explorer.",
           "scope": "window"
         },
         "java.configuration.updateBuildConfiguration": {
