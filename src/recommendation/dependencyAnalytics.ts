@@ -7,7 +7,7 @@ import { IHandler } from "./handler";
 
 const EXTENSION_NAME = "redhat.fabric8-analytics";
 const GH_ORG_URL = `https://github.com/fabric8-analytics`;
-const RECOMMENDATION_MESSAGE = `[Dependency Analytics](${GH_ORG_URL}) extension is recommended to get security insights about pom.xml.`;
+const RECOMMENDATION_MESSAGE = `Do you want to install the [Dependency Analytics](${GH_ORG_URL}) extension to stay informed about vulnerable dependencies in pom.xml files?`;
 
 function isPomDotXml(uri: vscode.Uri) {
 	return !!uri.path && uri.path.toLowerCase().endsWith("pom.xml");
