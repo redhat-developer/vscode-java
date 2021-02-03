@@ -26,6 +26,8 @@ import { serverStatusBarProvider } from "./serverStatusBarProvider";
 import * as fileEventHandler from './fileEventHandler';
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvider";
+import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
+import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -283,6 +285,33 @@ export class StandardLanguageClient {
 				}
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.SHOW_TYPE_HIERARCHY, (location: any) => {
+				if (location instanceof Uri) {
+					typeHierarchyTree.setTypeHierarchy(new Location(location, window.activeTextEditor.selection.active), TypeHierarchyDirection.Both);
+				} else {
+					if (window.activeTextEditor?.document?.languageId !== "java") {
+						return;
+					}
+					typeHierarchyTree.setTypeHierarchy(new Location(window.activeTextEditor.document.uri, window.activeTextEditor.selection.active), TypeHierarchyDirection.Both);
+				}
+			}));
+
+			context.subscriptions.push(commands.registerCommand(Commands.SHOW_CLASS_HIERARCHY, () => {
+				typeHierarchyTree.changeDirection(TypeHierarchyDirection.Both);
+			}));
+
+			context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUPERTYPE_HIERARCHY, () => {
+				typeHierarchyTree.changeDirection(TypeHierarchyDirection.Parents);
+			}));
+
+			context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUBTYPE_HIERARCHY, () => {
+				typeHierarchyTree.changeDirection(TypeHierarchyDirection.Children);
+			}));
+
+			context.subscriptions.push(commands.registerCommand(Commands.CHANGE_BASE_TYPE, async (item: TypeHierarchyItem) => {
+				typeHierarchyTree.changeBaseItem(item);
+			}));
+
 			context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean, token?: CancellationToken) => {
 				return window.withProgress({ location: ProgressLocation.Window }, async p => {
 					if (typeof isFullCompile !== 'boolean') {
@@ -457,7 +486,7 @@ function decodeBase64(text: string): string {
     return Buffer.from(text, 'base64').toString('ascii');
 }
 
-function showNoLocationFound(message: string): void {
+export function showNoLocationFound(message: string): void {
 	commands.executeCommand(
 		Commands.GOTO_LOCATION,
 		window.activeTextEditor.document.uri,
