@@ -52,6 +52,36 @@
         "description": "Style for modifier keywords."
       }
     ],
+    "semanticTokenModifiers": [
+      {
+        "id": "public",
+        "description": "Style for symbols with the public access modifier."
+      },
+      {
+        "id": "private",
+        "description": "Style for symbols with the private access modifier."
+      },
+      {
+        "id": "protected",
+        "description": "Style for symbols with the protected access modifier."
+      },
+      {
+        "id": "native",
+        "description": "Style for symbols with the native modifier."
+      },
+      {
+        "id": "generic",
+        "description": "Style for symbols that are generic (have type parameters)."
+      },
+      {
+        "id": "typeArgument",
+        "description": "Style for symbols that are type arguments for a generic symbol."
+      },
+      {
+        "id": "importDeclaration",
+        "description": "Style for symbols that are part of an import declaration."
+      }
+    ],
     "semanticTokenScopes": [
       {
         "language": "java",
@@ -65,6 +95,9 @@
           ],
           "modifier": [
             "storage.modifier.java"
+          ],
+          "keyword.documentation": [
+            "keyword.other.documentation.javadoc.java"
           ]
         }
       }
