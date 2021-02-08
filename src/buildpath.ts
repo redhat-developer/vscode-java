@@ -1,7 +1,8 @@
 'use strict';
 
-import { window, commands, ExtensionContext, Uri } from 'vscode';
+import { window, commands, ExtensionContext, Uri, ConfigurationTarget } from 'vscode';
 import { Commands } from './commands';
+import { getJavaConfiguration } from './utils';
 
 interface Result {
     status: boolean;
@@ -23,6 +24,9 @@ export function registerCommands(context: ExtensionContext) {
     context.subscriptions.push(commands.registerCommand(Commands.ADD_TO_SOURCEPATH, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.ADD_TO_SOURCEPATH, uri.toString());
         if (result.status) {
+            if (result.sourcePaths) {
+                getJavaConfiguration().update('project.sourcePaths', result.sourcePaths, ConfigurationTarget.Workspace);
+            }
             window.showInformationMessage(result.message ? result.message : 'Successfully added the folder to the source path.');
         } else {
             window.showErrorMessage(result.message);
@@ -32,6 +36,9 @@ export function registerCommands(context: ExtensionContext) {
     context.subscriptions.push(commands.registerCommand(Commands.REMOVE_FROM_SOURCEPATH, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.REMOVE_FROM_SOURCEPATH, uri.toString());
         if (result.status) {
+            if (result.sourcePaths) {
+                getJavaConfiguration().update('project.sourcePaths', result.sourcePaths, ConfigurationTarget.Workspace);
+            }
             window.showInformationMessage(result.message ? result.message : 'Successfully removed the folder from the source path.');
         } else {
             window.showErrorMessage(result.message);
