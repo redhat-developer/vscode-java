@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.75.0 (February 11th, 2021)
+ * enhancement - Specify output path for invisible project. See [#1694](https://github.com/redhat-developer/vscode-java/pull/1694).
+ * enhancement - Recommend dependency analytics extension. See [#1771](https://github.com/redhat-developer/vscode-java/pull/1771).
+ * bug fix - @link highlighting broken when linking to class. See [#1753](https://github.com/redhat-developer/vscode-java/issues/1753).
+ * other - Remove legacy Semantic Highlighting implementation. See [JLS#1649](https://github.com/eclipse/eclipse.jdt.ls/pull/1649).
+ * other - Make redhat.fabric8-analytics recommendation more compelling. See [#1788](https://github.com/redhat-developer/vscode-java/pull/1788).
+ * other - use lightweight mode by default when vscode is running from web browsers. See [#1780](https://github.com/redhat-developer/vscode-java/pull/1780).
+ * other - always exclude project settings files by default. See [#1779](https://github.com/redhat-developer/vscode-java/pull/1779).
+ * other - Declare semantic token modifiers. See [#1760](https://github.com/redhat-developer/vscode-java/pull/1760).
+ * other - semantic tokens: use 'method' instead of 'member'. See [#1713](https://github.com/redhat-developer/vscode-java/issues/1713).
+
 ## 0.74.0 (January 20th, 2021)
  * enhancement - Download sources for classes in jars with maven coordinates. See [#1664](https://github.com/redhat-developer/vscode-java/issues/1664).
  * bug fix - Some refactors are missing when the location has diagnostics. See [JLS#1642](https://github.com/eclipse/eclipse.jdt.ls/issues/1642).
