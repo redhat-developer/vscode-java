@@ -5,7 +5,9 @@ language: java
 matrix:
   include:
   - os: linux
-    dist: trusty
+    dist: bionic
+    services:
+      - xvfb
     jdk: openjdk11
     env:
       - JDK_HOME=~/openjdk11 # force launching JLS using JDK11
@@ -15,10 +17,8 @@ matrix:
 
 before_install:
 - if [ $TRAVIS_OS_NAME == "linux" ]; then
-      export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
-      sh -e /etc/init.d/xvfb start;
-      sleep 3;
-    fi
+      export CXX="g++-4.9" CC="gcc-4.9";
+  fi
 - npm install -g typescript
 
 install:
