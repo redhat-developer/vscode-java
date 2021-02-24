@@ -21,7 +21,6 @@ async function main() {
 		});
 
 		await runTests({
-			version: '1.52.1',
 			extensionDevelopmentPath,
 			extensionTestsPath: path.resolve(__dirname, './standard-mode-suite'),
 			launchArgs: [
@@ -38,7 +37,6 @@ async function main() {
 
 		console.log("running lightweight cases...");
 		await runTests({
-			version: '1.52.1',
 			extensionDevelopmentPath,
 			extensionTestsPath: path.resolve(__dirname, './lightweight-mode-suite'),
 			launchArgs: [
