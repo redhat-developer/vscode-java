@@ -1,11 +1,11 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, CancellationToken } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
 import { getJavaConfig, applyWorkspaceEdit } from "./extension";
-import { StreamInfo, LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams } from "vscode-languageclient";
+import { StreamInfo, LanguageClient, LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams, ConfigurationRequest, ConfigurationParams } from "vscode-languageclient";
 import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks } from "./protocol";
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange } from "./plugin";
@@ -174,6 +174,26 @@ export class StandardLanguageClient {
 
 			this.languageClient.onNotification(ServerNotification.type, (params) => {
 				commands.executeCommand(params.command, ...params.arguments);
+			});
+
+			this.languageClient.onRequest(ConfigurationRequest.type, (params: ConfigurationParams) => {
+				const result: any[] = [];
+				const activeEditor: TextEditor | undefined = window.activeTextEditor;
+				for (const item of params.items) {
+					const scopeUri: Uri | undefined = item.scopeUri && Uri.parse(item.scopeUri);
+					if (scopeUri && scopeUri.toString() === activeEditor?.document.uri.toString()) {
+						if (item.section === "java.format.insertSpaces") {
+							result.push(activeEditor.options.insertSpaces);
+						} else if (item.section === "java.format.tabSize") {
+							result.push(activeEditor.options.tabSize);
+						} else {
+							result.push(null);
+						}
+					} else {
+						result.push(workspace.getConfiguration(null, scopeUri).get(item.section, null /*defaultValue*/));
+					}
+				}
+				return result;
 			});
 		});
 
