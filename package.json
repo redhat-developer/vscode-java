@@ -382,6 +382,12 @@
           "scope": "window",
           "minimum": 1
         },
+        "java.recommendations.dependency.analytics.show": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the recommended Dependency Analytics extension.",
+          "scope": "window"
+        },
         "java.completion.maxResults": {
           "type": "integer",
           "default": 0,

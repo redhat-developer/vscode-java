@@ -181,10 +181,10 @@ The following settings are supported:
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
 * `java.configuration.maven.globalSettings` : Path to Maven's global settings.xml.
-
-New in 0.74.0:
 * `java.eclipse.downloadSources` : Enable/disable download of Maven source artifacts for Eclipse projects.
 
+New in 0.76.0:
+* `java.recommendations.dependency.analytics.show` : Show the recommended Dependency Analytics extension.
 
 Semantic Highlighting
 ===============

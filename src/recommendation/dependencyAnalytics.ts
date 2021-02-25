@@ -8,12 +8,17 @@ import { IHandler } from "./handler";
 const EXTENSION_NAME = "redhat.fabric8-analytics";
 const GH_ORG_URL = `https://github.com/fabric8-analytics`;
 const RECOMMENDATION_MESSAGE = `Do you want to install the [Dependency Analytics](${GH_ORG_URL}) extension to stay informed about vulnerable dependencies in pom.xml files?`;
+const JAVA_DEPENDENCY_ANALYTICS_SHOW = "java.recommendations.dependency.analytics.show";
 
 function isPomDotXml(uri: vscode.Uri) {
 	return !!uri.path && uri.path.toLowerCase().endsWith("pom.xml");
 }
 
 export function initialize (context: vscode.ExtensionContext, handler: IHandler): void {
+	const show = vscode.workspace.getConfiguration().get(JAVA_DEPENDENCY_ANALYTICS_SHOW);
+	if (!show) {
+		return;
+	}
 	if (!handler.canRecommendExtension(EXTENSION_NAME)) {
 		return;
 	}
