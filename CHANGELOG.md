@@ -1,5 +1,16 @@
 # Change Log
 
+## 0.76.0 (March 5th, 2021)
+ * feature - Code actions should return textedits with proper formatting. See [JLS#1157](https://github.com/eclipse/eclipse.jdt.ls/issues/1157).
+ * bug fix - Surround with try/catch reformats document. See [#1572](https://github.com/redhat-developer/vscode-java/issues/1572).
+ * bug fix - Change location of .m2/ and .tooling/ from HOME. See [JLS#1654](https://github.com/eclipse/eclipse.jdt.ls/issues/1654).
+ * bug fix - Issue with 'Go To Definition'. See [JLS#1634](https://github.com/eclipse/eclipse.jdt.ls/issues/1634).
+ * bug fix - search for enum reference without source. See [#1665](https://github.com/redhat-developer/vscode-java/issues/1665).
+ * other - Configure whether to show recommendations of external installations. See [#1816](https://github.com/redhat-developer/vscode-java/issues/1816).
+ * other - Adopt the helpers from jdt.core.manipulation to deal with the CU's preferences. See [JLS#1666](https://github.com/eclipse/eclipse.jdt.ls/pull/1666).
+ * debt - Upgrade infrastructure to support GLIBCXX 3.4.21. See [#1817](https://github.com/redhat-developer/vscode-java/pull/1817).
+ * debt - Tests fail on Windows. See [JLS#996](https://github.com/eclipse/eclipse.jdt.ls/issues/996).
+
 ## 0.75.0 (February 11th, 2021)
  * enhancement - Specify output path for invisible project. See [#1694](https://github.com/redhat-developer/vscode-java/pull/1694).
  * enhancement - Recommend dependency analytics extension. See [#1771](https://github.com/redhat-developer/vscode-java/pull/1771).
