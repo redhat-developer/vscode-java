@@ -364,10 +364,7 @@
           "scope": "window"
         },
         "java.project.sourcePaths": {
-          "type": [
-            "array",
-            "null"
-          ],
+          "type": "array",
           "items": {
             "type": "string"
           },
