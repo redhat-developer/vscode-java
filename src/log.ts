@@ -18,6 +18,8 @@ export const logger = createLogger({
 		format.prettyPrint()
 	),
 	transports: [
-		new transports.Console()
+		// See https://github.com/microsoft/vscode/issues/117327
+		// Disable console.log for lsp trace because intense logging will freeze the code render process.
+		// new transports.Console()
 	]
 });
