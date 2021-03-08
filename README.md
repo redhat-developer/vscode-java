@@ -182,9 +182,10 @@ The following settings are supported:
 * `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
 * `java.configuration.maven.globalSettings` : Path to Maven's global settings.xml.
 * `java.eclipse.downloadSources` : Enable/disable download of Maven source artifacts for Eclipse projects.
-
-New in 0.76.0:
 * `java.recommendations.dependency.analytics.show` : Show the recommended Dependency Analytics extension.
+
+New in 0.77.0:
+* `java.references.includeDecompiledSources` : Include the decompiled sources when finding references. Default to true.
 
 Semantic Highlighting
 ===============
