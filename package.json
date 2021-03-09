@@ -359,8 +359,17 @@
             "string",
             "null"
           ],
-          "markdownDescription": "A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project. ",
+          "markdownDescription": "A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
           "default": "",
+          "scope": "window"
+        },
+        "java.project.sourcePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
+          "default": [],
           "scope": "window"
         },
         "java.contentProvider.preferred": {

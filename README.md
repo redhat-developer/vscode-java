@@ -155,6 +155,7 @@ The following settings are supported:
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
 * `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
+* `java.project.outputPath`: A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
 * `java.completion.maxResults`: Maximum number of completion results (not including snippets). `0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit..
 * `java.configuration.runtimes`: Map Java Execution Environments to local JDKs.
@@ -186,6 +187,7 @@ The following settings are supported:
 
 New in 0.77.0:
 * `java.references.includeDecompiledSources` : Include the decompiled sources when finding references. Default to true.
+* `java.project.sourcePaths`: Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.
 
 Semantic Highlighting
 ===============

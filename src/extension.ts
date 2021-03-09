@@ -400,9 +400,11 @@ export function getJavaConfig(javaHome: string) {
 	const origConfig = getJavaConfiguration();
 	const javaConfig = JSON.parse(JSON.stringify(origConfig));
 	javaConfig.home = javaHome;
-	// Since output path is a project specific setting. To avoid pollute other project,
+	// Since source & output path are project specific settings. To avoid pollute other project,
 	// we avoid reading the value from the global scope.
 	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
+	javaConfig.project.sourcePaths = origConfig.inspect<string[]>("project.sourcePaths").workspaceValue;
+
 	const editorConfig = workspace.getConfiguration('editor');
 	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
 	javaConfig.format.tabSize = editorConfig.get('tabSize');
