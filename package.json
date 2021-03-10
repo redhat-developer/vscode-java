@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "0.70.0",
+  "version": "0.77.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
@@ -45,6 +45,61 @@
         "id": "annotationMember",
         "superType": "function",
         "description": "Style for annotation members."
+      },
+      {
+        "id": "modifier",
+        "superType": "keyword",
+        "description": "Style for modifier keywords."
+      }
+    ],
+    "semanticTokenModifiers": [
+      {
+        "id": "public",
+        "description": "Style for symbols with the public access modifier."
+      },
+      {
+        "id": "private",
+        "description": "Style for symbols with the private access modifier."
+      },
+      {
+        "id": "protected",
+        "description": "Style for symbols with the protected access modifier."
+      },
+      {
+        "id": "native",
+        "description": "Style for symbols with the native modifier."
+      },
+      {
+        "id": "generic",
+        "description": "Style for symbols that are generic (have type parameters)."
+      },
+      {
+        "id": "typeArgument",
+        "description": "Style for symbols that are type arguments for a generic symbol."
+      },
+      {
+        "id": "importDeclaration",
+        "description": "Style for symbols that are part of an import declaration."
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "java",
+        "scopes": {
+          "annotation": [
+            "storage.type.annotation.java"
+          ],
+          "annotationMember": [
+            "entity.name.annotationMember.java",
+            "constant.other.key.java"
+          ],
+          "modifier": [
+            "storage.modifier.java"
+          ],
+          "keyword.documentation": [
+            "keyword.other.documentation.javadoc.java"
+          ]
+        }
       }
     ],
     "languages": [
@@ -63,11 +118,13 @@
         "path": "./snippets/java.json"
       }
     ],
-    "grammars": [{
-			"language": "java",
-			"scopeName": "source.java",
-			"path": "./syntaxes/java.tmLanguage.json"
-		}],
+    "grammars": [
+      {
+        "language": "java",
+        "scopeName": "source.java",
+        "path": "./syntaxes/java.tmLanguage.json"
+      }
+    ],
     "jsonValidation": [
       {
         "fileMatch": "package.json",
@@ -85,7 +142,7 @@
           ],
           "default": null,
           "description": "Specifies the folder path to the JDK (11 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk11.0_8\"",
-          "scope": "window"
+          "scope": "machine-overridable"
         },
         "java.jdt.ls.vmargs": {
           "type": [
@@ -113,7 +170,7 @@
         "java.configuration.checkProjectSettingsExclusions": {
           "type": "boolean",
           "default": true,
-          "description": "Checks if the extension-generated project settings files (.project, .classpath, .factorypath, .settings/) should be excluded from the file explorer.",
+          "description": "Controls whether to exclude extension-generated project settings files (.project, .classpath, .factorypath, .settings/) from the file explorer.",
           "scope": "window"
         },
         "java.configuration.updateBuildConfiguration": {
@@ -203,7 +260,13 @@
         "java.maven.downloadSources": {
           "type": "boolean",
           "default": false,
-          "description": "Enable/disable eager download of Maven source artifacts.",
+          "description": "Enable/disable download of Maven source artifacts as part of importing Maven projects.",
+          "scope": "window"
+        },
+        "java.eclipse.downloadSources": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable download of Maven source artifacts for Eclipse projects.",
           "scope": "window"
         },
         "java.maven.updateSnapshots": {
@@ -233,7 +296,13 @@
         "java.configuration.maven.userSettings": {
           "type": "string",
           "default": null,
-          "description": "Path to Maven's settings.xml",
+          "description": "Path to Maven's user settings.xml",
+          "scope": "window"
+        },
+        "java.configuration.maven.globalSettings": {
+          "type": "string",
+          "default": null,
+          "description": "Path to Maven's global settings.xml",
           "scope": "window"
         },
         "java.format.enabled": {
@@ -285,6 +354,24 @@
           "additionalProperties": false,
           "scope": "window"
         },
+        "java.project.outputPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "markdownDescription": "A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
+          "default": "",
+          "scope": "window"
+        },
+        "java.project.sourcePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "markdownDescription": "Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
+          "default": [],
+          "scope": "window"
+        },
         "java.contentProvider.preferred": {
           "type": "string",
           "description": "Preferred content provider (a 3rd party decompiler id, usually)",
@@ -303,6 +390,12 @@
           "description": "Max simultaneous project builds",
           "scope": "window",
           "minimum": 1
+        },
+        "java.recommendations.dependency.analytics.show": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the recommended Dependency Analytics extension.",
+          "scope": "window"
         },
         "java.completion.maxResults": {
           "type": "integer",
@@ -349,7 +442,8 @@
           "description": "Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.",
           "default": [
             "java.awt.*",
-            "com.sun.*"
+            "com.sun.*",
+            "sun.*"
           ],
           "scope": "window"
         },
@@ -647,6 +741,12 @@
           "default": true,
           "description": "Include getter, setter and builder/constructor when finding references.",
           "scope": "window"
+        },
+        "java.references.includeDecompiledSources": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include the decompiled sources when finding references.",
+          "scope": "window"
         }
       }
     },
@@ -658,47 +758,47 @@
     "commands": [
       {
         "command": "java.server.mode.switch",
-        "title": "Switch to Standard mode",
+        "title": "Switch to Standard Mode",
         "category": "Java"
       },
       {
         "command": "java.projectConfiguration.update",
-        "title": "Update project configuration",
+        "title": "Update Project",
         "category": "Java"
       },
       {
         "command": "java.project.import",
-        "title": "Import Java projects in workspace",
+        "title": "Import Java Projects into Workspace",
         "category": "Java"
       },
       {
         "command": "java.open.serverLog",
-        "title": "Open Java language server log file",
+        "title": "Open Java Language Server Log File",
         "category": "Java"
       },
       {
         "command": "java.open.clientLog",
-        "title": "Open Java extension log file",
+        "title": "Open Java Extension Log File",
         "category": "Java"
       },
       {
         "command": "java.open.logs",
-        "title": "Open all log files",
+        "title": "Open All Log Files",
         "category": "Java"
       },
       {
         "command": "java.workspace.compile",
-        "title": "Force Java compilation",
+        "title": "Force Java Compilation",
         "category": "Java"
       },
       {
         "command": "java.open.formatter.settings",
-        "title": "Open Java formatter settings",
+        "title": "Open Java Formatter Settings",
         "category": "Java"
       },
       {
         "command": "java.clean.workspace",
-        "title": "Clean the Java language server workspace",
+        "title": "Clean Java Language Server Workspace",
         "category": "Java"
       },
       {
@@ -718,7 +818,7 @@
       },
       {
         "command": "java.project.listSourcePaths",
-        "title": "List all Java source paths",
+        "title": "List All Java Source Paths",
         "category": "Java"
       },
       {
@@ -850,6 +950,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.51",
     "@types/vscode": "^1.47.0",
+    "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.2",
     "gulp-decompress": "^3.0.0",
@@ -873,6 +974,7 @@
     "fs-extra": "^8.1.0",
     "glob": "^7.1.3",
     "vscode-languageclient": "6.0.0-next.9",
+    "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
   }

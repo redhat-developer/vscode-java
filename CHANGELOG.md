@@ -1,5 +1,75 @@
 # Change Log
 
+## 0.76.0 (March 5th, 2021)
+ * feature - Code actions should return textedits with proper formatting. See [JLS#1157](https://github.com/eclipse/eclipse.jdt.ls/issues/1157).
+ * bug fix - Surround with try/catch reformats document. See [#1572](https://github.com/redhat-developer/vscode-java/issues/1572).
+ * bug fix - Change location of .m2/ and .tooling/ from HOME. See [JLS#1654](https://github.com/eclipse/eclipse.jdt.ls/issues/1654).
+ * bug fix - Issue with 'Go To Definition'. See [JLS#1634](https://github.com/eclipse/eclipse.jdt.ls/issues/1634).
+ * bug fix - search for enum reference without source. See [#1665](https://github.com/redhat-developer/vscode-java/issues/1665).
+ * other - Configure whether to show recommendations of external installations. See [#1816](https://github.com/redhat-developer/vscode-java/issues/1816).
+ * other - Adopt the helpers from jdt.core.manipulation to deal with the CU's preferences. See [JLS#1666](https://github.com/eclipse/eclipse.jdt.ls/pull/1666).
+ * debt - Upgrade infrastructure to support GLIBCXX 3.4.21. See [#1817](https://github.com/redhat-developer/vscode-java/pull/1817).
+ * debt - Tests fail on Windows. See [JLS#996](https://github.com/eclipse/eclipse.jdt.ls/issues/996).
+
+## 0.75.0 (February 11th, 2021)
+ * enhancement - Specify output path for invisible project. See [#1694](https://github.com/redhat-developer/vscode-java/pull/1694).
+ * enhancement - Recommend dependency analytics extension. See [#1771](https://github.com/redhat-developer/vscode-java/pull/1771).
+ * bug fix - @link highlighting broken when linking to class. See [#1753](https://github.com/redhat-developer/vscode-java/issues/1753).
+ * other - Remove legacy Semantic Highlighting implementation. See [JLS#1649](https://github.com/eclipse/eclipse.jdt.ls/pull/1649).
+ * other - Make redhat.fabric8-analytics recommendation more compelling. See [#1788](https://github.com/redhat-developer/vscode-java/pull/1788).
+ * other - use lightweight mode by default when vscode is running from web browsers. See [#1780](https://github.com/redhat-developer/vscode-java/pull/1780).
+ * other - always exclude project settings files by default. See [#1779](https://github.com/redhat-developer/vscode-java/pull/1779).
+ * other - Declare semantic token modifiers. See [#1760](https://github.com/redhat-developer/vscode-java/pull/1760).
+ * other - semantic tokens: use 'method' instead of 'member'. See [#1713](https://github.com/redhat-developer/vscode-java/issues/1713).
+
+## 0.74.0 (January 20th, 2021)
+ * enhancement - Download sources for classes in jars with maven coordinates. See [#1664](https://github.com/redhat-developer/vscode-java/issues/1664).
+ * bug fix - Some refactors are missing when the location has diagnostics. See [JLS#1642](https://github.com/eclipse/eclipse.jdt.ls/issues/1642).
+ * bug fix - Should not enable preview compiler options if the tooling doesn't support the early access JDK. See [JLS#1644](https://github.com/eclipse/eclipse.jdt.ls/issues/1644).
+ * bug fix - Importing projects should follow "java.import.exclusions" setting to stop scanning the specified directories. See [#1698](https://github.com/redhat-developer/vscode-java/issues/1698).
+ * build - Update target platform to use Eclipse 2020-12 Release. See [JLS#1639](https://github.com/eclipse/eclipse.jdt.ls/pull/1639).
+ * build - Fix some dependency vulnerabilities. See [#1772](https://github.com/redhat-developer/vscode-java/pull/1772).
+
+## 0.73.0 (December 17th, 2020)
+ * bug fix - Open a Java file from unmanaged folder, the status bar didn't show language level info. See [#1735](https://github.com/redhat-developer/vscode-java/issues/1735).
+ * bug fix - Long completionItem/resolve and TimeoutException. See [JLS#1624](https://github.com/eclipse/eclipse.jdt.ls/issues/1624).
+ * bug fix - Add support to INFO log level. See [JLS#1623](https://github.com/eclipse/eclipse.jdt.ls/pull/1623).
+ * bug fix - Filter 'sun' packages out of completion type results. See [#1731](https://github.com/redhat-developer/vscode-java/pull/1731).
+ * bug fix - Dependencies weren't recognized after being added in gradle project. See [#1714](https://github.com/redhat-developer/vscode-java/issues/1714).
+ * bug fix - Detect Gradle project by settings.gradle as well. See [#1528](https://github.com/redhat-developer/vscode-java/issues/1528).
+
+## 0.72.0 (December 2nd, 2020)
+ * enhancement - Support inferSelection when extract to variable. See [#1717](https://github.com/redhat-developer/vscode-java/pull/1717).
+ * enhancement - Support inferSelection when extract to field. See [#1721](https://github.com/redhat-developer/vscode-java/pull/1721).
+ * bug fix - jdt.ls distro is 10MB heavier because of com.ibm.icu_64.2.0.v20190507-1337.jar. See [JLS#1351](https://github.com/eclipse/eclipse.jdt.ls/issues/1351).
+ * bug fix - Java LS crashes on WSL Alpine. See [#1711](https://github.com/redhat-developer/vscode-java/issues/1711).
+ * bug fix - End of File exception when opening completion in empty file. See [JLS#1611](https://github.com/eclipse/eclipse.jdt.ls/issues/1611).
+ * other - Update Target Platform to use Eclipse 2020-12 M3. See [JLS#1616](https://github.com/eclipse/eclipse.jdt.ls/pull/1616).
+ * other - Improve the performance of inferSelection. See [JLS#1609](https://github.com/eclipse/eclipse.jdt.ls/pull/1609).
+ * other - Allow creation of `abstract class` and `@interface` from "New Java Class" command. See [#1722](https://github.com/redhat-developer/vscode-java/issues/1722).
+ * other - Spelling error: Update project configuration. See [#1649](https://github.com/redhat-developer/vscode-java/issues/1649).
+
+## 0.71.0 (November 19th, 2020)
+ * bug fix - Quarkus: generated sources are not accessible. See [#1675](https://github.com/redhat-developer/vscode-java/issues/1675)
+ * bug fix - Error in every java file after updating to macOS Big Sur. See [#1700](https://github.com/redhat-developer/vscode-java/issues/1700).
+ * bug fix - Fix jdk detection: cover symlink folder on Linux. See [#1704](https://github.com/redhat-developer/vscode-java/pull/1704).
+ * bug fix - Fix jdk detection: cover common JDK installation places on Linux. See [#1706](https://github.com/redhat-developer/vscode-java/pull/1706).
+ * other - Improve tracing capability of m2e through m2e.logback.configuration.. See [JLS#1589](https://github.com/eclipse/eclipse.jdt.ls/pull/1589).
+ * other - Infer expressions if there is no selection range when extracting method. See [#1680](https://github.com/redhat-developer/vscode-java/pull/1680).
+
+## 0.70.0 (November 4th, 2020)
+ * enhancement - Hide inline variable/constant commands when no reference found. See [JLS#1573](https://github.com/eclipse/eclipse.jdt.ls/pull/1573) and [JLS#1575](https://github.com/eclipse/eclipse.jdt.ls/pull/1575).
+ * enhancement - Convert a lambda expression to method reference. See [#1448](https://github.com/redhat-developer/vscode-java/issues/1448).
+ * enhancement - Provide method for converting callstack entry to location. See [JLS#1202](https://github.com/eclipse/eclipse.jdt.ls/issues/1202).
+ * enhancement - Change scope of 'java.home' to machine-overridable. See [#1676](https://github.com/redhat-developer/vscode-java/pull/1676).
+ * enhancement - Declare semantic token type for modifier keywords. See [#1636](https://github.com/redhat-developer/vscode-java/pull/1636).
+ * enhancement - Add the java.configuration.maven.globalSettings property. See [#1365](https://github.com/redhat-developer/vscode-java/issues/1365).
+ * bug fix - GTD is not working if referenced library is updated without file name change. See [JLS#1577](https://github.com/eclipse/eclipse.jdt.ls/issues/1577).
+ * bug fix - Changing java.semanticHighlighting.enabled does not consistently update semantic tokens. See [JLS#1678](https://github.com/redhat-developer/vscode-java/issues/1678).
+ * bug fix - Method references are given the CompletionItemKind.Module type by the completion provider. See [#1661](https://github.com/redhat-developer/vscode-java/issues/1661).
+ * other - Update Target Platform to Eclipse 2020-12 M1. See [JLS#1567](https://github.com/eclipse/eclipse.jdt.ls/issues/1567).
+ * other - Pass the cancellationtoken to the client request registered by provider. See [#1668](https://github.com/redhat-developer/vscode-java/pull/1668).
+
 ## 0.69.0 (October 15th, 2020)
  * enhancement - Embed m2e 1.17. See [JLS#1562](https://github.com/eclipse/eclipse.jdt.ls/pull/1562).
  * enhancement - Add code actions to add sealed/final/non-sealed modifier on a permitted type declaration. See [JLS#1555](https://github.com/eclipse/eclipse.jdt.ls/issues/1555).

@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, WorkspaceConfiguration } from 'vscode';
+import { workspace, WorkspaceConfiguration, TextDocument } from 'vscode';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
@@ -111,4 +111,17 @@ function parseToStringGlob(patterns: string[]): string {
 	}
 
 	return `{${patterns.join(",")}}`;
+}
+
+export async function waitForDocumentChangesToEnd(document: TextDocument): Promise<void> {
+	let version = document.version;
+	return new Promise((resolve) => {
+		const iv = setInterval(() => {
+			if (document.version === version) {
+				clearInterval(iv);
+				resolve();
+			}
+			version = document.version;
+		}, 400);
+	});
 }

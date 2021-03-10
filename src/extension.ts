@@ -4,11 +4,12 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
 import { collectJavaExtensions } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
+import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
 import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
@@ -127,6 +128,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	enableJavadocSymbols();
 
+	initializeRecommendation(context);
+
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -157,7 +160,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					{ scheme: 'untitled', language: 'java' }
 				],
 				synchronize: {
-					configurationSection: 'java',
+					configurationSection: ['java', 'editor.insertSpaces', 'editor.tabSize'],
 				},
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
@@ -174,6 +177,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						generateConstructorsPromptSupport: true,
 						generateDelegateMethodsPromptSupport: true,
 						advancedExtractRefactoringSupport: true,
+						inferSelectionSupport: ["extractMethod", "extractVariable", "extractField"],
 						moveRefactoringSupport: true,
 						clientHoverProvider: true,
 						clientDocumentSymbolProvider: true,
@@ -312,7 +316,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				const config = getJavaConfiguration();
 				const importOnStartupSection: string = "project.importOnFirstTimeStartup";
 				const importOnStartup = config.get(importOnStartupSection);
-				if (importOnStartup === "disabled") {
+				if (importOnStartup === "disabled" ||
+					env.uiKind === UIKind.Web && env.appName.includes("Visual Studio Code")) {
 					syntaxClient.resolveApi(resolve);
 					requireStandardServer = false;
 				} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
@@ -395,6 +400,14 @@ export function getJavaConfig(javaHome: string) {
 	const origConfig = getJavaConfiguration();
 	const javaConfig = JSON.parse(JSON.stringify(origConfig));
 	javaConfig.home = javaHome;
+	// Since source & output path are project specific settings. To avoid pollute other project,
+	// we avoid reading the value from the global scope.
+	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
+	javaConfig.project.sourcePaths = origConfig.inspect<string[]>("project.sourcePaths").workspaceValue;
+
+	const editorConfig = workspace.getConfiguration('editor');
+	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
+	javaConfig.format.tabSize = editorConfig.get('tabSize');
 	return javaConfig;
 }
 
@@ -665,46 +678,11 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 	});
 }
 
-export async function applyWorkspaceEdit(obj, languageClient) {
+export function applyWorkspaceEdit(obj, languageClient) {
 	const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 	if (edit) {
-		await workspace.applyEdit(edit);
-		// By executing the range formatting command to correct the indention according to the VS Code editor settings.
-		// More details, see: https://github.com/redhat-developer/vscode-java/issues/557
-		try {
-			const currentEditor = window.activeTextEditor;
-			// If the Uri path of the edit change is not equal to that of the active editor, we will skip the range formatting
-			if (currentEditor.document.uri.fsPath !== edit.entries()[0][0].fsPath) {
-				return;
-			}
-			const cursorPostion = currentEditor.selection.active;
-			// Get the array of all the changes
-			const changes = edit.entries()[0][1];
-			// Get the position information of the first change
-			let startPosition = new Position(changes[0].range.start.line, changes[0].range.start.character);
-			let lineOffsets = changes[0].newText.split(/\r?\n/).length - 1;
-			for (let i = 1; i < changes.length; i++) {
-				// When it comes to a discontinuous range, execute the range formatting and record the new start position
-				if (changes[i].range.start.line !== startPosition.line) {
-					await executeRangeFormat(currentEditor, startPosition, lineOffsets);
-					startPosition = new Position(changes[i].range.start.line, changes[i].range.start.character);
-					lineOffsets = 0;
-				}
-				lineOffsets += changes[i].newText.split(/\r?\n/).length - 1;
-			}
-			await executeRangeFormat(currentEditor, startPosition, lineOffsets);
-			// Recover the cursor's original position
-			currentEditor.selection = new Selection(cursorPostion, cursorPostion);
-		} catch (error) {
-			languageClient.error(error);
-		}
+		workspace.applyEdit(edit);
 	}
-}
-
-async function executeRangeFormat(editor, startPosition, lineOffset) {
-	const endPosition = editor.document.positionAt(editor.document.offsetAt(new Position(startPosition.line + lineOffset + 1, 0)) - 1);
-	editor.selection = new Selection(startPosition, endPosition);
-	await commands.executeCommand('editor.action.formatSelection');
 }
 
 async function getTriggerFiles(): Promise<string[]> {

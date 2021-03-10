@@ -329,6 +329,22 @@ export namespace GetRefactorEditRequest {
     export const type = new RequestType<GetRefactorEditParams, RefactorWorkspaceEdit, void, void>('java/getRefactorEdit');
 }
 
+export interface SelectionInfo {
+    name: string;
+    length: number;
+    offset: number;
+    params?: string[];
+}
+
+export interface InferSelectionParams {
+    command: string;
+    context: CodeActionParams;
+}
+
+export namespace InferSelectionRequest {
+    export const type = new RequestType<InferSelectionParams, SelectionInfo[], void, void>('java/inferSelection');
+}
+
 export interface PackageNode {
     displayName: string;
     uri: string;

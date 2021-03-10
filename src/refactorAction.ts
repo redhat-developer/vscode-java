@@ -2,10 +2,10 @@
 
 import { existsSync } from 'fs';
 import * as path from 'path';
-import { commands, ExtensionContext, Position, TextDocument, Uri, window, workspace } from 'vscode';
+import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri, window, workspace } from 'vscode';
 import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerApplyRefactorCommand(languageClient, context);
@@ -52,23 +52,53 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                 insertSpaces: <boolean> currentEditor.options.insertSpaces,
             };
             const commandArguments: any[] = [];
-            if (command === 'extractField' || command === 'convertVariableToField') {
-                if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
-                    const scopes: any[] = commandInfo.initializedScopes;
-                    let initializeIn: string;
-                    if (scopes.length === 1) {
-                        initializeIn = scopes[0];
-                    } else if (scopes.length > 1) {
-                        initializeIn = await window.showQuickPick(scopes, {
-                            placeHolder: "Initialize the field in",
-                        });
-
+            if (command === 'extractField') {
+                if (!params || !params.range) {
+                    return;
+                }
+                if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
+                    const expression: SelectionInfo = await getExpression(command, params, languageClient);
+                    if (!expression) {
+                        return;
+                    }
+                    if (expression.params && Array.isArray(expression.params)) {
+                        const initializeIn = await resolveScopes(expression.params);
                         if (!initializeIn) {
                             return;
                         }
+                        commandArguments.push(initializeIn);
                     }
-
+                    commandArguments.push(expression);
+                } else {
+                    if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
+                        const initializeIn = await resolveScopes(commandInfo.initializedScopes);
+                        if (!initializeIn) {
+                            return;
+                        }
+                        commandArguments.push(initializeIn);
+                    }
+                }
+            } else if (command === 'convertVariableToField') {
+                if (commandInfo.initializedScopes && Array.isArray(commandInfo.initializedScopes)) {
+                    const initializeIn = await resolveScopes(commandInfo.initializedScopes);
+                    if (!initializeIn) {
+                        return;
+                    }
                     commandArguments.push(initializeIn);
+                }
+            } else if (command === 'extractMethod'
+                || command === 'extractVariableAllOccurrence'
+                || command === 'extractVariable'
+                || command === 'extractConstant') {
+                if (!params || !params.range) {
+                    return;
+                }
+                if (params.range.start.character === params.range.end.character && params.range.start.line === params.range.end.line) {
+                    const expression = await getExpression(command, params, languageClient);
+                    if (!expression) {
+                        return;
+                    }
+                    commandArguments.push(expression);
                 }
             }
 
@@ -94,6 +124,82 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             await moveType(languageClient, params, commandInfo);
         }
     }));
+}
+
+async function resolveScopes(scopes: any[]): Promise<any | undefined> {
+    let initializeIn: string;
+    if (scopes.length === 1) {
+        initializeIn = scopes[0];
+    } else if (scopes.length > 1) {
+        initializeIn = await window.showQuickPick(scopes, {
+            placeHolder: "Initialize the field in",
+        });
+
+        if (!initializeIn) {
+            return undefined;
+        }
+    }
+    return initializeIn;
+}
+
+async function getExpression(command: string, params: any, languageClient: LanguageClient): Promise<SelectionInfo | undefined> {
+    const expressions: SelectionInfo[] = await languageClient.sendRequest(InferSelectionRequest.type, {
+        command: command,
+        context: params,
+    });
+    const options: IExpressionItem[] = [];
+    for (const expression of expressions) {
+        const extractItem: IExpressionItem = {
+            label: expression.name,
+            length: expression.length,
+            offset: expression.offset,
+            params: expression.params,
+        };
+        options.push(extractItem);
+    }
+    let resultItem: IExpressionItem;
+    if (options.length === 1) {
+        resultItem = options[0];
+    } else if (options.length > 1) {
+        let commandMessage: string;
+        switch (command) {
+            case 'extractMethod':
+                commandMessage = 'extract to method';
+                break;
+            case 'extractVariableAllOccurrence':
+            case 'extractVariable':
+                commandMessage = 'extract to variable';
+                break;
+            case 'extractConstant':
+                commandMessage = 'extract to constant';
+                break;
+            case 'extractField':
+                commandMessage = 'extract to field';
+                break;
+            default:
+                return undefined;
+        }
+        resultItem = await window.showQuickPick<IExpressionItem>(options, {
+            placeHolder: `Select an expression you want to ${commandMessage}`,
+        });
+    }
+    if (!resultItem) {
+        return undefined;
+    }
+    const resultExpression: SelectionInfo = {
+        name: resultItem.label,
+        length: resultItem.length,
+        offset: resultItem.offset,
+        params: resultItem.params,
+    };
+    return resultExpression;
+}
+
+interface IExpressionItem extends QuickPickItem {
+	label: string;
+	length: number;
+	offset: number;
+	params?: string[];
 }
 
 async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: RefactorWorkspaceEdit) {
@@ -303,7 +409,7 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
     if (commandInfo.enclosingTypeName) {
         exclude.add(commandInfo.enclosingTypeName);
         // 55: Type, 71: Enum, 81: AnnotationType
-        if (commandInfo.memberType === 55 || commandInfo.memeberType === 71
+        if (commandInfo.memberType === 55 || commandInfo.memberType === 71
             || commandInfo.memberType === 81) {
             exclude.add(`${commandInfo.enclosingTypeName}.${commandInfo.displayName}`);
         }
