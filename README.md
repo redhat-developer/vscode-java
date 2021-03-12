@@ -188,6 +188,7 @@ The following settings are supported:
 New in 0.77.0:
 * `java.references.includeDecompiledSources` : Include the decompiled sources when finding references. Default to true.
 * `java.project.sourcePaths`: Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.
+* `java.typeHierarchy.lazyLoad` : Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.
 
 Semantic Highlighting
 ===============

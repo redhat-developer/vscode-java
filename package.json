@@ -11,7 +11,7 @@
   "preview": true,
   "enableProposedApi": false,
   "engines": {
-    "vscode": "^1.47.0"
+    "vscode": "^1.53.2"
   },
   "repository": {
     "type": "git",
@@ -747,6 +747,12 @@
           "default": true,
           "description": "Include the decompiled sources when finding references.",
           "scope": "window"
+        },
+        "java.typeHierarchy.lazyLoad": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
+          "scope": "window"
         }
       }
     },
@@ -830,6 +836,37 @@
         "command": "java.action.navigateToSuperImplementation",
         "title": "Go to Super Implementation",
         "category": "Java"
+      },
+      {
+        "command": "java.action.showTypeHierarchy",
+        "title": "Show Type Hierarchy",
+        "category": "Java"
+      },
+      {
+        "command": "java.action.showClassHierarchy",
+        "title": "Show Class Hierarchy",
+        "icon": "$(type-hierarchy)",
+        "enablement": "typeHierarchyDirection != both && typeHierarchySymbolKind != 10",
+        "category": "Java"
+      },
+      {
+        "command": "java.action.showSupertypeHierarchy",
+        "title": "Show Supertype Hierarchy",
+        "icon": "$(type-hierarchy-super)",
+        "enablement": "typeHierarchyDirection != parents",
+        "category": "Java"
+      },
+      {
+        "command": "java.action.showSubtypeHierarchy",
+        "title": "Show Subtype Hierarchy",
+        "icon": "$(type-hierarchy-sub)",
+        "enablement": "typeHierarchyDirection != children",
+        "category": "Java"
+      },
+      {
+        "command": "java.action.changeBaseType",
+        "title": "Base on this Type",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -882,6 +919,11 @@
           "command": "java.action.navigateToSuperImplementation",
           "when": "javaLSReady && editorTextFocus && editorLangId == java",
           "group": "navigation@90"
+        },
+        {
+          "command": "java.action.showTypeHierarchy",
+          "when": "javaLSReady && editorTextFocus && editorLangId == java",
+          "group": "0_navigation@3"
         }
       ],
       "commandPalette": [
@@ -906,6 +948,26 @@
           "when": "javaLSReady"
         },
         {
+          "command": "java.action.showTypeHierarchy",
+          "when": "javaLSReady && editorIsOpen"
+        },
+        {
+          "command": "java.action.showClassHierarchy",
+          "when": "false"
+        },
+        {
+          "command": "java.action.showSubtypeHierarchy",
+          "when": "false"
+        },
+        {
+          "command": "java.action.showSupertypeHierarchy",
+          "when": "false"
+        },
+        {
+          "command": "java.action.changeBaseType",
+          "when": "false"
+        },
+        {
           "command": "java.project.updateSourceAttachment",
           "when": "false"
         },
@@ -924,6 +986,30 @@
         {
           "command": "java.server.mode.switch",
           "when": "java:serverMode == LightWeight"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "java.action.showClassHierarchy",
+          "group": "navigation@-1",
+          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && typeHierarchySymbolKind != 10"
+        },
+        {
+          "command": "java.action.showSupertypeHierarchy",
+          "group": "navigation@0",
+          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
+        },
+        {
+          "command": "java.action.showSubtypeHierarchy",
+          "group": "navigation@1",
+          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "java.action.changeBaseType",
+          "group": "1",
+          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
         }
       ]
     }
@@ -949,7 +1035,7 @@
     "@types/lodash.findindex": "^4.6.6",
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.51",
-    "@types/vscode": "^1.47.0",
+    "@types/vscode": "^1.53.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.2",
