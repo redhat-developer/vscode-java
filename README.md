@@ -42,6 +42,8 @@ Features
 * Annotation processing support (automatic for Maven projects)
 * Semantic selection
 * Diagnostic tags
+* Call Hierarchy
+* Type Hierarchy
 
 Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
