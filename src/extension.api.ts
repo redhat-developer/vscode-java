@@ -14,6 +14,10 @@ export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
  * @param OptionKeys the settings we want to query, for example: ["org.eclipse.jdt.core.compiler.compliance", "org.eclipse.jdt.core.compiler.source"].
  *                   Besides the options defined in JavaCore, the following keys can also be used:
  *                   - "org.eclipse.jdt.ls.core.vm.location": Get the location of the VM assigned to build the given Java project
+ *                   - "org.eclipse.jdt.ls.core.sourcePaths": Get the source root paths of the given Java project
+ *                   - "org.eclipse.jdt.ls.core.outputPath": Get the default output path of the given Java project. Note that the default output path
+ *                                                           may not be equal to the output path of each source root.
+ *                   - "org.eclipse.jdt.ls.core.referencedLibraries": Get all the referenced library files of the given Java project
  * @returns An object with all the optionKeys.
  * @throws Will throw errors if the Uri does not belong to any project.
  */
