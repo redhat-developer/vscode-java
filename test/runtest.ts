@@ -16,8 +16,7 @@ async function main() {
 		await fse.ensureDir(path.join(testProjectPath, '.vscode'));
 		await fse.writeJSON(settingsJsonPath, {
 			"java.server.launchMode": "Standard",
-			"java.configuration.updateBuildConfiguration": "automatic",
-			"refactor.renameFromFileExplorer": "autoApply",
+			"java.configuration.updateBuildConfiguration": "automatic"
 		});
 
 		await runTests({

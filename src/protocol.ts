@@ -399,14 +399,10 @@ export namespace FindLinks {
     export const type = new RequestType<FindLinksParams, LinkLocation[], void, void>('java/findLinks');
 }
 
-export interface FileRenameParams {
+export interface RenameFilesParams {
     files: Array<{ oldUri: string, newUri: string }>;
 }
 
-export namespace DidRenameFiles {
-    export const type = new RequestType<FileRenameParams, WorkspaceEdit, void, void>('java/didRenameFiles');
-}
-
 export namespace WillRenameFiles {
-    export const type = new RequestType<FileRenameParams, WorkspaceEdit, void, void>('java/willRenameFiles');
+    export const type = new RequestType<RenameFilesParams, WorkspaceEdit, void, void>('workspace/willRenameFiles');
 }
