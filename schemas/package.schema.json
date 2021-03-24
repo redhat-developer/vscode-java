@@ -13,6 +13,14 @@
 						"type": "string",
 						"description": "Relative path to a Java language server extension JAR file"
 					}
+				},
+				"javaBuildFilePatterns": {
+					"type": "array",
+					"markdownDescription": "Java build file patterns",
+					"items": {
+						"type": "string",
+						"description": "Specific build file patterns"
+					}
 				}
 			}
 		}

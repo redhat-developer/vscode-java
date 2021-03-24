@@ -28,6 +28,7 @@ import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvider";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
+import * as vscode from "vscode";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -465,7 +466,19 @@ function projectConfigurationUpdate(languageClient: LanguageClient, uri?: Uri) {
 }
 
 function isJavaConfigFile(path: String) {
-	return path.endsWith('pom.xml') || path.endsWith('.gradle');
+	return path.endsWith('pom.xml') || path.endsWith('.gradle')
+	|| isBuildFilePattern(path);
+}
+
+function isBuildFilePattern(fileName: String): boolean {
+    return vscode
+            .extensions
+            .all
+            .filter(extension => extension.packageJSON['contributes'] && Array.isArray(extension.packageJSON['contributes']['javaBuildFilePatterns']))
+            .map(extension => extension.packageJSON['contributes']['javaBuildFilePatterns'])
+            .reduce((acc, val) => acc.concat(val), [])
+            .filter((pattern: String) => fileName.toLowerCase().endsWith(pattern.toLowerCase()))
+            .length > 0;
 }
 
 function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri, status: FeatureStatus) {
