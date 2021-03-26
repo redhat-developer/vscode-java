@@ -594,8 +594,7 @@
                   "JavaSE-12",
                   "JavaSE-13",
                   "JavaSE-14",
-                  "JavaSE-15",
-                  "JavaSE-16"
+                  "JavaSE-15"
                 ],
                 "description": "Java Execution Environment name. Must be unique."
               },
