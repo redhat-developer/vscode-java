@@ -35,6 +35,9 @@
   ],
   "main": "./dist/extension",
   "contributes": {
+    "javaBuildFilePatterns": [
+      "pom.xml", ".gradle"
+    ],
     "semanticTokenTypes": [
       {
         "id": "annotation",
