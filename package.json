@@ -36,7 +36,8 @@
   "main": "./dist/extension",
   "contributes": {
     "javaBuildFilePatterns": [
-      "^pom.xml$", ".*\\.gradle$"
+      "^pom.xml$",
+      ".*\\.gradle$"
     ],
     "semanticTokenTypes": [
       {
@@ -1033,7 +1034,7 @@
     "preinstall": "npx npm-force-resolutions",
     "vscode:prepublish": "webpack --mode production",
     "compile": "tsc -p ./&webpack --mode development",
-    "watch": "webpack --mode development --watch --info-verbosity verbose",
+    "watch": "webpack --mode development --watch",
     "pretest": "npm run compile",
     "test": "node ./out/test/runtest.js",
     "build-server": "./node_modules/.bin/gulp build_server",
@@ -1061,8 +1062,8 @@
     "typescript": "^3.7.3",
     "typescript-tslint-plugin": "^0.3.1",
     "vscode-test": "^1.4.0",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.6.0"
   },
   "dependencies": {
     "expand-home-dir": "^0.0.3",

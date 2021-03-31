@@ -19,6 +19,7 @@ before_install:
 - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9";
   fi
+- nvm install 12.22;
 - npm install -g typescript
 
 env:
