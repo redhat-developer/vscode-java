@@ -19,7 +19,7 @@
 					"markdownDescription": "Java build file patterns",
 					"items": {
 						"type": "string",
-						"description": "Specific build file patterns"
+						"description": "Regular expressions for specifying build file"
 					}
 				}
 			}
