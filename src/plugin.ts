@@ -3,9 +3,9 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Commands } from './commands';
+import { buildFilePatterns } from './standardLanguageClient';
 
 let existingExtensions: Array<string>;
-let existingBuildFilePatterns: Array<string>;
 
 export function collectJavaExtensions(extensions: readonly vscode.Extension<any>[]): string[] {
 	const result = [];
@@ -40,8 +40,6 @@ export function collectBuildFilePattern(extensions: readonly vscode.Extension<an
 			}
 		}
 	}
-	// Make a copy of build file patterns:
-	existingBuildFilePatterns = result.slice();
 	return result;
 }
 
@@ -72,13 +70,14 @@ function isExistingExtensionsUpdated(extensions: readonly vscode.Extension<any>[
 			}
 		}
 	}
+	return hasChanged;
 }
 
 function isExistingBuildFilePatternsUpdated(extensions: readonly vscode.Extension<any>[]) {
-	if (!existingBuildFilePatterns) {
+	if (!buildFilePatterns) {
 		return false;
 	}
-	const oldPatterns = new Set(existingBuildFilePatterns.slice());
+	const oldPatterns = new Set(buildFilePatterns.slice());
 	const newPatterns = collectBuildFilePattern(extensions);
 	const hasChanged = ( oldPatterns.size !== newPatterns.length);
 	if (!hasChanged) {
@@ -88,4 +87,5 @@ function isExistingBuildFilePatternsUpdated(extensions: readonly vscode.Extensio
 			}
 		}
 	}
+	return hasChanged;
 }
