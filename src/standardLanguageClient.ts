@@ -31,7 +31,7 @@ import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/proto
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
-let buildFilePatterns: Array<string>;
+export let buildFilePatterns: Array<string>;
 
 export class StandardLanguageClient {
 
