@@ -44,7 +44,7 @@ export function collectBuildFilePattern(extensions: readonly vscode.Extension<an
 }
 
 export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) {
-	if (isExistingExtensionsUpdated(extensions) || isExistingBuildFilePatternsUpdated(extensions)) {
+	if (isContributedPartUpdated(collectJavaExtensions(extensions), existingExtensions) || isContributedPartUpdated(collectBuildFilePattern(extensions), buildFilePatterns)) {
 		const msg = `Java Extension Contributions changed, reloading ${vscode.env.appName} is required for the changes to take effect.`;
 		const action = 'Reload';
 		const restartId = Commands.RELOAD_WINDOW;
@@ -56,33 +56,16 @@ export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) 
 	}
 }
 
-function isExistingExtensionsUpdated(extensions: readonly vscode.Extension<any>[]) {
-	if (!existingExtensions) {
+function isContributedPartUpdated(newContributedPart: Array<string>, oldContributedPart: Array<string>) {
+	if (!oldContributedPart) {
 		return false;
 	}
-	const oldExtensions = new Set(existingExtensions.slice());
-	const newExtensions = collectJavaExtensions(extensions);
-	const hasChanged = ( oldExtensions.size !== newExtensions.length);
+	const oldExtensions = new Set(oldContributedPart.slice());
+	const newExtensions = newContributedPart;
+	const hasChanged = (oldExtensions.size !== newExtensions.length);
 	if (!hasChanged) {
 		for (const newExtension of newExtensions) {
 			if (!oldExtensions.has(newExtension)) {
-				return true;
-			}
-		}
-	}
-	return hasChanged;
-}
-
-function isExistingBuildFilePatternsUpdated(extensions: readonly vscode.Extension<any>[]) {
-	if (!buildFilePatterns) {
-		return false;
-	}
-	const oldPatterns = new Set(buildFilePatterns.slice());
-	const newPatterns = collectBuildFilePattern(extensions);
-	const hasChanged = ( oldPatterns.size !== newPatterns.length);
-	if (!hasChanged) {
-		for (const newPattern of newPatterns) {
-			if (!oldPatterns.has(newPattern)) {
 				return true;
 			}
 		}
