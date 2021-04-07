@@ -641,12 +641,15 @@
           "type": "integer",
           "description": "Specifies the number of imports added before a star-import declaration is used.",
           "default": 99,
-          "scope": "window"
+          "scope": "window",
+          "minimum": 1
         },
         "java.sources.organizeImports.staticStarThreshold": {
           "type": "integer",
           "description": "Specifies the number of static imports added before a star-import declaration is used.",
-          "default": 99
+          "default": 99,
+          "scope": "window",
+          "minimum": 1
         },
         "java.semanticHighlighting.enabled": {
           "type": "boolean",
