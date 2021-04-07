@@ -467,8 +467,8 @@ function projectConfigurationUpdate(languageClient: LanguageClient, uri?: Uri) {
 	}
 }
 
-function isJavaConfigFile(path: string) {
-	const fileName = require("path").basename(path);
+function isJavaConfigFile(filePath: string) {
+	const fileName = path.basename(filePath);
 	const regEx = new RegExp(buildFilePatterns.map(r => `(${r})`).join('|'), 'i');
 	return regEx.test(fileName);
 }
