@@ -28,10 +28,10 @@ import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvider";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
+import { buildFilePatterns } from './plugin';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
-export let buildFilePatterns: Array<string>;
 
 export class StandardLanguageClient {
 
@@ -203,7 +203,7 @@ export class StandardLanguageClient {
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
 
-		buildFilePatterns = collectBuildFilePattern(extensions.all);
+		collectBuildFilePattern(extensions.all);
 
 		this.status = ClientStatus.Initialized;
 	}

@@ -104,6 +104,26 @@ suite('Java Language Extension - Standard', () => {
 		assert.equal(vmArgs[2], '-Dfoo=Some "crazy" stuff');
 	});
 
+	test('should collect build file pattenrs extensions', () => {
+		const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../test/resources/packageExample.json'), 'utf8'));
+		const fakedExtension = {
+			id: 'test',
+			extensionUri: null,
+			extensionPath: '',
+			isActive: true,
+			packageJSON,
+			exports: '',
+			activate: null,
+			extensionKind: vscode.ExtensionKind.Workspace
+		};
+
+		const extensions = [fakedExtension];
+		const result = plugin.collectBuildFilePattern(extensions);
+		assert(result.length === 2);
+		assert(result[0].endsWith("^pom.xml$"));
+		assert(result[1].endsWith(".*\\.gradle$"));
+	});
+
 	test('should collect java extensions', () => {
 		const packageJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../../../test/resources/packageExample.json'), 'utf8'));
 		const fakedExtension = {
