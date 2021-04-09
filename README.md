@@ -190,6 +190,7 @@ New in 0.77.0:
   - `afterCursor`: Insert the generated code after the member where the cursor is located.
   - `beforeCursor`: Insert the generated code before the member where the cursor is located.
   - `lastMember`: Insert the generated code as the last member of the target type.
+* `java.settings.url` : Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)
 
 Semantic Highlighting
 ===============
