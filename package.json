@@ -754,6 +754,12 @@
           "default": false,
           "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
           "scope": "window"
+        },
+        "java.settings.url": {
+          "type": "string",
+          "markdownDescription": "Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)",
+          "default": null,
+          "scope": "window"
         }
       }
     },
