@@ -3,9 +3,9 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Commands } from './commands';
-import { buildFilePatterns } from './standardLanguageClient';
 
 let existingExtensions: Array<string>;
+export let buildFilePatterns: Array<string>;
 
 export function collectJavaExtensions(extensions: readonly vscode.Extension<any>[]): string[] {
 	const result = [];
@@ -40,6 +40,7 @@ export function collectBuildFilePattern(extensions: readonly vscode.Extension<an
 			}
 		}
 	}
+	buildFilePatterns = result.slice();
 	return result;
 }
 
@@ -60,12 +61,12 @@ function isContributedPartUpdated(newContributedPart: Array<string>, oldContribu
 	if (!oldContributedPart) {
 		return false;
 	}
-	const oldExtensions = new Set(oldContributedPart.slice());
-	const newExtensions = newContributedPart;
-	const hasChanged = (oldExtensions.size !== newExtensions.length);
+	const oldContribution = new Set(oldContributedPart.slice());
+	const newContribution = newContributedPart;
+	const hasChanged = (oldContribution.size !== newContribution.length);
 	if (!hasChanged) {
-		for (const newExtension of newExtensions) {
-			if (!oldExtensions.has(newExtension)) {
+		for (const newExtension of newContribution) {
+			if (!oldContribution.has(newExtension)) {
 				return true;
 			}
 		}
