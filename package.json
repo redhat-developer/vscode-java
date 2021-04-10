@@ -328,6 +328,14 @@
           ],
           "scope": "window"
         },
+        "java.references.detectSourcesJarSuffix":{
+          "type": "array",
+          "description": "Configure source suffix array to a Java libraries.",
+          "default": [
+            "-sources.jar", "_src.jar"
+          ],
+          "scope": "window"
+        },
         "java.project.referencedLibraries": {
           "type": [
             "array",
