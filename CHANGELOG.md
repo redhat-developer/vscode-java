@@ -1,5 +1,31 @@
 # Change Log
 
+## 0.77.0 (April 15th, 2021)
+ * enhancement - Refactor when moving files. See [#641](https://github.com/redhat-developer/vscode-java/issues/641).
+ * enhancement - Support Type Hierarchy. See [#1790](https://github.com/redhat-developer/vscode-java/pull/1790).
+ * enhancement - Expose source paths setting in VS Code for unmanaged folders. See [#1798](https://github.com/redhat-developer/vscode-java/issues/1798).
+ * enhancement - Source actions should generate code at cursor location. See [#1346](https://github.com/redhat-developer/vscode-java/issues/1346).
+ * enhancement - Support String formatting via delegate command. See [JLS#1702](https://github.com/eclipse/eclipse.jdt.ls/pull/1702).
+ * enhancement - Add more options to query project settings. See [#1828](https://github.com/redhat-developer/vscode-java/pull/1828).
+ * enhancement - Writing Java in VS CODE shows way too much warnings! See [#1657](https://github.com/redhat-developer/vscode-java/issues/1657).
+ * enhancement - Enhanced IBuildSupport usage to support other build tools such as bazel. See [JLS#1694](https://github.com/eclipse/eclipse.jdt.ls/pull/1694).
+ * bug - External tool file modifications not registered. See [JLS#1650](https://github.com/eclipse/eclipse.jdt.ls/issues/1650).
+ * bug - Enhance the condition of inline constant. See [JLS#1672](https://github.com/eclipse/eclipse.jdt.ls/pull/1672).
+ * bug - Java code formatter rules is ignored. See [#1640](https://github.com/redhat-developer/vscode-java/issues/1640).
+ * bug - java.format.settings.url no longer loads project .xml file. See [#1827](https://github.com/redhat-developer/vscode-java/issues/1827).
+ * bug - Typo When Trying to Add Folder to Java Source Path That Is Already Included By Parent. See [#1833](https://github.com/redhat-developer/vscode-java/issues/1833).
+ * bug - Set minimum for threshold settings. See [#1868](https://github.com/redhat-developer/vscode-java/pull/1868).
+ * bug - Invisible project forgets source paths on classpath update. See [JLS#1647](https://github.com/eclipse/eclipse.jdt.ls/issues/1647).
+ * bug - Keep getting "Couldn't start client Language Support for Java" when opening a Java file in vscode. See [#1813](https://github.com/redhat-developer/vscode-java/issues/1813).
+ * bug - Disable console.log for lsp trace due to performance issue. See [#1824](https://github.com/redhat-developer/vscode-java/pull/1824).
+ * build - Update Target Platform to 2021-03 Release. See [JLS#1691](https://github.com/eclipse/eclipse.jdt.ls/pull/1691).
+ * build - Update lsp4j to 0.11.0. See [JLS#1700](https://github.com/eclipse/eclipse.jdt.ls/pull/1700).
+ * debt - Build Fails Due to Tests. See [JLS#1646](https://github.com/eclipse/eclipse.jdt.ls/issues/1646).
+ * debt - Stop generating .gz artifacts during builds. See [JLS#1707](https://github.com/eclipse/eclipse.jdt.ls/issues/1707).
+ * debt - Java LS Tests fail randomly. See [JLS#1684](https://github.com/eclipse/eclipse.jdt.ls/issues/1684).
+ * debt - Fix vulnerabilities by 'npm audit fix'. See [#1830](https://github.com/redhat-developer/vscode-java/pull/1830).
+ * other - Set org.eclipse.jdt.core.compiler.problem.missingSerialVersion to ignore by default. See [JLS#1714](https://github.com/eclipse/eclipse.jdt.ls/issues/1714).
+
 ## 0.76.0 (March 5th, 2021)
  * feature - Code actions should return textedits with proper formatting. See [JLS#1157](https://github.com/eclipse/eclipse.jdt.ls/issues/1157).
  * bug fix - Surround with try/catch reformats document. See [#1572](https://github.com/redhat-developer/vscode-java/issues/1572).
