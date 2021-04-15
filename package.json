@@ -760,6 +760,12 @@
           "markdownDescription": "Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)",
           "default": null,
           "scope": "window"
+        },
+        "java.symbols.includeSourceMethodDeclarations": {
+          "type": "boolean",
+          "markdownDescription": "Include method declarations from source files in symbol search.",
+          "default": false,
+          "scope": "window"
         }
       }
     },
