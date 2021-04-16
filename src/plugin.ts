@@ -45,7 +45,7 @@ export function collectBuildFilePattern(extensions: readonly vscode.Extension<an
 }
 
 export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) {
-	if (isContributedPartUpdated(collectJavaExtensions(extensions), existingExtensions) || isContributedPartUpdated(collectBuildFilePattern(extensions), buildFilePatterns)) {
+	if (isContributedPartUpdated(existingExtensions, collectJavaExtensions(extensions)) || isContributedPartUpdated(buildFilePatterns, collectBuildFilePattern(extensions))) {
 		const msg = `Java Extension Contributions changed, reloading ${vscode.env.appName} is required for the changes to take effect.`;
 		const action = 'Reload';
 		const restartId = Commands.RELOAD_WINDOW;
@@ -57,7 +57,7 @@ export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) 
 	}
 }
 
-function isContributedPartUpdated(newContributedPart: Array<string>, oldContributedPart: Array<string>) {
+function isContributedPartUpdated(oldContributedPart: Array<string>, newContributedPart: Array<string>) {
 	if (!oldContributedPart) {
 		return false;
 	}
