@@ -21,6 +21,9 @@ before_install:
   fi
 - npm install -g typescript
 
+env:
+- SKIP_COMMANDS_TEST="true"
+
 install:
 - wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
 - mkdir server
