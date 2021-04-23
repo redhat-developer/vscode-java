@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./protocol";
 import { SymbolItemNavigation, SymbolTreeInput, SymbolTreeModel } from "./references-view";
 import { getActiveLanguageClient } from "../extension";
-import { LanguageClient } from "vscode-languageclient";
+import { LanguageClient } from "vscode-languageclient/node";
 import { getRootItem, resolveTypeHierarchy, typeHierarchyDirectionToContextString } from "./util";
 import { CancellationToken, commands, workspace } from "vscode";
 

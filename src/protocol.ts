@@ -95,39 +95,39 @@ export interface EventNotification {
 }
 
 export namespace StatusNotification {
-	export const type = new NotificationType<StatusReport, void >('language/status');
+	export const type = new NotificationType<StatusReport>('language/status');
 }
 
 export namespace ProgressReportNotification {
-	export const type = new NotificationType<ProgressReport, void >('language/progressReport');
+	export const type = new NotificationType<ProgressReport>('language/progressReport');
 }
 
 export namespace ClassFileContentsRequest {
-    export const type = new RequestType<TextDocumentIdentifier, string, void, void> ('java/classFileContents');
+    export const type = new RequestType<TextDocumentIdentifier, string, void> ('java/classFileContents');
 }
 
 export namespace ProjectConfigurationUpdateRequest {
-    export const type = new NotificationType<TextDocumentIdentifier, void> ('java/projectConfigurationUpdate');
+    export const type = new NotificationType<TextDocumentIdentifier> ('java/projectConfigurationUpdate');
 }
 
 export namespace ActionableNotification {
-    export const type = new NotificationType<ActionableMessage, void>('language/actionableNotification');
+    export const type = new NotificationType<ActionableMessage>('language/actionableNotification');
 }
 
 export namespace EventNotification {
-    export const type = new NotificationType<EventNotification, void>('language/eventNotification');
+    export const type = new NotificationType<EventNotification>('language/eventNotification');
 }
 
 export namespace CompileWorkspaceRequest {
-    export const type = new RequestType<boolean, CompileWorkspaceStatus, void, void>('java/buildWorkspace');
+    export const type = new RequestType<boolean, CompileWorkspaceStatus, void>('java/buildWorkspace');
 }
 
 export namespace ExecuteClientCommandRequest {
-    export const type = new RequestType<ExecuteCommandParams, any, void, void>('workspace/executeClientCommand');
+    export const type = new RequestType<ExecuteCommandParams, any, void>('workspace/executeClientCommand');
 }
 
 export namespace ServerNotification {
-    export const type = new NotificationType<ExecuteCommandParams, void>('workspace/notify');
+    export const type = new NotificationType<ExecuteCommandParams>('workspace/notify');
 }
 
 export interface SourceAttachmentRequest {
@@ -162,7 +162,7 @@ export interface OverridableMethodsResponse {
 }
 
 export namespace ListOverridableMethodsRequest {
-    export const type = new RequestType<CodeActionParams, OverridableMethodsResponse, void, void>('java/listOverridableMethods');
+    export const type = new RequestType<CodeActionParams, OverridableMethodsResponse, void>('java/listOverridableMethods');
 }
 
 export interface AddOverridableMethodParams {
@@ -171,7 +171,7 @@ export interface AddOverridableMethodParams {
 }
 
 export namespace AddOverridableMethodsRequest {
-    export const type = new RequestType<AddOverridableMethodParams, WorkspaceEdit, void, void>('java/addOverridableMethods');
+    export const type = new RequestType<AddOverridableMethodParams, WorkspaceEdit, void>('java/addOverridableMethods');
 }
 
 export interface VariableBinding {
@@ -188,7 +188,7 @@ export interface CheckHashCodeEqualsResponse {
 }
 
 export namespace CheckHashCodeEqualsStatusRequest {
-    export const type = new RequestType<CodeActionParams, CheckHashCodeEqualsResponse, void, void>('java/checkHashCodeEqualsStatus');
+    export const type = new RequestType<CodeActionParams, CheckHashCodeEqualsResponse, void>('java/checkHashCodeEqualsStatus');
 }
 
 export interface GenerateHashCodeEqualsParams {
@@ -198,11 +198,11 @@ export interface GenerateHashCodeEqualsParams {
 }
 
 export namespace GenerateHashCodeEqualsRequest {
-    export const type = new RequestType<GenerateHashCodeEqualsParams, WorkspaceEdit, void, void>('java/generateHashCodeEquals');
+    export const type = new RequestType<GenerateHashCodeEqualsParams, WorkspaceEdit, void>('java/generateHashCodeEquals');
 }
 
 export namespace OrganizeImportsRequest {
-    export const type = new RequestType<CodeActionParams, WorkspaceEdit, void, void>('java/organizeImports');
+    export const type = new RequestType<CodeActionParams, WorkspaceEdit, void>('java/organizeImports');
 }
 
 export interface ImportCandidate {
@@ -222,7 +222,7 @@ export interface CheckToStringResponse {
 }
 
 export namespace CheckToStringStatusRequest {
-    export const type = new RequestType<CodeActionParams, CheckToStringResponse, void, void>('java/checkToStringStatus');
+    export const type = new RequestType<CodeActionParams, CheckToStringResponse, void>('java/checkToStringStatus');
 }
 
 export interface GenerateToStringParams {
@@ -231,7 +231,7 @@ export interface GenerateToStringParams {
 }
 
 export namespace GenerateToStringRequest {
-    export const type = new RequestType<GenerateToStringParams, WorkspaceEdit, void, void>('java/generateToString');
+    export const type = new RequestType<GenerateToStringParams, WorkspaceEdit, void>('java/generateToString');
 }
 
 export interface AccessorField {
@@ -242,7 +242,7 @@ export interface AccessorField {
 }
 
 export namespace ResolveUnimplementedAccessorsRequest {
-    export const type = new RequestType<CodeActionParams, AccessorField[], void, void>('java/resolveUnimplementedAccessors');
+    export const type = new RequestType<CodeActionParams, AccessorField[], void>('java/resolveUnimplementedAccessors');
 }
 
 export interface GenerateAccessorsParams {
@@ -251,7 +251,7 @@ export interface GenerateAccessorsParams {
 }
 
 export namespace GenerateAccessorsRequest {
-    export const type = new RequestType<GenerateAccessorsParams, WorkspaceEdit, void, void>('java/generateAccessors');
+    export const type = new RequestType<GenerateAccessorsParams, WorkspaceEdit, void>('java/generateAccessors');
 }
 
 export interface MethodBinding {
@@ -266,7 +266,7 @@ export interface CheckConstructorsResponse {
 }
 
 export namespace CheckConstructorStatusRequest {
-    export const type = new RequestType<CodeActionParams, CheckConstructorsResponse, void, void>('java/checkConstructorsStatus');
+    export const type = new RequestType<CodeActionParams, CheckConstructorsResponse, void>('java/checkConstructorsStatus');
 }
 
 export interface GenerateConstructorsParams {
@@ -276,7 +276,7 @@ export interface GenerateConstructorsParams {
 }
 
 export namespace GenerateConstructorsRequest {
-    export const type = new RequestType<GenerateConstructorsParams, WorkspaceEdit, void, void>('java/generateConstructors');
+    export const type = new RequestType<GenerateConstructorsParams, WorkspaceEdit, void>('java/generateConstructors');
 }
 
 export interface DelegateField {
@@ -289,7 +289,7 @@ export interface CheckDelegateMethodsResponse {
 }
 
 export namespace CheckDelegateMethodsStatusRequest {
-    export const type = new RequestType<CodeActionParams, CheckDelegateMethodsResponse, void, void>('java/checkDelegateMethodsStatus');
+    export const type = new RequestType<CodeActionParams, CheckDelegateMethodsResponse, void>('java/checkDelegateMethodsStatus');
 }
 
 export interface DelegateEntry {
@@ -303,7 +303,7 @@ export interface GenerateDelegateMethodsParams {
 }
 
 export namespace GenerateDelegateMethodsRequest {
-    export const type = new RequestType<GenerateDelegateMethodsParams, WorkspaceEdit, void, void>('java/generateDelegateMethods');
+    export const type = new RequestType<GenerateDelegateMethodsParams, WorkspaceEdit, void>('java/generateDelegateMethods');
 }
 
 export interface RenamePosition {
@@ -326,7 +326,7 @@ export interface GetRefactorEditParams {
 }
 
 export namespace GetRefactorEditRequest {
-    export const type = new RequestType<GetRefactorEditParams, RefactorWorkspaceEdit, void, void>('java/getRefactorEdit');
+    export const type = new RequestType<GetRefactorEditParams, RefactorWorkspaceEdit, void>('java/getRefactorEdit');
 }
 
 export interface SelectionInfo {
@@ -342,7 +342,7 @@ export interface InferSelectionParams {
 }
 
 export namespace InferSelectionRequest {
-    export const type = new RequestType<InferSelectionParams, SelectionInfo[], void, void>('java/inferSelection');
+    export const type = new RequestType<InferSelectionParams, SelectionInfo[], void>('java/inferSelection');
 }
 
 export interface PackageNode {
@@ -368,11 +368,11 @@ export interface MoveDestinationsResponse {
 }
 
 export namespace GetMoveDestinationsRequest {
-    export const type = new RequestType<MoveParams, MoveDestinationsResponse, void, void>('java/getMoveDestinations');
+    export const type = new RequestType<MoveParams, MoveDestinationsResponse, void>('java/getMoveDestinations');
 }
 
 export namespace MoveRequest {
-    export const type = new RequestType<MoveParams, RefactorWorkspaceEdit, void, void>('java/move');
+    export const type = new RequestType<MoveParams, RefactorWorkspaceEdit, void>('java/move');
 }
 
 export interface SearchSymbolParams extends WorkspaceSymbolParams {
@@ -382,7 +382,7 @@ export interface SearchSymbolParams extends WorkspaceSymbolParams {
 }
 
 export namespace SearchSymbols {
-    export const type = new RequestType<SearchSymbolParams, SymbolInformation[], void, void>('java/searchSymbols');
+    export const type = new RequestType<SearchSymbolParams, SymbolInformation[], void>('java/searchSymbols');
 }
 
 export interface FindLinksParams {
@@ -396,7 +396,7 @@ export interface LinkLocation extends Location {
 }
 
 export namespace FindLinks {
-    export const type = new RequestType<FindLinksParams, LinkLocation[], void, void>('java/findLinks');
+    export const type = new RequestType<FindLinksParams, LinkLocation[], void>('java/findLinks');
 }
 
 export interface RenameFilesParams {
@@ -404,5 +404,5 @@ export interface RenameFilesParams {
 }
 
 export namespace WillRenameFiles {
-    export const type = new RequestType<RenameFilesParams, WorkspaceEdit, void, void>('workspace/willRenameFiles');
+    export const type = new RequestType<RenameFilesParams, WorkspaceEdit, void>('workspace/willRenameFiles');
 }

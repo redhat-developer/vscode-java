@@ -5,9 +5,9 @@ import {
     DocumentSymbol,
     DocumentSymbolParams,
     DocumentSymbolRequest,
-    LanguageClient,
     SymbolInformation
 } from "vscode-languageclient";
+import { LanguageClient } from "vscode-languageclient/node";
 import { getActiveLanguageClient } from "./extension";
 
 type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;

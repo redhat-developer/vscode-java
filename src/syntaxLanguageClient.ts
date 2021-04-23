@@ -1,7 +1,8 @@
 'use strict';
 
 import * as net from "net";
-import { LanguageClientOptions, StreamInfo, LanguageClient, ServerOptions, DidChangeConfigurationNotification } from "vscode-languageclient";
+import { LanguageClientOptions, DidChangeConfigurationNotification } from "vscode-languageclient";
+import { LanguageClient, StreamInfo, ServerOptions } from "vscode-languageclient/node";
 import { OutputInfoCollector, ClientErrorHandler, getJavaConfig } from "./extension";
 import { logger } from "./log";
 import { ServerMode } from "./settings";

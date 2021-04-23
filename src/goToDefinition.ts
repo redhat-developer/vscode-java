@@ -5,9 +5,9 @@ import {
 	Location,
 	LocationLink,
 	DefinitionParams,
-	DefinitionRequest,
-	LanguageClient,
+	DefinitionRequest
 } from 'vscode-languageclient';
+import { LanguageClient } from 'vscode-languageclient/node';
 import { getActiveLanguageClient } from './extension';
 
 type GoToDefinitionResponse = Location | Location[] | LocationLink[] | null;

@@ -3,7 +3,8 @@
 import { existsSync } from 'fs';
 import * as path from 'path';
 import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri, window, workspace } from 'vscode';
-import { FormattingOptions, LanguageClient, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
+import { FormattingOptions, WorkspaceEdit, CreateFile, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
+import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from './commands';
 import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest } from './protocol';
 

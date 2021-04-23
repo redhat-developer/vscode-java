@@ -2,7 +2,6 @@
 
 import * as path from 'path';
 import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable } from 'vscode';
-import { LanguageClient } from 'vscode-languageclient';
 import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
 

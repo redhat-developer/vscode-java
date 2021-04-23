@@ -1,7 +1,8 @@
 'use strict';
 
 import { HoverProvider, CancellationToken, Hover, Position, TextDocument, MarkdownString, MarkedString, Command } from "vscode";
-import { LanguageClient, TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
+import { TextDocumentPositionParams, HoverRequest } from "vscode-languageclient";
+import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from "./commands";
 import { FindLinks } from "./protocol";
 import { provideHoverCommandFn } from "./extension.api";

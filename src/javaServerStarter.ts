@@ -4,7 +4,7 @@ import * as net from 'net';
 import * as glob from 'glob';
 import * as os from 'os';
 import * as fs from 'fs';
-import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient';
+import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient/node';
 import { RequirementsData } from './requirements';
 import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag } from './settings';
 import { logger } from './log';

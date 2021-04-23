@@ -58,6 +58,7 @@ suite('Public APIs - Standard', () => {
 				continue;
 			}
 			symbolDetected = true;
+			// @ts-ignore
 			assert.equal((symbol as DocumentSymbol).children.length, 4);
 		}
 		if (!symbolDetected) {
@@ -99,7 +100,7 @@ suite('Public APIs - Standard', () => {
 		const pomContent: string = await fse.readFile(pomPath, 'utf-8');
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 
-		await new Promise(async (resolve) => {
+		await new Promise<void>(async (resolve) => {
 			api.onDidClasspathUpdate((uri) => {
 				assert.equal(path.relative(uri.fsPath, constants.projectFsPath), '');
 				return resolve();
@@ -149,7 +150,7 @@ suite('Public APIs - Standard', () => {
 		await fse.ensureDir(gradleTestFolder);
 		await fse.createFile(path.join(gradleTestFolder, 'build.gradle'));
 
-		await new Promise(async (resolve) => {
+		await new Promise<void>(async (resolve) => {
 			api.onDidProjectsImport(() => {
 				return resolve();
 			});

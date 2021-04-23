@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
-import { LanguageClient, Position, TextDocumentIdentifier, TextDocumentPositionParams } from "vscode-languageclient";
+import { Position, TextDocumentIdentifier, TextDocumentPositionParams } from "vscode-languageclient";
+import { LanguageClient } from "vscode-languageclient/node";
 import { Commands } from "../commands";
 import { getActiveLanguageClient } from "../extension";
 import { showNoLocationFound } from "../standardLanguageClient";
