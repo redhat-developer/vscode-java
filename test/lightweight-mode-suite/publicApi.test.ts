@@ -54,6 +54,7 @@ suite('Public APIs - LightWeight', () => {
 				continue;
 			}
 			symbolDetected = true;
+			// @ts-ignore
 			assert.equal((symbol as DocumentSymbol).children.length, 4);
 		}
 		if (!symbolDetected) {
@@ -129,7 +130,7 @@ suite('Public APIs - LightWeight', () => {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 		let onDidChangeServerModeCount: number = 0;
 
-		await new Promise(async (resolve) => {
+		await new Promise<void>(async (resolve) => {
 
 			api.onDidServerModeChange((mode) => {
 				onDidChangeServerModeCount++;

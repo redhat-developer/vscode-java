@@ -1,7 +1,8 @@
 'use strict';
 
 import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable } from 'vscode';
-import { CodeActionParams, LanguageClient } from 'vscode-languageclient';
+import { CodeActionParams } from 'vscode-languageclient';
+import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,

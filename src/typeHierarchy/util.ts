@@ -1,5 +1,5 @@
 import { CancellationToken, commands, SymbolKind } from "vscode";
-import { LanguageClient } from "vscode-languageclient";
+import { LanguageClient } from "vscode-languageclient/node";
 import { Commands } from "../commands";
 import { LSPTypeHierarchyItem, TypeHierarchyDirection, TypeHierarchyItem } from "./protocol";
 

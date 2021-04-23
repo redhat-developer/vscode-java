@@ -1,7 +1,8 @@
 'use strict';
 
 import { commands, env, ExtensionContext, Range, TextEditor, window } from 'vscode';
-import { LanguageClient } from 'vscode-languageclient';
+import { LanguageClient } from 'vscode-languageclient/node';
+
 import { Commands } from './commands';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
