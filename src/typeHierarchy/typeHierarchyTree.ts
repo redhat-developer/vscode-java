@@ -31,6 +31,9 @@ export class TypeHierarchyTree {
 		if (!this.initialized) {
 			await this.initialize();
 		}
+		if (!this.api) {
+			return;
+		}
 		if (this.cancelTokenSource) {
 			this.cancelTokenSource.cancel();
 		}
@@ -65,6 +68,9 @@ export class TypeHierarchyTree {
 	}
 
 	public changeDirection(direction: TypeHierarchyDirection): void {
+		if (!this.api) {
+			return;
+		}
 		if (this.cancelTokenSource) {
 			this.cancelTokenSource.cancel();
 		}
@@ -77,6 +83,9 @@ export class TypeHierarchyTree {
 	}
 
 	public async changeBaseItem(item: TypeHierarchyItem): Promise<void> {
+		if (!this.api) {
+			return;
+		}
 		if (this.cancelTokenSource) {
 			this.cancelTokenSource.cancel();
 		}

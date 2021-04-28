@@ -11,7 +11,7 @@
   "preview": true,
   "enableProposedApi": false,
   "engines": {
-    "vscode": "^1.53.2"
+    "vscode": "^1.50.0"
   },
   "repository": {
     "type": "git",
@@ -1053,7 +1053,7 @@
     "@types/lodash.findindex": "^4.6.6",
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.51",
-    "@types/vscode": "^1.53.0",
+    "@types/vscode": "^1.50.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.2",
