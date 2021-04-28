@@ -115,7 +115,8 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 		if (!element) {
 			return undefined;
 		}
-		const treeItem: vscode.TreeItem = (element === this.model.getBaseItem()) ? new vscode.TreeItem({ label: element.name, highlights: [[0, element.name.length]] }) : new vscode.TreeItem(element.name);
+		// const treeItem: vscode.TreeItem = (element === this.model.getBaseItem()) ? new vscode.TreeItem({ label: element.name, highlights: [[0, element.name.length]] }) : new vscode.TreeItem(element.name);
+		const treeItem: vscode.TreeItem = new vscode.TreeItem(element.name);
 		treeItem.contextValue = (element === this.model.getBaseItem() || !element.uri) ? "false" : "true";
 		treeItem.description = element.detail;
 		treeItem.iconPath = TypeHierarchyTreeDataProvider.getThemeIcon(element.kind);
