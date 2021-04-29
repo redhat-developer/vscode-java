@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.79.0 (April 29th, 2021)
+* enhancement - Update language client to 7.0.0 to adopt LSP 3.16 features (enables lazy code action resolution). See [#1894](https://github.com/redhat-developer/vscode-java/pull/1894).
+
 ## 0.78.0 (April 29th, 2021)
  * enhancement - Add Java 16 Support. See [#1891](https://github.com/redhat-developer/vscode-java/pull/1891).
  * enhancement - java.project.referencedLibraries should resolve paths leading with ~. See [JLS#1735](https://github.com/eclipse/eclipse.jdt.ls/issues/1735).
