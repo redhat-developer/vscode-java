@@ -863,21 +863,30 @@
       {
         "command": "java.action.showClassHierarchy",
         "title": "Show Class Hierarchy",
-        "icon": "$(type-hierarchy)",
+        "icon": {
+          "dark": "./icons/dark/typehierarchy.png",
+          "light": "./icons/light/typehierarchy.png"
+        },
         "enablement": "typeHierarchyDirection != both && typeHierarchySymbolKind != 10",
         "category": "Java"
       },
       {
         "command": "java.action.showSupertypeHierarchy",
         "title": "Show Supertype Hierarchy",
-        "icon": "$(type-hierarchy-super)",
+        "icon": {
+          "dark": "./icons/dark/supertypehierarchy.png",
+          "light": "./icons/light/supertypehierarchy.png"
+        },
         "enablement": "typeHierarchyDirection != parents",
         "category": "Java"
       },
       {
         "command": "java.action.showSubtypeHierarchy",
         "title": "Show Subtype Hierarchy",
-        "icon": "$(type-hierarchy-sub)",
+        "icon": {
+          "dark": "./icons/dark/subtypehierarchy.png",
+          "light": "./icons/light/subtypehierarchy.png"
+        },
         "enablement": "typeHierarchyDirection != children",
         "category": "Java"
       },
