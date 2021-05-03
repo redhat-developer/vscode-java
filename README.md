@@ -189,8 +189,6 @@ The following settings are supported:
   - `beforeCursor`: Insert the generated code before the member where the cursor is located.
   - `lastMember`: Insert the generated code as the last member of the target type.
 * `java.settings.url` : Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)
-
-New in 0.78.0:
 * `java.symbols.includeSourceMethodDeclarations` : Include method declarations from source files in symbol search. Defaults to `false`.
 
 Semantic Highlighting

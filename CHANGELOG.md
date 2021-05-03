@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.79.1 (May 3rd, 2021)
+* bug fix - Formatter doesn't load format config after update. See [#1917](https://github.com/redhat-developer/vscode-java/issues/1917).
+
 ## 0.79.0 (April 29th, 2021)
 * enhancement - Update language client to 7.0.0 to adopt LSP 3.16 features (enables lazy code action resolution). See [#1894](https://github.com/redhat-developer/vscode-java/pull/1894).
 
