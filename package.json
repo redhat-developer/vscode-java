@@ -34,6 +34,9 @@
     "onCommand:_java.templateVariables"
   ],
   "main": "./dist/extension",
+  "capabilities": {
+    "virtualWorkspaces": false
+  },
   "contributes": {
     "javaBuildFilePatterns": [
       "^pom.xml$",
