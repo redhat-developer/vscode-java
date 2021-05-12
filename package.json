@@ -17,7 +17,8 @@
         "java.home",
         "java.jdt.ls.vmargs"
       ]
-    }
+    },
+    "virtualWorkspaces": false
   },
   "engines": {
     "vscode": "^1.53.2"
