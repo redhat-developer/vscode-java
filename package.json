@@ -40,7 +40,8 @@
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle",
     "workspaceContains:.classpath",
-    "onCommand:_java.templateVariables"
+    "onCommand:_java.templateVariables",
+    "onCommand:_java.notCoveredExecution"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -316,6 +317,17 @@
           "type": "string",
           "default": null,
           "description": "Path to Maven's global settings.xml",
+          "scope": "window"
+        },
+        "java.configuration.maven.notCoveredPluginExecutionSeverity": {
+          "type": "string",
+          "enum": [
+            "ignore",
+            "warning",
+            "error"
+          ],
+          "default": "error",
+          "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
           "scope": "window"
         },
         "java.format.enabled": {

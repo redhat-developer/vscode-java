@@ -119,6 +119,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
 	}));
+	context.subscriptions.push(commands.registerCommand(Commands.NOT_COVERED_EXECUTION, async () => {
+		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.notCoveredExecution.md`)), 'Not Covered Maven Plugin Execution', "", context);
+	}));
 
 	let storagePath = context.storagePath;
 	if (!storagePath) {
