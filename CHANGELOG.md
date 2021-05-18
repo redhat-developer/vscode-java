@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.79.2 (May 19th, 2021)
+ * bug fix - Package name not recognized when opening standalone java files. See [JLS#1764](https://github.com/eclipse/eclipse.jdt.ls/issues/1764).
+ * bug fix - Force Java Compilation returns error. See [#1929](https://github.com/redhat-developer/vscode-java/issues/1929).
+ * bug fix - Invalid formatter profile name setting causes errors. See [JLS#1761](https://github.com/eclipse/eclipse.jdt.ls/issues/1761).
+ * bug fix - Formatter doesn't load format config after update. See [#1917](https://github.com/redhat-developer/vscode-java/issues/1917).
+ * bug fix - Improve handling of exported settings files. See [#1939](https://github.com/redhat-developer/vscode-java/issues/1939).
+ * bug fix - A 'keyword' semantic token will sometimes appear when typing an expression. See [#1921](https://github.com/redhat-developer/vscode-java/issues/1921).
+ * other - Update hosted-git-info dependency. See [#1940](https://github.com/redhat-developer/vscode-java/pull/1940).
+ * other - Update lodash dependency.. See [#1934](https://github.com/redhat-developer/vscode-java/pull/1934).
+
 ## 0.79.1 (May 3rd, 2021)
 * bug fix - Formatter doesn't load format config after update. See [#1917](https://github.com/redhat-developer/vscode-java/issues/1917).
 
