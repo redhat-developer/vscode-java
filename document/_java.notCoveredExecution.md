@@ -4,7 +4,9 @@
 Some Maven projects use 3rd party Maven plugins to generate sources or resources, and you may find that the generated code is not picked up by the project classpath, or the Maven goals are not executed by Java extension. This is a known technical issue with `m2e`, the underlying Maven integration tool for Java extension. The reason is that the Maven tooling `m2e` doesn't know if it's safe to run your Maven plugin automatically during a workspace build, so it does not run them by default and requires explicit instructions on how to handle them. Learn more about this issue from the wiki about [Execution Not Covered](https://www.eclipse.org/m2e/documentation/m2e-execution-not-covered.html).
 
 ## Workaround
-- Option 1: Use [build-helper-maven-plugin](http://www.mojohaus.org/build-helper-maven-plugin/usage.html) to explicitly add the unrecoginzed source folder to classpath.
+- Option 1: The best thing is still to request the Maven plugin authors to provide native integration with m2e. Here is a guideline on [how to make Maven plugins compatible with m2e](https://www.eclipse.org/m2e/documentation/m2e-making-maven-plugins-compat.html).  
+
+- Option 2: Use [build-helper-maven-plugin](http://www.mojohaus.org/build-helper-maven-plugin/usage.html) to explicitly add the unrecognized source folder to classpath.
 
 ```xml
 <project>
@@ -36,7 +38,7 @@ Some Maven projects use 3rd party Maven plugins to generate sources or resources
 </project>
 ```
 
-- Option 2: Configure a lifecycle mapping metadata in pom.xml that explicitly tells m2e what to do with your plugin.
+- Option 3: Configure a lifecycle mapping metadata in pom.xml that explicitly tells m2e what to do with your plugin.
 
 For example, add [a processing instruction in the pom.xml](https://www.eclipse.org/m2e/documentation/release-notes-17.html#new-syntax-for-specifying-lifecycle-mapping-metadata) like `<?m2e execute onConfiguration?>` to execute it on every project configuration udpate.
 
