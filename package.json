@@ -326,7 +326,7 @@
             "warning",
             "error"
           ],
-          "default": "error",
+          "default": "warning",
           "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
           "scope": "window"
         },
