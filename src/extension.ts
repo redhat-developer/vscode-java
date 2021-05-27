@@ -185,7 +185,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						gradleChecksumWrapperPromptSupport: true,
 						resolveAdditionalTextEditsSupport: true,
 						advancedIntroduceParameterRefactoringSupport: true,
-						actionableRuntimeNotificationSupport: true
+						actionableRuntimeNotificationSupport: true,
+						syntaxServerExitsOnShutdown: true
 					},
 					triggerFiles,
 				},
