@@ -146,7 +146,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const workspacePath = path.resolve(storagePath + '/jdt_ws');
 			const syntaxServerWorkspacePath = path.resolve(storagePath + '/ss_ws');
 
-			const serverMode = getJavaServerMode();
+			let serverMode = getJavaServerMode();
+			const isWorkspaceTrusted = (workspace as any).isTrusted; // TODO: use workspace.isTrusted directly when other clients catch up to adopt 1.56.0
+			if (isWorkspaceTrusted !== undefined && !isWorkspaceTrusted) { // keep compatibility for old engines < 1.56.0
+				serverMode = ServerMode.LIGHTWEIGHT;
+			}
 			commands.executeCommand('setContext', 'java:serverMode', serverMode);
 			const isDebugModeByClientPort = !!process.env['SYNTAXLS_CLIENT_PORT'] || !!process.env['JDTLS_CLIENT_PORT'];
 			const requireSyntaxServer = (serverMode !== ServerMode.STANDARD) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
@@ -211,7 +215,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				outputChannelName: extensionName
 			};
 
-			apiManager.initialize(requirements);
+			apiManager.initialize(requirements, serverMode);
 
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
@@ -274,6 +278,16 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			 * @param force force to switch server mode without asking
 			 */
 			commands.registerCommand(Commands.SWITCH_SERVER_MODE, async (switchTo: ServerMode, force: boolean = false) => {
+				const isWorkspaceTrusted = (workspace as any).isTrusted;
+				if (isWorkspaceTrusted !== undefined && !isWorkspaceTrusted) { // keep compatibility for old engines < 1.56.0
+					const button = "Manage Workspace Trust";
+					const choice = await window.showInformationMessage("For security concern, Java language server cannot be switched to Standard mode in untrusted workspaces.", button);
+					if (choice === button) {
+						commands.executeCommand("workbench.action.manageTrust");
+					}
+					return;
+				}
+
 				const clientStatus: ClientStatus = standardClient.getClientStatus();
 				if (clientStatus === ClientStatus.Starting || clientStatus === ClientStatus.Started) {
 					return;
@@ -332,6 +346,15 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			if (requireStandardServer) {
 				startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+			}
+
+			const onDidGrantWorkspaceTrust = (workspace as any).onDidGrantWorkspaceTrust;
+			if (onDidGrantWorkspaceTrust !== undefined) { // keep compatibility for old engines < 1.56.0
+				context.subscriptions.push(onDidGrantWorkspaceTrust(() => {
+					if (getJavaServerMode() !== ServerMode.LIGHTWEIGHT) {
+						commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.STANDARD, true);
+					}
+				}));
 			}
 		});
 	});

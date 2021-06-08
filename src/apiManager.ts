@@ -7,7 +7,7 @@ import { goToDefinitionCommand, goToDefinitionProvider } from "./goToDefinition"
 import { commands, Uri } from "vscode";
 import { Commands } from "./commands";
 import { Emitter } from "vscode-languageclient";
-import { ServerMode, getJavaServerMode } from "./settings";
+import { ServerMode } from "./settings";
 import { registerHoverCommand } from "./hoverAction";
 
 class ApiManager {
@@ -17,7 +17,7 @@ class ApiManager {
     private onDidServerModeChangeEmitter: Emitter<ServerMode> = new Emitter<ServerMode>();
     private onDidProjectsImportEmitter: Emitter<Uri[]> = new Emitter<Uri[]>();
 
-    public initialize(requirements: RequirementsData): void {
+    public initialize(requirements: RequirementsData, serverMode: ServerMode): void {
         const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
         const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
 
@@ -48,7 +48,7 @@ class ApiManager {
             getClasspaths,
             isTestFile,
             onDidClasspathUpdate,
-            serverMode: getJavaServerMode(),
+            serverMode,
             onDidServerModeChange,
             onDidProjectsImport,
         };
