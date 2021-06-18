@@ -10,6 +10,15 @@
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": true,
   "enableProposedApi": false,
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "restrictedConfigurations": [
+        "java.home",
+        "java.jdt.ls.vmargs"
+      ]
+    }
+  },
   "engines": {
     "vscode": "^1.53.2"
   },
