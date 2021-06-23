@@ -40,8 +40,7 @@
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle",
     "workspaceContains:.classpath",
-    "onCommand:_java.templateVariables",
-    "onCommand:_java.notCoveredExecution"
+    "onCommand:_java.templateVariables"
   ],
   "main": "./dist/extension",
   "contributes": {

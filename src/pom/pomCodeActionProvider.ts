@@ -1,6 +1,6 @@
 'use strict';
 
-import { CodeActionProvider, CodeAction, TextDocument, Range, Selection, CodeActionContext, CancellationToken, ProviderResult, Command, CodeActionKind, Diagnostic, WorkspaceEdit, Position, EndOfLine, ExtensionContext, commands, CodeActionProviderMetadata, workspace, Uri } from "vscode";
+import { CodeActionProvider, CodeAction, TextDocument, Range, Selection, CodeActionContext, CancellationToken, ProviderResult, Command, CodeActionKind, Diagnostic, WorkspaceEdit, EndOfLine, ExtensionContext, commands, CodeActionProviderMetadata, workspace, Uri, window, TextEditor } from "vscode";
 import { Commands } from "../commands";
 
 export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
@@ -33,22 +33,19 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 
 				const action1 = new CodeAction("Enable this execution in project configuration phase", CodeActionKind.QuickFix.append("pom"));
 				action1.edit = new WorkspaceEdit();
-				action1.edit.insert(document.uri, new Position(diagnostic.range.end.line, diagnostic.range.end.character + 1),
-					indentation + "<?m2e execute onConfiguration?>");
+				action1.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e execute onConfiguration?>");
 				action1.command = saveAndUpdateConfigCommand;
 				codeActions.push(action1);
 
 				const action2 = new CodeAction("Enable this execution in project build phase", CodeActionKind.QuickFix.append("pom"));
 				action2.edit = new WorkspaceEdit();
-				action2.edit.insert(document.uri, new Position(diagnostic.range.end.line, diagnostic.range.end.character + 1),
-					indentation + "<?m2e execute onConfiguration,onIncremental?>");
+				action2.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e execute onConfiguration,onIncremental?>");
 				action2.command = saveAndUpdateConfigCommand;
 				codeActions.push(action2);
 
 				const action3 = new CodeAction("Mark this execution as ignored in pom.xml", CodeActionKind.QuickFix.append("pom"));
 				action3.edit = new WorkspaceEdit();
-				action3.edit.insert(document.uri, new Position(diagnostic.range.end.line, diagnostic.range.end.character + 1),
-					indentation + "<?m2e ignore?>");
+				action3.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e ignore?>");
 				action3.command = saveAndUpdateConfigCommand;
 				codeActions.push(action3);
 			}
@@ -63,13 +60,22 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 			return "";
 		}
 
+		let tabSize: number = 2; // default value
+		let insertSpaces: boolean = true; // default value
+		const activeEditor: TextEditor | undefined = window.activeTextEditor;
+		if (activeEditor && activeEditor.document.uri.toString() === document.uri.toString()) {
+			tabSize = Number(activeEditor.options.tabSize);
+			insertSpaces = Boolean(activeEditor.options.insertSpaces);
+		}
+
 		const lineSeparator = document.eol === EndOfLine.LF ? "\r" : "\r\n";
-		const currentTextIndentation = textline.text.substring(0, textline.firstNonWhitespaceCharacterIndex);
-		const tabSize = currentTextIndentation.length / 5;
-		const insertChar = currentTextIndentation && currentTextIndentation.charAt(0) === ' ' ? ' ' : '	';
-		let newIndentation = lineSeparator + currentTextIndentation;
-		for (let i = 0; i < tabSize; i++) {
-			newIndentation += insertChar;
+		let newIndentation = lineSeparator + textline.text.substring(0, textline.firstNonWhitespaceCharacterIndex);
+		if (insertSpaces) {
+			for (let i = 0; i < tabSize; i++) {
+				newIndentation += ' '; // insert a space char.
+			}
+		} else {
+			newIndentation += '	'; // insert a tab char.
 		}
 
 		return newIndentation;
