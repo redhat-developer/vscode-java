@@ -352,7 +352,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			if (onDidGrantWorkspaceTrust !== undefined) { // keep compatibility for old engines < 1.56.0
 				context.subscriptions.push(onDidGrantWorkspaceTrust(() => {
 					if (getJavaServerMode() !== ServerMode.LIGHTWEIGHT) {
-						commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.STANDARD, true);
+						// See the issue https://github.com/redhat-developer/vscode-java/issues/1994
+						// Need to recollect the Java bundles before starting standard mode.
+						setTimeout(() => {
+							clientOptions.initializationOptions.bundles = collectJavaExtensions(extensions.all);
+							commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.STANDARD, true);
+						}, 1000);
 					}
 				}));
 			}
