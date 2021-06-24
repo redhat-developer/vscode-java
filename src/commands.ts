@@ -247,5 +247,7 @@ export namespace Commands {
 
     export const TEMPLATE_VARIABLES = '_java.templateVariables';
 
+    export const NOT_COVERED_EXECUTION = '_java.notCoveredExecution';
+
     export const RUNTIME_VALIDATION_OPEN = 'java.runtimeValidation.open';
 }

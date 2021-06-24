@@ -30,6 +30,7 @@ import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvide
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 import { buildFilePatterns } from './plugin';
+import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -410,6 +411,12 @@ export class StandardLanguageClient {
 				const sectionId: string = javaRefactorKinds.get(kind) || '';
 				markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.LEARN_MORE_ABOUT_REFACTORING}.md`)), 'Java Refactoring', sectionId, context);
 			}));
+
+			languages.registerCodeActionsProvider({
+				language: "xml",
+				scheme: "file",
+				pattern: "**/pom.xml"
+			}, new PomCodeActionProvider(context), pomCodeActionMetadata);
 		});
 	}
 

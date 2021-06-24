@@ -318,6 +318,17 @@
           "description": "Path to Maven's global settings.xml",
           "scope": "window"
         },
+        "java.configuration.maven.notCoveredPluginExecutionSeverity": {
+          "type": "string",
+          "enum": [
+            "ignore",
+            "warning",
+            "error"
+          ],
+          "default": "warning",
+          "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
+          "scope": "window"
+        },
         "java.format.enabled": {
           "type": "boolean",
           "default": true,
