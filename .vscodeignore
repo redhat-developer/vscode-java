@@ -12,8 +12,9 @@ vsc-extension-quickstart.md
 undefined/**
 CONTRIBUTING.md
 .vscode-test/**
-**/*.vsix
-**/*.tar.gz
+**/**.vsix
+**/**.tar.gz
+dist/**/*.map
 webpack.*.json
 node_modules
 .editorconfig
