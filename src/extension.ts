@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
-import { collectJavaExtensions } from './plugin';
+import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { initialize as initializeRecommendation } from './recommendation';
@@ -354,10 +354,17 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					if (getJavaServerMode() !== ServerMode.LIGHTWEIGHT) {
 						// See the issue https://github.com/redhat-developer/vscode-java/issues/1994
 						// Need to recollect the Java bundles before starting standard mode.
-						setTimeout(() => {
+						let pollingCount: number = 0;
+						// Poll every ~100ms (timeout after 1s) and check whether contributing javaExtensions have changed.
+						const intervalId = setInterval(() => {
+							const existingJavaExtensions = clientOptions.initializationOptions.bundles;
 							clientOptions.initializationOptions.bundles = collectJavaExtensions(extensions.all);
-							commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.STANDARD, true);
-						}, 1000);
+							if (++pollingCount >= 10 || isContributedPartUpdated(existingJavaExtensions, clientOptions.initializationOptions.bundles)) {
+								clearInterval(intervalId);
+								commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.STANDARD, true);
+								return;
+							}
+						}, 100);
 					}
 				}));
 			}
