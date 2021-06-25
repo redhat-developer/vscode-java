@@ -57,7 +57,7 @@ class ServerStatusBarProvider implements Disposable {
 
 enum StatusIcon {
 	LightWeight = "$(rocket)",
-	Busy = "$(sync~spin)",
+	Busy = "$(refresh~spin)",
 	Ready = "$(thumbsup)",
 	Error = "$(thumbsdown)"
 }
