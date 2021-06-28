@@ -193,7 +193,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						resolveAdditionalTextEditsSupport: true,
 						advancedIntroduceParameterRefactoringSupport: true,
 						actionableRuntimeNotificationSupport: true,
-						syntaxServerExitsOnShutdown: true
+						shouldLanguageServerExitOnShutdown: true
 					},
 					triggerFiles,
 				},
