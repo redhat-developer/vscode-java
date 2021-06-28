@@ -57,7 +57,7 @@ export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) 
 	}
 }
 
-function isContributedPartUpdated(oldContributedPart: Array<string>, newContributedPart: Array<string>) {
+export function isContributedPartUpdated(oldContributedPart: Array<string>, newContributedPart: Array<string>) {
 	if (!oldContributedPart) {
 		return false;
 	}
