@@ -1,5 +1,24 @@
 # Change Log
 
+## 0.80.0 (June 30th, 2021)
+ * enhancement - Allow folding `static` blocks. See [JLS#1777](https://github.com/eclipse/eclipse.jdt.ls/issues/1777).
+ * enhancement - Add deprecated property to CompletionItem and SymbolInformation. See [JLS#695](https://github.com/eclipse/eclipse.jdt.ls/issues/695).
+ * enhancement - deprecated is not populated in textDocument/documentSymbol. See [JLS#1301](https://github.com/eclipse/eclipse.jdt.ls/issues/1301).
+ * enhancement - Support Workspace Trust. See [#1926](https://github.com/redhat-developer/vscode-java/issues/1926).
+ * enhancement - Add option to ignore all proxies. See [#1947](https://github.com/redhat-developer/vscode-java/issues/1947).
+ * enhancement - Provide fix suggestions for not covered Maven plugin execution in project build lifecycle. See [#1949](https://github.com/redhat-developer/vscode-java/pull/1949).
+ * bug fix - Cannot make a static reference to the non-static type T. See [JLS#1781](https://github.com/eclipse/eclipse.jdt.ls/issues/1781).
+ * bug fix - extract method does not seem to like var nor method references. See [#1956](https://github.com/redhat-developer/vscode-java/issues/1956).
+ * bug fix - "Problem" The method methodName(ParamType) in the type ClassName is not applicable for the arguments () in lightweight syntax only mode. See [#1931](https://github.com/redhat-developer/vscode-java/issues/1931).
+ * bug fix - Rename to shouldLanguageServerExitOnShutdown extended capability. See [#2008](https://github.com/redhat-developer/vscode-java/pull/2008).
+ * bug fix - Syntax server no longer exits once JDT server is initialized. See [#1928](https://github.com/redhat-developer/vscode-java/issues/1928).
+ * bug fix - File contents would be strange when renaming java file name (with lombok). See [JLS#1775](https://github.com/eclipse/eclipse.jdt.ls/issues/1775).
+ * bug fix - Changes on the profile have no effect if there are backslashes (\\) in the format.settings.url. See [#1944](https://github.com/redhat-developer/vscode-java/issues/1944).
+ * bug fix - java.project.sourcePaths doesn't refresh diagnostics. See [JLS#1769](https://github.com/eclipse/eclipse.jdt.ls/issues/1769).
+ * bug fix - wrong status in 'language/progressReport' notification when processing call hierarchy requests. See [JLS#1722](https://github.com/eclipse/eclipse.jdt.ls/issues/1722).
+ * build - Adjust .vscodeignore filters due to vsce@1.92 update. See [#1983](https://github.com/redhat-developer/vscode-java/pull/1983).
+ * other - Bump browserslist from 4.16.4 to 4.16.6. See [#1961](https://github.com/redhat-developer/vscode-java/pull/1961).
+
 ## 0.79.2 (May 19th, 2021)
  * bug fix - Package name not recognized when opening standalone java files. See [JLS#1764](https://github.com/eclipse/eclipse.jdt.ls/issues/1764).
  * bug fix - Force Java Compilation returns error. See [#1929](https://github.com/redhat-developer/vscode-java/issues/1929).
