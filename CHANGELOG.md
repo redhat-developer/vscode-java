@@ -3,7 +3,6 @@
 ## 0.80.0 (June 30th, 2021)
  * enhancement - Allow folding `static` blocks. See [JLS#1777](https://github.com/eclipse/eclipse.jdt.ls/issues/1777).
  * enhancement - Add deprecated property to CompletionItem and SymbolInformation. See [JLS#695](https://github.com/eclipse/eclipse.jdt.ls/issues/695).
- * enhancement - deprecated is not populated in textDocument/documentSymbol. See [JLS#1301](https://github.com/eclipse/eclipse.jdt.ls/issues/1301).
  * enhancement - Support Workspace Trust. See [#1926](https://github.com/redhat-developer/vscode-java/issues/1926).
  * enhancement - Add option to ignore all proxies. See [#1947](https://github.com/redhat-developer/vscode-java/issues/1947).
  * enhancement - Provide fix suggestions for not covered Maven plugin execution in project build lifecycle. See [#1949](https://github.com/redhat-developer/vscode-java/pull/1949).
