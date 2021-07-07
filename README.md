@@ -220,6 +220,7 @@ Also, you can contribute your own VSCode extension to enhance the existing featu
 
 Feedback
 ===============
+* Have a question? Start a discussion on [GitHub Discussions](https://github.com/redhat-developer/vscode-java/discussions),
 * File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-java/issues),
 * Chat with us on [Gitter](https://gitter.im/redhat-developer/vscode-java),
 * [Tweet us](https://twitter.com/VSCodeJava/) with other feedback.
