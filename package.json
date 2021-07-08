@@ -731,7 +731,7 @@
             "interactive",
             "automatic"
           ],
-          "default": "interactive",
+          "default": "automatic",
           "description": "Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time.",
           "scope": "application"
         },

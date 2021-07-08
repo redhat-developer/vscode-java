@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.81.0
+* other - Change the default value of the setting `java.project.importOnFirstTimeStartup` to `automatic`. See [#2016](https://github.com/redhat-developer/vscode-java/pull/2016)
+
 ## 0.80.0 (June 30th, 2021)
  * enhancement - Allow folding `static` blocks. See [JLS#1777](https://github.com/eclipse/eclipse.jdt.ls/issues/1777).
  * enhancement - Add deprecated property to CompletionItem and SymbolInformation. See [JLS#695](https://github.com/eclipse/eclipse.jdt.ls/issues/695).
