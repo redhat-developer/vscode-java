@@ -10,7 +10,7 @@ import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks } from "./protocol";
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange, collectBuildFilePattern } from "./plugin";
-import { serverTaskPresenter } from "./serverTaskPresenter";
+import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
 import { RequirementsData } from "./requirements";
 import * as net from 'net';
 import * as path from 'path';
@@ -90,11 +90,14 @@ export class StandardLanguageClient {
 		this.languageClient.registerProposedFeatures();
 
 		this.languageClient.onReady().then(() => {
+			activationProgressNotification.showProgress();
 			this.languageClient.onNotification(StatusNotification.type, (report) => {
 				switch (report.type) {
 					case 'ServiceReady':
 						apiManager.updateServerMode(ServerMode.STANDARD);
 						apiManager.fireDidServerModeChange(ServerMode.STANDARD);
+						activationProgressNotification.hide();
+						showImportFinishNotification(context);
 						break;
 					case 'Started':
 						this.status = ClientStatus.Started;
@@ -440,6 +443,23 @@ export class StandardLanguageClient {
 
 	public getClientStatus(): ClientStatus {
 		return this.status;
+	}
+}
+
+function showImportFinishNotification(context: ExtensionContext) {
+	const showNotification: boolean | undefined = context.globalState.get<boolean>("java.neverShowImportFinishNotification");
+	if (!showNotification) {
+		const options = ["Don't show again"];
+		if (extensions.getExtension("vscjava.vscode-java-dependency")) {
+			options.unshift("View projects");
+		}
+		window.showInformationMessage("Projects are imported into workspace.", ...options).then((choice) => {
+			if (choice === "Don't show again") {
+				context.globalState.update("java.neverShowImportFinishNotification", true);
+			} else if (choice === "View projects") {
+				commands.executeCommand("javaProjectExplorer.focus");
+			}
+		});
 	}
 }
 
