@@ -25,6 +25,7 @@ async function main() {
 			launchArgs: [
 				testProjectPath,
 				'--disable-extensions',
+				'--disable-workspace-trust'
 			]
 		});
 
@@ -41,6 +42,7 @@ async function main() {
 			launchArgs: [
 				testProjectPath,
 				'--disable-extensions',
+				'--disable-workspace-trust'
 			]
 		});
 	} catch (err) {
