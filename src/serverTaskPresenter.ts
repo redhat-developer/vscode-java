@@ -3,6 +3,7 @@ import { serverTasks } from "./serverTasks";
 import { Disposable } from "vscode-languageclient";
 import { ProgressReport } from "./protocol";
 import { Commands } from "./commands";
+import { getJavaConfiguration } from "./utils";
 
 const JAVA_SERVER_TASK_PRESENTER_TASK_NAME = "Java Build Status";
 
@@ -121,9 +122,11 @@ export class ActivationProgressNotification {
 	private lastJobId: string;
 
 	public showProgress() {
+		const isProgressReportEnabled: boolean = getJavaConfiguration().get('progressReports.enabled');
+		const title = isProgressReportEnabled ? `[Importing Projects](command:${Commands.SHOW_SERVER_TASK_STATUS})` : "Importing Projects";
 		window.withProgress({
 			location: ProgressLocation.Notification,
-			title: `[Importing Projects](command:${Commands.SHOW_SERVER_TASK_STATUS})`,
+			title,
 			cancellable: false,
 		}, (progress: Progress<{ message?: string; increment?: number }>) => {
 			return new Promise<void>((resolve) => {
@@ -144,6 +147,7 @@ export class ActivationProgressNotification {
 						if (!taskToShow) {
 							return;
 						}
+						this.lastJobId = taskToShow.id;
 						let message: string = taskToShow.task;
 						if (taskToShow.subTask) {
 							message += ": " + taskToShow.subTask;
