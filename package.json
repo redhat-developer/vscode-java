@@ -692,12 +692,6 @@
           "scope": "window",
           "minimum": 1
         },
-        "java.semanticHighlighting.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the semantic highlighting.",
-          "scope": "window"
-        },
         "java.imports.gradle.wrapper.checksums": {
           "type": "array",
           "items": {
