@@ -156,7 +156,11 @@ The following settings are supported:
 * `java.codeGeneration.toString.listArrayContents`: List contents of arrays instead of using native toString(). Defaults to `true`.
 * `java.codeGeneration.toString.limitElements`: Limit number of items in arrays/collections/maps to list, if 0 then list all. Defaults to `0`.
 * `java.selectionRange.enabled`: Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.
-* `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup. Defaults to `false`.
+* `java.showBuildStatusOnStart.enabled`: Automatically show build status on startup, defaults to `notification`.
+  - `notification`: Show the build status via progress notification.
+  - `terminal`: Show the build status via terminal.
+  - `off`: Do not show any build status.
+  > For backward compatibility, this setting also accepts boolean value, where `true` has the same meaning as `notification` and `false` has the same meaning as `off`.
 * `java.project.outputPath`: A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
 * `java.completion.maxResults`: Maximum number of completion results (not including snippets). `0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit..

@@ -45,7 +45,7 @@ export class StandardLanguageClient {
 			return;
 		}
 
-		if (workspace.getConfiguration().get("java.showBuildStatusOnStart.enabled")) {
+		if (workspace.getConfiguration().get("java.showBuildStatusOnStart.enabled") === "terminal") {
 			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 		}
 

@@ -122,8 +122,16 @@ export class ActivationProgressNotification {
 	private lastJobId: string;
 
 	public showProgress() {
-		const isProgressReportEnabled: boolean = getJavaConfiguration().get('progressReports.enabled');
-		const title = isProgressReportEnabled ? `[Importing Projects](command:${Commands.SHOW_SERVER_TASK_STATUS})` : "Importing Projects";
+		const showBuildStatusEnabled = getJavaConfiguration().get("showBuildStatusOnStart.enabled");
+		if (typeof showBuildStatusEnabled === "string" || showBuildStatusEnabled instanceof String) {
+			if (showBuildStatusEnabled !== "notification") {
+				return;
+			}
+		} else if (!showBuildStatusEnabled) {
+			return;
+		}
+		const isProgressReportEnabled: boolean = getJavaConfiguration().get("progressReports.enabled");
+		const title = isProgressReportEnabled ? `[Importing Projects](command:${Commands.SHOW_SERVER_TASK_STATUS})` : "Importing Projects...";
 		window.withProgress({
 			location: ProgressLocation.Notification,
 			title,
