@@ -131,7 +131,7 @@ export class ActivationProgressNotification {
 			return;
 		}
 		const isProgressReportEnabled: boolean = getJavaConfiguration().get("progressReports.enabled");
-		const title = isProgressReportEnabled ? `[Importing Projects](command:${Commands.SHOW_SERVER_TASK_STATUS})` : "Importing Projects...";
+		const title = isProgressReportEnabled ? "Importing Projects" : "Importing Projects...";
 		window.withProgress({
 			location: ProgressLocation.Notification,
 			title,
@@ -147,7 +147,7 @@ export class ActivationProgressNotification {
 						});
 						if (!taskToShow || taskToShow.complete) {
 							taskToShow = tasks.find((task) => {
-								if (!task.complete) {
+								if (!task.complete && task.task) {
 									return task;
 								}
 							});
@@ -156,9 +156,9 @@ export class ActivationProgressNotification {
 							return;
 						}
 						this.lastJobId = taskToShow.id;
-						let message: string = taskToShow.task;
+						let message: string = `([details](command:${Commands.SHOW_SERVER_TASK_STATUS})) ${taskToShow.task}`;
 						if (taskToShow.subTask) {
-							message += ": " + taskToShow.subTask;
+							message += " - " + taskToShow.subTask;
 						}
 						message = message.trim();
 						if (!message.endsWith("...")) {
