@@ -1,0 +1,22 @@
+{
+	"java.server.mode.switch": "Switch to Standard Mode",
+	"java.projectConfiguration.update": "Update Project",
+	"java.project.import": "Import Java Projects into Workspace",
+	"java.open.serverLog": "Open Java Language Server Log File",
+	"java.open.clientLog": "Open Java Extension Log File",
+	"java.open.logs": "Open All Log Files",
+	"java.workspace.compile": "Force Java Compilation",
+	"java.open.formatter.settings": "Open Java Formatter Settings",
+	"java.clean.workspace": "Clean Java Language Server Workspace",
+	"java.project.updateSourceAttachment": "Attach Source",
+	"java.project.addToSourcePath": "Add Folder to Java Source Path",
+	"java.project.removeFromSourcePath": "Remove Folder from Java Source Path",
+	"java.project.listSourcePaths": "List All Java Source Paths",
+	"java.show.server.task.status": "Show Build Job Status",
+	"java.action.navigateToSuperImplementation": "Go to Super Implementation",
+	"java.action.showTypeHierarchy": "Show Type Hierarchy",
+	"java.action.showClassHierarchy": "Show Class Hierarchy",
+	"java.action.showSupertypeHierarchy": "Show Supertype Hierarchy",
+	"java.action.showSubtypeHierarchy": "Show Subtype Hierarchy",
+	"java.action.changeBaseType": "Base on this Type"
+}

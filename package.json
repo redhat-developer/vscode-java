@@ -802,108 +802,108 @@
     "commands": [
       {
         "command": "java.server.mode.switch",
-        "title": "Switch to Standard Mode",
+        "title": "%java.server.mode.switch%",
         "category": "Java"
       },
       {
         "command": "java.projectConfiguration.update",
-        "title": "Update Project",
+        "title": "%java.projectConfiguration.update%",
         "category": "Java"
       },
       {
         "command": "java.project.import",
-        "title": "Import Java Projects into Workspace",
+        "title": "%java.project.import%",
         "category": "Java"
       },
       {
         "command": "java.open.serverLog",
-        "title": "Open Java Language Server Log File",
+        "title": "%java.open.serverLog%",
         "category": "Java"
       },
       {
         "command": "java.open.clientLog",
-        "title": "Open Java Extension Log File",
+        "title": "%java.open.clientLog%",
         "category": "Java"
       },
       {
         "command": "java.open.logs",
-        "title": "Open All Log Files",
+        "title": "%java.open.logs%",
         "category": "Java"
       },
       {
         "command": "java.workspace.compile",
-        "title": "Force Java Compilation",
+        "title": "%java.workspace.compile%",
         "category": "Java"
       },
       {
         "command": "java.open.formatter.settings",
-        "title": "Open Java Formatter Settings",
+        "title": "%java.open.formatter.settings%",
         "category": "Java"
       },
       {
         "command": "java.clean.workspace",
-        "title": "Clean Java Language Server Workspace",
+        "title": "%java.clean.workspace%",
         "category": "Java"
       },
       {
         "command": "java.project.updateSourceAttachment",
-        "title": "Attach Source",
+        "title": "%java.project.updateSourceAttachment%",
         "category": "Java"
       },
       {
         "command": "java.project.addToSourcePath",
-        "title": "Add Folder to Java Source Path",
+        "title": "%java.project.addToSourcePath%",
         "category": "Java"
       },
       {
         "command": "java.project.removeFromSourcePath",
-        "title": "Remove Folder from Java Source Path",
+        "title": "%java.project.removeFromSourcePath%",
         "category": "Java"
       },
       {
         "command": "java.project.listSourcePaths",
-        "title": "List All Java Source Paths",
+        "title": "%java.project.listSourcePaths%",
         "category": "Java"
       },
       {
         "command": "java.show.server.task.status",
-        "title": "Show Build Job Status",
+        "title": "%java.show.server.task.status%",
         "category": "Java"
       },
       {
         "command": "java.action.navigateToSuperImplementation",
-        "title": "Go to Super Implementation",
+        "title": "%java.action.navigateToSuperImplementation%",
         "category": "Java"
       },
       {
         "command": "java.action.showTypeHierarchy",
-        "title": "Show Type Hierarchy",
+        "title": "%java.action.showTypeHierarchy%",
         "category": "Java"
       },
       {
         "command": "java.action.showClassHierarchy",
-        "title": "Show Class Hierarchy",
+        "title": "%java.action.showClassHierarchy%",
         "icon": "$(type-hierarchy)",
         "enablement": "typeHierarchyDirection != both && typeHierarchySymbolKind != 10",
         "category": "Java"
       },
       {
         "command": "java.action.showSupertypeHierarchy",
-        "title": "Show Supertype Hierarchy",
+        "title": "%java.action.showSupertypeHierarchy%",
         "icon": "$(type-hierarchy-super)",
         "enablement": "typeHierarchyDirection != parents",
         "category": "Java"
       },
       {
         "command": "java.action.showSubtypeHierarchy",
-        "title": "Show Subtype Hierarchy",
+        "title": "%java.action.showSubtypeHierarchy%",
         "icon": "$(type-hierarchy-sub)",
         "enablement": "typeHierarchyDirection != children",
         "category": "Java"
       },
       {
         "command": "java.action.changeBaseType",
-        "title": "Base on this Type",
+        "title": "%java.action.changeBaseType%",
         "category": "Java"
       }
     ],

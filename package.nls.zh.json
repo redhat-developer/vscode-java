@@ -1,0 +1,22 @@
+{
+	"java.server.mode.switch": "切换到标准模式",
+	"java.projectConfiguration.update": "更新项目",
+	"java.project.import": "将 Java 项目导入工作区",
+	"java.open.serverLog": "打开 Java 语言服务器日志文件",
+	"java.open.clientLog": "打开 Java 插件日志文件",
+	"java.open.logs": "打开所有日志文件",
+	"java.workspace.compile": "强制编译",
+	"java.open.formatter.settings": "打开 Java 格式设置",
+	"java.clean.workspace": "清理 Java 语言服务器工作区",
+	"java.project.updateSourceAttachment": "附加源代码",
+	"java.project.addToSourcePath": "将文件夹加入 Java 源代码路径",
+	"java.project.removeFromSourcePath": "将文件夹从 Java 源代码路径中删除",
+	"java.project.listSourcePaths": "列出所有 Java 源代码路径",
+	"java.show.server.task.status": "显示工作状态",
+	"java.action.navigateToSuperImplementation": "转到父类实现",
+	"java.action.showTypeHierarchy": "显示类型层次结构",
+	"java.action.showClassHierarchy": "显示类的继承关系",
+	"java.action.showSupertypeHierarchy": "显示父类层次结构",
+	"java.action.showSubtypeHierarchy": "显示子类层次结构",
+	"java.action.changeBaseType": "基于此类型"
+}
