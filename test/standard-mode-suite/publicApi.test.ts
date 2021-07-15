@@ -9,6 +9,7 @@ import * as fse from 'fs-extra';
 import { getJavaConfiguration } from '../../src/utils';
 import { Commands } from '../../src/commands';
 import { constants } from '../common';
+import { env } from 'process';
 
 const pomPath: string = path.join(constants.projectFsPath, 'pom.xml');
 const gradleTestFolder: string = path.join(constants.projectFsPath, 'testGradle');
@@ -97,6 +98,10 @@ suite('Public APIs - Standard', () => {
 	});
 
 	test('onDidClasspathUpdate should work', async function () {
+		if (env['SKIP_CLASSPATH_TEST'] === 'true') {
+			console.log('Skipping "onDidClasspathUpdate should work"');
+			return;
+		}
 		const pomContent: string = await fse.readFile(pomPath, 'utf-8');
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
 

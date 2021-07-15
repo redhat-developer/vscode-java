@@ -1,0 +1,42 @@
+name: pr-verify
+
+on: [push, pull_request]
+
+jobs:
+  pr-verify-job:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    steps:
+      - name: Check Out Code
+        uses: actions/checkout@v2
+      - name: Set Up NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: '12.22.1'
+      - name: Set Up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - run: npm install -g typescript vsce
+      - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
+      - run: mkdir server && tar -xvzf jdt-language-server-latest.tar.gz -C ./server && rm jdt-language-server-latest.tar.gz
+      - run: npm install
+      - run: npm run compile
+      - run: npm run vscode:prepublish
+      - run: vsce package
+      - run: ls -ll java-*vsix
+      - run: npm run tslint
+      - name: Run Tests
+        if: runner.os == 'Linux'
+        env:
+          SKIP_COMMANDS_TEST: true
+        run: $(echo "xvfb-run --auto-servernum") npm run test --silent
+      - name: Run Tests
+        if: runner.os != 'Linux'
+        env:
+          SKIP_COMMANDS_TEST: true
+          SKIP_CLASSPATH_TEST: true
+        run: npm run test --silent
