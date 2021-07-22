@@ -131,50 +131,24 @@ export class ActivationProgressNotification {
 			return;
 		}
 		const isProgressReportEnabled: boolean = getJavaConfiguration().get("progressReports.enabled");
-		const title = isProgressReportEnabled ? "Importing Projects" : "Importing Projects...";
+		const title = isProgressReportEnabled ? "Opening Java Projects" : "Opening Java Projects...";
 		window.withProgress({
 			location: ProgressLocation.Notification,
 			title,
 			cancellable: false,
 		}, (progress: Progress<{ message?: string; increment?: number }>) => {
 			return new Promise<void>((resolve) => {
-				this.disposables.push(
-					serverTasks.onDidUpdateServerTask(tasks => {
-						let taskToShow: ProgressReport | undefined = tasks.find((task) => {
-							if (task.id === this.lastJobId) {
-								return task;
-							}
-						});
-						if (!taskToShow || taskToShow.complete) {
-							taskToShow = tasks.find((task) => {
-								if (!task.complete && task.task) {
-									return task;
-								}
-							});
-						}
-						if (!taskToShow) {
-							return;
-						}
-						this.lastJobId = taskToShow.id;
-						let message: string = `([details](command:${Commands.SHOW_SERVER_TASK_STATUS})) ${taskToShow.task}`;
-						if (taskToShow.subTask) {
-							message += " - " + taskToShow.subTask;
-						}
-						message = message.trim();
-						if (!message.endsWith("...")) {
-							message += "...";
-						}
-						progress.report({
-							message
-						});
-					}),
-					this.onHide(() => {
-						for (const disposable of this.disposables) {
-							disposable.dispose();
-						}
-						return resolve();
-					}),
-				);
+				if (isProgressReportEnabled) {
+					progress.report({
+						message: `[check details](command:${Commands.SHOW_SERVER_TASK_STATUS})`
+					});
+				}
+				this.onHide(() => {
+					for (const disposable of this.disposables) {
+						disposable.dispose();
+					}
+					return resolve();
+				});
 			});
 		});
 	}
