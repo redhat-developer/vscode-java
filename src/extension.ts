@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, Selection, Position, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
@@ -14,7 +14,7 @@ import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
 import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
-import { onConfigurationChange, getJavaServerMode, ServerMode } from './settings';
+import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
@@ -309,7 +309,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 
 				if (choice === "Yes") {
-					startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+					await startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
 				}
 			});
 
@@ -348,7 +348,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			}
 
 			if (requireStandardServer) {
-				startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+				await startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
 			}
 
 			const onDidGrantWorkspaceTrust = (workspace as any).onDidGrantWorkspaceTrust;
@@ -375,10 +375,16 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	});
 }
 
-function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
+async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
 	if (standardClient.getClientStatus() !== ClientStatus.Uninitialized) {
 		return;
 	}
+
+	const checkConflicts: boolean = await ensureNoBuildToolConflicts(context, clientOptions);
+	if (!checkConflicts) {
+		return;
+	}
+
 	if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
 		// Before standard server is ready, we are in hybrid.
 		apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
@@ -407,6 +413,74 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 	}
 
 	return false;
+}
+
+async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptions: LanguageClientOptions): Promise<boolean> {
+	const isMavenEnabled: boolean = getJavaConfiguration().get<boolean>("import.maven.enabled");
+	const isGradleEnabled: boolean = getJavaConfiguration().get<boolean>("import.gradle.enabled");
+	if (isMavenEnabled && isGradleEnabled) {
+		let activeBuildTool: string | undefined = context.workspaceState.get(ACTIVE_BUILD_TOOL_STATE);
+		if (!activeBuildTool) {
+			if (!await hasBuildToolConflicts()) {
+				return true;
+			}
+			activeBuildTool = await window.showInformationMessage("Build tools conflicts are detected in workspace, which one would you like to use?", "Use Maven", "Use Gradle");
+		}
+
+		if (!activeBuildTool) {
+			return false; // user cancels
+		} else if (activeBuildTool.toLocaleLowerCase().includes("maven")) {
+			// Here we do not persist it in the settings to avoid generating/updating files in user's workspace
+			// Later if user want to change the active build tool, just directly set the related settings.
+			clientOptions.initializationOptions.settings.java.import.gradle.enabled = false;
+			context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "maven");
+		} else if (activeBuildTool.toLocaleLowerCase().includes("gradle")) {
+			clientOptions.initializationOptions.settings.java.import.maven.enabled = false;
+			context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
+		} else {
+			throw new Error ("Unknown build tool: " + activeBuildTool); // unreachable
+		}
+	}
+
+	return true;
+}
+
+async function hasBuildToolConflicts(): Promise<boolean> {
+	const projectConfigurationUris: Uri[] = await getBuildFilesInWorkspace();
+	const projectConfigurationFsPaths: string[] = projectConfigurationUris.map((uri) => uri.fsPath);
+	const eclipseDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, [], ".project");
+	// ignore the folders that already has .project file (already imported before)
+	const gradleDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle");
+	const mavenDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, "pom.xml");
+	return gradleDirectories.some((gradleDir) => {
+		return mavenDirectories.includes(gradleDir);
+	});
+}
+
+async function getBuildFilesInWorkspace(): Promise<Uri[]> {
+	const buildFiles: Uri[] = [];
+	const inclusionPatterns: string[] = getBuildFilePatterns();
+	inclusionPatterns.push("**/.project");
+	const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
+	if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0) {
+		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null /*force not use default exclusion*/));
+	}
+
+	const inclusionBlob: string = convertToGlob(inclusionPatterns);
+	const exclusionBlob: string = getExclusionBlob();
+	if (inclusionBlob) {
+		buildFiles.push(...await workspace.findFiles(inclusionBlob, exclusionBlob));
+	}
+
+	return buildFiles;
+}
+
+function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], fileName: string): string[] {
+	return inclusions.filter((fsPath) => fsPath.endsWith(fileName)).map((fsPath) => {
+		return path.dirname(fsPath);
+	}).filter((inclusion) => {
+		return !exclusions.includes(inclusion);
+	});
 }
 
 async function promptUserForStandardServer(config: WorkspaceConfiguration): Promise<boolean> {

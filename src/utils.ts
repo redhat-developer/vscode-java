@@ -55,7 +55,7 @@ export function getBuildFilePatterns(): string[] {
 		patterns.push("**/pom.xml");
 	}
 	if (isGradleImporterEnabled) {
-		patterns.push("**/build.gradle");
+		patterns.push("**/*.gradle");
 	}
 
 	return patterns;

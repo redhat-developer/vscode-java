@@ -236,3 +236,5 @@ function unregisterGradleWrapperPromptDialog(sha256: string) {
 		gradleWrapperPromptDialogs.splice(index, 1);
 	}
 }
+
+export const ACTIVE_BUILD_TOOL_STATE: string = "java.activeBuildTool";
