@@ -718,10 +718,12 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 	});
 }
 
-export function applyWorkspaceEdit(obj, languageClient) {
+export function applyWorkspaceEdit(obj, languageClient): Thenable<boolean> {
 	const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
 	if (edit) {
-		workspace.applyEdit(edit);
+		return workspace.applyEdit(edit);
+	} else {
+		return Promise.resolve(true);
 	}
 }
 

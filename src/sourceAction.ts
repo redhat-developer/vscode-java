@@ -62,7 +62,7 @@ function registerOverrideMethodsCommand(languageClient: LanguageClient, context:
             context: params,
             overridableMethods: selectedItems.map((item) => item.originalMethod),
         });
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -105,14 +105,14 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: 
             fields: selectedFields.map((item) => item.originalField),
             regenerate
         });
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
 function registerOrganizeImportsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
     context.subscriptions.push(commands.registerCommand(Commands.ORGANIZE_IMPORTS, async (params: CodeActionParams) => {
         const workspaceEdit = await languageClient.sendRequest(OrganizeImportsRequest.type, params);
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -203,7 +203,7 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             context: params,
             fields,
         });
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -240,7 +240,7 @@ function registerGenerateAccessorsCommand(languageClient: LanguageClient, contex
             context: params,
             accessors: selectedAccessors.map((item) => item.originalField),
         });
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -294,7 +294,7 @@ function registerGenerateConstructorsCommand(languageClient: LanguageClient, con
             constructors: selectedConstructors,
             fields: selectedFields,
         });
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -355,6 +355,6 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
             context: params,
             delegateEntries,
         });
-        applyWorkspaceEdit(workspaceEdit, languageClient);
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
