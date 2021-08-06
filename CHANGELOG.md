@@ -1,6 +1,7 @@
 # Change Log
 
 ## 0.81.0
+* enhancement - Show job status via progress notification on start. See [#2022](https://github.com/redhat-developer/vscode-java/pull/2022)
 * other - Change the default value of the setting `java.project.importOnFirstTimeStartup` to `automatic`. See [#2016](https://github.com/redhat-developer/vscode-java/pull/2016)
 
 ## 0.80.0 (June 30th, 2021)

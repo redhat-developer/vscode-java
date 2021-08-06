@@ -1,19 +1,21 @@
-import { tasks, Task, TaskScope, Pseudoterminal, CustomExecution, TaskExecution, TaskRevealKind, TaskPanelKind, EventEmitter, Event, TerminalDimensions } from "vscode";
-import * as vscode from "vscode";
+import { tasks, Task, TaskScope, Pseudoterminal, CustomExecution, TaskExecution, TaskRevealKind, TaskPanelKind, EventEmitter, Event, TerminalDimensions, window, ProgressLocation, Progress } from "vscode";
 import { serverTasks } from "./serverTasks";
 import { Disposable } from "vscode-languageclient";
 import { ProgressReport } from "./protocol";
+import { Commands } from "./commands";
+import { getJavaConfiguration } from "./utils";
 
 const JAVA_SERVER_TASK_PRESENTER_TASK_NAME = "Java Build Status";
 
 export namespace serverTaskPresenter {
 	export async function presentServerTaskView() {
 		const execution = await getPresenterTaskExecution();
-		const terminals = vscode.window.terminals;
+		const terminals = window.terminals;
 		const presenterTerminals = terminals.filter(terminal => terminal.name.indexOf(execution.task.name) >= 0);
 		if (presenterTerminals.length > 0) {
 			presenterTerminals[0].show();
 		}
+		activationProgressNotification.hide();
 	}
 }
 
@@ -57,7 +59,7 @@ async function killExistingExecutions() {
 	execs.forEach(exec => exec.terminate());
 	await new Promise(resolve => setTimeout(resolve, 0));
 
-	let terminals = vscode.window.terminals;
+	let terminals = window.terminals;
 	terminals = terminals.filter(terminal => terminal.name.indexOf(JAVA_SERVER_TASK_PRESENTER_TASK_NAME) >= 0);
 	terminals.forEach(terminal => terminal.dispose());
 	await new Promise(resolve => setTimeout(resolve, 0));
@@ -112,3 +114,48 @@ class ServerTaskTerminal implements Pseudoterminal {
 		serverTasks.suggestTaskEntrySize(dimensions.rows - 1);
 	}
 }
+
+export class ActivationProgressNotification {
+	private hideEmitter = new EventEmitter<void>();
+	private onHide = this.hideEmitter.event;
+	private disposables: Disposable[] = [];
+	private lastJobId: string;
+
+	public showProgress() {
+		const showBuildStatusEnabled = getJavaConfiguration().get("showBuildStatusOnStart.enabled");
+		if (typeof showBuildStatusEnabled === "string" || showBuildStatusEnabled instanceof String) {
+			if (showBuildStatusEnabled !== "notification") {
+				return;
+			}
+		} else if (!showBuildStatusEnabled) {
+			return;
+		}
+		const isProgressReportEnabled: boolean = getJavaConfiguration().get("progressReports.enabled");
+		const title = isProgressReportEnabled ? "Opening Java Projects" : "Opening Java Projects...";
+		window.withProgress({
+			location: ProgressLocation.Notification,
+			title,
+			cancellable: false,
+		}, (progress: Progress<{ message?: string; increment?: number }>) => {
+			return new Promise<void>((resolve) => {
+				if (isProgressReportEnabled) {
+					progress.report({
+						message: `[check details](command:${Commands.SHOW_SERVER_TASK_STATUS})`
+					});
+				}
+				this.onHide(() => {
+					for (const disposable of this.disposables) {
+						disposable.dispose();
+					}
+					return resolve();
+				});
+			});
+		});
+	}
+
+	public hide() {
+		this.hideEmitter.fire();
+	}
+}
+
+export const activationProgressNotification = new ActivationProgressNotification();

@@ -605,9 +605,23 @@
           "scope": "window"
         },
         "java.showBuildStatusOnStart.enabled": {
-          "type": "boolean",
+          "anyOf": [
+            {
+              "enum": [
+                "notification",
+                "terminal",
+                "off"
+              ],
+              "enumDescriptions": [
+                "Show the build status via progress notification on start",
+                "Show the build status via terminal on start",
+                "Do not show any build status on start"
+              ]
+            },
+            "boolean"
+          ],
           "description": "Automatically show build status on startup.",
-          "default": false,
+          "default": "notification",
           "scope": "window"
         },
         "java.configuration.runtimes": {
