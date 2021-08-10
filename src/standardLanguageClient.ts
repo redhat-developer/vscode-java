@@ -446,9 +446,14 @@ export class StandardLanguageClient {
 	}
 }
 
-function showImportFinishNotification(context: ExtensionContext) {
-	const showNotification: boolean | undefined = context.globalState.get<boolean>("java.neverShowImportFinishNotification");
-	if (!showNotification) {
+async function showImportFinishNotification(context: ExtensionContext) {
+	const neverShow: boolean | undefined = context.globalState.get<boolean>("java.neverShowImportFinishNotification");
+	if (!neverShow) {
+		const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+		if (projectUris.length === 0 || (projectUris.length === 1 && projectUris[0].includes("jdt.ls-java-project"))) {
+			return;
+		}
+
 		const options = ["Don't show again"];
 		if (extensions.getExtension("vscjava.vscode-java-dependency")) {
 			options.unshift("View projects");

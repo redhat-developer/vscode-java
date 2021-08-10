@@ -1,4 +1,4 @@
-import { tasks, Task, TaskScope, Pseudoterminal, CustomExecution, TaskExecution, TaskRevealKind, TaskPanelKind, EventEmitter, Event, TerminalDimensions, window, ProgressLocation, Progress } from "vscode";
+import { tasks, Task, TaskScope, Pseudoterminal, CustomExecution, TaskExecution, TaskRevealKind, TaskPanelKind, EventEmitter, Event, TerminalDimensions, window, ProgressLocation, Progress, workspace } from "vscode";
 import { serverTasks } from "./serverTasks";
 import { Disposable } from "vscode-languageclient";
 import { ProgressReport } from "./protocol";
@@ -119,9 +119,11 @@ export class ActivationProgressNotification {
 	private hideEmitter = new EventEmitter<void>();
 	private onHide = this.hideEmitter.event;
 	private disposables: Disposable[] = [];
-	private lastJobId: string;
 
 	public showProgress() {
+		if (!workspace.workspaceFolders) {
+			return;
+		}
 		const showBuildStatusEnabled = getJavaConfiguration().get("showBuildStatusOnStart.enabled");
 		if (typeof showBuildStatusEnabled === "string" || showBuildStatusEnabled instanceof String) {
 			if (showBuildStatusEnabled !== "notification") {
