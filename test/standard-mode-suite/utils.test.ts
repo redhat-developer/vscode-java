@@ -37,7 +37,7 @@ suite('Utils Test', () => {
 
 		const result: string[] = getBuildFilePatterns();
 
-		assert.deepEqual(result, ["**/pom.xml", "**/build.gradle"]);
+		assert.deepEqual(result, ["**/pom.xml", "**/*.gradle"]);
 	});
 
 	test('getBuildFilePatterns() - no importers is enabled', async function () {

@@ -9,6 +9,7 @@ const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.set
 export const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
 export const IS_WORKSPACE_VMARGS_ALLOWED = "java.ls.isVmargsAllowed";
 const extensionName = 'Language Support for Java';
+export const ACTIVE_BUILD_TOOL_STATE = "java.activeBuildTool";
 
 const changeItem = {
 	global: 'Exclude globally',
