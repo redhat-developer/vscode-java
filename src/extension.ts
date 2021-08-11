@@ -424,7 +424,7 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptio
 			if (!await hasBuildToolConflicts()) {
 				return true;
 			}
-			activeBuildTool = await window.showInformationMessage("Build tools conflicts are detected in workspace, which one would you like to use?", "Use Maven", "Use Gradle");
+			activeBuildTool = await window.showInformationMessage("Build tool conflicts are detected in workspace. Which one would you like to use?", "Use Maven", "Use Gradle");
 		}
 
 		if (!activeBuildTool) {
@@ -459,14 +459,16 @@ async function hasBuildToolConflicts(): Promise<boolean> {
 
 async function getBuildFilesInWorkspace(): Promise<Uri[]> {
 	const buildFiles: Uri[] = [];
-	const inclusionPatterns: string[] = getBuildFilePatterns();
-	inclusionPatterns.push("**/.project");
-	const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
-	if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0) {
-		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null /*force not use default exclusion*/));
+	const inclusionFilePatterns: string[] = getBuildFilePatterns();
+	inclusionFilePatterns.push("**/.project");
+	const inclusionFolderPatterns: string[] = getInclusionPatternsFromNegatedExclusion();
+	// Since VS Code API does not support put negated exclusion pattern in findFiles(),
+	// here we first parse the negated exclusion to inclusion and do the search.
+	if (inclusionFilePatterns.length > 0 && inclusionFolderPatterns.length > 0) {
+		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionFilePatterns, inclusionFolderPatterns), null /*force not use default exclusion*/));
 	}
 
-	const inclusionBlob: string = convertToGlob(inclusionPatterns);
+	const inclusionBlob: string = convertToGlob(inclusionFilePatterns);
 	const exclusionBlob: string = getExclusionBlob();
 	if (inclusionBlob) {
 		buildFiles.push(...await workspace.findFiles(inclusionBlob, exclusionBlob));
