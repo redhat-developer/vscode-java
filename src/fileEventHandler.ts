@@ -2,7 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget, Disposable } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget, Disposable, Event, SymbolKind, DocumentSymbol, Selection, Range, TextEditor, TextEditorRevealType } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -10,6 +10,7 @@ import { WillRenameFiles } from './protocol';
 import { getJavaConfiguration } from './utils';
 import { userInfo } from 'os';
 import * as stringInterpolate from 'fmtr';
+import { getDocumentSymbolsProvider } from './documentSymbols';
 
 let serverReady: boolean = false;
 
@@ -24,6 +25,12 @@ export function registerFileEventHandlers(client: LanguageClient, context: Exten
 
     if (workspace.onWillRenameFiles) {
         context.subscriptions.push(workspace.onWillRenameFiles(getWillRenameHandler(client)));
+    }
+
+    if (workspace.onDidOpenTextDocument) {
+        
+        workspace.onDidChangeTextDocument
+        context.subscriptions.push(window.onDidChangeActiveTextEditor(handleTextDocumentOpen))
     }
 }
 
@@ -251,4 +258,48 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
     }
 
     return javaVersion < targetVersion;
+}
+
+// @types/vscode are too old: SymbolKind.Class = 4
+const SYMBOL_KIND_CLASS = 5;
+const SYMBOL_KIND_ENUM = 10;
+const SYMBOL_KIND_INTERFACE = 11;
+const TOP_LEVEL_KINDS = [SYMBOL_KIND_CLASS, SYMBOL_KIND_ENUM, SYMBOL_KIND_INTERFACE];
+
+function isCursorAtBeginningOfDocument(selection: Selection) {
+    return selection.start.line == 0 && selection.start.character == 0
+}
+
+async function handleTextDocumentOpen(textEditor: TextEditor) {
+    const uri = textEditor.document.uri;
+    if (uri.fsPath.endsWith(".java") || uri.fsPath.endsWith(".class")) {
+        
+        if (isCursorAtBeginningOfDocument(textEditor.selection)) {
+            console.log("Cursor at beginning of document. Loading document symbols to move cursor on main element...")
+            const documentSymbols = await getDocumentSymbolsProvider()({
+                textDocument: {
+                    uri: textEditor.document.uri.toString()
+                }
+            });
+            if (documentSymbols != null) {
+                for (let i = 0; i < documentSymbols.length; i++) {
+                    const documentSymbol = documentSymbols[i];
+                    if (TOP_LEVEL_KINDS.includes(documentSymbol.kind) && "selectionRange" in documentSymbol) {
+                        console.log("Current position ", textEditor.selection.active);
+                        if (isCursorAtBeginningOfDocument(textEditor.selection)) {
+                            const newPosition = new Position(documentSymbol.selectionRange.start.line, documentSymbol.selectionRange.start.character);
+                            console.log("Cursor still at beginning of document. Moving cursor to", newPosition);
+                            textEditor.selection = new Selection(newPosition, newPosition);
+                            textEditor.revealRange(new Range(newPosition, newPosition), TextEditorRevealType.InCenter);
+                            break;
+                        } else {
+                            console.log("Cursor moved in the meantime. Not moving cursor.")
+                        }
+                    }
+                }
+            } else {
+                console.log("Received no response to move cursor on main element...")
+            }
+        }
+    }
 }
