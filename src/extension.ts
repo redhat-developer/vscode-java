@@ -380,9 +380,9 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		return;
 	}
 
-	const checkConflicts: boolean = await ensureNoBuildToolConflicts(context, clientOptions);
-	if (!checkConflicts) {
-		return;
+	const projectConfigurations: Uri[] | undefined = await collectingProjectConfigurations(context);
+	if (projectConfigurations) {
+		clientOptions.initializationOptions.projectConfigurations = projectConfigurations.map((config) => config.toString());
 	}
 
 	if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
@@ -415,38 +415,48 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 	return false;
 }
 
-async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptions: LanguageClientOptions): Promise<boolean> {
+async function collectingProjectConfigurations(context: ExtensionContext): Promise<Uri[] | undefined> {
+	try {
+		const projectConfigurations: Uri[] = await ensureNoBuildToolConflicts(context, await getBuildFilesInWorkspace());
+		return filterOutProjectFiles(projectConfigurations);
+	} catch (e) {
+		return undefined;
+	}
+}
+
+async function ensureNoBuildToolConflicts(context: ExtensionContext, projectConfigurations: Uri[]): Promise<Uri[]> {
 	const isMavenEnabled: boolean = getJavaConfiguration().get<boolean>("import.maven.enabled");
 	const isGradleEnabled: boolean = getJavaConfiguration().get<boolean>("import.gradle.enabled");
 	if (isMavenEnabled && isGradleEnabled) {
 		let activeBuildTool: string | undefined = context.workspaceState.get(ACTIVE_BUILD_TOOL_STATE);
 		if (!activeBuildTool) {
-			if (!await hasBuildToolConflicts()) {
-				return true;
+			if (!await hasBuildToolConflicts(projectConfigurations)) {
+				return projectConfigurations;
 			}
 			activeBuildTool = await window.showInformationMessage("Build tool conflicts are detected in workspace. Which one would you like to use?", "Use Maven", "Use Gradle");
 		}
 
 		if (!activeBuildTool) {
-			return false; // user cancels
+			throw new Error("User cancelled build tool selection.");
 		} else if (activeBuildTool.toLocaleLowerCase().includes("maven")) {
-			// Here we do not persist it in the settings to avoid generating/updating files in user's workspace
-			// Later if user want to change the active build tool, just directly set the related settings.
-			clientOptions.initializationOptions.settings.java.import.gradle.enabled = false;
-			context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "maven");
+			await context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "maven");
+			return projectConfigurations.filter((uri) => {
+				return !uri.fsPath.endsWith(".gradle");
+			});
 		} else if (activeBuildTool.toLocaleLowerCase().includes("gradle")) {
-			clientOptions.initializationOptions.settings.java.import.maven.enabled = false;
-			context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
+			await context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
+			return projectConfigurations.filter((uri) => {
+				return !uri.fsPath.endsWith("pom.xml");
+			});
 		} else {
 			throw new Error ("Unknown build tool: " + activeBuildTool); // unreachable
 		}
 	}
 
-	return true;
+	return projectConfigurations;
 }
 
-async function hasBuildToolConflicts(): Promise<boolean> {
-	const projectConfigurationUris: Uri[] = await getBuildFilesInWorkspace();
+async function hasBuildToolConflicts(projectConfigurationUris: Uri[]): Promise<boolean> {
 	const projectConfigurationFsPaths: string[] = projectConfigurationUris.map((uri) => uri.fsPath);
 	const eclipseDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, [], ".project");
 	// ignore the folders that already has .project file (already imported before)
@@ -457,6 +467,27 @@ async function hasBuildToolConflicts(): Promise<boolean> {
 	return gradleDirectories.some((gradleDir) => {
 		return mavenDirectories.includes(gradleDir);
 	});
+}
+
+function filterOutProjectFiles(projectConfigurations: Uri[]): Uri[] {
+	// find all the directories containing pom.xml or *.gradle
+	const buildToolDirectories: Set<string> = new Set();
+	for (const projectConfig of projectConfigurations) {
+		if (projectConfig.fsPath.endsWith("pom.xml") || projectConfig.fsPath.endsWith(".gradle")) {
+			buildToolDirectories.add(path.dirname(projectConfig.fsPath));
+		}
+	}
+
+	// filter out those .project files whose containing directory is in BuildToolDirectories
+	const filteredConfigurations: Uri[] = [];
+	for (const projectConfig of projectConfigurations) {
+		const filePath: string = projectConfig.fsPath;
+		if (filePath.endsWith(".project") && buildToolDirectories.has(path.dirname(filePath))) {
+			continue;
+		}
+		filteredConfigurations.push(projectConfig);
+	}
+	return filteredConfigurations;
 }
 
 async function getBuildFilesInWorkspace(): Promise<Uri[]> {
