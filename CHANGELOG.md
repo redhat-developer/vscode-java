@@ -1,8 +1,25 @@
 # Change Log
 
-## 0.81.0
-* enhancement - Show job status via progress notification on start. See [#2022](https://github.com/redhat-developer/vscode-java/pull/2022)
-* other - Change the default value of the setting `java.project.importOnFirstTimeStartup` to `automatic`. See [#2016](https://github.com/redhat-developer/vscode-java/pull/2016)
+## 0.81.0 (August 17th, 2021)
+ * enhancement - 'Create method' code action for method reference. See [JLS#1464](https://github.com/eclipse/eclipse.jdt.ls/issues/1464).
+ * enhancement - Show job status via progress notification on start. See [#2022](https://github.com/redhat-developer/vscode-java/pull/2022)
+ * enhancement - New setting entry to choose project type (Maven or Gradle) when ambiguous. See [#600](https://github.com/redhat-developer/vscode-java/issues/600).
+ * performance - Avoid displaying (expensive) constant values in completion items. See [JLS#1835](https://github.com/eclipse/eclipse.jdt.ls/issues/1835).
+ * performance - toURI is expensive on Windows for completions. See [JLS#1831](https://github.com/eclipse/eclipse.jdt.ls/issues/1831).
+ * bug fix - Go to definition doesn't compute/find results on methods inside an anonymous class. See [JLS#1813](https://github.com/eclipse/eclipse.jdt.ls/issues/1813).
+ * bug fix - quickfix not available where cursor lands by default on annotations. See [#1992](https://github.com/redhat-developer/vscode-java/issues/1992).
+ * bug fix - Fix content assist for multiline strings. See [#1811](https://github.com/redhat-developer/vscode-java/issues/1811).
+ * bug fix - Language server freezes when importing Maven project. See [#2020](https://github.com/redhat-developer/vscode-java/issues/2020).
+ * bug fix - Suggest correct import quick fix in anonymous classes. See [#2034](https://github.com/redhat-developer/vscode-java/issues/2034).
+ * bug fix - Organize imports generates duplicate static import statement. See [#2012](https://github.com/redhat-developer/vscode-java/issues/2012).
+ * bug fix - Do not show the import notification when no projects available. See [#2056](https://github.com/redhat-developer/vscode-java/pull/2056).
+ * bug fix - Make commands wait for applyEdit. See [#2042](https://github.com/redhat-developer/vscode-java/pull/2042).
+ * build - Move pull request verification job to GitHub Actions. See [#2031](https://github.com/redhat-developer/vscode-java/pull/2031).
+ * debt - Update eclipse-jarsigner-plugin to 1.3.2. See [JLS#1829](https://github.com/eclipse/eclipse.jdt.ls/pull/1829).
+ * debt - Language server distro contains 2 Guava jars. See [JLS#1706](https://github.com/eclipse/eclipse.jdt.ls/issues/1706).
+ * other - Change the default value of the setting `java.project.importOnFirstTimeStartup` to `automatic`. See [#2014](https://github.com/redhat-developer/vscode-java/issues/2014)
+ * other - Disable Workspace Trust in test suite runtime. See [#2026](https://github.com/redhat-developer/vscode-java/pull/2026).
+ * other - Typo in notcoveredexecution.md. See [#2033](https://github.com/redhat-developer/vscode-java/pull/2033).
 
 ## 0.80.0 (June 30th, 2021)
  * enhancement - Allow folding `static` blocks. See [JLS#1777](https://github.com/eclipse/eclipse.jdt.ls/issues/1777).
