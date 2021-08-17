@@ -390,7 +390,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
 		apiManager.fireDidServerModeChange(ServerMode.HYBRID);
 	}
-	standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
+	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 	standardClient.start();
 	serverStatusBarProvider.showStandardStatus();
 }
