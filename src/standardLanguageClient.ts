@@ -13,6 +13,7 @@ import { onExtensionChange, collectBuildFilePattern } from "./plugin";
 import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
 import { RequirementsData } from "./requirements";
 import * as net from 'net';
+import * as fse from 'fs-extra';
 import * as path from 'path';
 import { getJavaConfiguration } from "./utils";
 import { logger } from "./log";
@@ -40,10 +41,12 @@ export class StandardLanguageClient {
 	private languageClient: LanguageClient;
 	private status: ClientStatus = ClientStatus.Uninitialized;
 
-	public initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve: (value: ExtensionAPI) => void): void {
+	public async initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve: (value: ExtensionAPI) => void): Promise<void> {
 		if (this.status !== ClientStatus.Uninitialized) {
 			return;
 		}
+
+		const hasImported: boolean = await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"));
 
 		if (workspace.getConfiguration().get("java.showBuildStatusOnStart.enabled") === "terminal") {
 			commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
@@ -97,7 +100,9 @@ export class StandardLanguageClient {
 						apiManager.updateServerMode(ServerMode.STANDARD);
 						apiManager.fireDidServerModeChange(ServerMode.STANDARD);
 						activationProgressNotification.hide();
-						showImportFinishNotification(context);
+						if (!hasImported) {
+							showImportFinishNotification(context);
+						}
 						break;
 					case 'Started':
 						this.status = ClientStatus.Started;
