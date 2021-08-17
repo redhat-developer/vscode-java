@@ -39,6 +39,9 @@
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:build.gradle",
+    "workspaceContains:settings.gradle",
+    "workspaceContains:build.gradle.kts",
+    "workspaceContains:settings.gradle.kts",
     "workspaceContains:.classpath",
     "onCommand:_java.templateVariables"
   ],
@@ -46,7 +49,7 @@
   "contributes": {
     "javaBuildFilePatterns": [
       "^pom.xml$",
-      ".*\\.gradle$"
+      ".*\\.gradle(.kts)?$"
     ],
     "semanticTokenTypes": [
       {
@@ -942,7 +945,7 @@
       "explorer/context": [
         {
           "command": "java.projectConfiguration.update",
-          "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
+          "when": "resourceFilename =~ /(.*\\.gradle.*)|(pom.xml)$/",
           "group": "1_javaactions"
         },
         {
@@ -964,7 +967,7 @@
         },
         {
           "command": "java.projectConfiguration.update",
-          "when": "resourceFilename =~ /(.*\\.gradle)|(pom.xml)$/",
+          "when": "resourceFilename =~ /(.*\\.gradle.*)|(pom.xml)$/",
           "group": "1_javaactions"
         },
         {
