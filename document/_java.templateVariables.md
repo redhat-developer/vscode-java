@@ -9,6 +9,7 @@ Below are the predefined variables you could use in the template settings such a
 - `${time}` - current system time
 - `${year}` - current year
 - `${month}` - current month
+- `${shortmonth}` - short form representation of current month
 - `${day}` - current day of the month
 - `${hour}` - current hour
 - `${minute}` - current minute
