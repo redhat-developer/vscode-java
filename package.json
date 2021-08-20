@@ -48,8 +48,8 @@
   "main": "./dist/extension",
   "contributes": {
     "javaBuildFilePatterns": [
-      "^pom.xml$",
-      ".*\\.gradle(.kts)?$"
+      "^pom\\.xml$",
+      ".*\\.gradle(\\.kts)?$"
     ],
     "semanticTokenTypes": [
       {
@@ -945,7 +945,7 @@
       "explorer/context": [
         {
           "command": "java.projectConfiguration.update",
-          "when": "resourceFilename =~ /(.*\\.gradle.*)|(pom.xml)$/",
+          "when": "resourceFilename =~ /(.*\\.gradle)|(.*\\.gradle\\.kts)|(pom\\.xml)$/",
           "group": "1_javaactions"
         },
         {
@@ -967,7 +967,7 @@
         },
         {
           "command": "java.projectConfiguration.update",
-          "when": "resourceFilename =~ /(.*\\.gradle.*)|(pom.xml)$/",
+          "when": "resourceFilename =~ /(.*\\.gradle)|(.*\\.gradle\\.kts)|(pom\\.xml)$/",
           "group": "1_javaactions"
         },
         {
