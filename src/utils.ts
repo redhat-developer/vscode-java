@@ -56,6 +56,7 @@ export function getBuildFilePatterns(): string[] {
 	}
 	if (isGradleImporterEnabled) {
 		patterns.push("**/*.gradle");
+		patterns.push("**/*.gradle.kts");
 	}
 
 	return patterns;

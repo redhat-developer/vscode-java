@@ -16,7 +16,7 @@
 			"./bin/java.extend.jar"
 		],
 		"javaBuildFilePatterns": [
-			"^pom.xml$", ".*\\.gradle$"
+			"^pom.xml$", ".*\\.gradle(\\.kts)?$"
 		]
 	},
 	"extensionDependencies": [

@@ -121,7 +121,7 @@ suite('Java Language Extension - Standard', () => {
 		const result = plugin.collectBuildFilePattern(extensions);
 		assert(result.length === 2);
 		assert(result[0].endsWith("^pom.xml$"));
-		assert(result[1].endsWith(".*\\.gradle$"));
+		assert(result[1].endsWith(".*\\.gradle(\\.kts)?$"));
 	});
 
 	test('should collect java extensions', () => {
