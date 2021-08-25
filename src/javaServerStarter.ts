@@ -9,10 +9,20 @@ import { RequirementsData } from './requirements';
 import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag, isInWorkspaceFolder } from './settings';
 import { logger } from './log';
 import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } from './utils';
-import { workspace, ExtensionContext } from 'vscode';
+import { workspace, ExtensionContext, window } from 'vscode';
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
+
+/**
+ * Argument that tells the program where to generate the heap dump that is created when an OutOfMemoryError is raised and `HEAP_DUMP` has been passed
+ */
+ export const HEAP_DUMP_LOCATION = '-XX:HeapDumpPath=';
+
+ /**
+  * Argument that tells the program to generate a heap dump file when an OutOfMemoryError is raised
+  */
+ export const HEAP_DUMP = '-XX:+HeapDumpOnOutOfMemoryError';
 
 export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
@@ -95,6 +105,16 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 
 	parseVMargs(params, vmargs);
+
+	if (!isSyntaxServer) {
+		if (vmargs.indexOf(HEAP_DUMP) < 0) {
+			params.push(HEAP_DUMP);
+		}
+		if (vmargs.indexOf(HEAP_DUMP_LOCATION) < 0) {
+			params.push(`${HEAP_DUMP_LOCATION}${context.storageUri.fsPath}`);
+		}
+	}
+
 	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
 	// were deprecated in JDK 13 and will likely be removed in a future release."
 	// so only add -noverify for older versions

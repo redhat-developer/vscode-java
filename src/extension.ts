@@ -4,11 +4,11 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, Selection, CodeActionContext, Diagnostic } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
-import { prepareExecutable } from './javaServerStarter';
+import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
@@ -26,6 +26,7 @@ import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import * as chokidar from 'chokidar';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -76,6 +77,43 @@ export class ClientErrorHandler implements ErrorHandler {
 			return CloseAction.Restart;
 		}
 	}
+}
+
+/**
+ * Shows a message about the server crashing due to an out of memory issue
+ */
+async function showOOMMessage(): Promise<void> {
+	const CONFIGURE = 'Increase Memory ..';
+	const result = await window.showErrorMessage('The Java Language Server encountered an OutOfMemory error. Some language features may not work due to limited memory. ',
+		CONFIGURE);
+	if (result === CONFIGURE) {
+		let jvmArgs: string = getJavaConfiguration().get('jdt.ls.vmargs');
+		const results = MAX_HEAP_SIZE_EXTRACTOR.exec(jvmArgs);
+		if (results && results[0]) {
+			const maxMemArg: string = results[0];
+			const maxMemValue: number = Number(results[1]);
+			const newMaxMemArg: string = maxMemArg.replace(maxMemValue.toString(), (maxMemValue * 2).toString());
+			jvmArgs = jvmArgs.replace(maxMemArg, newMaxMemArg);
+			await workspace.getConfiguration().update("java.jdt.ls.vmargs", jvmArgs, ConfigurationTarget.Workspace);
+		}
+	}
+}
+
+const HEAP_DUMP_FOLDER_EXTRACTOR = new RegExp(`${HEAP_DUMP_LOCATION}(?:'([^']+)'|"([^"]+)"|([^\\s]+))`);
+const MAX_HEAP_SIZE_EXTRACTOR = new RegExp(`-Xmx([0-9]+)[kKmMgG]`);
+
+/**
+ * Returns the heap dump folder defined in the user's preferences, or undefined if the user does not set the heap dump folder
+ *
+ * @returns the heap dump folder defined in the user's preferences, or undefined if the user does not set the heap dump folder
+ */
+function getHeapDumpFolderFromSettings(): string {
+	const jvmArgs: string = getJavaConfiguration().get('jdt.ls.vmargs');
+	const results = HEAP_DUMP_FOLDER_EXTRACTOR.exec(jvmArgs);
+	if (!results || !results[0]) {
+		return undefined;
+	}
+	return results[1] || results[2] || results[3];
 }
 
 export class OutputInfoCollector implements OutputChannel {
@@ -133,6 +171,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	enableJavadocSymbols();
 
 	initializeRecommendation(context);
+
+	registerOutOfMemoryDetection(storagePath);
 
 	cleanJavaWorkspaceStorage();
 
@@ -928,6 +968,7 @@ function isPrefix(parentPath: string, childPath: string): boolean {
 	const relative = path.relative(parentPath, childPath);
 	return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
 }
+
 async function cleanJavaWorkspaceStorage() {
 	const configCacheLimit = getJavaConfiguration().get<number>("configuration.workspaceCacheLimit");
 
@@ -953,4 +994,19 @@ async function cleanJavaWorkspaceStorage() {
 			}
 		});
     }
+}
+
+function registerOutOfMemoryDetection(storagePath: string) {
+	const heapDumpFolder = getHeapDumpFolderFromSettings() || storagePath;
+	chokidar.watch(`${heapDumpFolder}/java_*.hprof`, { ignoreInitial: true }).on('add', path => {
+		// Only clean heap dumps that are generated in the default location.
+		// The default location is the extension global storage
+		// This means that if users change the folder where the heap dumps are placed,
+		// then they will be able to read the heap dumps,
+		// since they aren't immediately deleted.
+		if (heapDumpFolder === storagePath) {
+			fse.remove(path);
+		}
+		showOOMMessage();
+	});
 }
