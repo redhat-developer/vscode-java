@@ -441,7 +441,7 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, projectConf
 		} else if (activeBuildTool.toLocaleLowerCase().includes("maven")) {
 			await context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "maven");
 			return projectConfigurations.filter((uri) => {
-				return !uri.fsPath.endsWith(".gradle");
+				return !/.*\.gradle(\.kts)?$/.test(uri.fsPath);
 			});
 		} else if (activeBuildTool.toLocaleLowerCase().includes("gradle")) {
 			await context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
@@ -470,10 +470,10 @@ async function hasBuildToolConflicts(projectConfigurationUris: Uri[]): Promise<b
 }
 
 function filterOutProjectFiles(projectConfigurations: Uri[]): Uri[] {
-	// find all the directories containing pom.xml or *.gradle
+	// find all the directories containing pom.xml or *.gradle(.kts)
 	const buildToolDirectories: Set<string> = new Set();
 	for (const projectConfig of projectConfigurations) {
-		if (projectConfig.fsPath.endsWith("pom.xml") || projectConfig.fsPath.endsWith(".gradle")) {
+		if (projectConfig.fsPath.endsWith("pom.xml") || /.*\.gradle(\.kts)?$/.test(projectConfig.fsPath)) {
 			buildToolDirectories.add(path.dirname(projectConfig.fsPath));
 		}
 	}
