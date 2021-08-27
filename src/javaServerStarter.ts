@@ -6,7 +6,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient/node';
 import { RequirementsData } from './requirements';
-import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag } from './settings';
+import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag, isInWorkspaceFolder } from './settings';
 import { logger } from './log';
 import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } from './utils';
 import { workspace, ExtensionContext } from 'vscode';
@@ -65,11 +65,12 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 	let vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').workspaceValue;
 	if (vmargsCheck !== undefined) {
+		const isWorkspaceTrusted = (workspace as any).isTrusted; // keep compatibility for old engines < 1.56.0
 		const agentFlag = getJavaagentFlag(vmargsCheck);
-		if (agentFlag !== null) {
+		if (agentFlag !== null && (isWorkspaceTrusted === undefined || !isWorkspaceTrusted)) {
 			const keyVmargs = getKey(IS_WORKSPACE_VMARGS_ALLOWED, context.storagePath, vmargsCheck);
 			const key = context.globalState.get(keyVmargs);
-			if (key !== true) {
+			if (key !== true && (workspace.workspaceFolders && isInWorkspaceFolder(agentFlag, workspace.workspaceFolders))) {
 				vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').globalValue;
 			}
 		}

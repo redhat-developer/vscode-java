@@ -1,7 +1,7 @@
 'use strict';
 
 import * as path from 'path';
-import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable } from 'vscode';
+import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
 import { getJavaConfiguration } from './utils';
 
@@ -141,11 +141,12 @@ export async function checkJavaPreferences(context: ExtensionContext) {
 	}
 	const vmargs = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').workspaceValue;
 	if (vmargs !== undefined) {
+		const isWorkspaceTrusted = (workspace as any).isTrusted; // keep compatibility for old engines < 1.56.0
 		const agentFlag = getJavaagentFlag(vmargs);
-		if (agentFlag !== null) {
+		if (agentFlag !== null && (isWorkspaceTrusted === undefined || !isWorkspaceTrusted)) {
 			const keyVmargs = getKey(IS_WORKSPACE_VMARGS_ALLOWED, context.storagePath, vmargs);
 			const vmargsVerified = globalState.get(keyVmargs);
-			if (vmargsVerified === undefined || vmargsVerified === null) {
+			if ((vmargsVerified === undefined || vmargsVerified === null) && (workspace.workspaceFolders && isInWorkspaceFolder(agentFlag, workspace.workspaceFolders))) {
 				await window.showErrorMessage(`Security Warning! The java.jdt.ls.vmargs variable defined in ${env.appName} settings includes the (${agentFlag}) javagent preference. Do you allow it to be used?`, disallow, allow).then(async selection => {
 					if (selection === allow) {
 						globalState.update(keyVmargs, true);
@@ -185,6 +186,10 @@ export function getJavaagentFlag(vmargs) {
 		}
 	}
 	return agentFlag;
+}
+
+export function isInWorkspaceFolder(loc: string, workspaceFolders: readonly WorkspaceFolder[]) {
+	return !path.isAbsolute(loc) || workspaceFolders.some(dir => loc.startsWith(dir.uri.fsPath));
 }
 
 export enum ServerMode {
