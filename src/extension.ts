@@ -440,14 +440,33 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, projectConf
 			throw new Error("User cancelled build tool selection.");
 		} else if (activeBuildTool.toLocaleLowerCase().includes("maven")) {
 			await context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "maven");
-			return projectConfigurations.filter((uri) => {
-				return !/.*\.gradle(\.kts)?$/.test(uri.fsPath);
-			});
+			const result = await Promise.all(projectConfigurations.map(async (uri) => {
+				const isGradleFile = /.*\.gradle(\.kts)?$/.test(uri.fsPath);
+				if (!isGradleFile) {
+					return true;
+				}
+				// Only filter out directories which have conflicts
+				return !(await fse.pathExists(path.resolve(path.dirname(uri.fsPath), "pom.xml")));
+			}));
+			return projectConfigurations.filter((_v, index) => result[index]);
 		} else if (activeBuildTool.toLocaleLowerCase().includes("gradle")) {
 			await context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
-			return projectConfigurations.filter((uri) => {
-				return !uri.fsPath.endsWith("pom.xml");
-			});
+			const result = await Promise.all(projectConfigurations.map(async (uri) => {
+				const isPomFile = uri.fsPath.endsWith("pom.xml");
+				if (!isPomFile) {
+					return true;
+				}
+				// Only filter out directories which have conflicts
+				const dirName = path.dirname(uri.fsPath);
+				for (const fileName of ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]) {
+					const configurationFilePath = path.resolve(dirName, fileName);
+					if (await fse.pathExists(configurationFilePath)) {
+						return false;
+					}
+				}
+				return true;
+			}));
+			return projectConfigurations.filter((_v, index) => result[index]);
 		} else {
 			throw new Error ("Unknown build tool: " + activeBuildTool); // unreachable
 		}
