@@ -113,16 +113,3 @@ function parseToStringGlob(patterns: string[]): string {
 
 	return `{${patterns.join(",")}}`;
 }
-
-export async function waitForDocumentChangesToEnd(document: TextDocument): Promise<void> {
-	let version = document.version;
-	return new Promise((resolve) => {
-		const iv = setInterval(() => {
-			if (document.version === version) {
-				clearInterval(iv);
-				resolve();
-			}
-			version = document.version;
-		}, 400);
-	});
-}

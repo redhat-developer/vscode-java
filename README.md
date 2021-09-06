@@ -173,7 +173,6 @@ The following settings are supported:
   Default launch mode is `Hybrid`. Legacy mode is `Standard`
 * `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
-* `java.semanticHighlighting.enabled`: Enable/disable [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) for Java files. Defaults to `true`.
 * `java.imports.gradle.wrapper.checksums`: Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers.
 * `java.project.importOnFirstTimeStartup`: Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time. Supported values are `disabled` (never imports), `interactive` (asks to import or not), `automatic` (always imports). Default to `automatic`.
 * `java.project.importHint`: Enable/disable the server-mode switch information, when Java projects import is skipped on startup. Defaults to `true`.
@@ -197,7 +196,7 @@ The following settings are supported:
 
 Semantic Highlighting
 ===============
-[Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) is controlled by the `java.semanticHighlighting.enabled` preference. When enabled, it fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience different small issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing.
+[Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).
 
 Troubleshooting
 ===============

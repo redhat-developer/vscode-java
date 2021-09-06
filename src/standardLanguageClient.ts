@@ -90,7 +90,6 @@ export class StandardLanguageClient {
 
 		// Create the language client and start the client.
 		this.languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
-		this.languageClient.registerProposedFeatures();
 
 		this.languageClient.onReady().then(() => {
 			activationProgressNotification.showProgress();

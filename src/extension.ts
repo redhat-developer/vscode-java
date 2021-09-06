@@ -24,7 +24,6 @@ import { StandardLanguageClient } from './standardLanguageClient';
 import { apiManager } from './apiManager';
 import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
-import { registerSemanticTokensProvider } from './semanticTokenProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 
@@ -325,8 +324,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context.storagePath);
-					// temporary implementation Semantic Highlighting before it is part of LSP
-					registerSemanticTokensProvider(context);
 				}
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
