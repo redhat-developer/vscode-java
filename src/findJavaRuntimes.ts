@@ -275,7 +275,7 @@ async function findLinkedFile(file: string): Promise<string> {
     if (!await fse.pathExists(file) || !(await fse.lstat(file)).isSymbolicLink()) {
         return file;
     }
-    return await findLinkedFile(await fse.readlink(file));
+    return findLinkedFile(await fse.readlink(file));
 }
 
 export async function getJavaVersion(javaHome: string): Promise<number | undefined> {
