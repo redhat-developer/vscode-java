@@ -1,5 +1,27 @@
 # Change Log
 
+## 0.82.0 (September 16th, 2021)
+ * performance - completion: optimize the performance of SnippetCompletionProposal. See [JLS#1838](https://github.com/eclipse/eclipse.jdt.ls/issues/1838).
+ * performance - completion: listing constructors is slow. See [JLS#1836](https://github.com/eclipse/eclipse.jdt.ls/issues/1836).
+ * enhancement - Support Kotlin Gradle files. See [#632](https://github.com/redhat-developer/vscode-java/issues/632) & [JLS#449](https://github.com/eclipse/eclipse.jdt.ls/issues/449).
+ * enhancement - "Open Call Hierarchy" does not jump to the reference where it is invoked at. See [#2044](https://github.com/redhat-developer/vscode-java/issues/2044).
+ * enhancement - Semantic highlighting is not available in lightweight mode. See [#1999](https://github.com/redhat-developer/vscode-java/issues/1999).
+ * enhancement - Add additional variables for java.template snippets. See [#1987](https://github.com/redhat-developer/vscode-java/issues/1987).
+ * enhancement - Add 'hashCode()' and 'equals()' to Show Fixes for type declaration. See [JLS#1842](https://github.com/eclipse/eclipse.jdt.ls/pull/1842).
+ * enhancement - Permit usage of javaagent when resource is not in workspace. See [#1965](https://github.com/redhat-developer/vscode-java/issues/1965).
+ * enhancement - Add functionality to exclude files that will not be tracked for changes. See [JLS#1847](https://github.com/eclipse/eclipse.jdt.ls/issues/1847).
+ * bug fix - Some typeComment variables can't be parsed. See [#2052](https://github.com/redhat-developer/vscode-java/issues/2052).
+ * bug fix - Generate Getters source action is broken from within a record. See [JLS#1392](https://github.com/eclipse/eclipse.jdt.ls/issues/1392).
+ * bug fix - Java LS sometimes hangs while loading a gradle project. See [#2088](https://github.com/redhat-developer/vscode-java/issues/2088).
+ * bug fix - java.project.exclusion is not working as expected. See [#2075](https://github.com/redhat-developer/vscode-java/issues/2075).
+ * bug fix - Fix regression for Gradle project compilation. See [#2071](https://github.com/redhat-developer/vscode-java/issues/2071).
+ * bug fix - Get correct Java project in multi-module case. See [JLS#1865](https://github.com/eclipse/eclipse.jdt.ls/pull/1865).
+ * debt - Update target platform to 2021-09 (4.21) Release. See [JLS#1880](https://github.com/eclipse/eclipse.jdt.ls/pull/1880).
+ * other - Support import from configuration files. See [JLS#1840](https://github.com/eclipse/eclipse.jdt.ls/pull/1840).
+ * other - Support 3.16 semantic tokens. See [JLS#1678](https://github.com/eclipse/eclipse.jdt.ls/issues/1678).
+ * other - Remove redundant use of `await` on a return. See [#2100](https://github.com/redhat-developer/vscode-java/pull/2100).
+ * other - Disable extension in virtual workspaces. See [#1942](https://github.com/redhat-developer/vscode-java/pull/1942).
+
 ## 0.81.0 (August 17th, 2021)
  * enhancement - 'Create method' code action for method reference. See [JLS#1464](https://github.com/eclipse/eclipse.jdt.ls/issues/1464).
  * enhancement - Show job status via progress notification on start. See [#2022](https://github.com/redhat-developer/vscode-java/pull/2022)
