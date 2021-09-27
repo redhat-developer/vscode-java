@@ -2,7 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget, Disposable, Event, DocumentSymbol, Selection, Range, TextEditor, TextEditorRevealType } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileWillRenameEvent, Position, FileType, Selection, Range, TextEditor, TextEditorRevealType } from 'vscode';
 import { SymbolKind } from "vscode-languageclient";
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ListCommandResult } from './buildpath';
