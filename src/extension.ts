@@ -673,7 +673,7 @@ async function openFormatter(extensionPath) {
 	const formatterUrl: string = getJavaConfiguration().get('format.settings.url');
 	if (formatterUrl && formatterUrl.length > 0) {
 		if (isRemote(formatterUrl)) {
-			commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(formatterUrl));
+			return commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(formatterUrl));
 		} else {
 			const document = getPath(formatterUrl);
 			if (document && fs.existsSync(document)) {
@@ -742,7 +742,7 @@ function openDocument(extensionPath, formatterUrl, defaultFormatter, relativePat
 }
 
 function isRemote(f) {
-	return f !== null && f.startsWith('http:/') || f.startsWith('https:/');
+	return f !== null && f.startsWith('http:/') || f.startsWith('https:/') || f.startsWith('file:/');
 }
 
 async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath) {
