@@ -60,13 +60,23 @@
       },
       {
         "id": "annotationMember",
-        "superType": "function",
+        "superType": "method",
         "description": "Style for annotation members."
       },
       {
         "id": "modifier",
         "superType": "keyword",
         "description": "Style for modifier keywords."
+      },
+      {
+        "id": "record",
+        "superType": "class",
+        "description": "Style for records."
+      },
+      {
+        "id": "recordComponent",
+        "superType": "parameter",
+        "description": "Style for record components."
       }
     ],
     "semanticTokenModifiers": [
@@ -97,6 +107,10 @@
       {
         "id": "importDeclaration",
         "description": "Style for symbols that are part of an import declaration."
+      },
+      {
+        "id": "constructor",
+        "description": "Style for symbols that are constructors."
       }
     ],
     "semanticTokenScopes": [
@@ -115,6 +129,9 @@
           ],
           "keyword.documentation": [
             "keyword.other.documentation.javadoc.java"
+          ],
+          "*.constructor": [
+            "entity.name.function.java"
           ]
         }
       }
