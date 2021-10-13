@@ -13,6 +13,7 @@ const testSettings = path.join(tempTestFolder, '.vscode', 'settings.json');
 //...
 
 gulp.task('download_server', function(done) {
+	fse.removeSync('./server');
 	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
 		.pipe(decompress())
 		.pipe(gulp.dest('./server'));
@@ -20,7 +21,8 @@ gulp.task('download_server', function(done) {
 });
 
 gulp.task('build_server', function(done) {
-	cp.execSync(mvnw()+ ' -Pserver-distro clean package', {cwd:server_dir, stdio:[0,1,2]} );
+	fse.removeSync('./server');
+	cp.execSync(mvnw() + ' -Pserver-distro clean package -Declipse.jdt.ls.skipGradleChecksums', { cwd: server_dir, stdio: [0, 1, 2] });
 	gulp.src(server_dir + '/org.eclipse.jdt.ls.product/distro/*.tar.gz')
 		.pipe(decompress())
 		.pipe(gulp.dest('./server'));
@@ -28,7 +30,7 @@ gulp.task('build_server', function(done) {
 });
 
 gulp.task('dev_server', function(done) {
-	let command = mvnw() +' -o -pl org.eclipse.jdt.ls.core,org.eclipse.jdt.ls.target clean package';
+	let command = mvnw() + ' -o -pl org.eclipse.jdt.ls.core,org.eclipse.jdt.ls.target clean package -Declipse.jdt.ls.skipGradleChecksums';
 	console.log('executing '+command);
 	cp.execSync(command, {cwd:server_dir, stdio:[0,1,2]} );
 	glob.Glob(server_dir +'/org.eclipse.jdt.ls.core/target/org.eclipse.jdt.ls.core-*-SNAPSHOT.jar',
