@@ -79,7 +79,7 @@ This assumes that you are starting on the `vscode-java` directory
 	```
 
 **\*Optional:**
-You can run faster server builds during development by calling `./node_modules/.bin/gulp dev_server` script instead, this will build server binaries that are required by your host OS only. You can also use `npm run watch-server` which will build and place them on the extension for Java changes. These commands run Maven in offline mode, so you might need to run `build-server` at least once, to fetch all the dependencies.
+You can run faster server builds during development by calling `npm run fast-build-server` script instead, this will build server binaries that are required by your host OS only. You can also use `npm run watch-server` which will build and place them on the extension for Java changes. These commands run Maven in offline mode, so you might need to run `build-server` at least once, to fetch all the dependencies.
 
 This will build and place the binaries under the `server` folder. Alternately you can download and use the latest snapshot build from [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls) project with the following
 
@@ -93,7 +93,7 @@ Below are the details about how to set up the JDT Language Server in different I
 ### B-1) Setting up the JDT Language Server in VS Code
 1) Please install [Eclipse PDE support](https://marketplace.visualstudio.com/items?itemName=yaozheng.vscode-pde) extension in your VS Code first. The PDE extension's home page provides more usage details about _Reload Target Platform_, _Run JUnit Plug-in Test_, _Run Eclipse Application_.
 
-2) Open VS Code on the `eclipse.jdt.ls` folder. The PDE extension will work with Java extension together to automatically load the eclipse.jdt.ls project. Check the status of the language tools on the lower right corner. It should show ready (thumbs up) as the image below.  
+2) Open VS Code on the `eclipse.jdt.ls` folder. The PDE extension will work with Java extension together to automatically load the eclipse.jdt.ls project. Check the status of the language tools on the lower right corner. It should show ready (thumbs up) as the image below.
   ![status indicator](images/statusMarker.png)
 
 ### B-2) Setting up the JDT Language Server in Eclipse
@@ -140,7 +140,7 @@ While developing the language server and the extension, you don't need to deploy
 
 1. Open VSCode on the `vscode-java` folder
 
-2. In the debug viewlet, run the launch _Launch Extension - Remote Server_  
+2. In the debug viewlet, run the launch _Launch Extension - Remote Server_
 ![Remote Server](images/changelog/RemoteServer.png)
 
 3. The extension will open a socket on port 3333 and will wait for the JDT language server to connect
@@ -148,10 +148,10 @@ While developing the language server and the extension, you don't need to deploy
 ### b) _Launch Debug Server - Server Side_
 
 - With the client side **(vscode-java) running**, you can start the remote server in your preferred IDE.
-  - Start the remote server via VS Code.  
+  - Start the remote server via VS Code.
     ![Remote Server In VS Code](images/changelog/RemoteServerInVSCode.png)
 
-  - Start the remote server via Eclipse.  
+  - Start the remote server via Eclipse.
     ![Remote Server In Eclipse](images/changelog/DebugRemoteServer.png)
 
 - In the debug console of VSCode you can see if the connection was successful.
@@ -160,7 +160,7 @@ While developing the language server and the extension, you don't need to deploy
     - Modify `SERVER_PORT` to specify the port the JDT LS server should connect to.
 
 ## C-2) The language server opens the connection first, and waits the extension to connect to it.
-- Start the language server via `jdt.ls.socket-stream` launch configuration in VS Code or Eclipse  
+- Start the language server via `jdt.ls.socket-stream` launch configuration in VS Code or Eclipse
   ![Socket Steam in VS Code](images/changelog/SocketSteamInVSCode.png)
 
 - Start the extenion via _Launch Extension - JDTLS Client_ in VS Code
