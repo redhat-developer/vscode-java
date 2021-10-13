@@ -481,7 +481,10 @@
           "default": [
             "java.awt.*",
             "com.sun.*",
-            "sun.*"
+            "sun.*",
+            "jdk.*",
+            "org.graalvm.*",
+            "io.micrometer.shaded.*"
           ],
           "scope": "window"
         },
