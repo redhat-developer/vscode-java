@@ -817,6 +817,16 @@
           "markdownDescription": "Include method declarations from source files in symbol search.",
           "default": false,
           "scope": "window"
+        },
+        "java.quickfix.showAt": {
+          "type": "string",
+          "enum": [
+            "line",
+            "problem"
+          ],
+          "default": "line",
+          "description": "Show quickfixes at the problem or line level.",
+          "scope": "window"
         }
       }
     },
