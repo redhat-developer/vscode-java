@@ -1,5 +1,29 @@
 # Change Log
 
+## 1.0.0 (October 19th, 2021)
+ * performance - completion: optimize the index engine for the scenario "complete on type name". See [JLS#1846](https://github.com/eclipse/eclipse.jdt.ls/issues/1846).
+ * enhancement - Support Java 17. See [#2102](https://github.com/redhat-developer/vscode-java/pull/2102).
+ * enhancement - Add semantic token types for Records. See [#2125](https://github.com/redhat-developer/vscode-java/issues/2125).
+ * enhancement - Support highlight for constructor call. See [#2124](https://github.com/redhat-developer/vscode-java/issues/2124).
+ * enhancement - Add Getter and Setter to Show Fixes for type declaration. See [JLS#1883](https://github.com/eclipse/eclipse.jdt.ls/pull/1883).
+ * enhancement - Add `toString()` to Show Fixes for type declaration. See [JLS#1903](https://github.com/eclipse/eclipse.jdt.ls/pull/1903).
+ * enhancement - Add a `codeAction` to generate the `serialVersionUID` field. See [JLS#1892](https://github.com/eclipse/eclipse.jdt.ls/issues/1892).
+ * enhancement - i18n: support Chinese. See [#2027](https://github.com/redhat-developer/vscode-java/pull/2027).
+ * enhancement - Adopt new createStatusBarItem API. See [#2083](https://github.com/redhat-developer/vscode-java/pull/2083).
+ * bug fix - Missing space in anonymous type completion proposal. See [#2147](https://github.com/redhat-developer/vscode-java/issues/2147).
+ * bug fix - Packages are not filtered from completion despite the `java.completion.filteredTypes` configuration. See [JLS#1904](https://github.com/eclipse/eclipse.jdt.ls/issues/1904).
+ * bug fix - Exclude `jdk.*`, `org.graalvm.*` and `io.micrometer.shaded.*` from completion. See [#2164](https://github.com/redhat-developer/vscode-java/pull/2164).
+ * bug fix - "Project Configuration Update" is broken due to `JDTUtils.isExcludedFile()` is not working. See [JLS#1909](https://github.com/eclipse/eclipse.jdt.ls/issues/1909).
+ * bug fix - NPE on `::new` method refs (Cannot invoke `org.eclipse.jdt.core.dom.IMethodBinding.isSynthetic()` because "functionalMethod" is null). See [JLS#1885](https://github.com/eclipse/eclipse.jdt.ls/issues/1885).
+ * bug fix - Go to definition doesn't compute/find results on methods inside an anonymous class. See [JLS#1813](https://github.com/eclipse/eclipse.jdt.ls/issues/1813).
+ * bug fix - Assign all to fields generates wrong field names in some corner cases. See [JLS#1031](https://github.com/eclipse/eclipse.jdt.ls/issues/1031).
+ * bug fix - Import quickfix disappear on save. See [#2127](https://github.com/redhat-developer/vscode-java/issues/2127).
+ * bug fix - Module descriptor syntax coloring should be improved. See [#1384](https://github.com/redhat-developer/vscode-java/issues/1384).
+ * bug fix - Fix Open Java Formatter Settings. See [#2138](https://github.com/redhat-developer/vscode-java/pull/2138).
+ * bug fix - Code is compiled with preview features for no reason, causing the project not to run. See [#1971](https://github.com/redhat-developer/vscode-java/issues/1971).
+ * build - npm run watch fails with unresolved dependencies. See [#230](https://github.com/redhat-developer/vscode-java/issues/230).
+ * debt - Update org.jsoup 1.9.2 to 1.14.2. See [JLS#1884](https://github.com/eclipse/eclipse.jdt.ls/pull/1884).
+
 ## 0.82.0 (September 16th, 2021)
  * performance - completion: optimize the performance of SnippetCompletionProposal. See [JLS#1838](https://github.com/eclipse/eclipse.jdt.ls/issues/1838).
  * performance - completion: listing constructors is slow. See [JLS#1836](https://github.com/eclipse/eclipse.jdt.ls/issues/1836).

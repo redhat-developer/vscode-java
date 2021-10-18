@@ -5,10 +5,10 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "0.83.0",
+  "version": "1.0.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
-  "preview": true,
+  "preview": false,
   "enableProposedApi": false,
   "capabilities": {
     "untrustedWorkspaces": {
