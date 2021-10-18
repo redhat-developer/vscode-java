@@ -4,8 +4,8 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, Selection, CodeActionContext, Diagnostic } from 'vscode';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
 import { prepareExecutable } from './javaServerStarter';
@@ -205,6 +205,55 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								}
 							});
 						}
+					},
+					// https://github.com/redhat-developer/vscode-java/issues/2130
+					// include all diagnostics for the current line in the CodeActionContext params for the performance reason
+					provideCodeActions: (document, range, context, token, next) => {
+						const client: any = standardClient.getClient();
+						const params: CodeActionParams = {
+							textDocument: client.code2ProtocolConverter.asTextDocumentIdentifier(document),
+							range: client.code2ProtocolConverter.asRange(range),
+							context: client.code2ProtocolConverter.asCodeActionContext(context)
+						};
+						const showAt  = getJavaConfiguration().get<string>("quickfix.showAt");
+						if (showAt === 'line' && range.start.line === range.end.line && range.start.character === range.end.character) {
+							const textLine = document.lineAt(params.range.start.line);
+							if (textLine !== null) {
+								const diagnostics = client.diagnostics.get(document.uri);
+								const allDiagnostics: Diagnostic[] = [];
+								for (const diagnostic of diagnostics) {
+									if (textLine.range.intersection(diagnostic.range)) {
+										const newLen = allDiagnostics.push(diagnostic);
+										if (newLen > 1000) {
+											break;
+										}
+									}
+								}
+								const codeActionContext: CodeActionContext = {
+									diagnostics: allDiagnostics,
+									only: context.only,
+								};
+								params.context = client.code2ProtocolConverter.asCodeActionContext(codeActionContext);
+							}
+						}
+						return client.sendRequest(CodeActionRequest.type, params, token).then((values) => {
+							if (values === null) {
+								return undefined;
+							}
+							const result = [];
+							for (const item of values) {
+								if (Command.is(item)) {
+									result.push(client.protocol2CodeConverter.asCommand(item));
+								}
+								else {
+									result.push(client.protocol2CodeConverter.asCodeAction(item));
+								}
+							}
+							return result;
+						}, (error) => {
+							client.logFailedRequest(CodeActionRequest.type, error);
+							return Promise.resolve([]);
+						});
 					}
 				},
 				revealOutputChannelOn: RevealOutputChannelOn.Never,
