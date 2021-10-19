@@ -1,10 +1,11 @@
 'use strict';
 
-import { StatusBarItem, window, StatusBarAlignment, TextEditor, Uri, commands, Event, workspace } from "vscode";
+import { StatusBarItem, window, StatusBarAlignment, TextEditor, Uri, commands, workspace, version } from "vscode";
 import { Commands } from "./commands";
 import { Disposable } from "vscode-languageclient";
 import * as path from "path";
 import { apiManager } from "./apiManager";
+import * as semver from "semver";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -12,11 +13,15 @@ class RuntimeStatusBarProvider implements Disposable {
 	private fileProjectMapping: Map<string, string>;
 	private storagePath: string | undefined;
 	private disposables: Disposable[];
+	// Adopt new API for status bar item, meanwhile keep the compatibility with Theia.
+	// See: https://github.com/redhat-developer/vscode-java/issues/1982
+	private isAdvancedStatusBarItem: boolean;
 
 	constructor() {
 		this.javaProjects = new Map<string, IProjectInfo>();
 		this.fileProjectMapping = new Map<string, string>();
 		this.disposables = [];
+		this.isAdvancedStatusBarItem = semver.gte(version, "1.57.0");
 	}
 
 	public async initialize(storagePath?: string): Promise<void> {
@@ -25,7 +30,13 @@ class RuntimeStatusBarProvider implements Disposable {
 			this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
 		}
 
-		this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 0);
+		if (this.isAdvancedStatusBarItem) {
+			this.statusBarItem = (window.createStatusBarItem as any)("java.runtimeStatus", StatusBarAlignment.Right, 0);
+			(this.statusBarItem as any).name = "Java Runtime Configuration";
+		} else {
+			this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 0);
+		}
+
 		let projectUriStrings: string[];
 		try {
 			projectUriStrings = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
