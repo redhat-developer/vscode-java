@@ -2,8 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileWillRenameEvent, Position, FileType, Selection, Range, TextEditor, TextEditorRevealType } from 'vscode';
-import { SymbolKind } from "vscode-languageclient";
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileWillRenameEvent, Position, FileType, Selection, Range, TextEditorRevealType } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -11,7 +10,6 @@ import { WillRenameFiles } from './protocol';
 import { getJavaConfiguration } from './utils';
 import { userInfo } from 'os';
 import * as stringInterpolate from 'fmtr';
-import { getDocumentSymbolsProvider } from './documentSymbols';
 
 let serverReady: boolean = false;
 
@@ -29,9 +27,7 @@ export function registerFileEventHandlers(client: LanguageClient, context: Exten
     }
 
     if (workspace.onDidOpenTextDocument) {
-        
-        workspace.onDidChangeTextDocument
-        context.subscriptions.push(window.onDidChangeActiveTextEditor(handleTextDocumentOpen))
+        context.subscriptions.push(workspace.onDidOpenTextDocument(navigateToClassDeclaration));
     }
 }
 
@@ -261,35 +257,43 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
     return javaVersion < targetVersion;
 }
 
-const TOP_LEVEL_KINDS: Set<number> = new Set([SymbolKind.Class, SymbolKind.Enum, SymbolKind.Interface]);
-
-function isCursorAtBeginningOfDocument(selection: Selection) {
-    return selection.start.line == 0 && selection.start.character == 0
+/**
+ * Navigates to the first type declaration in a class file.
+ *
+ * The language server will always return (0,0) for class files in a workspace/symbols request,
+ * because calculating the correct position would require opening and parsing every class file, which is too slow.
+ *
+ * Cursor position and selections in class files are not persisted across editor sessions,
+ * probably because the files are not part of the workspace.
+ *
+ * We can use this to our advantage to listen to the {@link workspace.onDidOpenTextDocument},
+ * which only triggers once a session for every document opened.
+ */
+async function navigateToClassDeclaration(document: TextDocument) {
+    if (document.uri.path.endsWith(".class")) {
+        // Not every textDocument is opened in the active editor.
+        const disposable = window.onDidChangeActiveTextEditor(async (textEditor) => {
+            if (textEditor !== undefined && textEditor.document.uri === document.uri) {
+                const newPosition = findFirstTypeDeclaration(document);
+                textEditor.selection = new Selection(newPosition, newPosition);
+                textEditor.revealRange(new Range(newPosition, newPosition), TextEditorRevealType.InCenter);
+            }
+            disposable.dispose();
+        });
+    }
 }
 
-async function handleTextDocumentOpen(textEditor: TextEditor) {
-    const uri = textEditor.document.uri;
-    if (uri.fsPath.endsWith(".java") || uri.fsPath.endsWith(".class")) {
-        
-        if (isCursorAtBeginningOfDocument(textEditor.selection)) {
-            const documentSymbols = await getDocumentSymbolsProvider()({
-                textDocument: {
-                    uri: textEditor.document.uri.toString()
-                }
-            });
-            if (documentSymbols != null) {
-                for (let i = 0; i < documentSymbols.length; i++) {
-                    const documentSymbol = documentSymbols[i];
-                    if (TOP_LEVEL_KINDS.has(documentSymbol.kind) && "selectionRange" in documentSymbol) {
-                        if (isCursorAtBeginningOfDocument(textEditor.selection)) {
-                            const newPosition = new Position(documentSymbol.selectionRange.start.line, documentSymbol.selectionRange.start.character);
-                            textEditor.selection = new Selection(newPosition, newPosition);
-                            textEditor.revealRange(new Range(newPosition, newPosition), TextEditorRevealType.InCenter);
-                            break;
-                        }
-                    }
-                }
-            }
+const JAVA_TYPE_DECLARATION_REGEX = /^\s*\w?[\w\s-]*\b(?:class|@interface|interface|enum)\s+(?=[\w$]+)/;
+
+// More than one class declaration per class file is allowed, but I have never seen a library that actually uses this.
+function findFirstTypeDeclaration(document: TextDocument): Position {
+    for (let index = 0; index < document.lineCount; index++) {
+        const line = document.lineAt(index);
+        const match = JAVA_TYPE_DECLARATION_REGEX.exec(line.text);
+
+        if (match !== null) {
+            return new Position(line.lineNumber, match[0].length);
         }
     }
+    return new Position(0, 0);
 }
