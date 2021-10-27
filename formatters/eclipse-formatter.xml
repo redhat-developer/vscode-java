@@ -94,7 +94,7 @@
 <setting id="org.eclipse.jdt.core.formatter.indent_statements_compare_to_block" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.indent_statements_compare_to_body" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_cases" value="true"/>
-<setting id="org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_switch" value="false"/>
+<setting id="org.eclipse.jdt.core.formatter.indent_switchstatements_compare_to_switch" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.indentation.size" value="4"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_enum_constant" value="insert"/>
 <setting id="org.eclipse.jdt.core.formatter.insert_new_line_after_annotation_on_field" value="insert"/>
@@ -304,7 +304,7 @@
 <setting id="org.eclipse.jdt.core.formatter.put_empty_statement_on_new_line" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.tabulation.char" value="tab"/>
 <setting id="org.eclipse.jdt.core.formatter.tabulation.size" value="4"/>
-<setting id="org.eclipse.jdt.core.formatter.use_on_off_tags" value="false"/>
+<setting id="org.eclipse.jdt.core.formatter.use_on_off_tags" value="true"/>
 <setting id="org.eclipse.jdt.core.formatter.use_tabs_only_for_leading_indentations" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.wrap_before_assignment_operator" value="false"/>
 <setting id="org.eclipse.jdt.core.formatter.wrap_before_binary_operator" value="true"/>
