@@ -8,7 +8,6 @@ import * as expandHomeDir from 'expand-home-dir';
 import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
 import { checkJavaPreferences } from './settings';
-import { getJavaConfiguration } from './utils';
 import { findJavaHomes, getJavaVersion, JavaRuntime } from './findJavaRuntimes';
 
 const isWindows = process.platform.indexOf('win') === 0;
@@ -16,6 +15,8 @@ const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
 const JAVA_FILENAME = 'java' + (isWindows ? '.exe' : '');
 const REQUIRED_JDK_VERSION = 11;
 export interface RequirementsData {
+    tooling_jre: string;
+    tooling_jre_version: number;
     java_home: string;
     java_version: number;
 }
@@ -34,6 +35,8 @@ interface ErrorData {
  *
  */
 export async function resolveRequirements(context: ExtensionContext): Promise<RequirementsData> {
+    const embeddedJREFirst = process.env['EMBEDDED_JRE_FIRST'] === 'true'; // For testing purpose
+    const embeddedJRE = await findEmbeddedJRE(context);
     return new Promise(async (resolve, reject) => {
         let source: string;
         let javaVersion: number = 0;
@@ -62,15 +65,53 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
                 sortJdksBySource(validJdks);
                 javaHome = validJdks[0].home;
                 javaVersion = validJdks[0].version;
+            } else if (javaRuntimes.length) {
+                sortJdksBySource(javaRuntimes);
+                javaHome = javaRuntimes[0].home;
+                javaVersion = javaRuntimes[0].version;
             }
         }
 
-        if (javaVersion < REQUIRED_JDK_VERSION) {
+        if (!embeddedJRE && javaVersion < REQUIRED_JDK_VERSION) {
             openJDKDownload(reject, `Java ${REQUIRED_JDK_VERSION} or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)`);
         }
 
-        resolve({ java_home: javaHome, java_version: javaVersion });
+        let toolingJre: string;
+        let toolingJreVersion: number = 0;
+        // Prefer to use javahome's jdk to start the language server. When it fails, then fall back to the embedded JRE.
+        if (javaVersion >= REQUIRED_JDK_VERSION && !embeddedJREFirst) {
+            toolingJre = javaHome;
+            toolingJreVersion = javaVersion;
+        } else {
+            toolingJre = embeddedJRE;
+            toolingJreVersion = await getJavaVersion(embeddedJRE);
+        }
+
+        resolve({
+            tooling_jre: toolingJre,
+            tooling_jre_version: toolingJreVersion,
+            java_home: javaHome || toolingJre,
+            java_version: javaVersion || toolingJreVersion,
+        });
     });
+}
+
+async function findEmbeddedJRE(context: ExtensionContext): Promise<string | undefined> {
+    const jreHome = context.asAbsolutePath("jre");
+    if (fse.existsSync(jreHome) && fse.statSync(jreHome).isDirectory()) {
+        if (fse.existsSync(path.join(jreHome, "bin", JAVA_FILENAME))) {
+            return jreHome;
+        }
+
+        const candidates = fse.readdirSync(jreHome);
+        for (const candidate of candidates) {
+            if (fse.existsSync(path.join(jreHome, candidate, "bin", JAVA_FILENAME))) {
+                return path.join(jreHome, candidate);
+            }
+        }
+    }
+
+    return;
 }
 
 function sortJdksBySource(jdks: JavaRuntime[]) {

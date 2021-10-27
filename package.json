@@ -21,7 +21,7 @@
     "virtualWorkspaces": false
   },
   "engines": {
-    "vscode": "^1.53.2"
+    "vscode": "^1.61.0"
   },
   "repository": {
     "type": "git",
