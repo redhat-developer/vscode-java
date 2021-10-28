@@ -13,7 +13,7 @@ import * as requirements from './requirements';
 import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
-import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
+import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob, ensureExists } from './utils';
 import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
@@ -610,9 +610,7 @@ async function cleanWorkspace(workspacePath) {
 	const doIt = 'Restart and delete';
 	window.showWarningMessage('Are you sure you want to clean the Java language server workspace?', 'Cancel', doIt).then(selection => {
 		if (selection === doIt) {
-			if (!fs.existsSync(workspacePath)) {
-				fs.mkdirSync(workspacePath);
-			}
+			ensureExists(workspacePath);
 			const file = path.join(workspacePath, cleanWorkspaceFileName);
 			fs.closeSync(fs.openSync(file, 'w'));
 			commands.executeCommand(Commands.RELOAD_WINDOW);
@@ -690,9 +688,7 @@ async function openFormatter(extensionPath) {
 		relativePath = fileName;
 	} else {
 		const root = path.join(extensionPath, '..', 'redhat.java');
-		if (!fs.existsSync(root)) {
-			fs.mkdirSync(root);
-		}
+		ensureExists(root);
 		file = path.join(root, fileName);
 	}
 	if (!fs.existsSync(file)) {
@@ -765,9 +761,7 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 						relativePath = fileName;
 					} else {
 						const root = path.join(extensionPath, '..', 'redhat.java');
-						if (!fs.existsSync(root)) {
-							fs.mkdirSync(root);
-						}
+						ensureExists(root);
 						f = path.join(root, fileName);
 					}
 				} else {
@@ -780,9 +774,14 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 					const action = 'Yes';
 					window.showWarningMessage(msg, action, 'No').then((selection) => {
 						if (action === selection) {
-							fs.createReadStream(defaultFormatter)
-								.pipe(fs.createWriteStream(f))
-								.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
+							try {
+								ensureExists(path.dirname(f));
+								fs.createReadStream(defaultFormatter)
+									.pipe(fs.createWriteStream(f))
+									.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
+							} catch (error) {
+								window.showErrorMessage(`Failed to create ${f}: ${error}`);
+							}
 						}
 					});
 				} else {

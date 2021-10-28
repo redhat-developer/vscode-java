@@ -41,9 +41,11 @@ export function getTimestamp(file) {
 }
 
 export function ensureExists(folder) {
-	if (!fs.existsSync(folder)) {
-		fs.mkdirSync(folder);
+	if (fs.existsSync(folder)) {
+		return;
 	}
+	ensureExists(path.dirname(folder));
+	fs.mkdirSync(folder);
 }
 
 export function getBuildFilePatterns(): string[] {
