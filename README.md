@@ -195,7 +195,8 @@ The following settings are supported:
 * `java.symbols.includeSourceMethodDeclarations` : Include method declarations from source files in symbol search. Defaults to `false`.
 
 New in 1.1.0:
- * `java.quickfix.showAt"` : Show quickfixes at the problem or line level.
+ * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
+ * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
 
 
 Semantic Highlighting
