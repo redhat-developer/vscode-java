@@ -343,6 +343,16 @@
           "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
           "scope": "window"
         },
+        "java.configuration.workspaceCacheLimit": {
+          "type": [
+            "null",
+            "integer"
+          ],
+          "default": null,
+          "minimum": 1,
+          "description": "The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.",
+          "scope": "application"
+        },
         "java.format.enabled": {
           "type": "boolean",
           "default": true,

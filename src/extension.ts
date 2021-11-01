@@ -32,7 +32,8 @@ const standardClient: StandardLanguageClient = new StandardLanguageClient();
 const jdtEventEmitter = new EventEmitter<Uri>();
 const cleanWorkspaceFileName = '.cleanWorkspace';
 const extensionName = 'Language Support for Java';
-let clientLogFile;
+let storagePath: string;
+let clientLogFile: string;
 
 export class ClientErrorHandler implements ErrorHandler {
 	private restarts: number[];
@@ -122,7 +123,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.notCoveredExecution.md`)), 'Not Covered Maven Plugin Execution', "", context);
 	}));
 
-	let storagePath = context.storagePath;
+	storagePath = context.storagePath;
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
 	}
@@ -132,6 +133,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	enableJavadocSymbols();
 
 	initializeRecommendation(context);
+
+	cleanJavaWorkspaceStorage();
 
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
@@ -924,4 +927,30 @@ function isPrefix(parentPath: string, childPath: string): boolean {
 	}
 	const relative = path.relative(parentPath, childPath);
 	return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+async function cleanJavaWorkspaceStorage() {
+	const configCacheLimit = getJavaConfiguration().get<number>("configuration.workspaceCacheLimit");
+
+	if (!storagePath || !configCacheLimit) {
+		return;
+	}
+
+	const limit: number = configCacheLimit * 86400000; // days to ms
+	const currTime = new Date().valueOf(); // ms since Epoch
+	// storage path is Code/User/workspaceStorage/${id}/redhat.java/
+	const wsRoot = path.dirname(path.dirname(storagePath));
+
+	// find all folders of the form "redhat.java/jdt_ws/" and delete "redhat.java/"
+	if (fs.existsSync(wsRoot)) {
+		new glob.Glob(`${wsRoot}/**/jdt_ws`, (_err, matches) => {
+			for (const javaWSCache of matches) {
+				const entry = path.dirname(javaWSCache);
+				const entryModTime = fs.statSync(entry).mtimeMs;
+				if ((currTime - entryModTime) > limit) {
+					logger.info(`Removing workspace storage folder : ${entry}`);
+					deleteDirectory(entry);
+				}
+			}
+		});
+    }
 }
