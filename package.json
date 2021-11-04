@@ -170,7 +170,8 @@
           ],
           "default": null,
           "description": "Specifies the folder path to the JDK (11 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk11.0_8\"",
-          "scope": "machine-overridable"
+          "scope": "machine-overridable",
+          "deprecationMessage": "This setting will be deprecated, please use the environment variable 'JAVA_HOME' instead."
         },
         "java.jdt.ls.vmargs": {
           "type": [

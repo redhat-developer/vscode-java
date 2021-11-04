@@ -85,16 +85,16 @@ gulp.task('download_jre', async function(done) {
 
 		/**
 		 * A sample justj.manifest
-		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-linux-aarch64.tar.gz
-		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-linux-x86_64.tar.gz
-		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-macosx-aarch64.tar.gz
-		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-macosx-x86_64.tar.gz
-		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-win32-x86_64.tar.gz
+		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-linux-aarch64.tar.gz
+		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-linux-x86_64.tar.gz
+		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-macosx-aarch64.tar.gz
+		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-macosx-x86_64.tar.gz
+		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-win32-x86_64.tar.gz
 		 */
 		const javaPlatform = platformMapping[targetPlatform];
 		const list = value.split(/\r?\n/);
 		const jreIdentifier = list.find((value) => {
-			return value.indexOf("org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped") >= 0 && value.indexOf(javaPlatform) >= 0;
+			return value.indexOf("org.eclipse.justj.openjdk.hotspot.jre.full.stripped") >= 0 && value.indexOf(javaPlatform) >= 0;
 		});
 
 		if (!jreIdentifier) {
