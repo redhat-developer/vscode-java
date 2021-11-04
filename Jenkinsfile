@@ -4,7 +4,7 @@ def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-12.13.1'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh "npm install -g vsce"
+	sh 'npm install -g "vsce@<2"'
 }
 
 def buildVscodeExtension(){

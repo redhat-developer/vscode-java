@@ -20,7 +20,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'adopt'
-      - run: npm install -g typescript vsce
+      - run: npm install -g typescript "vsce@<2"
       - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
       - run: mkdir server && tar -xvzf jdt-language-server-latest.tar.gz -C ./server && rm jdt-language-server-latest.tar.gz
       - run: npm install
