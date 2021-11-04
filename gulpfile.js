@@ -28,10 +28,13 @@ function cleanManifest() {
 	}
 }
 
+// Pls update the latest JRE if a new JDK is announced.
 const LATEST_JRE = 17;
+
 /**
  * Usage:
- * npx gulp download_jre --target darwin-x64 --javaVersion latest
+ * npx gulp download_jre    // Download the latest JRE for the platform of the current running machine.
+ * npx gulp download_jre --target darwin-x64 --javaVersion 17  // Download the specified JRE for the specified platform.
  *
  * Supported platforms:
  *  win32-x64,
@@ -53,9 +56,10 @@ gulp.task('download_jre', async function(done) {
 		"win32-x64": "win32-x86_64"
 	}
 
-	if (argv.target && Object.keys(platformMapping).includes(argv.target)) {
-		const javaVersion = (!argv.javaVersion || argv.javaVersion === "latest") ? LATEST_JRE : javaVersion;
-		console.log("Downloading justj JRE " + javaVersion);
+	const targetPlatform = argv.target || process.platform + "-" + process.arch;
+	if (targetPlatform && Object.keys(platformMapping).includes(targetPlatform)) {
+		const javaVersion = (!argv.javaVersion || argv.javaVersion === "latest") ? LATEST_JRE : argv.javaVersion;
+		console.log("Downloading justj JRE " + javaVersion + " for the platform " + targetPlatform) + "...";
 
 		const mafinestUrl = `https://download.eclipse.org/justj/jres/${javaVersion}/downloads/latest/justj.manifest`;
 		// Download justj.manifest file
@@ -87,16 +91,15 @@ gulp.task('download_jre', async function(done) {
 		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-macosx-x86_64.tar.gz
 		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped-17-win32-x86_64.tar.gz
 		 */
-		const prefix = "org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped";
-		const platformLabel = platformMapping[argv.target];
+		const javaPlatform = platformMapping[targetPlatform];
 		const list = value.split(/\r?\n/);
 		const jreIdentifier = list.find((value) => {
-			return value.indexOf("org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped") >= 0 && value.indexOf(platformLabel) >= 0;
+			return value.indexOf("org.eclipse.justj.openjdk.hotspot.jre.minimal.stripped") >= 0 && value.indexOf(javaPlatform) >= 0;
 		});
 
 		if (!jreIdentifier) {
 			cleanManifest();
-			done(new Error(`justj doesn't support the platform ${platformLabel} jre of ${javaVersion}, please refer to the link ${mafinestUrl} for the supported platforms.`));
+			done(new Error(`justj doesn't support the jre ${javaVersion} for the platform ${javaPlatform} (${targetPlatform}), please refer to the link ${mafinestUrl} for the supported platforms.`));
 			return;
 		}
 
@@ -115,7 +118,7 @@ gulp.task('download_jre', async function(done) {
 				.on('end', resolve);
 		});
 	} else {
-		console.log("[Error] download_jre failed, please specify a valid target platform. Here are the supported platform list:");
+		console.log("[Error] download_jre failed, please specify a valid target platform via --target argument. Here are the supported platform list:");
 		for (const platform of Object.keys(platformMapping)) {
 			console.log(platform);
 		}
