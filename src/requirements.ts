@@ -8,7 +8,8 @@ import * as expandHomeDir from 'expand-home-dir';
 import findJavaHome = require("find-java-home");
 import { Commands } from './commands';
 import { checkJavaPreferences } from './settings';
-import { findJavaHomes, getJavaVersion, JavaRuntime } from './findJavaRuntimes';
+import { findJavaHomes, getJavaVersion, JavaRuntime, verifyJavaHome } from './findJavaRuntimes';
+import { logger } from './log';
 
 const isWindows = process.platform.indexOf('win') === 0;
 const JAVAC_FILENAME = 'javac' + (isWindows ? '.exe' : '');
@@ -70,12 +71,28 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
                     toolingJre = javaHome;
                     toolingJreVersion = javaVersion;
                 }
-            } else if (javaRuntimes.length) {
-                sortJdksBySource(javaRuntimes);
-                javaHome = javaRuntimes[0].home;
-                javaVersion = javaRuntimes[0].version;
-            } else {
-                openJDKDownload(reject, "Please download and install a JDK to compile your project. You can configure your projects with different JDKs by the setting ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)");
+            } else { // pick a default project JDK
+                /**
+                 * For legacy users, we implicitly following the order below to
+                 * set a default project JDK during initialization:
+                 * java.home > env.JDK_HOME > env.JAVA_HOME > env.PATH
+                 *
+                 * We'll keep it for compatibility.
+                 */
+                if (javaHome && (javaHome = await verifyJavaHome(javaHome, JAVAC_FILENAME))) {
+                    javaVersion = await getJavaVersion(javaHome);
+                    logger.info("Use the JDK from 'java.home' setting as the initial default project JDK.");
+                } else if (javaRuntimes.length) {
+                    sortJdksBySource(javaRuntimes);
+                    javaHome = javaRuntimes[0].home;
+                    javaVersion = javaRuntimes[0].version;
+                    logger.info(`Use the JDK from '${javaRuntimes[0].sources}' as the initial default project JDK.`);
+                } else if (javaHome = await findDefaultJDKFromSettings()) {
+                    javaVersion = await getJavaVersion(javaHome);
+                    logger.info("Use the JDK from 'java.configuration.runtimes' as the initial default project JDK.");
+                } else {
+                    openJDKDownload(reject, "Please download and install a JDK to compile your project. You can configure your projects with different JDKs by the setting ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)");
+                }
             }
         }
 
@@ -109,6 +126,31 @@ async function findEmbeddedJRE(context: ExtensionContext): Promise<string | unde
     }
 
     return;
+}
+
+async function findDefaultJDKFromSettings(): Promise<string | undefined> {
+    const runtimes = workspace.getConfiguration().get("java.configuration.runtimes");
+    if (Array.isArray(runtimes) && runtimes.length) {
+        let candidate: string;
+        for (const runtime of runtimes) {
+            if (!runtime || typeof runtime !== 'object' || !runtime.path) {
+                continue;
+            }
+
+            const javaHome = await verifyJavaHome(runtime.path, JAVAC_FILENAME);
+            if (javaHome) {
+                candidate = javaHome;
+            }
+
+            if (runtime.default) {
+                break;
+            }
+        }
+
+        return candidate;
+    }
+
+    return undefined;
 }
 
 function sortJdksBySource(jdks: JavaRuntime[]) {
