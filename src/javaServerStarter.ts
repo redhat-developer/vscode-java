@@ -73,6 +73,10 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	if (DEBUG) {
 		params.push('-Dlog.level=ALL');
 	}
+	const metadataLocation = workspace.getConfiguration().get('java.import.generatesMetadataFilesAtProjectRoot');
+	if (metadataLocation !== undefined) {
+		params.push(`-Djava.import.generatesMetadataFilesAtProjectRoot=${metadataLocation}`);
+	}
 	let vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').workspaceValue;
 	if (vmargsCheck !== undefined) {
 		const isWorkspaceTrusted = (workspace as any).isTrusted; // keep compatibility for old engines < 1.56.0
