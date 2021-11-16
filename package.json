@@ -378,7 +378,7 @@
         },
         "java.import.generatesMetadataFilesAtProjectRoot": {
           "type": "boolean",
-          "description": "Specify whether the project metadata files(.project, .classpath, .settings) will be generated at the project root.",
+          "description": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root.",
           "default": false,
           "scope": "window"
         },
