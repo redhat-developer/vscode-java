@@ -31,10 +31,12 @@ import * as chokidar from 'chokidar';
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
 const jdtEventEmitter = new EventEmitter<Uri>();
-const cleanWorkspaceFileName = '.cleanWorkspace';
 const extensionName = 'Language Support for Java';
 let storagePath: string;
 let clientLogFile: string;
+
+export const cleanWorkspaceFileName = '.cleanWorkspace';
+export let workspacePath: string;
 
 export class ClientErrorHandler implements ErrorHandler {
 	private restarts: number[];
@@ -162,6 +164,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}));
 
 	storagePath = context.storagePath;
+	context.subscriptions.push(commands.registerCommand(Commands.MEATDATA_FILES_GENERATION, async () => {
+		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.metadataFilesGeneration.md`)), 'Metadata Files Generation', "", context);
+	}));
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
 	}
@@ -188,7 +193,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}).then(async (requirements) => {
 		const triggerFiles = await getTriggerFiles();
 		return new Promise<ExtensionAPI>(async (resolve) => {
-			const workspacePath = path.resolve(storagePath + '/jdt_ws');
+			workspacePath = path.resolve(storagePath + '/jdt_ws');
 			const syntaxServerWorkspacePath = path.resolve(storagePath + '/ss_ws');
 
 			let serverMode = getJavaServerMode();

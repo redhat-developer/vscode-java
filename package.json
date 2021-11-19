@@ -44,7 +44,8 @@
     "workspaceContains:build.gradle.kts",
     "workspaceContains:settings.gradle.kts",
     "workspaceContains:.classpath",
-    "onCommand:_java.templateVariables"
+    "onCommand:_java.templateVariables",
+    "onCommand:_java.metadataFilesGeneration"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -378,7 +379,7 @@
         },
         "java.import.generatesMetadataFilesAtProjectRoot": {
           "type": "boolean",
-          "description": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root.",
+          "markdownDescription": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Click [HERE](command:_java.metadataFilesGeneration) to learn how to change the setting to make it take effect.",
           "default": false,
           "scope": "window"
         },
