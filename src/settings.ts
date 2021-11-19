@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
-import { cleanWorkspaceFileName, workspacePath } from './extension';
+import { cleanWorkspaceFileName } from './extension';
 import { ensureExists, getJavaConfiguration } from './utils';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
@@ -25,7 +25,7 @@ export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // ja
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 const gradleWrapperPromptDialogs = [];
 
-export function onConfigurationChange() {
+export function onConfigurationChange(workspacePath: string) {
 	return workspace.onDidChangeConfiguration(params => {
 		if (!params.affectsConfiguration('java')) {
 			return;

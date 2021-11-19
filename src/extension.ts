@@ -36,7 +36,6 @@ let storagePath: string;
 let clientLogFile: string;
 
 export const cleanWorkspaceFileName = '.cleanWorkspace';
-export let workspacePath: string;
 
 export class ClientErrorHandler implements ErrorHandler {
 	private restarts: number[];
@@ -193,7 +192,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}).then(async (requirements) => {
 		const triggerFiles = await getTriggerFiles();
 		return new Promise<ExtensionAPI>(async (resolve) => {
-			workspacePath = path.resolve(storagePath + '/jdt_ws');
+			const workspacePath = path.resolve(storagePath + '/jdt_ws');
 			const syntaxServerWorkspacePath = path.resolve(storagePath + '/ss_ws');
 
 			let serverMode = getJavaServerMode();
@@ -370,7 +369,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
-			context.subscriptions.push(onConfigurationChange());
+			context.subscriptions.push(onConfigurationChange(workspacePath));
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
