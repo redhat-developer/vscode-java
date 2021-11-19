@@ -35,7 +35,7 @@ export function onConfigurationChange(workspacePath: string) {
 			excludeProjectSettingsFiles();
 		}
 
-		let isFsModeChanged: boolean = hasConfigKeyChanged('import.generatesMetadataFilesAtProjectRoot', oldConfig, newConfig);
+		const isFsModeChanged: boolean = hasConfigKeyChanged('import.generatesMetadataFilesAtProjectRoot', oldConfig, newConfig);
 		if (isFsModeChanged) {
 			// Changing the FS mode needs a clean restart.
 			ensureExists(workspacePath);
