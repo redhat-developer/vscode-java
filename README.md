@@ -197,6 +197,7 @@ The following settings are supported:
 New in 1.1.0:
  * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
  * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
+ * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
 
 
 Semantic Highlighting

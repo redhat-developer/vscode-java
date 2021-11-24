@@ -1,9 +1,11 @@
 'use strict';
 
+import * as fs from 'fs';
 import * as path from 'path';
 import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
-import { getJavaConfiguration } from './utils';
+import { cleanWorkspaceFileName } from './extension';
+import { ensureExists, getJavaConfiguration } from './utils';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 export const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -23,7 +25,7 @@ export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // ja
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 const gradleWrapperPromptDialogs = [];
 
-export function onConfigurationChange() {
+export function onConfigurationChange(workspacePath: string) {
 	return workspace.onDidChangeConfiguration(params => {
 		if (!params.affectsConfiguration('java')) {
 			return;
@@ -32,7 +34,15 @@ export function onConfigurationChange() {
 		if (newConfig.get(EXCLUDE_FILE_CONFIG)) {
 			excludeProjectSettingsFiles();
 		}
-		if (hasJavaConfigChanged(oldConfig, newConfig)) {
+
+		const isFsModeChanged: boolean = hasConfigKeyChanged('import.generatesMetadataFilesAtProjectRoot', oldConfig, newConfig);
+		if (isFsModeChanged) {
+			// Changing the FS mode needs a clean restart.
+			ensureExists(workspacePath);
+			const file = path.join(workspacePath, cleanWorkspaceFileName);
+			fs.closeSync(fs.openSync(file, 'w'));
+		}
+		if (isFsModeChanged || hasJavaConfigChanged(oldConfig, newConfig)) {
 			const msg = `Java Language Server configuration changed, please restart ${env.appName}.`;
 			const action = 'Restart Now';
 			const restartId = Commands.RELOAD_WINDOW;

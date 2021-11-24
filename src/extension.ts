@@ -31,10 +31,11 @@ import * as chokidar from 'chokidar';
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
 const jdtEventEmitter = new EventEmitter<Uri>();
-const cleanWorkspaceFileName = '.cleanWorkspace';
 const extensionName = 'Language Support for Java';
 let storagePath: string;
 let clientLogFile: string;
+
+export const cleanWorkspaceFileName = '.cleanWorkspace';
 
 export class ClientErrorHandler implements ErrorHandler {
 	private restarts: number[];
@@ -162,6 +163,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}));
 
 	storagePath = context.storagePath;
+	context.subscriptions.push(commands.registerCommand(Commands.MEATDATA_FILES_GENERATION, async () => {
+		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.metadataFilesGeneration.md`)), 'Metadata Files Generation', "", context);
+	}));
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
 	}
@@ -365,7 +369,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
-			context.subscriptions.push(onConfigurationChange());
+			context.subscriptions.push(onConfigurationChange(workspacePath));
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
