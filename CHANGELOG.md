@@ -1,5 +1,26 @@
 # Change Log
 
+## 1.1.0 (November 26th, 2021)
+ * enhancement - Stop generating metadata files at project's root. See [#618](https://github.com/redhat-developer/vscode-java/issues/618).
+ * enhancement - Quickfixes should be available at the line level. See [#2130](https://github.com/redhat-developer/vscode-java/issues/2130).
+ * enhancement - Explicitly report OutOfMemory error to user. See [#1959](https://github.com/redhat-developer/vscode-java/issues/1959).
+ * enhancement - Add option to clean out cached workspace data that is unused for a specified period of time. See [#2110](https://github.com/redhat-developer/vscode-java/issues/2110).
+ * enhancement - Add `Generate Constructors` to Show Fixes for type declaration. See [JLS#1937](https://github.com/eclipse/eclipse.jdt.ls/pull/1937).
+ * enhancement - Add `Override/Implement methods` to Show Fixes for type declaration. See [JLS#1932](https://github.com/eclipse/eclipse.jdt.ls/pull/1932).
+ * enhancement - Add "Surround With Try-With" code assist proposal. See [#2128](https://github.com/redhat-developer/vscode-java/issues/2128).
+ * enhancement - Formatter should indent `case` statements within a `switch` statement by default. See [#2185](https://github.com/redhat-developer/vscode-java/issues/2185).
+ * enhancement - Formatter should not join wrapped lines by default. See [#2181](https://github.com/redhat-developer/vscode-java/issues/2181).
+ * enhancement - Always show `Organize imports` in Quick Fixes for import declaration. See [JLS#1936](https://github.com/eclipse/eclipse.jdt.ls/pull/1936).
+ * bug fix - Java server refreshing the workspace (cleaning/building) for each restart. See [#2222](https://github.com/redhat-developer/vscode-java/issues/2222).
+ * bug fix - Problem messages can get offset by frequent changes to the document. See [#1633](https://github.com/redhat-developer/vscode-java/issues/1633).
+ * bug fix - Duplicate implement method quick fixes. See [JLS#1942](https://github.com/eclipse/eclipse.jdt.ls/issues/1942).
+ * bug fix - Malformed semantic tokens in some case. See [JLS#1922](https://github.com/eclipse/eclipse.jdt.ls/issues/1922).
+ * bug fix - Several errors reported for anonymous Object classes. See [JLS#1915](https://github.com/eclipse/eclipse.jdt.ls/issues/1915).
+ * bug fix - `if` with `instanceof` pattern match and `&&` breaks completion in nested `if`. See [JLS#1855](https://github.com/eclipse/eclipse.jdt.ls/issues/1855).
+ * bug fix - Java build status spinning forever. See [#2214](https://github.com/redhat-developer/vscode-java/pull/2214).
+ * bug fix - Creating the formatter file fails silently if parent folder doesn't exist. See [#2189](https://github.com/redhat-developer/vscode-java/issues/2189).
+ * debt - Don't use deprecated rangeLength property in handleChanged. See [JLS#1928](https://github.com/eclipse/eclipse.jdt.ls/pull/1928).
+
 ## 1.0.0 (October 19th, 2021)
  * performance - completion: optimize the index engine for the scenario "complete on type name". See [JLS#1846](https://github.com/eclipse/eclipse.jdt.ls/issues/1846).
  * enhancement - Support Java 17. See [#2102](https://github.com/redhat-developer/vscode-java/pull/2102).
