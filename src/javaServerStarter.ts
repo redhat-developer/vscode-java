@@ -115,7 +115,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 			params.push(HEAP_DUMP);
 		}
 		if (vmargs.indexOf(HEAP_DUMP_LOCATION) < 0) {
-			params.push(`${HEAP_DUMP_LOCATION}${context.storageUri.fsPath}`);
+			params.push(`${HEAP_DUMP_LOCATION}${path.dirname(workspacePath)}`);
 		}
 	}
 
