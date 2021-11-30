@@ -271,16 +271,23 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
  */
 async function navigateToClassDeclaration(document: TextDocument) {
     if (document.uri.path.endsWith(".class")) {
-        // Not every textDocument is opened in the active editor.
         const disposable = window.onDidChangeActiveTextEditor(async (textEditor) => {
-            if (textEditor !== undefined && textEditor.document.uri === document.uri) {
-                const newPosition = findFirstTypeDeclaration(document);
-                textEditor.selection = new Selection(newPosition, newPosition);
-                textEditor.revealRange(new Range(newPosition, newPosition), TextEditorRevealType.InCenter);
+            if (textEditor !== undefined && textEditor.document.uri === document.uri && isCursorAtBeginningOfDocument(textEditor.selection)) {                
+                setTimeout(() => {
+                    if (isCursorAtBeginningOfDocument(textEditor.selection)) {
+                        const newPosition = findFirstTypeDeclaration(document);
+                        textEditor.selection = new Selection(newPosition, newPosition);
+                        textEditor.revealRange(new Range(newPosition, newPosition), TextEditorRevealType.InCenter);
+                    }
+                }, 100);
             }
             disposable.dispose();
         });
     }
+}
+
+function isCursorAtBeginningOfDocument(selection: Selection): boolean {
+    return selection.start.line == 0 && selection.start.character == 0
 }
 
 const JAVA_TYPE_DECLARATION_REGEX = /^\s*\w?[\w\s-]*\b(?:class|@interface|interface|enum)\s+(?=[\w$]+)/;
