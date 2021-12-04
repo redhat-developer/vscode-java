@@ -1,16 +1,16 @@
 
-import * as path from 'path';
-import * as net from 'net';
-import * as glob from 'glob';
-import * as os from 'os';
 import * as fs from 'fs';
-import { StreamInfo, Executable, ExecutableOptions } from 'vscode-languageclient/node';
-import { RequirementsData } from './requirements';
-import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag, isInWorkspaceFolder } from './settings';
+import * as glob from 'glob';
+import * as net from 'net';
+import * as os from 'os';
+import * as path from 'path';
+import { ExtensionContext, workspace } from 'vscode';
+import { Executable, ExecutableOptions, StreamInfo } from 'vscode-languageclient/node';
 import { logger } from './log';
-import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } from './utils';
-import { workspace, ExtensionContext, window } from 'vscode';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
+import { RequirementsData } from './requirements';
+import { getJavaagentFlag, getJavaEncoding, getKey, isInWorkspaceFolder, IS_WORKSPACE_VMARGS_ALLOWED } from './settings';
+import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp } from './utils';
 
 // eslint-disable-next-line no-var
 declare var v8debug;
@@ -30,6 +30,13 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
 	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
+	if (os.platform() === 'win32') {
+		const vmargs = getJavaConfiguration().get('jdt.ls.vmargs', '');
+		const watchParentProcess = '-DwatchParentProcess=false';
+		if (vmargs.indexOf(watchParentProcess) < 0) {
+			options.detached = true;
+		}
+	}
 	executable.options = options;
 	executable.command = path.resolve(`${requirements.tooling_jre}/bin/java`);
 	executable.args = prepareParams(requirements, javaConfig, workspacePath, context, isSyntaxServer);
@@ -105,12 +112,6 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	const encodingKey = '-Dfile.encoding=';
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
-	}
-	if (os.platform() === 'win32') {
-		const watchParentProcess = '-DwatchParentProcess=';
-		if (vmargs.indexOf(watchParentProcess) < 0) {
-			params.push(`${watchParentProcess}false`);
-		}
 	}
 	if (vmargs.indexOf('-Xlog:') < 0) {
 		params.push('-Xlog:disable');
