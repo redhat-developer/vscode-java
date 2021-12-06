@@ -3,6 +3,7 @@ const gulp = require('gulp');
 const cp = require('child_process');
 const decompress = require('gulp-decompress');
 const download = require('gulp-download');
+const request = require('request');
 const glob = require('glob');
 const fse = require('fs-extra');
 const path = require('path');
@@ -21,12 +22,6 @@ gulp.task('clean_jre', function(done) {
 
 	done();
 });
-
-function cleanManifest() {
-	if (fse.existsSync('./jre/justj.manifest')) {
-		fse.removeSync('./jre/justj.manifest');
-	}
-}
 
 // Pls update the latest JRE if a new JDK is announced.
 const LATEST_JRE = 17;
@@ -61,30 +56,25 @@ gulp.task('download_jre', async function(done) {
 		const javaVersion = (!argv.javaVersion || argv.javaVersion === "latest") ? LATEST_JRE : argv.javaVersion;
 		console.log("Downloading justj JRE " + javaVersion + " for the platform " + targetPlatform) + "...";
 
-		const mafinestUrl = `https://download.eclipse.org/justj/jres/${javaVersion}/downloads/latest/justj.manifest`;
+		const manifestUrl = `https://download.eclipse.org/justj/jres/${javaVersion}/downloads/latest/justj.manifest`;
 		// Download justj.manifest file
-		await new Promise(function(resolve, reject) {
-			download(mafinestUrl)
-				.on('error', reject)
-				.pipe(gulp.dest('./jre'))
-				.on('end', resolve);
+		const manifest = await new Promise(function(resolve, reject) {
+			request.get(manifestUrl, function(err, response, body) {
+				if(err || response.statusCode >= 400) {
+					reject(err || `${response.statusCode} returned from ${manifestUrl}`);
+				} else {
+					resolve(String(body));
+				}
+			});
 		});
 
-		if (!fse.existsSync('./jre/justj.manifest')) {
-			cleanManifest();
-			done(new Error(`Failed to download justj.manifest, please check if the link ${mafinestUrl} is valid.`))
-			return;
-		}
-
-		const value = fse.readFileSync('./jre/justj.manifest').toString();
-		if (value.startsWith("<!DOCTYPE html>")) {
-			cleanManifest();
-			done(new Error(`Failed to download justj.manifest, please check if the link ${mafinestUrl} is valid.`))
+		if (!manifest) {
+			done(new Error(`Failed to download justj.manifest, please check if the link ${manifestUrl} is valid.`))
 			return;
 		}
 
 		/**
-		 * A sample justj.manifest
+		 * Here are the contents for a sample justj.manifest file:
 		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-linux-aarch64.tar.gz
 		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-linux-x86_64.tar.gz
 		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-macosx-aarch64.tar.gz
@@ -92,14 +82,13 @@ gulp.task('download_jre', async function(done) {
 		 * ../20211012_0921/org.eclipse.justj.openjdk.hotspot.jre.full.stripped-17-win32-x86_64.tar.gz
 		 */
 		const javaPlatform = platformMapping[targetPlatform];
-		const list = value.split(/\r?\n/);
+		const list = manifest.split(/\r?\n/);
 		const jreIdentifier = list.find((value) => {
 			return value.indexOf("org.eclipse.justj.openjdk.hotspot.jre.full.stripped") >= 0 && value.indexOf(javaPlatform) >= 0;
 		});
 
 		if (!jreIdentifier) {
-			cleanManifest();
-			done(new Error(`justj doesn't support the jre ${javaVersion} for the platform ${javaPlatform} (${targetPlatform}), please refer to the link ${mafinestUrl} for the supported platforms.`));
+			done(new Error(`justj doesn't support the jre ${javaVersion} for the platform ${javaPlatform} (${targetPlatform}), please refer to the link ${manifestUrl} for the supported platforms.`));
 			return;
 		}
 
@@ -124,7 +113,6 @@ gulp.task('download_jre', async function(done) {
 		}
 	}
 
-	cleanManifest();
 	done();
 });
 

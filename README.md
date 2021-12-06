@@ -54,11 +54,11 @@ See the [changelog](CHANGELOG.md) for the latest release. You might also find us
 Setting the JDK
 ===============
 ## Java Tooling JDK
-Now that Java extension will publish platform specific versions, it will embed a JRE for supported platforms such as `win32-x64`, `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`. The embedded JRE is used to launch Java Language Server itself, you're only responsible for configuring [Project JDKs](#project-jdks) to compile your project.
+Now that Java extension will publish platform specific versions, it will embed a JRE for supported platforms such as `win32-x64`, `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`. The embedded JRE is used to launch the Language Server for Java. Users are only responsible for configuring [Project JDKs](#project-jdks) to compile your Java projects.
 
 The following part is only kept for the universal version without embedded JRE.
 
->The tooling JDK will be used to launch the Java Language Server. And by default, will also be used to compile your projects.\
+>The tooling JDK will be used to launch the Language Server for Java. And by default, will also be used to compile your projects.\
 \
 The path to the Java Development Kit can be specified by the `java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
 >- the `JDK_HOME` environment variable

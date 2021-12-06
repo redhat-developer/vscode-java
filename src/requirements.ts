@@ -113,10 +113,6 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
 async function findEmbeddedJRE(context: ExtensionContext): Promise<string | undefined> {
     const jreHome = context.asAbsolutePath("jre");
     if (fse.existsSync(jreHome) && fse.statSync(jreHome).isDirectory()) {
-        if (fse.existsSync(path.join(jreHome, "bin", JAVA_FILENAME))) {
-            return jreHome;
-        }
-
         const candidates = fse.readdirSync(jreHome);
         for (const candidate of candidates) {
             if (fse.existsSync(path.join(jreHome, candidate, "bin", JAVA_FILENAME))) {
