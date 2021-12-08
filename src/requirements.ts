@@ -197,7 +197,7 @@ function openJDKDownload(reject, cause) {
     });
 }
 
-function getJdkUrl() {
+export function getJdkUrl() {
     let jdkUrl = 'https://developers.redhat.com/products/openjdk/download/?sc_cid=701f2000000RWTnAAO';
     if (process.platform === 'darwin') {
         jdkUrl = 'https://adoptopenjdk.net/';

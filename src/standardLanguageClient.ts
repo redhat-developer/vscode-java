@@ -1,17 +1,17 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
 import { getJavaConfig, applyWorkspaceEdit } from "./extension";
 import { LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams, ConfigurationRequest, ConfigurationParams } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
-import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks } from "./protocol";
+import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo } from "./protocol";
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange, collectBuildFilePattern } from "./plugin";
 import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
-import { RequirementsData } from "./requirements";
+import { getJdkUrl, RequirementsData } from "./requirements";
 import * as net from 'net';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -32,9 +32,15 @@ import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 import { buildFilePatterns } from './plugin';
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
+import { findRuntimes, IJavaRuntime } from "jdk-utils";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
+const GET_JDK = "Get the Java Development Kit";
+const USE_JAVA = "Use Java ";
+const AS_GRADLE_JVM = " as Gradle JVM";
+const UPGRADE_GRADLE = "Upgrade Gradle to ";
+const GRADLE_IMPORT_JVM = "java.import.gradle.java.home";
 
 export class StandardLanguageClient {
 
@@ -128,7 +134,7 @@ export class StandardLanguageClient {
 				serverTasks.updateServerTask(progress);
 			});
 
-			this.languageClient.onNotification(EventNotification.type, (notification) => {
+			this.languageClient.onNotification(EventNotification.type, async (notification) => {
 				switch (notification.eventType) {
 					case EventType.ClasspathUpdated:
 						apiManager.fireDidClasspathUpdate(Uri.parse(notification.data));
@@ -144,6 +150,24 @@ export class StandardLanguageClient {
 							apiManager.fireDidProjectsImport(projectUris);
 						}
 						break;
+					case EventType.IncompatibleGradleJdkIssue:
+						const options: string[] = [];
+						const info = notification.data as GradleCompatibilityInfo;
+						const highestJavaVersion = Number(info.highestJavaVersion);
+						let targetRuntime: IJavaRuntime | undefined;
+						for (const javaRuntime of await findRuntimes({checkJavac: true, withVersion: true, withTags: true})) {
+							if (javaRuntime.version.major <= highestJavaVersion) {
+								targetRuntime = javaRuntime;
+								break;
+							}
+						}
+						options.push(UPGRADE_GRADLE + info.recommendedGradleVersion);
+						if (!targetRuntime) {
+							options.push(GET_JDK);
+						} else {
+							options.push(USE_JAVA + targetRuntime.version.major + AS_GRADLE_JVM);
+						}
+						this.showGradleCompatibilityIssueNotification(info.message, options, targetRuntime.homedir, info.projectUri);
 					default:
 						break;
 				}
@@ -215,6 +239,44 @@ export class StandardLanguageClient {
 		collectBuildFilePattern(extensions.all);
 
 		this.status = ClientStatus.Initialized;
+	}
+
+	private showGradleCompatibilityIssueNotification(message: string, options: string[], newJavaHome: string, projectUri: string) {
+		window.showErrorMessage(message + " [Learn More](https://docs.gradle.org/current/userguide/compatibility.html)", ...options).then(async (choice) => {
+			if (choice === GET_JDK) {
+				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(getJdkUrl()));
+			} else if (choice.startsWith(USE_JAVA)) {
+				await workspace.getConfiguration().update(GRADLE_IMPORT_JVM, newJavaHome, ConfigurationTarget.Global);
+				commands.executeCommand("workbench.action.openSettings", GRADLE_IMPORT_JVM);
+				commands.executeCommand("java.project.import");
+			} else if (choice.startsWith(UPGRADE_GRADLE)) {
+				const useWrapper = workspace.getConfiguration().get<boolean>("java.import.gradle.wrapper.enabled");
+				if (!useWrapper) {
+					await workspace.getConfiguration().update("java.import.gradle.wrapper.enabled", true, ConfigurationTarget.Workspace);
+				}
+				const result = await window.withProgress({
+					location: ProgressLocation.Window,
+					title: "Upgrading Gradle wrapper...",
+					cancellable: true,
+				}, (_progress, token) => {
+					return commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, "java.project.upgradeGradle", projectUri, token);
+				});
+				if (result) {
+					const propertiesFile = path.join(projectUri, "gradle", "wrapper", "gradle-wrapper.properties");
+					if (fse.pathExists(propertiesFile)) {
+						const content = await fse.readFile(propertiesFile);
+						const offset = content.toString().indexOf("distributionUrl");
+						if (offset >= 0) {
+							const document = await workspace.openTextDocument(propertiesFile);
+							const position = document.positionAt(offset);
+							const distributionUrlRange = document.getWordRangeAtPosition(position);
+							window.showTextDocument(document, {selection: distributionUrlRange});
+						}
+					}
+					commands.executeCommand("java.project.import");
+				}
+			}
+		});
 	}
 
 	private registerCommandsForStandardServer(context: ExtensionContext, jdtEventEmitter: EventEmitter<Uri>): void {
