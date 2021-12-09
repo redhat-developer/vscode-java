@@ -46,7 +46,8 @@ node('rhel8'){
 
 	stage "Package vscode-java"
 	def packageJson = readJSON file: 'package.json'
-	sh "vsce package -o java-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
+	env.EXTENSION_VERSION = "${packageJson.version}"
+	sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
@@ -64,14 +65,18 @@ node('rhel8'){
 	def embeddedJRE = 17
 	for(platform in platforms){
 		sh "npx gulp download_jre --target ${platform} --javaVersion ${embeddedJRE}"
-		sh "vsce package --target ${platform} -o java-${platform}-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
+		sh "vsce package --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 	}
 	stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
 
 	stage 'Upload vscode-java to staging'
 	def artifacts = findFiles(glob: '**.vsix')
+	def artifactDir = "java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}"
+	sh "mkdir ${artifactDir}"
+	sh "mv *.vsix ${artifactDir}"
+
 	for(artifact in artifacts){
-		sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${artifact.path} ${UPLOAD_LOCATION}/jdt.ls/staging"
+		sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/jdt.ls/staging"
 	}
 }
 
@@ -104,13 +109,17 @@ node('rhel8'){
 			}
 		}
 
-		archive includes:"**.vsix"
-
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
 		def artifacts = findFiles(glob: '**.vsix')
+    	def artifactDir = "java-${env.EXTENSION_VERSION}"
+	    sh "mkdir ${artifactDir}"
+	    sh "mv *.vsix ${artifactDir}"
+
+		archive includes:"${artifactDir}/**/*.*"
+
 		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
 		for(artifact in artifacts){
-			sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${artifact.path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
+			sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
 		}
 	}// if publishToMarketPlace
 }
