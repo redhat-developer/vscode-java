@@ -54,13 +54,16 @@ See the [changelog](CHANGELOG.md) for the latest release. You might also find us
 Setting the JDK
 ===============
 ## Java Tooling JDK
-This JDK will be used to launch the Java Language Server. And by default, will also be used to compile your projects.
+Now that Java extension will publish platform specific versions, it will embed a JRE for supported platforms such as `win32-x64`, `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`. The embedded JRE is used to launch the Language Server for Java. Users are only responsible for configuring [Project JDKs](#project-jdks) to compile your Java projects.
 
+The following part is only kept for the universal version without embedded JRE.
+
+>The tooling JDK will be used to launch the Language Server for Java. And by default, will also be used to compile your projects.\
+\
 The path to the Java Development Kit can be specified by the `java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
-
-- the `JDK_HOME` environment variable
-- the `JAVA_HOME` environment variable
-- on the current system path
+>- the `JDK_HOME` environment variable
+>- the `JAVA_HOME` environment variable
+>- on the current system path
 
 ## Project JDKs
 If you need to compile your projects against a different JDK version, it's recommended you configure the `java.configuration.runtimes` property in your user settings, eg:
@@ -107,7 +110,7 @@ Supported VS Code settings
 ==========================
 The following settings are supported:
 
-* `java.home` : Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
+* `java.home` : **Deprecated, only used for universal version without embedded JRE.** Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.

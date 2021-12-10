@@ -110,6 +110,26 @@
 			"outFiles": ["${workspaceRoot}/out/**/*.js"],
 			"preLaunchTask": "prepareLightweightTest",
 			"postDebugTask": "cleanTestFolder"
+		},
+		{
+			"args": [
+				"${input:gulpTask}"
+			],
+			"name": "Launch Gulp Task",
+			"program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+			"request": "launch",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+			"type": "pwa-node"
+		}
+	],
+	"inputs": [
+		{
+			"id": "gulpTask",
+			"type": "promptString",
+			"description": "Name of the Gulp task to execute",
+			"default": "download_jre"
 		}
 	]
 }
