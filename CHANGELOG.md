@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.2.0 (December 16th, 2021)
+ * enhancement - Support platform specific extension. See [#2109](https://github.com/redhat-developer/vscode-java/issues/2109).
+ * enhancement - Make the debounce adaptive for validation job. See [JLS#1973](https://github.com/eclipse/eclipse.jdt.ls/pull/1973).
+ * bug fix - Fix issue where importing packages showed incorrect result. See [#1422](https://github.com/redhat-developer/vscode-java/issues/1422).
+ * bug fix - Fix regression in code action for unresolved type. See [JLS#1967](https://github.com/eclipse/eclipse.jdt.ls/pull/1967).
+ * bug fix - Diagnostics from changes to build configuration not reflected in opened source files. See [JLS#1963](https://github.com/eclipse/eclipse.jdt.ls/issues/1963).
+ * bug fix - Java extension does not work on standalone java files. See [#2231](https://github.com/redhat-developer/vscode-java/issues/2231).
+ * debt - Remove unused log4j 1.2.15 from builds. See [JLS#1972](https://github.com/eclipse/eclipse.jdt.ls/pull/1972).
+ * debt - Use jdk-utils to detect installed runtimes. See [#2246](https://github.com/redhat-developer/vscode-java/pull/2246).
+
 ## 1.1.0 (November 26th, 2021)
  * enhancement - Stop generating metadata files at project's root. See [#618](https://github.com/redhat-developer/vscode-java/issues/618).
  * enhancement - Quickfixes should be available at the line level. See [#2130](https://github.com/redhat-developer/vscode-java/issues/2130).
