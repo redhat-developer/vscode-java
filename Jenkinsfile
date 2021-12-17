@@ -78,6 +78,8 @@ node('rhel8'){
 	for(artifact in artifacts){
 		sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/jdt.ls/staging"
 	}
+	// Clean up build vsix
+	sh "rm -rf ${artifactDir}"
 }
 
 node('rhel8'){
@@ -98,6 +100,8 @@ node('rhel8'){
 		stage "Publish to VS Code Marketplace"
 		// VS Code Marketplace
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+			// Clean up embedded jre folder from previous build
+			sh 'npx gulp clean_jre'
 			// Publish a generic version
 			sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
 
@@ -111,9 +115,9 @@ node('rhel8'){
 
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
 		def artifacts = findFiles(glob: '**.vsix')
-    	def artifactDir = "java-${env.EXTENSION_VERSION}"
-	    sh "mkdir ${artifactDir}"
-	    sh "mv *.vsix ${artifactDir}"
+		def artifactDir = "java-${env.EXTENSION_VERSION}"
+		sh "mkdir ${artifactDir}"
+		sh "mv *.vsix ${artifactDir}"
 
 		archive includes:"${artifactDir}/**/*.*"
 
