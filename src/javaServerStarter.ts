@@ -64,7 +64,11 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 				'--add-opens',
 				'java.base/java.util=ALL-UNNAMED',
 				'--add-opens',
-				'java.base/java.lang=ALL-UNNAMED');
+				'java.base/java.lang=ALL-UNNAMED',
+				// See https://github.com/redhat-developer/vscode-java/issues/2264
+				// It requires the internal API sun.nio.fs.WindowsFileAttributes.isDirectoryLink() to check if a Windows directory is symlink.
+				'--add-opens',
+				'java.base/sun.nio.fs=ALL-UNNAMED');
 
 	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1',
 				'-Dosgi.bundles.defaultStartLevel=4',
