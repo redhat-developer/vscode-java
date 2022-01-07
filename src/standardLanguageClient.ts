@@ -62,6 +62,8 @@ export class StandardLanguageClient {
 				serverStatusBarProvider.setBusy();
 			} else if (status === ServerStatusKind.Error) {
 				serverStatusBarProvider.setError();
+			} else if (status === ServerStatusKind.Warning) {
+				serverStatusBarProvider.setWarning();
 			} else {
 				serverStatusBarProvider.setReady();
 			}
@@ -116,12 +118,23 @@ export class StandardLanguageClient {
 						apiManager.updateStatus(ClientStatus.Error);
 						resolve(apiManager.getApiInstance());
 						break;
+					case 'ProjectStatus':
+						if (report.message === "WARNING") {
+							serverStatus.updateServerStatus(ServerStatusKind.Warning);
+						} else if (report.message === "OK") {
+							this.status = ClientStatus.Started;
+							serverStatus.errorResolved();
+							serverStatus.updateServerStatus(ServerStatusKind.Ready);
+						}
+						return;
 					case 'Starting':
 					case 'Message':
 						// message goes to progress report instead
 						break;
 				}
-				serverStatusBarProvider.updateTooltip(report.message);
+				if (!serverStatus.hasErrors()) {
+					serverStatusBarProvider.updateTooltip(report.message);
+				}
 			});
 
 			this.languageClient.onNotification(ProgressReportNotification.type, (progress) => {
