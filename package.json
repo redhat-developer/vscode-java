@@ -14,6 +14,7 @@
     "untrustedWorkspaces": {
       "supported": "limited",
       "restrictedConfigurations": [
+        "java.jdt.ls.java.home",
         "java.home",
         "java.jdt.ls.vmargs"
       ]
