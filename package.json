@@ -1091,6 +1091,16 @@
           "type": "boolean",
           "markdownDescription": "Specify whether to replace all the occurrences of the subtype with the new extracted interface.",
           "default": true
+        },
+        "redhat.telemetry.enabled": {
+          "type": "boolean",
+          "default": null,
+          "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
+          "scope": "window",
+          "tags": [
+            "usesOnlineServices",
+            "telemetry"
+          ]
         }
       }
     },
@@ -1442,6 +1452,7 @@
     "@vscode/codicons": "^0.0.32",
     "@vscode/webview-ui-toolkit": "1.2.2",
     "chokidar": "^3.5.3",
+    "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
     "expand-home-dir": "^0.0.3",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
@@ -1455,5 +1466,7 @@
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
-  }
+  },
+  "segmentWriteKey": "Y7Y5Xk8dKEhVZHTmAkFZkqgdN4d7c4lt",
+  "segmentWriteKeyDebug": "BflPll7uuKOCm3y0g7JpfXLVBVFBivDE"
 }

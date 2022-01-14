@@ -31,6 +31,7 @@ import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
 import glob = require('glob');
+import { Telemetry } from './telemetry';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -98,6 +99,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}
 	clientLogFile = path.join(storagePath, 'client.log');
 	initializeLogFile(clientLogFile);
+
+	Telemetry.startTelemetry(context);
 
 	enableJavadocSymbols();
 

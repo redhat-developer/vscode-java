@@ -209,5 +209,7 @@ export function getJavaConfig(javaHome: string) {
 	if (completionCaseMatching === "auto") {
 		javaConfig.completion.matchCase = isInsider ? "firstLetter" : "off";
 	}
+
+	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
 	return javaConfig;
 }

@@ -37,6 +37,8 @@ import { TracingLanguageClient } from './TracingLanguageClient';
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
+import { Telemetry } from "./telemetry";
+import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -285,6 +287,12 @@ export class StandardLanguageClient {
 				}
 			}
 			return result;
+		});
+
+		this.languageClient.onTelemetry(async (e: TelemetryEvent) => {
+			if (e.name === Telemetry.SERVER_INITIALIZED_EVT) {
+				return Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, e.properties);
+			}
 		});
 
 		context.subscriptions.push(commands.registerCommand(GRADLE_CHECKSUM, (wrapper: string, sha256: string) => {
