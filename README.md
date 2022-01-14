@@ -110,7 +110,7 @@ Supported VS Code settings
 ==========================
 The following settings are supported:
 
-* `java.home` : **Deprecated, only used for universal version without embedded JRE.** Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
+* `java.home` : **Deprecated, please use 'java.jdt.ls.java.home' instead.** Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
@@ -196,12 +196,12 @@ The following settings are supported:
   - `lastMember`: Insert the generated code as the last member of the target type.
 * `java.settings.url` : Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)
 * `java.symbols.includeSourceMethodDeclarations` : Include method declarations from source files in symbol search. Defaults to `false`.
-
-New in 1.1.0:
  * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
  * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
  * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
 
+New in 1.3.0:
+* `java.jdt.ls.java.home`: Absolute path to JDK home folder used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. Requires VS Code restart.
 
 Semantic Highlighting
 ===============

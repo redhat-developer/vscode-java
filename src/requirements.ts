@@ -34,11 +34,12 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
     let toolingJre: string = await findEmbeddedJRE(context);
     let toolingJreVersion: number = await getMajorVersion(toolingJre);
     return new Promise(async (resolve, reject) => {
-        let source: string;
+        const javaPreferences = await checkJavaPreferences(context);
+        const preferenceName = javaPreferences.preference;
+        let javaHome = javaPreferences.javaHome;
         let javaVersion: number = 0;
-        let javaHome = await checkJavaPreferences(context);
-        if (!toolingJre && javaHome) { // "java.home" setting is only used for the universal version.
-            source = `java.home variable defined in ${env.appName} settings`;
+        if (javaHome) {
+            const source = `${preferenceName} variable defined in ${env.appName} settings`;
             javaHome = expandHomeDir(javaHome);
             if (!await fse.pathExists(javaHome)) {
                 invalidJavaHome(reject, `The ${source} points to a missing or inaccessible folder (${javaHome})`);
@@ -52,51 +53,49 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
                 invalidJavaHome(reject, msg);
             }
             javaVersion = await getMajorVersion(javaHome);
-            toolingJre = javaHome;
-            toolingJreVersion = javaVersion;
-        } else {
-            // java.home not specified, search valid JDKs from env.JAVA_HOME, env.PATH, SDKMAN, jEnv, jabba, Common directories
-            const javaRuntimes = await findRuntimes({checkJavac: true, withVersion: true, withTags: true});
-            if (!toolingJre) { // universal version
-                // as latest version as possible.
-                sortJdksByVersion(javaRuntimes);
-                const validJdks = javaRuntimes.filter(r => r.version.major >= REQUIRED_JDK_VERSION);
-                if (validJdks.length > 0) {
-                    sortJdksBySource(validJdks);
-                    javaHome = validJdks[0].homedir;
-                    javaVersion = validJdks[0].version.major;
-                    toolingJre = javaHome;
-                    toolingJreVersion = javaVersion;
-                }
-            } else { // pick a default project JDK/JRE
-                /**
-                 * For legacy users, we implicitly following the order below to
-                 * set a default project JDK during initialization:
-                 * java.home > env.JDK_HOME > env.JAVA_HOME > env.PATH
-                 *
-                 * We'll keep it for compatibility.
-                 */
-                if (javaHome && (await getRuntime(javaHome) !== undefined)) {
-                    const runtime = await getRuntime(javaHome, {withVersion: true});
-                    javaHome = runtime.homedir;
-                    javaVersion = runtime.version?.major;
-                    logger.info("Use the JDK from 'java.home' setting as the initial default project JDK.");
-                } else if (javaRuntimes.length) {
-                    sortJdksBySource(javaRuntimes);
-                    javaHome = javaRuntimes[0].homedir;
-                    javaVersion = javaRuntimes[0].version?.major;
-                    logger.info(`Use the JDK from '${getSources(javaRuntimes[0])}' as the initial default project JDK.`);
-                } else if (javaHome = await findDefaultRuntimeFromSettings()) {
-                    javaVersion = await getMajorVersion(javaHome);
-                    logger.info("Use the JDK from 'java.configuration.runtimes' as the initial default project JDK.");
-                } else {
-                    openJDKDownload(reject, "Please download and install a JDK to compile your project. You can configure your projects with different JDKs by the setting ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)");
-                }
+            if (preferenceName === "java.jdt.ls.java.home" || !toolingJre) {
+                toolingJre = javaHome;
+                toolingJreVersion = javaVersion;
+            }
+        }
+
+        // search valid JDKs from env.JAVA_HOME, env.PATH, SDKMAN, jEnv, jabba, Common directories
+        const javaRuntimes = await findRuntimes({ checkJavac: true, withVersion: true, withTags: true });
+        if (!toolingJre) { // universal version
+            // as latest version as possible.
+            sortJdksByVersion(javaRuntimes);
+            const validJdks = javaRuntimes.filter(r => r.version.major >= REQUIRED_JDK_VERSION);
+            if (validJdks.length > 0) {
+                sortJdksBySource(validJdks);
+                javaHome = validJdks[0].homedir;
+                javaVersion = validJdks[0].version.major;
+                toolingJre = javaHome;
+                toolingJreVersion = javaVersion;
+            }
+        } else { // pick a default project JDK/JRE
+            /**
+             * For legacy users, we implicitly following the order below to
+             * set a default project JDK during initialization:
+             * java.jdt.ls.java.home > java.home > env.JDK_HOME > env.JAVA_HOME > env.PATH
+             *
+             * We'll keep it for compatibility.
+             */
+            if (javaHome) {
+                logger.info("Use the JDK from 'java.home' setting as the initial default project JDK.");
+            } else if (javaRuntimes.length) {
+                sortJdksBySource(javaRuntimes);
+                javaHome = javaRuntimes[0].homedir;
+                javaVersion = javaRuntimes[0].version?.major;
+                logger.info(`Use the JDK from '${getSources(javaRuntimes[0])}' as the initial default project JDK.`);
+            } else if (javaHome = await findDefaultRuntimeFromSettings()) {
+                javaVersion = await getMajorVersion(javaHome);
+                logger.info("Use the JDK from 'java.configuration.runtimes' as the initial default project JDK.");
+            } else {
+                openJDKDownload(reject, "Please download and install a JDK to compile your project. You can configure your projects with different JDKs by the setting ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)");
             }
         }
 
         if (!toolingJre || toolingJreVersion < REQUIRED_JDK_VERSION) {
-            // For universal version, we still require users to install a qualified JDK to run Java extension.
             openJDKDownload(reject, `Java ${REQUIRED_JDK_VERSION} or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)`);
         }
 
