@@ -12,7 +12,7 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a Java Development Kit for your project (Java 1.5 or above is supported)   
+    * Download and install a Java Development Kit for your project (Java 1.5 or above is supported)
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
@@ -60,7 +60,7 @@ The following part is only kept for the universal version without embedded JRE.
 
 >The tooling JDK will be used to launch the Language Server for Java. And by default, will also be used to compile your projects.\
 \
-The path to the Java Development Kit can be specified by the `java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
+The path to the Java Development Kit can be specified by the `java.jdt.ls.java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
 >- the `JDK_HOME` environment variable
 >- the `JAVA_HOME` environment variable
 >- on the current system path
