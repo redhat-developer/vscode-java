@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
@@ -154,12 +154,32 @@ export class StandardLanguageClient {
 						const options: string[] = [];
 						const info = notification.data as GradleCompatibilityInfo;
 						const highestJavaVersion = Number(info.highestJavaVersion);
-						let targetRuntime: IJavaRuntime | undefined;
+						const runtimes: IJavaRuntime[] = [];
+						const pathEnvRuntimes: IJavaRuntime[] = [];
+						const javaHomeEnvRuntimes: IJavaRuntime[] = [];
+						const jdkHomeEnvRuntimes: IJavaRuntime[] = [];
 						for (const javaRuntime of await findRuntimes({checkJavac: true, withVersion: true, withTags: true})) {
 							if (javaRuntime.version.major <= highestJavaVersion) {
-								targetRuntime = javaRuntime;
-								break;
+								if (javaRuntime.isInPathEnv) {
+									pathEnvRuntimes.push(javaRuntime);
+								} else if (javaRuntime.isJavaHomeEnv) {
+									javaHomeEnvRuntimes.push(javaRuntime);
+								} else if (javaRuntime.isJdkHomeEnv) {
+									jdkHomeEnvRuntimes.push(javaRuntime);
+								} else {
+									runtimes.push(javaRuntime);
+								}
 							}
+						}
+						let targetRuntime;
+						if (pathEnvRuntimes.length > 0) {
+							targetRuntime = this.findHighestRuntime(pathEnvRuntimes);
+						} else if (javaHomeEnvRuntimes.length > 0) {
+							targetRuntime = this.findHighestRuntime(javaHomeEnvRuntimes);
+						} else if (jdkHomeEnvRuntimes.length > 0) {
+							targetRuntime = this.findHighestRuntime(jdkHomeEnvRuntimes);
+						} else if (runtimes.length > 0) {
+							targetRuntime = this.findHighestRuntime(runtimes);
 						}
 						options.push(UPGRADE_GRADLE + info.recommendedGradleVersion);
 						if (!targetRuntime) {
@@ -167,7 +187,7 @@ export class StandardLanguageClient {
 						} else {
 							options.push(USE_JAVA + targetRuntime.version.major + AS_GRADLE_JVM);
 						}
-						this.showGradleCompatibilityIssueNotification(info.message, options, targetRuntime.homedir, info.projectUri);
+						this.showGradleCompatibilityIssueNotification(info.message, options, info.projectUri, targetRuntime?.homedir);
 					default:
 						break;
 				}
@@ -241,7 +261,14 @@ export class StandardLanguageClient {
 		this.status = ClientStatus.Initialized;
 	}
 
-	private showGradleCompatibilityIssueNotification(message: string, options: string[], newJavaHome: string, projectUri: string) {
+	private findHighestRuntime(runtimes: IJavaRuntime[]): IJavaRuntime {
+		runtimes.sort((a, b) => {
+			return b.version.major - a.version.major;
+		});
+		return runtimes[0];
+	}
+
+	private showGradleCompatibilityIssueNotification(message: string, options: string[], projectUri: string, newJavaHome: string) {
 		window.showErrorMessage(message + " [Learn More](https://docs.gradle.org/current/userguide/compatibility.html)", ...options).then(async (choice) => {
 			if (choice === GET_JDK) {
 				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(getJdkUrl()));
@@ -270,7 +297,7 @@ export class StandardLanguageClient {
 							const document = await workspace.openTextDocument(propertiesFile);
 							const position = document.positionAt(offset);
 							const distributionUrlRange = document.getWordRangeAtPosition(position);
-							window.showTextDocument(document, {selection: distributionUrlRange});
+							window.showTextDocument(document, {selection: new Range(distributionUrlRange.start, new Position(distributionUrlRange.start.line + 1, 0))});
 						}
 					}
 					commands.executeCommand("java.project.import");
