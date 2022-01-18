@@ -14,6 +14,7 @@
     "untrustedWorkspaces": {
       "supported": "limited",
       "restrictedConfigurations": [
+        "java.jdt.ls.java.home",
         "java.home",
         "java.jdt.ls.vmargs"
       ]
@@ -171,7 +172,16 @@
           "default": null,
           "description": "Specifies the folder path to the JDK (11 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk11.0_8\"",
           "scope": "machine-overridable",
-          "deprecationMessage": "This setting will be deprecated, please use the environment variable 'JAVA_HOME' instead."
+          "deprecationMessage": "This setting is deprecated, please use 'java.jdt.ls.java.home' instead."
+        },
+        "java.jdt.ls.java.home": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specifies the folder path to the JDK (11 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk11.0_8\"",
+          "scope": "machine-overridable"
         },
         "java.jdt.ls.vmargs": {
           "type": [
