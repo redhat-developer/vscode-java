@@ -466,22 +466,31 @@ export class StandardLanguageClient {
 async function showImportFinishNotification(context: ExtensionContext) {
 	const neverShow: boolean | undefined = context.globalState.get<boolean>("java.neverShowImportFinishNotification");
 	if (!neverShow) {
-		const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
-		if (projectUris.length === 0 || (projectUris.length === 1 && projectUris[0].includes("jdt.ls-java-project"))) {
-			return;
+		let choice: string | undefined;
+		const options = ["Don't show again"];
+		if (serverStatus.hasErrors()) {
+			options.unshift("Show errors");
+			choice = await window.showWarningMessage("Errors occurred during import of Java projects.", ...options);
+		} else {
+			const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+			if (projectUris.length === 0 || (projectUris.length === 1 && projectUris[0].includes("jdt.ls-java-project"))) {
+				return;
+			}
+
+			if (extensions.getExtension("vscjava.vscode-java-dependency")) {
+				options.unshift("View projects");
+			}
+
+			choice = await window.showInformationMessage("Projects are imported into workspace.", ...options);
 		}
 
-		const options = ["Don't show again"];
-		if (extensions.getExtension("vscjava.vscode-java-dependency")) {
-			options.unshift("View projects");
+		if (choice === "Don't show again") {
+			context.globalState.update("java.neverShowImportFinishNotification", true);
+		} else if (choice === "View projects") {
+			commands.executeCommand("javaProjectExplorer.focus");
+		} else if (choice === "Show errors") {
+			commands.executeCommand("workbench.panel.markers.view.focus");
 		}
-		window.showInformationMessage("Projects are imported into workspace.", ...options).then((choice) => {
-			if (choice === "Don't show again") {
-				context.globalState.update("java.neverShowImportFinishNotification", true);
-			} else if (choice === "View projects") {
-				commands.executeCommand("javaProjectExplorer.focus");
-			}
-		});
 	}
 }
 
