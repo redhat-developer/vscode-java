@@ -409,7 +409,7 @@ export namespace WillRenameFiles {
 }
 
 export interface GradleCompatibilityInfo {
-    projectPath: string;
+    projectUri: string;
     message: string;
     highestJavaVersion: string;
     recommendedGradleVersion: string;

@@ -11,7 +11,7 @@ import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentReques
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange, collectBuildFilePattern } from "./plugin";
 import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
-import { getJdkUrl, RequirementsData } from "./requirements";
+import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from "./requirements";
 import * as net from 'net';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -154,40 +154,19 @@ export class StandardLanguageClient {
 						const options: string[] = [];
 						const info = notification.data as GradleCompatibilityInfo;
 						const highestJavaVersion = Number(info.highestJavaVersion);
-						const runtimes: IJavaRuntime[] = [];
-						const pathEnvRuntimes: IJavaRuntime[] = [];
-						const javaHomeEnvRuntimes: IJavaRuntime[] = [];
-						const jdkHomeEnvRuntimes: IJavaRuntime[] = [];
-						for (const javaRuntime of await findRuntimes({checkJavac: true, withVersion: true, withTags: true})) {
-							if (javaRuntime.version.major <= highestJavaVersion) {
-								if (javaRuntime.isInPathEnv) {
-									pathEnvRuntimes.push(javaRuntime);
-								} else if (javaRuntime.isJavaHomeEnv) {
-									javaHomeEnvRuntimes.push(javaRuntime);
-								} else if (javaRuntime.isJdkHomeEnv) {
-									jdkHomeEnvRuntimes.push(javaRuntime);
-								} else {
-									runtimes.push(javaRuntime);
-								}
-							}
-						}
-						let targetRuntime;
-						if (pathEnvRuntimes.length > 0) {
-							targetRuntime = this.findHighestRuntime(pathEnvRuntimes);
-						} else if (javaHomeEnvRuntimes.length > 0) {
-							targetRuntime = this.findHighestRuntime(javaHomeEnvRuntimes);
-						} else if (jdkHomeEnvRuntimes.length > 0) {
-							targetRuntime = this.findHighestRuntime(jdkHomeEnvRuntimes);
-						} else if (runtimes.length > 0) {
-							targetRuntime = this.findHighestRuntime(runtimes);
-						}
+						let runtimes = await findRuntimes({checkJavac: true, withVersion: true, withTags: true});
+						runtimes = runtimes.filter(runtime => {
+							return runtime.version.major <= highestJavaVersion;
+						});
+						sortJdksByVersion(runtimes);
+						sortJdksBySource(runtimes);
 						options.push(UPGRADE_GRADLE + info.recommendedGradleVersion);
-						if (!targetRuntime) {
+						if (!runtimes.length) {
 							options.push(GET_JDK);
 						} else {
-							options.push(USE_JAVA + targetRuntime.version.major + AS_GRADLE_JVM);
+							options.push(USE_JAVA + runtimes[0].version.major + AS_GRADLE_JVM);
 						}
-						this.showGradleCompatibilityIssueNotification(info.message, options, info.projectPath, targetRuntime?.homedir);
+						this.showGradleCompatibilityIssueNotification(info.message, options, info.projectUri, runtimes[0]?.homedir);
 					default:
 						break;
 				}
@@ -261,13 +240,6 @@ export class StandardLanguageClient {
 		this.status = ClientStatus.Initialized;
 	}
 
-	private findHighestRuntime(runtimes: IJavaRuntime[]): IJavaRuntime {
-		runtimes.sort((a, b) => {
-			return b.version.major - a.version.major;
-		});
-		return runtimes[0];
-	}
-
 	private showGradleCompatibilityIssueNotification(message: string, options: string[], projectUri: string, newJavaHome: string) {
 		window.showErrorMessage(message + " [Learn More](https://docs.gradle.org/current/userguide/compatibility.html)", ...options).then(async (choice) => {
 			if (choice === GET_JDK) {
@@ -289,7 +261,7 @@ export class StandardLanguageClient {
 					return commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, "java.project.upgradeGradle", projectUri, token);
 				});
 				if (result) {
-					const propertiesFile = path.join(projectUri, "gradle", "wrapper", "gradle-wrapper.properties");
+					const propertiesFile = path.join(Uri.parse(projectUri).fsPath, "gradle", "wrapper", "gradle-wrapper.properties");
 					if (fse.pathExists(propertiesFile)) {
 						const content = await fse.readFile(propertiesFile);
 						const offset = content.toString().indexOf("distributionUrl");
