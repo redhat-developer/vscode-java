@@ -187,7 +187,7 @@ export class StandardLanguageClient {
 						} else {
 							options.push(USE_JAVA + targetRuntime.version.major + AS_GRADLE_JVM);
 						}
-						this.showGradleCompatibilityIssueNotification(info.message, options, info.projectUri, targetRuntime?.homedir);
+						this.showGradleCompatibilityIssueNotification(info.message, options, info.projectPath, targetRuntime?.homedir);
 					default:
 						break;
 				}
