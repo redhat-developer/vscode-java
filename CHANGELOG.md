@@ -1,5 +1,20 @@
 # Change Log
 
+## 1.3.0 (January 24th, 2022)
+ * enhancement - Support completion for lambda expressions. See [JLS#1985](https://github.com/eclipse/eclipse.jdt.ls/issues/1985).
+ * enhancement - Add "Convert to Switch Expression" code assist proposal. See [JLS#1935](https://github.com/eclipse/eclipse.jdt.ls/pull/1935).
+ * enhancement - Support Gradle compatibility check. See [#2225](https://github.com/redhat-developer/vscode-java/issues/2225).
+ * bug fix - Fix regression in signature help. See [JLS#1980](https://github.com/eclipse/eclipse.jdt.ls/issues/1980).
+ * bug fix - Provide a way to disable embedded JRE. See [#2276](https://github.com/redhat-developer/vscode-java/issues/2276).
+ * bug fix - Projects containing windows symlink directories are not recognized. See [#2264](https://github.com/redhat-developer/vscode-java/issues/2264).
+ * bug fix - JDK installed via Homebrew is not detected. See [#2254](https://github.com/redhat-developer/vscode-java/issues/2254).
+ * bug fix - Avoid duplicate quick fixes when showing all quick fixes on a line. See [#2236](https://github.com/redhat-developer/vscode-java/issues/2236).
+ * bug fix - "Go to References" result contains inaccurate references. See [#2227](https://github.com/redhat-developer/vscode-java/issues/2227).
+ * bug fix - Ensure gradle wrappers are correctly processed on project import. See [#2218](https://github.com/redhat-developer/vscode-java/issues/2218).
+ * enhancement - Language server status bar item is not in sync with the real status. See [#2243](https://github.com/redhat-developer/vscode-java/issues/2243).
+ * build - Fix Jenkinsfile to publish the correct generic extension version. See [#2252](https://github.com/redhat-developer/vscode-java/pull/2252).
+ * other - Change minimum JDK requirement listed in documentation. See [#2275](https://github.com/redhat-developer/vscode-java/pull/2275).
+
 ## 1.2.0 (December 16th, 2021)
  * enhancement - Support platform specific extension. See [#2109](https://github.com/redhat-developer/vscode-java/issues/2109).
  * enhancement - Make the debounce adaptive for validation job. See [JLS#1973](https://github.com/eclipse/eclipse.jdt.ls/pull/1973).
