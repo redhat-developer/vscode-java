@@ -247,14 +247,14 @@ export class StandardLanguageClient {
 			} else if (choice.startsWith(USE_JAVA)) {
 				await workspace.getConfiguration().update(GRADLE_IMPORT_JVM, newJavaHome, ConfigurationTarget.Global);
 				commands.executeCommand("workbench.action.openSettings", GRADLE_IMPORT_JVM);
-				commands.executeCommand("java.project.import");
+				commands.executeCommand(Commands.IMPORT_PROJECTS);
 			} else if (choice.startsWith(UPGRADE_GRADLE)) {
 				const useWrapper = workspace.getConfiguration().get<boolean>("java.import.gradle.wrapper.enabled");
 				if (!useWrapper) {
 					await workspace.getConfiguration().update("java.import.gradle.wrapper.enabled", true, ConfigurationTarget.Workspace);
 				}
 				const result = await window.withProgress({
-					location: ProgressLocation.Window,
+					location: ProgressLocation.Notification,
 					title: "Upgrading Gradle wrapper...",
 					cancellable: true,
 				}, (_progress, token) => {
@@ -272,7 +272,7 @@ export class StandardLanguageClient {
 							window.showTextDocument(document, {selection: new Range(distributionUrlRange.start, new Position(distributionUrlRange.start.line + 1, 0))});
 						}
 					}
-					commands.executeCommand("java.project.import");
+					commands.executeCommand(Commands.IMPORT_PROJECTS);
 				}
 			}
 		});
