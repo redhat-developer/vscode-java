@@ -55,10 +55,19 @@ class ServerStatusBarProvider implements Disposable {
 
 	public setError(): void {
 		this.statusBarItem.text = StatusIcon.Error;
+		this.statusBarItem.command = Commands.OPEN_LOGS;
+	}
+
+	public setWarning(): void {
+		this.statusBarItem.text = StatusIcon.Warning;
+		this.statusBarItem.command = "workbench.panel.markers.view.focus";
+		this.statusBarItem.tooltip = "Errors occurred in project configurations, click to show the PROBLEMS panel";
 	}
 
 	public setReady(): void {
 		this.statusBarItem.text = StatusIcon.Ready;
+		this.statusBarItem.command = Commands.SHOW_SERVER_TASK_STATUS;
+		this.statusBarItem.tooltip = "ServiceReady";
 	}
 
 	public updateTooltip(tooltip: string): void {
@@ -74,6 +83,7 @@ enum StatusIcon {
 	LightWeight = "$(rocket)",
 	Busy = "$(sync~spin)",
 	Ready = "$(thumbsup)",
+	Warning = "$(thumbsdown)",
 	Error = "$(thumbsdown)"
 }
 
