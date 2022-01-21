@@ -58,6 +58,7 @@ export enum FeatureStatus {
 export enum EventType {
     ClasspathUpdated = 100,
     ProjectsImported = 200,
+    IncompatibleGradleJdkIssue = 300,
 }
 
 export enum CompileWorkspaceStatus {
@@ -405,4 +406,11 @@ export interface RenameFilesParams {
 
 export namespace WillRenameFiles {
     export const type = new RequestType<RenameFilesParams, WorkspaceEdit, void>('workspace/willRenameFiles');
+}
+
+export interface GradleCompatibilityInfo {
+    projectUri: string;
+    message: string;
+    highestJavaVersion: string;
+    recommendedGradleVersion: string;
 }

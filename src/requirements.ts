@@ -147,7 +147,7 @@ async function findDefaultRuntimeFromSettings(): Promise<string | undefined> {
     return undefined;
 }
 
-function sortJdksBySource(jdks: IJavaRuntime[]) {
+export function sortJdksBySource(jdks: IJavaRuntime[]) {
     const rankedJdks = jdks as Array<IJavaRuntime & { rank: number }>;
     const sources = ["JDK_HOME", "JAVA_HOME", "PATH"];
     for (const [index, source] of sources.entries()) {
@@ -164,7 +164,7 @@ function sortJdksBySource(jdks: IJavaRuntime[]) {
 /**
  * Sort by major version in descend order.
  */
-function sortJdksByVersion(jdks: IJavaRuntime[]) {
+export function sortJdksByVersion(jdks: IJavaRuntime[]) {
     jdks.sort((a, b) => (b.version?.major ?? 0) - (a.version?.major ?? 0));
 }
 
@@ -196,7 +196,7 @@ function openJDKDownload(reject, cause) {
     });
 }
 
-function getJdkUrl() {
+export function getJdkUrl() {
     let jdkUrl = 'https://developers.redhat.com/products/openjdk/download/?sc_cid=701f2000000RWTnAAO';
     if (process.platform === 'darwin') {
         jdkUrl = 'https://adoptopenjdk.net/';
