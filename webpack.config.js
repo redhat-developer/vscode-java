@@ -23,6 +23,7 @@ const config = {
     },
     externals: {
         vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+        fsevents: "require('fsevents')", // https://github.com/yan-foto/electron-reload/issues/71#issuecomment-588988382
     },
     devtool: 'source-map',
     resolve: { // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
