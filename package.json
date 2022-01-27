@@ -1159,7 +1159,7 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "chokidar": "^2.1.8",
+    "chokidar": "^3.5.3",
     "expand-home-dir": "^0.0.3",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
