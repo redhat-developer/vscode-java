@@ -207,8 +207,9 @@
           "scope": "window"
         },
         "java.configuration.checkProjectSettingsExclusions": {
+          "deprecationMessage": "Please use 'java.import.generatesMetadataFilesAtProjectRoot' to control whether to generate the project metadata files at the project root. And use 'files.exclude' to control whether to hide the project metadata files from the file explorer.",
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Controls whether to exclude extension-generated project settings files (.project, .classpath, .factorypath, .settings/) from the file explorer.",
           "scope": "window"
         },
