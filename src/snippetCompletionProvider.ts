@@ -22,15 +22,25 @@ export class SnippetCompletionProvider implements CompletionItemProvider {
         const snippetItems: CompletionItem[] = [];
         for (const label of Object.keys(this.snippets)) {
             const snippetContent = this.snippets[label];
-            const snippetItem: CompletionItem = new CompletionItem(snippetContent.prefix);
-            snippetItem.kind = CompletionItemKind.Snippet;
-            snippetItem.detail = snippetContent.description;
-            const insertText: string = (snippetContent.body as String[]).join('\n');
-            snippetItem.insertText = new SnippetString(insertText);
-            snippetItem.documentation = beautifyDocument(insertText);
-            snippetItems.push(snippetItem);
+            if (Array.isArray(snippetContent.prefix)) {
+                for (const prefix of snippetContent.prefix) {
+                    snippetItems.push(this.getCompletionItem(prefix, snippetContent));
+                }
+            } else {
+                snippetItems.push(this.getCompletionItem(snippetContent.prefix, snippetContent));
+            }
         }
         return snippetItems;
+    }
+
+    private getCompletionItem(prefix: string, snippetContent: any) {
+        const snippetItem: CompletionItem = new CompletionItem(prefix);
+        snippetItem.kind = CompletionItemKind.Snippet;
+        snippetItem.detail = snippetContent.description;
+        const insertText: string = (snippetContent.body as String[]).join('\n');
+        snippetItem.insertText = new SnippetString(insertText);
+        snippetItem.documentation = beautifyDocument(insertText);
+        return snippetItem;
     }
 }
 
