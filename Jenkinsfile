@@ -92,7 +92,7 @@ node('rhel8'){
 		unstash 'vsix'
 		def vsix = findFiles(glob: '**.vsix')
 		// Open-vsx Marketplace
-		sh 'npm install -g "ovsx<0.3.0"'
+		sh 'npm install -g "ovsx@<0.3.0"'
 		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
 			sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${vsix[0].path}"
 		}
