@@ -14,7 +14,7 @@ import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
 import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob, ensureExists } from './utils';
-import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE } from './settings';
+import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE, handleTextBlockClosing } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
@@ -464,6 +464,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					}
 				}));
 			}
+			context.subscriptions.push(workspace.onDidChangeTextDocument(event => handleTextBlockClosing(event.document, event.contentChanges)));
 		});
 	});
 }

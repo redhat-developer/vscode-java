@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder } from 'vscode';
+import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder, TextDocument, Position, SnippetString, TextLine } from 'vscode';
 import { Commands } from './commands';
 import { cleanWorkspaceFileName } from './extension';
 import { ensureExists, getJavaConfiguration } from './utils';
@@ -285,5 +285,37 @@ function unregisterGradleWrapperPromptDialog(sha256: string) {
 	const index = gradleWrapperPromptDialogs.indexOf(sha256);
 	if (index > -1) {
 		gradleWrapperPromptDialogs.splice(index, 1);
+	}
+}
+
+export function handleTextBlockClosing(document: TextDocument, changes: readonly import("vscode").TextDocumentContentChangeEvent[]): any {
+	const activeTextEditor = window.activeTextEditor;
+	const activeDocument = activeTextEditor && activeTextEditor.document;
+	if (document !== activeDocument || changes.length === 0 || document.languageId !== 'java') {
+		return;
+	}
+	const lastChange = changes[changes.length - 1];
+	if (lastChange.text === null || lastChange.text.length <= 0) {
+		return;
+	}
+	if (lastChange.text !== '"""";') {
+		return;
+	}
+	const selection = activeTextEditor.selection.active;
+	if (selection !== null) {
+		const start = new Position(selection.line, selection.character - 2);
+		const end = new Position(selection.line, selection.character + 4);
+		const range = new Range(start, end);
+		const activeText = activeDocument.getText(range);
+		if (activeText === '""""""') {
+			const tabSize = <number>activeTextEditor.options.tabSize!;
+			const tabSpaces = <boolean>activeTextEditor.options.insertSpaces!;
+			const indentLevel = 2;
+			const indentSize = tabSpaces ? indentLevel * tabSize : indentLevel;
+			const repeatChar = tabSpaces ? ' ' : '\t';
+			const text = `\n${repeatChar.repeat(indentSize)}\$\{0\}\n${repeatChar.repeat(indentSize)}`;
+			const position = new Position(selection.line, selection.character + 1);
+			activeTextEditor.insertSnippet(new SnippetString(text), position);
+		}
 	}
 }
