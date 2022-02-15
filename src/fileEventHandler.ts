@@ -2,7 +2,7 @@
 
 import { lstatSync } from 'fs-extra';
 import * as path from 'path';
-import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileWillRenameEvent, Position, FileType, Selection, Range, TextEditorRevealType } from 'vscode';
+import { workspace, FileCreateEvent, ExtensionContext, window, TextDocument, SnippetString, commands, Uri, FileRenameEvent, ProgressLocation, WorkspaceEdit as CodeWorkspaceEdit, FileWillRenameEvent, Position, FileType, ConfigurationTarget, Disposable } from 'vscode';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { ListCommandResult } from './buildpath';
 import { Commands } from './commands';
@@ -24,10 +24,6 @@ export function registerFileEventHandlers(client: LanguageClient, context: Exten
 
     if (workspace.onWillRenameFiles) {
         context.subscriptions.push(workspace.onWillRenameFiles(getWillRenameHandler(client)));
-    }
-
-    if (workspace.onDidOpenTextDocument) {
-        context.subscriptions.push(workspace.onDidOpenTextDocument(navigateToClassDeclaration));
     }
 }
 
@@ -71,12 +67,11 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
             package_name: "",
             type_name: typeName,
             user: userInfo().username,
-            date: date.toLocaleDateString(undefined, {month: "short", day: "2-digit", year: "numeric"}),
+            date: date.toLocaleDateString(),
             time: date.toLocaleTimeString(),
             year: date.getFullYear(),
-            month: formatNumber(date.getMonth() + 1),
-            shortmonth: date.toLocaleDateString(undefined, {month: "short"}),
-            day: formatNumber(date.getDate()),
+            month: formatNumber(date.getMonth()),
+            day: formatNumber(date.getDay()),
             hour: formatNumber(date.getHours()),
             minute: formatNumber(date.getMinutes()),
         };
@@ -255,52 +250,4 @@ async function isVersionLessThan(fileUri: string, targetVersion: number): Promis
     }
 
     return javaVersion < targetVersion;
-}
-
-/**
- * Navigates to the first type declaration in a class file.
- *
- * The language server will always return (0,0) for class files in a workspace/symbols request,
- * because calculating the correct position would require opening and parsing every class file, which is too slow.
- *
- * Cursor position and selections in class files are not persisted across editor sessions,
- * probably because the files are not part of the workspace.
- *
- * We can use this to our advantage to listen to the {@link workspace.onDidOpenTextDocument},
- * which only triggers once a session for every document opened.
- */
-async function navigateToClassDeclaration(document: TextDocument) {
-    if (document.uri.path.endsWith(".class")) {
-        const disposable = window.onDidChangeActiveTextEditor(async (textEditor) => {
-            if (textEditor !== undefined && textEditor.document.uri === document.uri && isCursorAtBeginningOfDocument(textEditor.selection)) {                
-                setTimeout(() => {
-                    if (isCursorAtBeginningOfDocument(textEditor.selection)) {
-                        const newPosition = findFirstTypeDeclaration(document);
-                        textEditor.selection = new Selection(newPosition, newPosition);
-                        textEditor.revealRange(new Range(newPosition, newPosition), TextEditorRevealType.InCenter);
-                    }
-                }, 100);
-            }
-            disposable.dispose();
-        });
-    }
-}
-
-function isCursorAtBeginningOfDocument(selection: Selection): boolean {
-    return selection.start.line == 0 && selection.start.character == 0
-}
-
-const JAVA_TYPE_DECLARATION_REGEX = /^\s*\w?[\w\s-]*\b(?:class|@interface|interface|enum)\s+(?=[\w$]+)/;
-
-// More than one class declaration per class file is allowed, but I have never seen a library that actually uses this.
-function findFirstTypeDeclaration(document: TextDocument): Position {
-    for (let index = 0; index < document.lineCount; index++) {
-        const line = document.lineAt(index);
-        const match = JAVA_TYPE_DECLARATION_REGEX.exec(line.text);
-
-        if (match !== null) {
-            return new Position(line.lineNumber, match[0].length);
-        }
-    }
-    return new Position(0, 0);
 }

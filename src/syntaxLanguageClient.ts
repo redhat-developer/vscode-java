@@ -21,7 +21,7 @@ export class SyntaxLanguageClient {
 			middleware: {
 				workspace: {
 					didChangeConfiguration: () => {
-						this.languageClient.sendNotification(DidChangeConfigurationNotification.type, {
+						return this.languageClient.sendNotification(DidChangeConfigurationNotification.type, {
 							settings: {
 								java: getJavaConfig(requirements.java_home),
 							}

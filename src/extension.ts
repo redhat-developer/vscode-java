@@ -5,7 +5,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command, ErrorHandlerResult, CloseHandlerResult } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
 import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
@@ -44,21 +44,27 @@ export class ClientErrorHandler implements ErrorHandler {
 		this.restarts = [];
 	}
 
-	public error(_error: Error, _message: Message, count: number): ErrorAction {
+	public error(_error: Error, _message: Message, count: number): ErrorHandlerResult {
 		if (count && count <= 3) {
 			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
-			return ErrorAction.Continue;
+			return {
+				action: ErrorAction.Continue,
+			};
 		}
 
 		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
-		return ErrorAction.Shutdown;
+		return {
+			action: ErrorAction.Shutdown
+		} 
 	}
 
-	public closed(): CloseAction {
+	public closed(): CloseHandlerResult {
 		this.restarts.push(Date.now());
 		if (this.restarts.length < 5) {
 			logger.error(`The ${this.name} server crashed and will restart.`);
-			return CloseAction.Restart;
+			return {
+				action: CloseAction.Restart
+			}
 		} else {
 			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
 			if (diff <= 3 * 60 * 1000) {
@@ -70,12 +76,16 @@ export class ClientErrorHandler implements ErrorHandler {
 						commands.executeCommand(Commands.OPEN_LOGS);
 					}
 				});
-				return CloseAction.DoNotRestart;
+				return {
+					action: CloseAction.DoNotRestart
+				}
 			}
 
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			this.restarts.shift();
-			return CloseAction.Restart;
+			return {
+				action: CloseAction.Restart
+			}
 		}
 	}
 }
@@ -246,7 +256,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				middleware: {
 					workspace: {
 						didChangeConfiguration: () => {
-							standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
+							return standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
 									java: getJavaConfig(requirements.java_home),
 								}
