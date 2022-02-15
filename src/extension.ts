@@ -55,7 +55,7 @@ export class ClientErrorHandler implements ErrorHandler {
 		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
 		return {
 			action: ErrorAction.Shutdown
-		} 
+		};
 	}
 
 	public closed(): CloseHandlerResult {
@@ -64,7 +64,7 @@ export class ClientErrorHandler implements ErrorHandler {
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			return {
 				action: CloseAction.Restart
-			}
+			};
 		} else {
 			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
 			if (diff <= 3 * 60 * 1000) {
@@ -78,14 +78,14 @@ export class ClientErrorHandler implements ErrorHandler {
 				});
 				return {
 					action: CloseAction.DoNotRestart
-				}
+				};
 			}
 
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			this.restarts.shift();
 			return {
 				action: CloseAction.Restart
-			}
+			};
 		}
 	}
 }
