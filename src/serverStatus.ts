@@ -5,6 +5,7 @@ import { serverTasks } from "./serverTasks";
 
 export enum ServerStatusKind {
 	Ready = "Ready",
+	Warning = "Warning",
 	Error = "Error",
 	Busy = "Busy",
 }
@@ -24,6 +25,8 @@ function fireEvent() {
 
 export namespace serverStatus {
 
+	let hasError: boolean = false;
+
 	export const onServerStatusChanged = _emitter.event;
 
 	export function initialize() {
@@ -38,7 +41,21 @@ export namespace serverStatus {
 			throw new Error("Busy status cannot be set directly.");
 		}
 
+		if (status === ServerStatusKind.Error || status === ServerStatusKind.Warning) {
+			hasError = true;
+		} else if (hasError) {
+			return;
+		}
+
 		_status = status;
 		fireEvent();
+	}
+
+	export function hasErrors() {
+		return hasError;
+	}
+
+	export function errorResolved() {
+		hasError = false;
 	}
 }

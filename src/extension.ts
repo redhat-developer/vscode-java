@@ -4,16 +4,16 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken } from 'vscode-languageclient';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic } from 'vscode';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
-import { prepareExecutable } from './javaServerStarter';
+import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
-import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob } from './utils';
+import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob, ensureExists } from './utils';
 import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
@@ -26,13 +26,16 @@ import { SnippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import * as chokidar from 'chokidar';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
 const jdtEventEmitter = new EventEmitter<Uri>();
-const cleanWorkspaceFileName = '.cleanWorkspace';
 const extensionName = 'Language Support for Java';
-let clientLogFile;
+let storagePath: string;
+let clientLogFile: string;
+
+export const cleanWorkspaceFileName = '.cleanWorkspace';
 
 export class ClientErrorHandler implements ErrorHandler {
 	private restarts: number[];
@@ -75,6 +78,43 @@ export class ClientErrorHandler implements ErrorHandler {
 			return CloseAction.Restart;
 		}
 	}
+}
+
+/**
+ * Shows a message about the server crashing due to an out of memory issue
+ */
+async function showOOMMessage(): Promise<void> {
+	const CONFIGURE = 'Increase Memory ..';
+	const result = await window.showErrorMessage('The Java Language Server encountered an OutOfMemory error. Some language features may not work due to limited memory. ',
+		CONFIGURE);
+	if (result === CONFIGURE) {
+		let jvmArgs: string = getJavaConfiguration().get('jdt.ls.vmargs');
+		const results = MAX_HEAP_SIZE_EXTRACTOR.exec(jvmArgs);
+		if (results && results[0]) {
+			const maxMemArg: string = results[0];
+			const maxMemValue: number = Number(results[1]);
+			const newMaxMemArg: string = maxMemArg.replace(maxMemValue.toString(), (maxMemValue * 2).toString());
+			jvmArgs = jvmArgs.replace(maxMemArg, newMaxMemArg);
+			await workspace.getConfiguration().update("java.jdt.ls.vmargs", jvmArgs, ConfigurationTarget.Workspace);
+		}
+	}
+}
+
+const HEAP_DUMP_FOLDER_EXTRACTOR = new RegExp(`${HEAP_DUMP_LOCATION}(?:'([^']+)'|"([^"]+)"|([^\\s]+))`);
+const MAX_HEAP_SIZE_EXTRACTOR = new RegExp(`-Xmx([0-9]+)[kKmMgG]`);
+
+/**
+ * Returns the heap dump folder defined in the user's preferences, or undefined if the user does not set the heap dump folder
+ *
+ * @returns the heap dump folder defined in the user's preferences, or undefined if the user does not set the heap dump folder
+ */
+function getHeapDumpFolderFromSettings(): string {
+	const jvmArgs: string = getJavaConfiguration().get('jdt.ls.vmargs');
+	const results = HEAP_DUMP_FOLDER_EXTRACTOR.exec(jvmArgs);
+	if (!results || !results[0]) {
+		return undefined;
+	}
+	return results[1] || results[2] || results[3];
 }
 
 export class OutputInfoCollector implements OutputChannel {
@@ -122,7 +162,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.notCoveredExecution.md`)), 'Not Covered Maven Plugin Execution', "", context);
 	}));
 
-	let storagePath = context.storagePath;
+	storagePath = context.storagePath;
+	context.subscriptions.push(commands.registerCommand(Commands.MEATDATA_FILES_GENERATION, async () => {
+		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.metadataFilesGeneration.md`)), 'Metadata Files Generation', "", context);
+	}));
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
 	}
@@ -132,6 +175,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	enableJavadocSymbols();
 
 	initializeRecommendation(context);
+
+	registerOutOfMemoryDetection(storagePath);
+
+	cleanJavaWorkspaceStorage();
 
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
@@ -205,6 +252,55 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								}
 							});
 						}
+					},
+					// https://github.com/redhat-developer/vscode-java/issues/2130
+					// include all diagnostics for the current line in the CodeActionContext params for the performance reason
+					provideCodeActions: (document, range, context, token, next) => {
+						const client: any = standardClient.getClient();
+						const params: CodeActionParams = {
+							textDocument: client.code2ProtocolConverter.asTextDocumentIdentifier(document),
+							range: client.code2ProtocolConverter.asRange(range),
+							context: client.code2ProtocolConverter.asCodeActionContext(context)
+						};
+						const showAt  = getJavaConfiguration().get<string>("quickfix.showAt");
+						if (showAt === 'line' && range.start.line === range.end.line && range.start.character === range.end.character) {
+							const textLine = document.lineAt(params.range.start.line);
+							if (textLine !== null) {
+								const diagnostics = client.diagnostics.get(document.uri);
+								const allDiagnostics: Diagnostic[] = [];
+								for (const diagnostic of diagnostics) {
+									if (textLine.range.intersection(diagnostic.range)) {
+										const newLen = allDiagnostics.push(diagnostic);
+										if (newLen > 1000) {
+											break;
+										}
+									}
+								}
+								const codeActionContext: CodeActionContext = {
+									diagnostics: allDiagnostics,
+									only: context.only,
+								};
+								params.context = client.code2ProtocolConverter.asCodeActionContext(codeActionContext);
+							}
+						}
+						return client.sendRequest(CodeActionRequest.type, params, token).then((values) => {
+							if (values === null) {
+								return undefined;
+							}
+							const result = [];
+							for (const item of values) {
+								if (Command.is(item)) {
+									result.push(client.protocol2CodeConverter.asCommand(item));
+								}
+								else {
+									result.push(client.protocol2CodeConverter.asCodeAction(item));
+								}
+							}
+							return result;
+						}, (error) => {
+							client.logFailedRequest(CodeActionRequest.type, error);
+							return Promise.resolve([]);
+						});
 					}
 				},
 				revealOutputChannelOn: RevealOutputChannelOn.Never,
@@ -273,7 +369,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
-			context.subscriptions.push(onConfigurationChange());
+			context.subscriptions.push(onConfigurationChange(workspacePath));
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
@@ -610,9 +706,7 @@ async function cleanWorkspace(workspacePath) {
 	const doIt = 'Restart and delete';
 	window.showWarningMessage('Are you sure you want to clean the Java language server workspace?', 'Cancel', doIt).then(selection => {
 		if (selection === doIt) {
-			if (!fs.existsSync(workspacePath)) {
-				fs.mkdirSync(workspacePath);
-			}
+			ensureExists(workspacePath);
 			const file = path.join(workspacePath, cleanWorkspaceFileName);
 			fs.closeSync(fs.openSync(file, 'w'));
 			commands.executeCommand(Commands.RELOAD_WINDOW);
@@ -690,9 +784,7 @@ async function openFormatter(extensionPath) {
 		relativePath = fileName;
 	} else {
 		const root = path.join(extensionPath, '..', 'redhat.java');
-		if (!fs.existsSync(root)) {
-			fs.mkdirSync(root);
-		}
+		ensureExists(root);
 		file = path.join(root, fileName);
 	}
 	if (!fs.existsSync(file)) {
@@ -765,9 +857,7 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 						relativePath = fileName;
 					} else {
 						const root = path.join(extensionPath, '..', 'redhat.java');
-						if (!fs.existsSync(root)) {
-							fs.mkdirSync(root);
-						}
+						ensureExists(root);
 						f = path.join(root, fileName);
 					}
 				} else {
@@ -780,9 +870,14 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 					const action = 'Yes';
 					window.showWarningMessage(msg, action, 'No').then((selection) => {
 						if (action === selection) {
-							fs.createReadStream(defaultFormatter)
-								.pipe(fs.createWriteStream(f))
-								.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
+							try {
+								ensureExists(path.dirname(f));
+								fs.createReadStream(defaultFormatter)
+									.pipe(fs.createWriteStream(f))
+									.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
+							} catch (error) {
+								window.showErrorMessage(`Failed to create ${f}: ${error}`);
+							}
 						}
 					});
 				} else {
@@ -876,4 +971,46 @@ function isPrefix(parentPath: string, childPath: string): boolean {
 	}
 	const relative = path.relative(parentPath, childPath);
 	return !!relative && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
+async function cleanJavaWorkspaceStorage() {
+	const configCacheLimit = getJavaConfiguration().get<number>("configuration.workspaceCacheLimit");
+
+	if (!storagePath || !configCacheLimit) {
+		return;
+	}
+
+	const limit: number = configCacheLimit * 86400000; // days to ms
+	const currTime = new Date().valueOf(); // ms since Epoch
+	// storage path is Code/User/workspaceStorage/${id}/redhat.java/
+	const wsRoot = path.dirname(path.dirname(storagePath));
+
+	// find all folders of the form "redhat.java/jdt_ws/" and delete "redhat.java/"
+	if (fs.existsSync(wsRoot)) {
+		new glob.Glob(`${wsRoot}/**/jdt_ws`, (_err, matches) => {
+			for (const javaWSCache of matches) {
+				const entry = path.dirname(javaWSCache);
+				const entryModTime = fs.statSync(entry).mtimeMs;
+				if ((currTime - entryModTime) > limit) {
+					logger.info(`Removing workspace storage folder : ${entry}`);
+					deleteDirectory(entry);
+				}
+			}
+		});
+    }
+}
+
+function registerOutOfMemoryDetection(storagePath: string) {
+	const heapDumpFolder = getHeapDumpFolderFromSettings() || storagePath;
+	chokidar.watch(`${heapDumpFolder}/java_*.hprof`, { ignoreInitial: true }).on('add', path => {
+		// Only clean heap dumps that are generated in the default location.
+		// The default location is the extension global storage
+		// This means that if users change the folder where the heap dumps are placed,
+		// then they will be able to read the heap dumps,
+		// since they aren't immediately deleted.
+		if (heapDumpFolder === storagePath) {
+			fse.remove(path);
+		}
+		showOOMMessage();
+	});
 }

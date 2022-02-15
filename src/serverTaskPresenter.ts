@@ -39,6 +39,7 @@ async function getPresenterTaskExecution(): Promise<TaskExecution> {
 		echo: false,
 		focus: false
 	};
+	presenterTask.isBackground = true;
 
 	return presenterTaskExecution = await tasks.executeTask(presenterTask);
 }

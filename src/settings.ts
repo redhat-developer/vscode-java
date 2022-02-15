@@ -1,12 +1,15 @@
 'use strict';
 
+import * as fs from 'fs';
 import * as path from 'path';
 import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
-import { getJavaConfiguration } from './utils';
+import { cleanWorkspaceFileName } from './extension';
+import { ensureExists, getJavaConfiguration } from './utils';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
-export const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
+const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
+const IS_WORKSPACE_JLS_JDK_ALLOWED = "java.jdt.ls.java.home.isAllowed";
 export const IS_WORKSPACE_VMARGS_ALLOWED = "java.ls.isVmargsAllowed";
 const extensionName = 'Language Support for Java';
 export const ACTIVE_BUILD_TOOL_STATE = "java.activeBuildTool";
@@ -23,7 +26,7 @@ export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // ja
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 const gradleWrapperPromptDialogs = [];
 
-export function onConfigurationChange() {
+export function onConfigurationChange(workspacePath: string) {
 	return workspace.onDidChangeConfiguration(params => {
 		if (!params.affectsConfiguration('java')) {
 			return;
@@ -32,7 +35,15 @@ export function onConfigurationChange() {
 		if (newConfig.get(EXCLUDE_FILE_CONFIG)) {
 			excludeProjectSettingsFiles();
 		}
-		if (hasJavaConfigChanged(oldConfig, newConfig)) {
+
+		const isFsModeChanged: boolean = hasConfigKeyChanged('import.generatesMetadataFilesAtProjectRoot', oldConfig, newConfig);
+		if (isFsModeChanged) {
+			// Changing the FS mode needs a clean restart.
+			ensureExists(workspacePath);
+			const file = path.join(workspacePath, cleanWorkspaceFileName);
+			fs.closeSync(fs.openSync(file, 'w'));
+		}
+		if (isFsModeChanged || hasJavaConfigChanged(oldConfig, newConfig)) {
 			const msg = `Java Language Server configuration changed, please restart ${env.appName}.`;
 			const action = 'Restart Now';
 			const restartId = Commands.RELOAD_WINDOW;
@@ -92,7 +103,8 @@ function excludeProjectSettingsFilesForWorkspace(workspaceUri: Uri) {
 }
 
 function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: WorkspaceConfiguration) {
-	return hasConfigKeyChanged('home', oldConfig, newConfig)
+	return hasConfigKeyChanged('jdt.ls.java.home', oldConfig, newConfig)
+		|| hasConfigKeyChanged('home', oldConfig, newConfig)
 		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
 		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig)
 		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig);
@@ -115,30 +127,63 @@ export function getJavaEncoding(): string {
 	return javaEncoding;
 }
 
-export async function checkJavaPreferences(context: ExtensionContext) {
+export async function checkJavaPreferences(context: ExtensionContext): Promise<{javaHome?: string, preference: string}> {
 	const allow = 'Allow';
 	const disallow = 'Disallow';
-	let javaHome = workspace.getConfiguration().inspect<string>('java.home').workspaceValue;
+	let preference: string = 'java.jdt.ls.java.home';
+	let javaHome = workspace.getConfiguration().inspect<string>('java.jdt.ls.java.home').workspaceValue;
 	let isVerified = javaHome === undefined || javaHome === null;
 	if (isVerified) {
-		javaHome = getJavaConfiguration().get('home');
+		javaHome = getJavaConfiguration().get('jdt.ls.java.home');
 	}
-	const key = getKey(IS_WORKSPACE_JDK_ALLOWED, context.storagePath, javaHome);
+	const key = getKey(IS_WORKSPACE_JLS_JDK_ALLOWED, context.storagePath, javaHome);
 	const globalState = context.globalState;
 	if (!isVerified) {
 		isVerified = globalState.get(key);
 		if (isVerified === undefined) {
-			await window.showErrorMessage(`Security Warning! Do you allow this workspace to set the java.home variable? \n java.home: ${javaHome}`, disallow, allow).then(async selection => {
+			await window.showErrorMessage(`Security Warning! Do you allow this workspace to set the java.jdt.ls.java.home variable? \n java.jdt.ls.java.home: ${javaHome}`, disallow, allow).then(async selection => {
 				if (selection === allow) {
 					globalState.update(key, true);
 				} else if (selection === disallow) {
 					globalState.update(key, false);
-					await workspace.getConfiguration().update('java.home', undefined, ConfigurationTarget.Workspace);
+					await workspace.getConfiguration().update('java.jdt.ls.java.home', undefined, ConfigurationTarget.Workspace);
 				}
 			});
 			isVerified = globalState.get(key);
 		}
+		if (!isVerified) { // java.jdt.ls.java.home from workspace settings is disallowed.
+			javaHome = workspace.getConfiguration().inspect<string>('java.jdt.ls.java.home').globalValue;
+		}
 	}
+
+	if (!javaHome) { // Read java.home from the deprecated "java.home" setting.
+		preference = 'java.home';
+		javaHome = workspace.getConfiguration().inspect<string>('java.home').workspaceValue;
+		isVerified = javaHome === undefined || javaHome === null;
+		if (isVerified) {
+			javaHome = getJavaConfiguration().get('home');
+		}
+		const key = getKey(IS_WORKSPACE_JDK_ALLOWED, context.storagePath, javaHome);
+		const globalState = context.globalState;
+		if (!isVerified) {
+			isVerified = globalState.get(key);
+			if (isVerified === undefined) {
+				await window.showErrorMessage(`Security Warning! Do you allow this workspace to set the java.home variable? \n java.home: ${javaHome}`, disallow, allow).then(async selection => {
+					if (selection === allow) {
+						globalState.update(key, true);
+					} else if (selection === disallow) {
+						globalState.update(key, false);
+						await workspace.getConfiguration().update('java.home', undefined, ConfigurationTarget.Workspace);
+					}
+				});
+				isVerified = globalState.get(key);
+			}
+			if (!isVerified) { // java.home from workspace settings is disallowed.
+				javaHome = workspace.getConfiguration().inspect<string>('java.home').globalValue;
+			}
+		}
+	}
+
 	const vmargs = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').workspaceValue;
 	if (vmargs !== undefined) {
 		const isWorkspaceTrusted = (workspace as any).isTrusted; // keep compatibility for old engines < 1.56.0
@@ -158,11 +203,11 @@ export async function checkJavaPreferences(context: ExtensionContext) {
 			}
 		}
 	}
-	if (isVerified) {
-		return javaHome;
-	} else {
-		return workspace.getConfiguration().inspect<string>('java.home').globalValue;
-	}
+
+	return {
+		javaHome,
+		preference
+	};
 }
 
 export function getKey(prefix, storagePath, value) {

@@ -1,5 +1,51 @@
 # Change Log
 
+## 1.3.0 (January 24th, 2022)
+ * enhancement - Support completion for lambda expressions. See [JLS#1985](https://github.com/eclipse/eclipse.jdt.ls/issues/1985).
+ * enhancement - Add "Convert to Switch Expression" code assist proposal. See [JLS#1935](https://github.com/eclipse/eclipse.jdt.ls/pull/1935).
+ * enhancement - Support Gradle compatibility check. See [#2225](https://github.com/redhat-developer/vscode-java/issues/2225).
+ * enhancement - Language server status bar item is not in sync with the real status. See [#2243](https://github.com/redhat-developer/vscode-java/issues/2243).
+ * bug fix - Fix regression in signature help. See [JLS#1980](https://github.com/eclipse/eclipse.jdt.ls/issues/1980).
+ * bug fix - Provide a way to disable embedded JRE. See [#2276](https://github.com/redhat-developer/vscode-java/issues/2276).
+ * bug fix - Projects containing windows symlink directories are not recognized. See [#2264](https://github.com/redhat-developer/vscode-java/issues/2264).
+ * bug fix - JDK installed via Homebrew is not detected. See [#2254](https://github.com/redhat-developer/vscode-java/issues/2254).
+ * bug fix - Avoid duplicate quick fixes when showing all quick fixes on a line. See [#2236](https://github.com/redhat-developer/vscode-java/issues/2236).
+ * bug fix - "Go to References" result contains inaccurate references. See [#2227](https://github.com/redhat-developer/vscode-java/issues/2227).
+ * bug fix - Ensure gradle wrappers are correctly processed on project import. See [#2218](https://github.com/redhat-developer/vscode-java/issues/2218).
+ * build - Fix Jenkinsfile to publish the correct generic extension version. See [#2252](https://github.com/redhat-developer/vscode-java/pull/2252).
+ * other - Change minimum JDK requirement listed in documentation. See [#2275](https://github.com/redhat-developer/vscode-java/pull/2275).
+
+## 1.2.0 (December 16th, 2021)
+ * enhancement - Support platform specific extension. See [#2109](https://github.com/redhat-developer/vscode-java/issues/2109).
+ * enhancement - Make the debounce adaptive for validation job. See [JLS#1973](https://github.com/eclipse/eclipse.jdt.ls/pull/1973).
+ * bug fix - Fix issue where importing packages showed incorrect result. See [#1422](https://github.com/redhat-developer/vscode-java/issues/1422).
+ * bug fix - Fix regression in code action for unresolved type. See [JLS#1967](https://github.com/eclipse/eclipse.jdt.ls/pull/1967).
+ * bug fix - Diagnostics from changes to build configuration not reflected in opened source files. See [JLS#1963](https://github.com/eclipse/eclipse.jdt.ls/issues/1963).
+ * bug fix - Java extension does not work on standalone java files. See [#2231](https://github.com/redhat-developer/vscode-java/issues/2231).
+ * debt - Remove unused log4j 1.2.15 from builds. See [JLS#1972](https://github.com/eclipse/eclipse.jdt.ls/pull/1972).
+ * debt - Use jdk-utils to detect installed runtimes. See [#2246](https://github.com/redhat-developer/vscode-java/pull/2246).
+
+## 1.1.0 (November 26th, 2021)
+ * enhancement - Stop generating metadata files at project's root. See [#618](https://github.com/redhat-developer/vscode-java/issues/618).
+ * enhancement - Quickfixes should be available at the line level. See [#2130](https://github.com/redhat-developer/vscode-java/issues/2130).
+ * enhancement - Explicitly report OutOfMemory error to user. See [#1959](https://github.com/redhat-developer/vscode-java/issues/1959).
+ * enhancement - Add option to clean out cached workspace data that is unused for a specified period of time. See [#2110](https://github.com/redhat-developer/vscode-java/issues/2110).
+ * enhancement - Add `Generate Constructors` to Show Fixes for type declaration. See [JLS#1937](https://github.com/eclipse/eclipse.jdt.ls/pull/1937).
+ * enhancement - Add `Override/Implement methods` to Show Fixes for type declaration. See [JLS#1932](https://github.com/eclipse/eclipse.jdt.ls/pull/1932).
+ * enhancement - Add "Surround With Try-With" code assist proposal. See [#2128](https://github.com/redhat-developer/vscode-java/issues/2128).
+ * enhancement - Formatter should indent `case` statements within a `switch` statement by default. See [#2185](https://github.com/redhat-developer/vscode-java/issues/2185).
+ * enhancement - Formatter should not join wrapped lines by default. See [#2181](https://github.com/redhat-developer/vscode-java/issues/2181).
+ * enhancement - Always show `Organize imports` in Quick Fixes for import declaration. See [JLS#1936](https://github.com/eclipse/eclipse.jdt.ls/pull/1936).
+ * bug fix - Java server refreshing the workspace (cleaning/building) for each restart. See [#2222](https://github.com/redhat-developer/vscode-java/issues/2222).
+ * bug fix - Problem messages can get offset by frequent changes to the document. See [#1633](https://github.com/redhat-developer/vscode-java/issues/1633).
+ * bug fix - Duplicate implement method quick fixes. See [JLS#1942](https://github.com/eclipse/eclipse.jdt.ls/issues/1942).
+ * bug fix - Malformed semantic tokens in some case. See [JLS#1922](https://github.com/eclipse/eclipse.jdt.ls/issues/1922).
+ * bug fix - Several errors reported for anonymous Object classes. See [JLS#1915](https://github.com/eclipse/eclipse.jdt.ls/issues/1915).
+ * bug fix - `if` with `instanceof` pattern match and `&&` breaks completion in nested `if`. See [JLS#1855](https://github.com/eclipse/eclipse.jdt.ls/issues/1855).
+ * bug fix - Java build status spinning forever. See [#2214](https://github.com/redhat-developer/vscode-java/pull/2214).
+ * bug fix - Creating the formatter file fails silently if parent folder doesn't exist. See [#2189](https://github.com/redhat-developer/vscode-java/issues/2189).
+ * debt - Don't use deprecated rangeLength property in handleChanged. See [JLS#1928](https://github.com/eclipse/eclipse.jdt.ls/pull/1928).
+
 ## 1.0.0 (October 19th, 2021)
  * performance - completion: optimize the index engine for the scenario "complete on type name". See [JLS#1846](https://github.com/eclipse/eclipse.jdt.ls/issues/1846).
  * enhancement - Support Java 17. See [#2102](https://github.com/redhat-developer/vscode-java/pull/2102).

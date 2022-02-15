@@ -4,7 +4,7 @@ def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-12.13.1'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh "npm install -g vsce"
+	sh 'npm install -g "vsce@<2"'
 }
 
 def buildVscodeExtension(){
@@ -46,7 +46,8 @@ node('rhel8'){
 
 	stage "Package vscode-java"
 	def packageJson = readJSON file: 'package.json'
-	sh "vsce package -o java-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
+	env.EXTENSION_VERSION = "${packageJson.version}"
+	sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
@@ -55,10 +56,30 @@ node('rhel8'){
 		sh "npm test --silent"
 	}
 
-	stage 'Upload vscode-java to staging'
 	def vsix = findFiles(glob: '**.vsix')
-	sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/jdt.ls/staging"
-	stash name:'vsix', includes:files[0].path
+	stash name:'vsix', includes:vsix[0].path
+
+	// Package platform specific versions
+	stage "Package platform specific vscode-java"
+	def platforms = ["win32-x64", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64"]
+	def embeddedJRE = 17
+	for(platform in platforms){
+		sh "npx gulp download_jre --target ${platform} --javaVersion ${embeddedJRE}"
+		sh "vsce package --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+	}
+	stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
+
+	stage 'Upload vscode-java to staging'
+	def artifacts = findFiles(glob: '**.vsix')
+	def artifactDir = "java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}"
+	sh "mkdir ${artifactDir}"
+	sh "mv *.vsix ${artifactDir}"
+
+	for(artifact in artifacts){
+		sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/jdt.ls/staging"
+	}
+	// Clean up build vsix
+	sh "rm -rf ${artifactDir}"
 }
 
 node('rhel8'){
@@ -67,24 +88,42 @@ node('rhel8'){
 			input message:'Approve deployment?', submitter: 'fbricon,rgrunber'
 		}
 
-		stage "Publish to Marketplaces"
+		stage "Publish to Open-vsx Marketplace"
 		unstash 'vsix'
 		def vsix = findFiles(glob: '**.vsix')
-		// VS Code Marketplace
-		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
-		}
-
 		// Open-vsx Marketplace
-		sh "npm install -g ovsx"
+		sh 'npm install -g "ovsx@<0.3.0"'
 		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
 			sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${vsix[0].path}"
 		}
 
-		archive includes:"**.vsix"
+		stage "Publish to VS Code Marketplace"
+		// VS Code Marketplace
+		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+			// Clean up embedded jre folder from previous build
+			sh 'npx gulp clean_jre'
+			// Publish a generic version
+			sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+
+			// Publish platform specific versions
+			unstash 'platformVsix'
+			def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
+			for(platformVsix in platformVsixes){
+				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
+			}
+		}
 
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
+		def artifacts = findFiles(glob: '**.vsix')
+		def artifactDir = "java-${env.EXTENSION_VERSION}"
+		sh "mkdir ${artifactDir}"
+		sh "mv *.vsix ${artifactDir}"
+
+		archive includes:"${artifactDir}/**/*.*"
+
 		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
-		sh "rsync -Pzrlt --rsh=ssh --protocol=28 ${vsix[0].path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
+		for(artifact in artifacts){
+			sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
+		}
 	}// if publishToMarketPlace
 }

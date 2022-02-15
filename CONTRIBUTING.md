@@ -54,6 +54,12 @@ The following will be a start to finish guide to get the entire language server 
 	```bash
 	$ npm install
 	```
+5. (**\*Optional**) Build a platform specific JRE:
+
+	```bash
+	$ npx gulp download_jre
+	```
+	You can also use the options `--target` and `--javaVersion` to build the specified JRE version for the specified target architecture.
 
 #
 

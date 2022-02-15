@@ -9,17 +9,27 @@ import { RequirementsData } from './requirements';
 import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag, isInWorkspaceFolder } from './settings';
 import { logger } from './log';
 import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } from './utils';
-import { workspace, ExtensionContext } from 'vscode';
+import { workspace, ExtensionContext, window } from 'vscode';
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
+
+/**
+ * Argument that tells the program where to generate the heap dump that is created when an OutOfMemoryError is raised and `HEAP_DUMP` has been passed
+ */
+ export const HEAP_DUMP_LOCATION = '-XX:HeapDumpPath=';
+
+ /**
+  * Argument that tells the program to generate a heap dump file when an OutOfMemoryError is raised
+  */
+ export const HEAP_DUMP = '-XX:+HeapDumpOnOutOfMemoryError';
 
 export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
 	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
 	executable.options = options;
-	executable.command = path.resolve(requirements.java_home + '/bin/java');
+	executable.command = path.resolve(requirements.tooling_jre + '/bin/java');
 	executable.args = prepareParams(requirements, javaConfig, workspacePath, context, isSyntaxServer);
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
@@ -49,19 +59,26 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		// suspend=y is the default. Use this form if you need to debug the server startup code:
 		//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 	}
-	if (requirements.java_version > 8) {
-		params.push('--add-modules=ALL-SYSTEM',
-					'--add-opens',
-					'java.base/java.util=ALL-UNNAMED',
-					'--add-opens',
-					'java.base/java.lang=ALL-UNNAMED');
-	}
+
+	params.push('--add-modules=ALL-SYSTEM',
+				'--add-opens',
+				'java.base/java.util=ALL-UNNAMED',
+				'--add-opens',
+				'java.base/java.lang=ALL-UNNAMED',
+				// See https://github.com/redhat-developer/vscode-java/issues/2264
+				// It requires the internal API sun.nio.fs.WindowsFileAttributes.isDirectoryLink() to check if a Windows directory is symlink.
+				'--add-opens',
+				'java.base/sun.nio.fs=ALL-UNNAMED');
 
 	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1',
 				'-Dosgi.bundles.defaultStartLevel=4',
 				'-Declipse.product=org.eclipse.jdt.ls.core.product');
 	if (DEBUG) {
 		params.push('-Dlog.level=ALL');
+	}
+	const metadataLocation = workspace.getConfiguration().get('java.import.generatesMetadataFilesAtProjectRoot');
+	if (metadataLocation !== undefined) {
+		params.push(`-Djava.import.generatesMetadataFilesAtProjectRoot=${metadataLocation}`);
 	}
 	let vmargsCheck = workspace.getConfiguration().inspect('java.jdt.ls.vmargs').workspaceValue;
 	if (vmargsCheck !== undefined) {
@@ -95,10 +112,20 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 
 	parseVMargs(params, vmargs);
+
+	if (!isSyntaxServer) {
+		if (vmargs.indexOf(HEAP_DUMP) < 0) {
+			params.push(HEAP_DUMP);
+		}
+		if (vmargs.indexOf(HEAP_DUMP_LOCATION) < 0) {
+			params.push(`${HEAP_DUMP_LOCATION}${path.dirname(workspacePath)}`);
+		}
+	}
+
 	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
 	// were deprecated in JDK 13 and will likely be removed in a future release."
 	// so only add -noverify for older versions
-	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.java_version < 13) {
+	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.tooling_jre_version < 13) {
 		params.push('-noverify');
 	}
 

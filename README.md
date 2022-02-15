@@ -12,7 +12,7 @@ Quick Start
 ============
 1. Install the Extension
 2. If you do not have a _Java_ Development Kit correctly [set](#setting-the-jdk)
-    * Download and install a recent Java Development Kit (latest Java 11 is the current minimum requirement).
+    * Download and install a Java Development Kit for your project (Java 1.5 or above is supported)
 3. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
@@ -54,13 +54,16 @@ See the [changelog](CHANGELOG.md) for the latest release. You might also find us
 Setting the JDK
 ===============
 ## Java Tooling JDK
-This JDK will be used to launch the Java Language Server. And by default, will also be used to compile your projects.
+Now that Java extension will publish platform specific versions, it will embed a JRE for supported platforms such as `win32-x64`, `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`. The embedded JRE is used to launch the Language Server for Java. Users are only responsible for configuring [Project JDKs](#project-jdks) to compile your Java projects.
 
-The path to the Java Development Kit can be specified by the `java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
+The following part is only kept for the universal version without embedded JRE.
 
-- the `JDK_HOME` environment variable
-- the `JAVA_HOME` environment variable
-- on the current system path
+>The tooling JDK will be used to launch the Language Server for Java. And by default, will also be used to compile your projects.\
+\
+The path to the Java Development Kit can be specified by the `java.jdt.ls.java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
+>- the `JDK_HOME` environment variable
+>- the `JAVA_HOME` environment variable
+>- on the current system path
 
 ## Project JDKs
 If you need to compile your projects against a different JDK version, it's recommended you configure the `java.configuration.runtimes` property in your user settings, eg:
@@ -107,7 +110,7 @@ Supported VS Code settings
 ==========================
 The following settings are supported:
 
-* `java.home` : Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
+* `java.home` : **Deprecated, please use 'java.jdt.ls.java.home' instead.** Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
@@ -193,6 +196,12 @@ The following settings are supported:
   - `lastMember`: Insert the generated code as the last member of the target type.
 * `java.settings.url` : Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)
 * `java.symbols.includeSourceMethodDeclarations` : Include method declarations from source files in symbol search. Defaults to `false`.
+ * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
+ * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
+ * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
+
+New in 1.3.0:
+* `java.jdt.ls.java.home`: Absolute path to JDK home folder used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. Requires VS Code restart.
 
 Semantic Highlighting
 ===============

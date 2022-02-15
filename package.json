@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.1.0",
+  "version": "1.4.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -14,6 +14,7 @@
     "untrustedWorkspaces": {
       "supported": "limited",
       "restrictedConfigurations": [
+        "java.jdt.ls.java.home",
         "java.home",
         "java.jdt.ls.vmargs"
       ]
@@ -21,7 +22,7 @@
     "virtualWorkspaces": false
   },
   "engines": {
-    "vscode": "^1.53.2"
+    "vscode": "^1.61.0"
   },
   "repository": {
     "type": "git",
@@ -44,7 +45,8 @@
     "workspaceContains:build.gradle.kts",
     "workspaceContains:settings.gradle.kts",
     "workspaceContains:.classpath",
-    "onCommand:_java.templateVariables"
+    "onCommand:_java.templateVariables",
+    "onCommand:_java.metadataFilesGeneration"
   ],
   "main": "./dist/extension",
   "contributes": {
@@ -169,6 +171,16 @@
           ],
           "default": null,
           "description": "Specifies the folder path to the JDK (11 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk11.0_8\"",
+          "scope": "machine-overridable",
+          "deprecationMessage": "This setting is deprecated, please use 'java.jdt.ls.java.home' instead."
+        },
+        "java.jdt.ls.java.home": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "Specifies the folder path to the JDK (11 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk11.0_8\"",
           "scope": "machine-overridable"
         },
         "java.jdt.ls.vmargs": {
@@ -343,6 +355,16 @@
           "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
           "scope": "window"
         },
+        "java.configuration.workspaceCacheLimit": {
+          "type": [
+            "null",
+            "integer"
+          ],
+          "default": null,
+          "minimum": 1,
+          "description": "The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.",
+          "scope": "application"
+        },
         "java.format.enabled": {
           "type": "boolean",
           "default": true,
@@ -364,6 +386,12 @@
             "**/archetype-resources/**",
             "**/META-INF/maven/**"
           ],
+          "scope": "window"
+        },
+        "java.import.generatesMetadataFilesAtProjectRoot": {
+          "type": "boolean",
+          "markdownDescription": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Click [HERE](command:_java.metadataFilesGeneration) to learn how to change the setting to make it take effect.",
+          "default": false,
           "scope": "window"
         },
         "java.project.referencedLibraries": {
@@ -817,6 +845,16 @@
           "markdownDescription": "Include method declarations from source files in symbol search.",
           "default": false,
           "scope": "window"
+        },
+        "java.quickfix.showAt": {
+          "type": "string",
+          "enum": [
+            "line",
+            "problem"
+          ],
+          "default": "line",
+          "description": "Show quickfixes at the problem or line level.",
+          "scope": "window"
         }
       }
     },
@@ -1110,8 +1148,9 @@
     "lodash.findindex": "^4.6.0",
     "lodash.template": ">=4.5.0",
     "minimist": ">=1.2.5",
-    "mocha": "^8.1.1",
-    "ts-loader": "^5.3.1",
+    "mocha": "^9.2.0",
+    "request": "^2.88.2",
+    "ts-loader": "^9.2.6",
     "tslint": "^5.11.0",
     "typescript": "^4.2.4",
     "typescript-tslint-plugin": "^0.3.1",
@@ -1120,13 +1159,14 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
+    "chokidar": "^3.5.3",
     "expand-home-dir": "^0.0.3",
-    "find-java-home": "1.1.0",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.3",
-    "vscode-languageclient": "7.1.0-next.5",
+    "jdk-utils": "^0.4.2",
     "semver": "^7.3.5",
+    "vscode-languageclient": "7.1.0-next.5",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
