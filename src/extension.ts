@@ -5,7 +5,7 @@ import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command, ErrorHandlerResult, CloseHandlerResult, CodeActionTriggerKind } from 'vscode-languageclient';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
 import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
@@ -44,27 +44,21 @@ export class ClientErrorHandler implements ErrorHandler {
 		this.restarts = [];
 	}
 
-	public error(_error: Error, _message: Message, count: number): ErrorHandlerResult {
+	public error(_error: Error, _message: Message, count: number): ErrorAction {
 		if (count && count <= 3) {
 			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
-			return {
-				action: ErrorAction.Continue,
-			};
+			return ErrorAction.Continue;
 		}
 
 		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
-		return {
-			action: ErrorAction.Shutdown
-		};
+		return ErrorAction.Shutdown;
 	}
 
-	public closed(): CloseHandlerResult {
+	public closed(): CloseAction {
 		this.restarts.push(Date.now());
 		if (this.restarts.length < 5) {
 			logger.error(`The ${this.name} server crashed and will restart.`);
-			return {
-				action: CloseAction.Restart
-			};
+			return CloseAction.Restart;
 		} else {
 			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
 			if (diff <= 3 * 60 * 1000) {
@@ -76,16 +70,12 @@ export class ClientErrorHandler implements ErrorHandler {
 						commands.executeCommand(Commands.OPEN_LOGS);
 					}
 				});
-				return {
-					action: CloseAction.DoNotRestart
-				};
+				return CloseAction.DoNotRestart;
 			}
 
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			this.restarts.shift();
-			return {
-				action: CloseAction.Restart
-			};
+			return CloseAction.Restart;
 		}
 	}
 }
@@ -132,10 +122,6 @@ export class OutputInfoCollector implements OutputChannel {
 
 	constructor(public name: string) {
 		this.channel = window.createOutputChannel(this.name);
-	}
-	replace(value: string): void {
-		logger.info(value);
-		this.channel.replace(value);
 	}
 
 	append(value: string): void {
@@ -260,7 +246,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				middleware: {
 					workspace: {
 						didChangeConfiguration: () => {
-							return standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
+							standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
 									java: getJavaConfig(requirements.java_home),
 								}
@@ -293,7 +279,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								const codeActionContext: CodeActionContext = {
 									diagnostics: allDiagnostics,
 									only: context.only,
-									triggerKind: CodeActionTriggerKind.Invoked
 								};
 								params.context = client.code2ProtocolConverter.asCodeActionContext(codeActionContext);
 							}

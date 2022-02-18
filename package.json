@@ -22,7 +22,7 @@
     "virtualWorkspaces": false
   },
   "engines": {
-    "vscode": "^1.63.0"
+    "vscode": "^1.61.0"
   },
   "repository": {
     "type": "git",
@@ -207,8 +207,9 @@
           "scope": "window"
         },
         "java.configuration.checkProjectSettingsExclusions": {
+          "deprecationMessage": "Please use 'java.import.generatesMetadataFilesAtProjectRoot' to control whether to generate the project metadata files at the project root. And use 'files.exclude' to control whether to hide the project metadata files from the file explorer.",
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Controls whether to exclude extension-generated project settings files (.project, .classpath, .factorypath, .settings/) from the file explorer.",
           "scope": "window"
         },
@@ -1139,7 +1140,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.51",
     "@types/semver": "^7.3.8",
-    "@types/vscode": "^1.63.0",
+    "@types/vscode": "^1.53.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.2",
@@ -1166,7 +1167,7 @@
     "glob": "^7.1.3",
     "jdk-utils": "^0.4.2",
     "semver": "^7.3.5",
-    "vscode-languageclient": "8.0.0-next.12",
+    "vscode-languageclient": "7.1.0-next.5",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
