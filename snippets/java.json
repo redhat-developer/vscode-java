@@ -1,6 +1,6 @@
 {
 	"main": {
-		"prefix": "main",
+		"prefix": ["main", "psvm"],
 		"body": [
 			"public static void main(String[] args) {",
 			"\t$0",
