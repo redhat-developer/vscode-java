@@ -1,13 +1,15 @@
 'use strict';
 
-import { DocumentSymbolRequest, SymbolInformation as clientSymbolInformation, DocumentSymbol as clientDocumentSymbol, HoverRequest } from "vscode-languageclient";
+import { DocumentSymbolRequest, SymbolInformation as clientSymbolInformation, DocumentSymbol as clientDocumentSymbol, HoverRequest, WorkspaceSymbolRequest } from "vscode-languageclient";
 import { LanguageClient } from "vscode-languageclient/node";
-import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover } from "vscode";
-import { ClassFileContentsRequest } from "./protocol";
+import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover, WorkspaceSymbolProvider, Range, commands, SymbolKind } from "vscode";
+import { ClassFileContentsRequest, StatusNotification } from "./protocol";
 import { createClientHoverProvider } from "./hoverAction";
 import { getActiveLanguageClient } from "./extension";
 import { apiManager } from "./apiManager";
 import { ServerMode } from "./settings";
+import { serverStatus, ServerStatusKind } from "./serverStatus";
+import { Commands } from "./commands";
 
 export interface ProviderOptions {
 	contentProviderEvent: Event<Uri>;
@@ -26,6 +28,8 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 
 	const jdtProvider = createJDTContentProvider(options);
 	context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', jdtProvider));
+
+	overwriteWorkspaceSymbolProviderIfSupported();
 	return {
 		handles: [hoverProvider, symbolProvider, jdtProvider]
 	};
@@ -99,4 +103,51 @@ function createDocumentSymbolProvider(): DocumentSymbolProvider {
 			return languageClient.protocol2CodeConverter.asDocumentSymbols(<clientDocumentSymbol[]>symbolResponse);
 		}
 	};
+}
+
+const START_OF_DOCUMENT = new Range(new Position(0, 0), new Position(0, 0));
+
+function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: WorkspaceSymbolProvider): WorkspaceSymbolProvider  {
+	return {
+		provideWorkspaceSymbols: existingWorkspaceSymbolProvider.provideWorkspaceSymbols,
+		resolveWorkspaceSymbol: async (symbol: SymbolInformation, token: CancellationToken): Promise<SymbolInformation> => {
+			const range = symbol.location.range;
+			if (range && !range.isEqual(START_OF_DOCUMENT)) {
+				return symbol;
+			}
+
+			const languageClient = await getActiveLanguageClient();
+			const serializableSymbol = {
+				name: symbol.name,
+				// Cannot serialize SymbolKind as number, because GSON + lsp4j.SymbolKind expect a name.
+				kind: SymbolKind[symbol.kind],
+				location: {
+					uri: languageClient.code2ProtocolConverter.asUri(symbol.location.uri),
+					range: languageClient.code2ProtocolConverter.asRange(symbol.location.range)
+				},
+				containerName: symbol.containerName
+			};
+
+			const response = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.RESOLVE_WORKSPACE_SYMBOL, JSON.stringify(serializableSymbol));
+			if (token.isCancellationRequested) {
+				return undefined;
+			}
+			return languageClient.protocol2CodeConverter.asSymbolInformation(response as clientSymbolInformation);
+		}
+	};
+}
+
+function overwriteWorkspaceSymbolProviderIfSupported(): void {
+	const disposable =  serverStatus.onServerStatusChanged( async (status) => {
+		if (status === ServerStatusKind.Ready) {
+			const feature =  (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
+			const providers = feature.getProviders();
+			if (providers && providers.length > 0) {
+				feature.dispose();
+				const workspaceSymbolProvider = createWorkspaceSymbolProvider(providers[0]);
+				languages.registerWorkspaceSymbolProvider(workspaceSymbolProvider);
+				disposable.dispose();
+			}
+		}
+	});	
 }

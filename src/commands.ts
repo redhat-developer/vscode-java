@@ -244,4 +244,6 @@ export namespace Commands {
     export const MEATDATA_FILES_GENERATION = '_java.metadataFilesGeneration';
 
     export const RUNTIME_VALIDATION_OPEN = 'java.runtimeValidation.open';
+
+    export const RESOLVE_WORKSPACE_SYMBOL = 'java.project.resolveWorkspaceSymbol';
 }
