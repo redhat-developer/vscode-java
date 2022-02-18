@@ -149,5 +149,5 @@ function overwriteWorkspaceSymbolProviderIfSupported(): void {
 				disposable.dispose();
 			}
 		}
-	});	
+	});
 }
