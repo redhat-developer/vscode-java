@@ -727,7 +727,19 @@ function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Acti
 		// find out the newest one
 		glob(filename + '.*', { cwd: dirname }, (err, files) => {
 			if (!err && files.length > 0) {
-				files.sort();
+				files.sort((a, b) => {
+					const dateA = a.slice(11, 21), dateB = b.slice(11, 21);
+					if (dateA === dateB) {
+						if (a.length > 22 && b.length > 22) {
+							const extA = a.slice(22), extB = b.slice(22);
+							return parseInt(extA) - parseInt(extB);
+						} else {
+							return a.length - b.length;
+						}
+					} else {
+						return dateA < dateB ? -1 : 1;
+					}
+				});
 				logFile = path.join(dirname, files[files.length - 1]);
 			}
 
