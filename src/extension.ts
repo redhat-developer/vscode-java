@@ -989,7 +989,8 @@ function isPrefix(parentPath: string, childPath: string): boolean {
 async function cleanJavaWorkspaceStorage() {
 	const configCacheLimit = getJavaConfiguration().get<number>("configuration.workspaceCacheLimit");
 
-	if (!storagePath || !configCacheLimit) {
+	// Also leave temporary workspaces alone as they should have their own policy
+	if (!storagePath || !configCacheLimit || storagePath.includes('vscodesws')) {
 		return;
 	}
 
