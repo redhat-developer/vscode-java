@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.4.0 (March 3rd, 2022)
+ * enhancement - Trigger completion after `new` keyword. See [#1666](https://github.com/redhat-developer/vscode-java/issues/1666).
+ * enhancement - Improve occurrences highlighting. See [JLS#1941](https://github.com/eclipse/eclipse.jdt.ls/pull/1941).
+ * enhancement - Autoclose multiline strings (JEP 368). See [#1428](https://github.com/redhat-developer/vscode-java/issues/1428).
+ * enhancement - Provide more aliases for code snippets. See [#2314](https://github.com/redhat-developer/vscode-java/pull/2314).
+ * bug fix - "Add serial version ID" should not generate empty comments. See [JLS#1899](https://github.com/eclipse/eclipse.jdt.ls/issues/1899).
+ * bug fix - Convert to static import incorrectly removes import statements. See [JLS#1203](https://github.com/eclipse/eclipse.jdt.ls/issues/1203).
+ * bug fix - Open Java extension log doesn't open latest file. See [#2319](https://github.com/redhat-developer/vscode-java/issues/2319).
+ * bug fix - Type mismatch: cannot convert from `Object` to `Map<String,IndexType>`. See [JLS#1971](https://github.com/eclipse/eclipse.jdt.ls/issues/1971).
+ * bug fix - Signature help occasionally fails on constructors and qualified method invocations. See [#2097](https://github.com/redhat-developer/vscode-java/issues/2097).
+ * other - Set `java.configuration.workspaceCacheLimit` default value to 90. See [#2330](https://github.com/redhat-developer/vscode-java/pull/2330).
+ * other - Deprecate `java.configuration.checkProjectSettingsExclusions`. See [#2311](https://github.com/redhat-developer/vscode-java/pull/2311).
+
 ## 1.3.0 (January 24th, 2022)
  * enhancement - Support completion for lambda expressions. See [JLS#1985](https://github.com/eclipse/eclipse.jdt.ls/issues/1985).
  * enhancement - Add "Convert to Switch Expression" code assist proposal. See [JLS#1935](https://github.com/eclipse/eclipse.jdt.ls/pull/1935).
