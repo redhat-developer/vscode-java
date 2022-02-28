@@ -104,7 +104,9 @@ export namespace Commands {
     export const CLEAN_WORKSPACE = 'java.clean.workspace';
     /**
      * Update the source attachment for the selected class file
+	 * client-side & server-side commands
      */
+    export const UPDATE_SOURCE_ATTACHMENT_CMD = 'java.project.updateSourceAttachment.command';
     export const UPDATE_SOURCE_ATTACHMENT = 'java.project.updateSourceAttachment';
     /**
      * Resolve the source attachment information for the selected class file
@@ -112,19 +114,27 @@ export namespace Commands {
     export const RESOLVE_SOURCE_ATTACHMENT = 'java.project.resolveSourceAttachment';
     /**
      * Mark the folder as the source root of the closest project.
+	 * client-side & server-side commands
      */
+    export const ADD_TO_SOURCEPATH_CMD = 'java.project.addToSourcePath.command';
     export const ADD_TO_SOURCEPATH = 'java.project.addToSourcePath';
     /**
      * Unmark the folder as the source root of the project.
+	 * client-side & server-side commands
      */
+    export const REMOVE_FROM_SOURCEPATH_CMD = 'java.project.removeFromSourcePath.command';
     export const REMOVE_FROM_SOURCEPATH = 'java.project.removeFromSourcePath';
     /**
      * List all recognized source roots in the workspace.
+	 * client-side & server-side commands
      */
+    export const LIST_SOURCEPATHS_CMD = 'java.project.listSourcePaths.command';
     export const LIST_SOURCEPATHS = 'java.project.listSourcePaths';
     /**
      * Import new projects
+	 * client-side & server-side commands
      */
+    export const IMPORT_PROJECTS_CMD = 'java.project.import.command';
     export const IMPORT_PROJECTS = 'java.project.import';
     /**
      * Override or implements the methods from the supertypes.

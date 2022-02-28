@@ -877,7 +877,7 @@
         "category": "Java"
       },
       {
-        "command": "java.project.import",
+        "command": "java.project.import.command",
         "title": "%java.project.import%",
         "category": "Java"
       },
@@ -912,22 +912,22 @@
         "category": "Java"
       },
       {
-        "command": "java.project.updateSourceAttachment",
+        "command": "java.project.updateSourceAttachment.command",
         "title": "%java.project.updateSourceAttachment%",
         "category": "Java"
       },
       {
-        "command": "java.project.addToSourcePath",
+        "command": "java.project.addToSourcePath.command",
         "title": "%java.project.addToSourcePath%",
         "category": "Java"
       },
       {
-        "command": "java.project.removeFromSourcePath",
+        "command": "java.project.removeFromSourcePath.command",
         "title": "%java.project.removeFromSourcePath%",
         "category": "Java"
       },
       {
-        "command": "java.project.listSourcePaths",
+        "command": "java.project.listSourcePaths.command",
         "title": "%java.project.listSourcePaths%",
         "category": "Java"
       },
@@ -999,18 +999,18 @@
         },
         {
           "when": "explorerResourceIsFolder&&javaLSReady",
-          "command": "java.project.addToSourcePath",
+          "command": "java.project.addToSourcePath.command",
           "group": "1_javaactions@1"
         },
         {
           "when": "explorerResourceIsFolder&&javaLSReady",
-          "command": "java.project.removeFromSourcePath",
+          "command": "java.project.removeFromSourcePath.command",
           "group": "1_javaactions@2"
         }
       ],
       "editor/context": [
         {
-          "command": "java.project.updateSourceAttachment",
+          "command": "java.project.updateSourceAttachment.command",
           "when": "editorReadonly && editorLangId == java",
           "group": "1_javaactions"
         },
@@ -1036,7 +1036,7 @@
           "when": "javaLSReady"
         },
         {
-          "command": "java.project.import",
+          "command": "java.project.import.command",
           "when": "javaLSReady"
         },
         {
@@ -1048,7 +1048,7 @@
           "when": "javaLSReady"
         },
         {
-          "command": "java.project.listSourcePaths",
+          "command": "java.project.listSourcePaths.command",
           "when": "javaLSReady"
         },
         {
@@ -1072,15 +1072,15 @@
           "when": "false"
         },
         {
-          "command": "java.project.updateSourceAttachment",
+          "command": "java.project.updateSourceAttachment.command",
           "when": "false"
         },
         {
-          "command": "java.project.addToSourcePath",
+          "command": "java.project.addToSourcePath.command",
           "when": "false"
         },
         {
-          "command": "java.project.removeFromSourcePath",
+          "command": "java.project.removeFromSourcePath.command",
           "when": "false"
         },
         {

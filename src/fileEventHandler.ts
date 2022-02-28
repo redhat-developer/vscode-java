@@ -50,7 +50,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
 
     let sourcePaths: string[] = [];
     if (serverReady) {
-        const result: ListCommandResult = await commands.executeCommand<ListCommandResult>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.LIST_SOURCEPATHS);
+        const result: ListCommandResult = await commands.executeCommand<ListCommandResult>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.LIST_SOURCEPATHS_CMD);
         if (result && result.data && result.data.length) {
             sourcePaths = result.data.map((sourcePath) => sourcePath.path).sort((a, b) => b.length - a.length);
         }

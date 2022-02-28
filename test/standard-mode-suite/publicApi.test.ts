@@ -159,7 +159,7 @@ suite('Public APIs - Standard', () => {
 			api.onDidProjectsImport(() => {
 				return resolve();
 			});
-			await commands.executeCommand(Commands.IMPORT_PROJECTS);
+			await commands.executeCommand(Commands.IMPORT_PROJECTS_CMD);
 		});
 	});
 
