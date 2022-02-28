@@ -21,7 +21,7 @@ export interface ListCommandResult extends Result {
 }
 
 export function registerCommands(context: ExtensionContext) {
-    context.subscriptions.push(commands.registerCommand(Commands.ADD_TO_SOURCEPATH, async (uri: Uri) => {
+    context.subscriptions.push(commands.registerCommand(Commands.ADD_TO_SOURCEPATH_CMD, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.ADD_TO_SOURCEPATH, uri.toString());
         if (result.status) {
             if (result.sourcePaths) {
@@ -33,7 +33,7 @@ export function registerCommands(context: ExtensionContext) {
         }
     }));
 
-    context.subscriptions.push(commands.registerCommand(Commands.REMOVE_FROM_SOURCEPATH, async (uri: Uri) => {
+    context.subscriptions.push(commands.registerCommand(Commands.REMOVE_FROM_SOURCEPATH_CMD, async (uri: Uri) => {
         const result = await <any>commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.REMOVE_FROM_SOURCEPATH, uri.toString());
         if (result.status) {
             if (result.sourcePaths) {
@@ -45,7 +45,7 @@ export function registerCommands(context: ExtensionContext) {
         }
     }));
 
-    context.subscriptions.push(commands.registerCommand(Commands.LIST_SOURCEPATHS, async() => {
+    context.subscriptions.push(commands.registerCommand(Commands.LIST_SOURCEPATHS_CMD, async() => {
         const result: ListCommandResult = await commands.executeCommand<ListCommandResult>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.LIST_SOURCEPATHS);
         if (result.status) {
             if (!result.data || !result.data.length) {

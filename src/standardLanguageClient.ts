@@ -260,7 +260,7 @@ export class StandardLanguageClient {
 			} else if (choice.startsWith(USE_JAVA)) {
 				await workspace.getConfiguration().update(GRADLE_IMPORT_JVM, newJavaHome, ConfigurationTarget.Global);
 				commands.executeCommand("workbench.action.openSettings", GRADLE_IMPORT_JVM);
-				commands.executeCommand(Commands.IMPORT_PROJECTS);
+				commands.executeCommand(Commands.IMPORT_PROJECTS_CMD);
 			} else if (choice.startsWith(UPGRADE_GRADLE)) {
 				const useWrapper = workspace.getConfiguration().get<boolean>("java.import.gradle.wrapper.enabled");
 				if (!useWrapper) {
@@ -285,14 +285,14 @@ export class StandardLanguageClient {
 							window.showTextDocument(document, {selection: new Range(distributionUrlRange.start, new Position(distributionUrlRange.start.line + 1, 0))});
 						}
 					}
-					commands.executeCommand(Commands.IMPORT_PROJECTS);
+					commands.executeCommand(Commands.IMPORT_PROJECTS_CMD);
 				}
 			}
 		});
 	}
 
 	private registerCommandsForStandardServer(context: ExtensionContext, jdtEventEmitter: EventEmitter<Uri>): void {
-		context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS, async () => {
+		context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS_CMD, async () => {
 			return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
 		}));
 
@@ -432,7 +432,7 @@ export class StandardLanguageClient {
 				});
 			}));
 
-			context.subscriptions.push(commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT, async (classFileUri: Uri): Promise<boolean> => {
+			context.subscriptions.push(commands.registerCommand(Commands.UPDATE_SOURCE_ATTACHMENT_CMD, async (classFileUri: Uri): Promise<boolean> => {
 				const resolveRequest: SourceAttachmentRequest = {
 					classFileUri: classFileUri.toString(),
 				};
