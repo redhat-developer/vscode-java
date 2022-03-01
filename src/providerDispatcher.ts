@@ -29,7 +29,8 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 	const jdtProvider = createJDTContentProvider(options);
 	context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', jdtProvider));
 
-	overwriteWorkspaceSymbolProviderIfSupported();
+	overwriteWorkspaceSymbolProvider(context);
+
 	return {
 		handles: [hoverProvider, symbolProvider, jdtProvider]
 	};
@@ -137,7 +138,7 @@ function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: Workspac
 	};
 }
 
-function overwriteWorkspaceSymbolProviderIfSupported(): void {
+function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
 	const disposable =  serverStatus.onServerStatusChanged( async (status) => {
 		if (status === ServerStatusKind.Ready) {
 			const feature =  (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
@@ -145,7 +146,7 @@ function overwriteWorkspaceSymbolProviderIfSupported(): void {
 			if (providers && providers.length > 0) {
 				feature.dispose();
 				const workspaceSymbolProvider = createWorkspaceSymbolProvider(providers[0]);
-				languages.registerWorkspaceSymbolProvider(workspaceSymbolProvider);
+				context.subscriptions.push(languages.registerWorkspaceSymbolProvider(workspaceSymbolProvider))
 				disposable.dispose();
 			}
 		}
