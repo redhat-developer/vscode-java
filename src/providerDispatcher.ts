@@ -146,7 +146,7 @@ function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
 			if (providers && providers.length > 0) {
 				feature.dispose();
 				const workspaceSymbolProvider = createWorkspaceSymbolProvider(providers[0]);
-				context.subscriptions.push(languages.registerWorkspaceSymbolProvider(workspaceSymbolProvider))
+				context.subscriptions.push(languages.registerWorkspaceSymbolProvider(workspaceSymbolProvider));
 				disposable.dispose();
 			}
 		}
