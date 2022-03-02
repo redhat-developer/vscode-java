@@ -139,8 +139,8 @@ function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: Workspac
 }
 
 function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
-	const disposable =  serverStatus.onServerStatusChanged( async (status) => {
-		if (status === ServerStatusKind.Ready) {
+	const disposable =  apiManager.getApiInstance().onDidServerModeChange( async (mode) => {
+		if (mode === ServerMode.STANDARD) {
 			const feature =  (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
 			const providers = feature.getProviders();
 			if (providers && providers.length > 0) {
