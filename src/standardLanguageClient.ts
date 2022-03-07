@@ -33,6 +33,7 @@ import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/proto
 import { buildFilePatterns } from './plugin';
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
 import { findRuntimes, IJavaRuntime } from "jdk-utils";
+import { snippetCompletionProvider } from "./snippetCompletionProvider";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -110,6 +111,8 @@ export class StandardLanguageClient {
 						if (!hasImported) {
 							showImportFinishNotification(context);
 						}
+						// Disable the client-side snippet provider since LS is ready.
+						snippetCompletionProvider.dispose();
 						break;
 					case 'Started':
 						this.status = ClientStatus.Started;

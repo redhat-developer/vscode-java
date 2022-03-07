@@ -22,7 +22,7 @@ import { registerClientProviders } from './providerDispatcher';
 import * as fileEventHandler from './fileEventHandler';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { apiManager } from './apiManager';
-import { SnippetCompletionProvider } from './snippetCompletionProvider';
+import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
@@ -408,8 +408,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 			});
 
-			const snippetProvider: SnippetCompletionProvider = new SnippetCompletionProvider();
-			context.subscriptions.push(languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, snippetProvider));
+			context.subscriptions.push(snippetCompletionProvider.initialize());
 			context.subscriptions.push(serverStatusBarProvider);
 			context.subscriptions.push(runtimeStatusBarProvider);
 
