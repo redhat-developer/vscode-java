@@ -16,7 +16,8 @@
       "restrictedConfigurations": [
         "java.jdt.ls.java.home",
         "java.home",
-        "java.jdt.ls.vmargs"
+        "java.jdt.ls.vmargs",
+        "java.configuration.runtimes"
       ]
     },
     "virtualWorkspaces": false
