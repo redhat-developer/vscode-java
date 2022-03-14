@@ -5,7 +5,7 @@ export function initializeLogFile(filename: string) {
 	logger.add(new DailyRotateFile({
 		filename: filename,
 		datePattern: 'YYYY-MM-DD',
-		maxSize: '100k', // 100k max size per file
+		maxSize: '1m', // 1MB max size per file
 		maxFiles: '2d' // retain logs of the last two days
 	}));
 }
