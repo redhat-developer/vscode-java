@@ -185,6 +185,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	cleanJavaWorkspaceStorage();
 
+	serverStatusBarProvider.initialize();
+
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -424,7 +426,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (event === ServerMode.STANDARD) {
 					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
-					runtimeStatusBarProvider.initialize(context.storagePath);
+					runtimeStatusBarProvider.initialize(context);
 				}
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
