@@ -34,6 +34,7 @@ import { buildFilePatterns } from './plugin';
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
 import { findRuntimes, IJavaRuntime } from "jdk-utils";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
+import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -501,6 +502,14 @@ export class StandardLanguageClient {
 				scheme: "file",
 				pattern: "**/pom.xml"
 			}, new PomCodeActionProvider(context), pomCodeActionMetadata);
+
+			if (languages.registerInlayHintsProvider) {
+				context.subscriptions.push(languages.registerInlayHintsProvider([
+					{ scheme: "file", language: "java", pattern: "**/*.java" },
+					{ scheme: "jdt", language: "java", pattern: "**/*.class" },
+					{ scheme: "untitled", language: "java", pattern: "**/*.java" }
+				], new JavaInlayHintsProvider(this.languageClient)));
+			}
 		});
 	}
 

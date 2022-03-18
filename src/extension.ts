@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic, CodeActionTriggerKind } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
@@ -132,6 +132,11 @@ export class OutputInfoCollector implements OutputChannel {
 	appendLine(value: string): void {
 		logger.info(value);
 		this.channel.appendLine(value);
+	}
+
+	replace(value: string): void {
+		this.clear();
+		this.append(value);
 	}
 
 	clear(): void {
@@ -279,6 +284,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								const codeActionContext: CodeActionContext = {
 									diagnostics: allDiagnostics,
 									only: context.only,
+									triggerKind: CodeActionTriggerKind.Invoke,
 								};
 								params.context = client.code2ProtocolConverter.asCodeActionContext(codeActionContext);
 							}

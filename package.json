@@ -23,7 +23,7 @@
     "virtualWorkspaces": false
   },
   "engines": {
-    "vscode": "^1.61.0"
+    "vscode": "^1.65.0"
   },
   "repository": {
     "type": "git",
@@ -857,6 +857,22 @@
           "default": "line",
           "description": "Show quickfixes at the problem or line level.",
           "scope": "window"
+        },
+        "java.inlayHints.parameterNames.enabled": {
+          "type": "string",
+          "enum": [
+            "none",
+            "literals",
+            "all"
+          ],
+          "enumDescriptions": [
+            "Disable parameter name hints",
+            "Enable parameter name hints only for literal arguments",
+            "Enable parameter name hints for literal and non-literal arguments"
+          ],
+          "default": "literals",
+          "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n",
+          "scope": "window"
         }
       }
     },
@@ -1141,7 +1157,7 @@
     "@types/mocha": "^5.2.5",
     "@types/node": "^8.10.51",
     "@types/semver": "^7.3.8",
-    "@types/vscode": "^1.53.0",
+    "@types/vscode": "^1.65.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.2",
