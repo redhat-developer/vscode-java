@@ -1,15 +1,31 @@
 #!/usr/bin/env groovy
 
 def installBuildRequirements(){
-	def nodeHome = tool 'nodejs-12.13.1'
+	def nodeHome = tool 'nodejs-14.19.1'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh 'npm install -g "vsce@<2"'
+	sh 'npm install -g "vsce"'
 }
 
 def buildVscodeExtension(){
 	sh "npm install"
 	sh "npm run vscode:prepublish"
+}
+
+def publishToVSCodeMarketplace(vsix){
+	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+		// Clean up embedded jre folder from previous build
+		sh 'npx gulp clean_jre'
+		// Publish a generic version
+		sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+
+		// Publish platform specific versions
+		unstash 'platformVsix'
+		def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
+		for(platformVsix in platformVsixes){
+			sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
+		}
+	}
 }
 
 node('rhel8'){
@@ -44,10 +60,14 @@ node('rhel8'){
 	sh "mkdir ./server"
 	sh "tar -xvzf ${files[0].path} -C ./server"
 
+	if (!publishToMarketPlace.equals('true')) {
+		sh "node ./scripts/prepare-nightly-build.js"
+		sh "mv ./package.insiders.json ./package.json"
+	}
 	stage "Package vscode-java"
 	def packageJson = readJSON file: 'package.json'
 	env.EXTENSION_VERSION = "${packageJson.version}"
-	sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+	sh "vsce package ${publishToMarketPlace.equals('true') ? "" : "--pre-release"} -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 
 	stage 'Test vscode-java for staging'
 	wrap([$class: 'Xvnc']) {
@@ -65,7 +85,7 @@ node('rhel8'){
 	def embeddedJRE = 17
 	for(platform in platforms){
 		sh "npx gulp download_jre --target ${platform} --javaVersion ${embeddedJRE}"
-		sh "vsce package --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+		sh "vsce package ${publishToMarketPlace.equals('true') ? "" : "--pre-release"} --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 	}
 	stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
 
@@ -96,19 +116,7 @@ node('rhel8'){
 
 		stage "Publish to VS Code Marketplace"
 		// VS Code Marketplace
-		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			// Clean up embedded jre folder from previous build
-			sh 'npx gulp clean_jre'
-			// Publish a generic version
-			sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
-
-			// Publish platform specific versions
-			unstash 'platformVsix'
-			def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
-			for(platformVsix in platformVsixes){
-				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
-			}
-		}
+		publishToVSCodeMarketplace(vsix)
 
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
 		def artifactDir = "java-${env.EXTENSION_VERSION}"
@@ -119,5 +127,10 @@ node('rhel8'){
 
 		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
 		sh "sftp ${UPLOAD_LOCATION}/static/jdt.ls/stable/ <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
-	}// if publishToMarketPlace
+	} else {
+		stage "Publish pre release to VS Code Marketplace"
+		unstash 'vsix'
+		def vsix = findFiles(glob: '**.vsix')
+		publishToVSCodeMarketplace(vsix)
+	}
 }
