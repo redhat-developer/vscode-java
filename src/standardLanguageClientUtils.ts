@@ -33,11 +33,11 @@ export async function projectConfigurationUpdate(languageClient: LanguageClient,
 	}
 
 	if (resources.length === 1) {
-		languageClient.sendNotification(ProjectConfigurationUpdateRequest.type, {
+		await languageClient.sendNotification(ProjectConfigurationUpdateRequest.type, {
 			uri: resources[0].toString(),
 		});
 	} else if (resources.length > 1) {
-		languageClient.sendNotification(ProjectConfigurationUpdateRequest.typeV2, {
+		await languageClient.sendNotification(ProjectConfigurationUpdateRequest.typeV2, {
 			identifiers: resources.map(r => {
 				return { uri: r.toString() };
 			}),

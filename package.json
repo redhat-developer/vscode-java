@@ -23,7 +23,7 @@
     "virtualWorkspaces": false
   },
   "engines": {
-    "vscode": "^1.65.0"
+    "vscode": "^1.67.0"
   },
   "repository": {
     "type": "git",
@@ -1400,7 +1400,7 @@
     "@types/node": "^8.10.51",
     "@types/semver": "^7.3.8",
     "@types/sinon": "^10.0.12",
-    "@types/vscode": "^1.65.0",
+    "@types/vscode": "^1.67.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "@vscode/test-electron": "^2.1.5",
@@ -1431,7 +1431,7 @@
     "htmlparser2": "6.0.1",
     "jdk-utils": "^0.4.4",
     "semver": "^7.3.5",
-    "vscode-languageclient": "7.1.0-next.5",
+    "vscode-languageclient": "8.0.2",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"

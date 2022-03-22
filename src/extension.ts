@@ -6,7 +6,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
-import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
+import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, State } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
 import { ClientErrorHandler } from './clientErrorHandler';
@@ -175,8 +175,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				},
 				middleware: {
 					workspace: {
-						didChangeConfiguration: () => {
-							standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
+						didChangeConfiguration: async () => {
+							await standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
 									java: getJavaConfig(requirements.java_home),
 								}
@@ -185,12 +185,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					},
 					// https://github.com/redhat-developer/vscode-java/issues/2130
 					// include all diagnostics for the current line in the CodeActionContext params for the performance reason
-					provideCodeActions: (document, range, context, token, next) => {
+					provideCodeActions: async (document, range, context, token, next) => {
 						const client: LanguageClient = standardClient.getClient();
 						const params: CodeActionParams = {
 							textDocument: client.code2ProtocolConverter.asTextDocumentIdentifier(document),
 							range: client.code2ProtocolConverter.asRange(range),
-							context: client.code2ProtocolConverter.asCodeActionContext(context)
+							context: await client.code2ProtocolConverter.asCodeActionContext(context)
 						};
 						const showAt  = getJavaConfiguration().get<string>("quickfix.showAt");
 						if (showAt === 'line' && range.start.line === range.end.line && range.start.character === range.end.character) {
@@ -209,12 +209,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 								const codeActionContext: CodeActionContext = {
 									diagnostics: allDiagnostics,
 									only: context.only,
-									triggerKind: CodeActionTriggerKind.Invoke,
+									triggerKind: context.triggerKind,
 								};
-								params.context = client.code2ProtocolConverter.asCodeActionContext(codeActionContext);
+								params.context = await client.code2ProtocolConverter.asCodeActionContext(codeActionContext);
 							}
 						}
-						return client.sendRequest(CodeActionRequest.type, params, token).then((values) => {
+						return client.sendRequest(CodeActionRequest.type, params, token).then(async (values) => {
 							if (values === null) {
 								return undefined;
 							}
@@ -224,7 +224,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 									result.push(client.protocol2CodeConverter.asCommand(item));
 								}
 								else {
-									result.push(client.protocol2CodeConverter.asCodeAction(item));
+									result.push(await client.protocol2CodeConverter.asCodeAction(item));
 								}
 							}
 							return result;
@@ -249,13 +249,16 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			// no need to pass `resolve` into any code past this point,
 			// since `resolve` is a no-op from now on
 
+			const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true);
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions);
 				} else {
-					syntaxClient.initialize(requirements, clientOptions, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
+					syntaxClient.initialize(requirements, clientOptions, serverOptions);
 				}
-				syntaxClient.start();
+				syntaxClient.start().then(() => {
+					syntaxClient.registerSyntaxClientActions(serverOptions);
+				});
 				serverStatusBarProvider.showLightWeightStatus();
 			}
 
@@ -430,7 +433,9 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		apiManager.fireDidServerModeChange(ServerMode.hybrid);
 	}
 	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter);
-	standardClient.start();
+	standardClient.start().then(async () => {
+		standardClient.registerLanguageClientActions(context, await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins")), jdtEventEmitter);
+	});
 	serverStatusBarProvider.showStandardStatus();
 }
 
@@ -532,7 +537,9 @@ export async function getActiveLanguageClient(): Promise<LanguageClient | undefi
 		return undefined;
 	}
 
-	await languageClient.onReady();
+	if (languageClient.needsStart()) {
+		await languageClient.start();
+	}
 
 	return languageClient;
 }

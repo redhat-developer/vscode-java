@@ -165,7 +165,7 @@ function getWillRenameHandler(client: LanguageClient) {
                 const edit = await client.sendRequest(WillRenameFiles.type, {
                     files: javaRenameEvents
                 });
-                resolve(client.protocol2CodeConverter.asWorkspaceEdit(edit));
+                resolve(await client.protocol2CodeConverter.asWorkspaceEdit(edit));
             } catch (ex) {
                 reject(ex);
             }
