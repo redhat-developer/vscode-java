@@ -14,7 +14,9 @@ class SnippetCompletionProvider implements Disposable {
     }
 
     public dispose(): void {
-        this.providerImpl.dispose();
+        if (this.providerImpl) {
+            this.providerImpl.dispose();
+        }
     }
 }
 
