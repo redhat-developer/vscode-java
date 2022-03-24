@@ -924,13 +924,19 @@
       },
       {
         "command": "java.open.serverLog",
-        "title": "%java.open.serverLog%",
-        "category": "Java"
+        "when": "false"
+      },
+      {
+        "command": "java.open.serverStdoutLog",
+        "when": "false"
+      },
+      {
+        "command": "java.open.serverStderrLog",
+        "when": "false"
       },
       {
         "command": "java.open.clientLog",
-        "title": "%java.open.clientLog%",
-        "category": "Java"
+        "when": "false"
       },
       {
         "command": "java.open.logs",

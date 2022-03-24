@@ -85,6 +85,16 @@ export namespace Commands {
     export const OPEN_SERVER_LOG = 'java.open.serverLog';
 
     /**
+    * Open Java Language Service Output Log file
+    */
+    export const OPEN_SERVER_STDOUT_LOG = 'java.open.serverStdoutLog';
+
+    /**
+    * Open Java Language Server Error Log file
+    */
+    export const OPEN_SERVER_STDERR_LOG = 'java.open.serverStderrLog';
+
+    /**
     * Open Java client Log file
     */
     export const OPEN_CLIENT_LOG = 'java.open.clientLog';

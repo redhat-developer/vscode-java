@@ -55,6 +55,8 @@ suite('Java Language Extension - Standard', () => {
 				Commands.OPEN_LOGS,
 				Commands.OPEN_OUTPUT,
 				Commands.OPEN_SERVER_LOG,
+				Commands.OPEN_SERVER_STDOUT_LOG,
+				Commands.OPEN_SERVER_STDERR_LOG,
 				Commands.ORGANIZE_IMPORTS,
 				Commands.OVERRIDE_METHODS_PROMPT,
 				Commands.PROJECT_CONFIGURATION_STATUS,
