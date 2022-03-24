@@ -369,6 +369,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			// Register commands here to make it available even when the language client fails
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDOUT_LOG, (column: ViewColumn) => openRollingServerLogFile(workspacePath, '.out-jdt.ls', column)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDERR_LOG, (column: ViewColumn) => openRollingServerLogFile(workspacePath, '.error-jdt.ls', column)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, (column: ViewColumn) => openClientLogFile(clientLogFile, column)));
 
@@ -734,6 +736,25 @@ function openServerLogFile(workspacePath, column: ViewColumn = ViewColumn.Active
 	return openLogFile(serverLogFile, 'Could not open Java Language Server log file', column);
 }
 
+function openRollingServerLogFile(workspacePath, filename, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
+	return new Promise((resolve) => {
+		const dirname = path.join(workspacePath, '.metadata');
+
+		// find out the newest one
+		glob(filename + '-*', { cwd: dirname }, (err, files) => {
+			if (!err && files.length > 0) {
+				files.sort();
+
+				const logFile = path.join(dirname, files[files.length - 1]);
+				openLogFile(logFile, `Could not open Java Language Server log file ${filename}`, column).then((result) => resolve(result));
+			} else {
+				window.showWarningMessage(`Could not find Java Language Server log file ${filename} in ${dirname}`);
+				resolve(false);
+			}
+		});
+	});
+}
+
 function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
 	return new Promise((resolve) => {
 		const filename = path.basename(logFile);
@@ -765,7 +786,9 @@ function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Acti
 
 async function openLogs() {
 	await commands.executeCommand(Commands.OPEN_CLIENT_LOG, ViewColumn.One);
-	await commands.executeCommand(Commands.OPEN_SERVER_LOG, ViewColumn.Two);
+	await commands.executeCommand(Commands.OPEN_SERVER_LOG, ViewColumn.One);
+	await commands.executeCommand(Commands.OPEN_SERVER_STDOUT_LOG, ViewColumn.One);
+	await commands.executeCommand(Commands.OPEN_SERVER_STDERR_LOG, ViewColumn.One);
 }
 
 function openLogFile(logFile, openingFailureWarning: string, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
@@ -778,7 +801,7 @@ function openLogFile(logFile, openingFailureWarning: string, column: ViewColumn 
 			if (!doc) {
 				return false;
 			}
-			return window.showTextDocument(doc, column)
+			return window.showTextDocument(doc, {viewColumn: column, preview: false})
 				.then(editor => !!editor);
 		}, () => false)
 		.then(didOpen => {

@@ -16,6 +16,8 @@ suite('Java Language Extension - LightWeight', () => {
 			const JAVA_COMMANDS = [
 				Commands.EXECUTE_WORKSPACE_COMMAND,
 				Commands.OPEN_SERVER_LOG,
+				Commands.OPEN_SERVER_STDOUT_LOG,
+				Commands.OPEN_SERVER_STDERR_LOG,
 				Commands.OPEN_CLIENT_LOG,
 				Commands.OPEN_LOGS,
 				Commands.OPEN_FORMATTER,
