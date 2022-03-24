@@ -223,33 +223,21 @@ export namespace Commands {
      */
     export const NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND = 'java.action.navigateToSuperImplementation';
     /**
-     * Open Type Hierarchy of given Selection.
-     */
-    export const SHOW_TYPE_HIERARCHY = 'java.action.showTypeHierarchy';
-    /**
-     * Show SuperType Hierarchy of given Selection.
+     * Show Supertype Hierarchy of given type.
      */
     export const SHOW_SUPERTYPE_HIERARCHY = 'java.action.showSupertypeHierarchy';
     /**
-     * Show SubType Hierarchy of given Selection.
+     * Show Subtype Hierarchy of given type.
      */
     export const SHOW_SUBTYPE_HIERARCHY = 'java.action.showSubtypeHierarchy';
     /**
-     * Show Type Hierarchy of given Selection.
+     * Show Class Hierarchy of given type.
      */
     export const SHOW_CLASS_HIERARCHY = 'java.action.showClassHierarchy';
     /**
-     * Change the base type of Type Hierarchy.
+     * Show Class Hierarchy of given type from reference view.
      */
-    export const CHANGE_BASE_TYPE = 'java.action.changeBaseType';
-    /**
-     * Open the given TypeHierarchy Item.
-     */
-    export const OPEN_TYPE_HIERARCHY = 'java.navigate.openTypeHierarchy';
-    /**
-     * Resolve the given TypeHierarchy Item.
-     */
-    export const RESOLVE_TYPE_HIERARCHY = 'java.navigate.resolveTypeHierarchy';
+    export const SHOW_CLASS_HIERARCHY_FROM_REFERENCE_VIEW = 'java.action.showClassHierarchyFromReferenceView';
     /**
      * Show server task status
      */

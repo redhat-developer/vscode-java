@@ -17,11 +17,9 @@
 	"java.project.listSourcePaths": "列出所有 Java 源代码路径",
 	"java.show.server.task.status": "显示工作状态",
 	"java.action.navigateToSuperImplementation": "转到父类实现",
-	"java.action.showTypeHierarchy": "显示类型层次结构",
 	"java.action.showClassHierarchy": "显示类的继承关系",
 	"java.action.showSupertypeHierarchy": "显示父类层次结构",
 	"java.action.showSubtypeHierarchy": "显示子类层次结构",
-	"java.action.changeBaseType": "基于此类型",
 	"java.project.createModuleInfo.command": "创建 module-info.java",
 	"java.clean.sharedIndexes": "清理共享的索引文件"
 }

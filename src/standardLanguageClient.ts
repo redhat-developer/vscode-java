@@ -4,8 +4,9 @@ import * as fse from 'fs-extra';
 import { findRuntimes } from "jdk-utils";
 import * as net from 'net';
 import * as path from 'path';
-import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
+import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, TypeHierarchyItem, Uri, ViewColumn, window, workspace } from "vscode";
 import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit } from "vscode-languageclient";
+import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHierarchy';
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -34,7 +35,7 @@ import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import * as sourceAction from './sourceAction';
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
 import { TracingLanguageClient } from './TracingLanguageClient';
-import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
+import { CodeTypeHierarchyItem, showSubtypeHierarchyReferenceViewCommand, showSupertypeHierarchyReferenceViewCommand, showTypeHierarchyReferenceViewCommand } from "./typeHierarchy/protocol";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
 import { Telemetry } from "./telemetry";
@@ -107,7 +108,7 @@ export class StandardLanguageClient {
 
 		// Create the language client and start the client.
 		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions);
-
+		this.languageClient.registerFeature(new TypeHierarchyFeature(this.languageClient));
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
 
@@ -376,31 +377,68 @@ export class StandardLanguageClient {
 			}
 		}));
 
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_TYPE_HIERARCHY, (location: any) => {
-			if (location instanceof Uri) {
-				typeHierarchyTree.setTypeHierarchy(new Location(location, window.activeTextEditor.selection.active), TypeHierarchyDirection.both);
-			} else {
-				if (window.activeTextEditor?.document?.languageId !== "java") {
-					return;
+		context.subscriptions.push(commands.registerCommand(Commands.SHOW_CLASS_HIERARCHY, async (anchor: any) => {
+			try {
+				if (anchor instanceof Uri) {  // comes from context menu
+					await typeHierarchyTree.setTypeHierarchy(new Location(anchor, window.activeTextEditor.selection.active));
+				} else if (anchor instanceof TypeHierarchyItem) {  // comes from class hierarchy view item
+					await typeHierarchyTree.setTypeHierarchy(new Location(anchor.uri, anchor.range.start));
+				} else {  // comes from command palette
+					if (window.activeTextEditor?.document?.languageId !== "java") {
+						return;
+					}
+					await typeHierarchyTree.setTypeHierarchy(new Location(window.activeTextEditor.document.uri, window.activeTextEditor.selection.active));
 				}
-				typeHierarchyTree.setTypeHierarchy(new Location(window.activeTextEditor.document.uri, window.activeTextEditor.selection.active), TypeHierarchyDirection.both);
+			} catch (e) {
+				if (e?.message) {
+					// show message in the selection when call from editor context menu
+					if (anchor instanceof Uri) {
+						showNoLocationFound(e.message);
+					} else {
+						window.showErrorMessage(e.message);
+					}
+				}
 			}
 		}));
 
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_CLASS_HIERARCHY, () => {
-			typeHierarchyTree.changeDirection(TypeHierarchyDirection.both);
+		context.subscriptions.push(commands.registerCommand(Commands.SHOW_CLASS_HIERARCHY_FROM_REFERENCE_VIEW, async (anchor?: any) => {
+			try {
+				if (!anchor) {  // comes from reference-view's title or command palette
+					await typeHierarchyTree.setTypeHierarchyFromReferenceView();
+				} else if (anchor.item instanceof TypeHierarchyItem) {  // comes from reference-view's item
+					await typeHierarchyTree.setTypeHierarchy(new Location(anchor.item.uri, anchor.item.range.start));
+				}
+			} catch (e) {
+				if (e?.message) {
+					window.showErrorMessage(e.message);
+				}
+			}
 		}));
 
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUPERTYPE_HIERARCHY, () => {
-			typeHierarchyTree.changeDirection(TypeHierarchyDirection.parents);
+		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUPERTYPE_HIERARCHY, async (anchor?: any) => {
+			let location: Location;
+			if (!anchor) {
+				location = typeHierarchyTree.getAnchor();
+			} else if (anchor instanceof TypeHierarchyItem) {
+				location = new Location(anchor.uri, anchor.range.start);
+			}
+			if (location) {
+				await commands.executeCommand(showTypeHierarchyReferenceViewCommand);
+				await commands.executeCommand(showSupertypeHierarchyReferenceViewCommand, location);
+			}
 		}));
 
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUBTYPE_HIERARCHY, () => {
-			typeHierarchyTree.changeDirection(TypeHierarchyDirection.children);
-		}));
-
-		context.subscriptions.push(commands.registerCommand(Commands.CHANGE_BASE_TYPE, async (item: TypeHierarchyItem) => {
-			typeHierarchyTree.changeBaseItem(item);
+		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUBTYPE_HIERARCHY, async (anchor?: any) => {
+			let location: Location;
+			if (!anchor) {
+				location = typeHierarchyTree.getAnchor();
+			} else if (anchor instanceof TypeHierarchyItem) {
+				location = new Location(anchor.uri, anchor.range.start);
+			}
+			if (location) {
+				await commands.executeCommand(showTypeHierarchyReferenceViewCommand);
+				await commands.executeCommand(showSubtypeHierarchyReferenceViewCommand, location);
+			}
 		}));
 
 		context.subscriptions.push(commands.registerCommand(Commands.BUILD_PROJECT, async (uris: Uri[] | Uri, isFullBuild: boolean, token: CancellationToken) => {
