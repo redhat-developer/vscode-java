@@ -1,12 +1,26 @@
 'use strict';
 
-import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemKind, SnippetString, MarkdownString } from "vscode";
+import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemKind, SnippetString, MarkdownString, languages, Disposable } from "vscode";
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { apiManager } from "./apiManager";
-import { ClientStatus } from "./extension.api";
 
-export class SnippetCompletionProvider implements CompletionItemProvider {
+class SnippetCompletionProvider implements Disposable {
+
+    private providerImpl: Disposable;
+
+    public initialize(): SnippetCompletionProvider {
+        this.providerImpl = languages.registerCompletionItemProvider({ scheme: 'file', language: 'java' }, new SnippetCompletionProviderImpl());
+        return this;
+    }
+
+    public dispose(): void {
+        if (this.providerImpl) {
+            this.providerImpl.dispose();
+        }
+    }
+}
+
+class SnippetCompletionProviderImpl implements CompletionItemProvider {
 
     private snippets: {};
 
@@ -15,9 +29,6 @@ export class SnippetCompletionProvider implements CompletionItemProvider {
     }
 
     public async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionItem[]> {
-        if (apiManager.getApiInstance().status === ClientStatus.Started) {
-            return [];
-        }
 
         const snippetItems: CompletionItem[] = [];
         for (const label of Object.keys(this.snippets)) {
@@ -48,3 +59,5 @@ export function beautifyDocument(raw: string): MarkdownString {
     const escapedString = raw.replace(/\$\{\d:?(.*?)\}/gm, '$1').replace(/\$\d/gm, '');
     return new MarkdownString().appendCodeblock(escapedString, "java");
 }
+
+export const snippetCompletionProvider: SnippetCompletionProvider = new SnippetCompletionProvider();

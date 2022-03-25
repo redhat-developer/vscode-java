@@ -9,6 +9,7 @@ import { ServerMode } from "./settings";
 import { StatusNotification } from "./protocol";
 import { apiManager } from "./apiManager";
 import { ExtensionAPI, ClientStatus } from "./extension.api";
+import { snippetCompletionProvider } from "./snippetCompletionProvider";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 
@@ -61,6 +62,8 @@ export class SyntaxLanguageClient {
 						case 'Started':
 							this.status = ClientStatus.Started;
 							apiManager.updateStatus(ClientStatus.Started);
+							// Disable the client-side snippet provider since LS is ready.
+							snippetCompletionProvider.dispose();
 							break;
 						case 'Error':
 							this.status = ClientStatus.Error;
