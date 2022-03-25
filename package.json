@@ -1149,7 +1149,7 @@
     "gulp-download": "0.0.1",
     "lodash.findindex": "^4.6.0",
     "lodash.template": ">=4.5.0",
-    "minimist": ">=1.2.5",
+    "minimist": ">=1.2.6",
     "mocha": "^9.2.0",
     "request": "^2.88.2",
     "ts-loader": "^9.2.6",
