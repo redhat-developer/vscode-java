@@ -14,14 +14,16 @@ const languageServerDocumentSelector = [
 	{ pattern: '**/{build,settings}.gradle.kts'}
 ];
 
-const languageStatusItemAPI = (vscode.languages as any).createLanguageStatusItem;
+export function supportsLanguageStatus(): boolean {
+	return !vscode.languages.createLanguageStatusItem;
+}
 
 export namespace StatusCommands {
 	export const switchToStandardCommand = {
 		title: "Load Projects",
 		command: Commands.SWITCH_SERVER_MODE,
 		arguments: ["Standard"],
-		tooltip: "Java language server is running in LightWeight mode, load projects to switch to Standard mode"
+		tooltip: "LightWeight mode only provides limited features, please load projects to get full feature set"
 	};
 
 	export const showServerStatusCommand = {
@@ -38,10 +40,10 @@ export namespace StatusCommands {
 	};
 }
 
-export namespace LanguageStatusItemFactory {
+export namespace ServerStatusItemFactory {
 	export function create(): any {
-		if (languageStatusItemAPI) {
-			const item = languageStatusItemAPI("JavaServerStatusItem", languageServerDocumentSelector);
+		if (supportsLanguageStatus()) {
+			const item = vscode.languages.createLanguageStatusItem("JavaServerStatusItem", languageServerDocumentSelector);
 			item.name = "Java Language Server Status";
 			return item;
 		}
@@ -99,8 +101,8 @@ export namespace LanguageStatusItemFactory {
 
 export namespace CleanServerStatusItemFactory {
 	export function create(): any {
-		if (languageStatusItemAPI) {
-			const item = languageStatusItemAPI("javaServerCleanItem", languageServerDocumentSelector);
+		if (supportsLanguageStatus()) {
+			const item = vscode.languages.createLanguageStatusItem("javaServerCleanItem", languageServerDocumentSelector);
 			item.name = "Clean Java language server workspace";
 			item.command = {
 				title: "Clean workspace",
@@ -117,8 +119,8 @@ export namespace CleanServerStatusItemFactory {
 
 export namespace RuntimeStatusItemFactory {
 	export function create(text: string): any {
-		if (languageStatusItemAPI) {
-			const item = languageStatusItemAPI("javaRuntimeStatusItem", languageServerDocumentSelector);
+		if (supportsLanguageStatus()) {
+			const item = vscode.languages.createLanguageStatusItem("javaRuntimeStatusItem", languageServerDocumentSelector);
 			item.severity = (vscode as any).LanguageStatusSeverity?.Information;
 			item.name = "Java Runtime";
 			item.text = text;
@@ -131,9 +133,9 @@ export namespace RuntimeStatusItemFactory {
 
 export namespace BuildFileStatusItemFactory {
 	export function create(buildFilePath: string): any {
-		if (languageStatusItemAPI) {
+		if (supportsLanguageStatus()) {
 			const fileName = path.basename(buildFilePath);
-			const item = languageStatusItemAPI("javaBuildFileStatusItem", languageServerDocumentSelector);
+			const item = vscode.languages.createLanguageStatusItem("javaBuildFileStatusItem", languageServerDocumentSelector);
 			item.severity = (vscode as any).LanguageStatusSeverity?.Information;
 			item.name = "Java Build File";
 			item.text = fileName;

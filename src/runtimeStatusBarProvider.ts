@@ -8,7 +8,7 @@ import * as path from "path";
 import { apiManager } from "./apiManager";
 import * as semver from "semver";
 import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
-import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands } from "./languageStatusItemFactory";
+import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -21,14 +21,12 @@ class RuntimeStatusBarProvider implements Disposable {
 	// Adopt new API for status bar item, meanwhile keep the compatibility with Theia.
 	// See: https://github.com/redhat-developer/vscode-java/issues/1982
 	private isAdvancedStatusBarItem: boolean;
-	private languageStatusItemAPI: any;
 
 	constructor() {
 		this.javaProjects = new Map<string, IProjectInfo>();
 		this.fileProjectMapping = new Map<string, string>();
 		this.disposables = [];
 		this.isAdvancedStatusBarItem = semver.gte(version, "1.57.0");
-		this.languageStatusItemAPI = (languages as any).createLanguageStatusItem;
 	}
 
 	public async initialize(context: ExtensionContext): Promise<void> {
@@ -38,7 +36,7 @@ class RuntimeStatusBarProvider implements Disposable {
 			this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
 		}
 
-		if (!this.languageStatusItemAPI) {
+		if (!supportsLanguageStatus()) {
 			if (this.isAdvancedStatusBarItem) {
 				this.statusBarItem = (window.createStatusBarItem as any)("java.runtimeStatus", StatusBarAlignment.Right, 0);
 				(this.statusBarItem as any).name = "Java Runtime Configuration";
@@ -58,7 +56,7 @@ class RuntimeStatusBarProvider implements Disposable {
 			this.javaProjects.set(Uri.parse(uri).fsPath, undefined);
 		}
 
-		if (!this.languageStatusItemAPI) {
+		if (!supportsLanguageStatus()) {
 			this.statusBarItem.command = StatusCommands.configureJavaRuntimeCommand;
 		}
 
@@ -161,7 +159,7 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	private async updateItem(context: ExtensionContext, textEditor: TextEditor): Promise<void> {
-		if (!textEditor || path.extname(textEditor.document.fileName) !== ".java" && !this.languageStatusItemAPI) {
+		if (!textEditor || path.extname(textEditor.document.fileName) !== ".java" && !supportsLanguageStatus()) {
 			this.statusBarItem?.hide();
 			return;
 		}
@@ -169,7 +167,7 @@ class RuntimeStatusBarProvider implements Disposable {
 		const uri: Uri = textEditor.document.uri;
 		const projectPath: string = this.findOwnerProject(uri);
 		if (!projectPath) {
-			if (this.languageStatusItemAPI) {
+			if (supportsLanguageStatus()) {
 				this.hideRuntimeStatusItem();
 				this.hideBuildFileStatusItem();
 			} else {
@@ -180,7 +178,7 @@ class RuntimeStatusBarProvider implements Disposable {
 
 		const projectInfo: IProjectInfo = await this.getProjectInfo(projectPath);
 		if (!projectInfo) {
-			if (this.languageStatusItemAPI) {
+			if (supportsLanguageStatus()) {
 				this.hideRuntimeStatusItem();
 				this.hideBuildFileStatusItem();
 			} else {
@@ -190,7 +188,7 @@ class RuntimeStatusBarProvider implements Disposable {
 		}
 
 		const text = this.getJavaRuntimeFromVersion(projectInfo.sourceLevel);
-		if (this.languageStatusItemAPI) {
+		if (supportsLanguageStatus()) {
 			if (!this.runtimeStatusItem) {
 				this.runtimeStatusItem = RuntimeStatusItemFactory.create(text);
 				const buildFilePath = await this.getBuildFilePath(context, projectPath);

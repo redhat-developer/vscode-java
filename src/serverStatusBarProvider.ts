@@ -4,7 +4,7 @@ import { StatusBarItem, window, StatusBarAlignment, version, languages } from "v
 import { Commands } from "./commands";
 import { Disposable } from "vscode-languageclient";
 import * as semver from "semver";
-import { LanguageStatusItemFactory, StatusCommands, CleanServerStatusItemFactory } from "./languageStatusItemFactory";
+import { ServerStatusItemFactory, StatusCommands, CleanServerStatusItemFactory, supportsLanguageStatus } from "./languageStatusItemFactory";
 
 class ServerStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -13,17 +13,14 @@ class ServerStatusBarProvider implements Disposable {
 	// Adopt new API for status bar item, meanwhile keep the compatibility with Theia.
 	// See: https://github.com/redhat-developer/vscode-java/issues/1982
 	private isAdvancedStatusBarItem: boolean;
-	// Adopt new API for language status item, meanwhile keep the compatibility with Theia.
-	private languageStatusItemAPI: any;
 
 	constructor() {
-		this.languageStatusItemAPI = (languages as any).createLanguageStatusItem;
 		this.isAdvancedStatusBarItem = semver.gte(version, "1.57.0");
 	}
 
 	public initialize(): void {
-		if (this.languageStatusItemAPI) {
-			this.languageStatusItem = LanguageStatusItemFactory.create();
+		if (supportsLanguageStatus()) {
+			this.languageStatusItem = ServerStatusItemFactory.create();
 		} else {
 			if (this.isAdvancedStatusBarItem) {
 				this.statusBarItem = (window.createStatusBarItem as any)("java.serverStatus", StatusBarAlignment.Right, Number.MIN_VALUE);
@@ -34,8 +31,8 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public showLightWeightStatus(): void {
-		if (this.languageStatusItemAPI) {
-			LanguageStatusItemFactory.showLightWeightStatus(this.languageStatusItem);
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.showLightWeightStatus(this.languageStatusItem);
 		} else {
 			if (this.isAdvancedStatusBarItem) {
 				(this.statusBarItem as any).name = "Java Server Mode";
@@ -48,9 +45,9 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public showStandardStatus(): void {
-		if (this.languageStatusItemAPI) {
-			LanguageStatusItemFactory.showStandardStatus(this.languageStatusItem);
-			LanguageStatusItemFactory.setBusy(this.languageStatusItem);
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.showStandardStatus(this.languageStatusItem);
+			ServerStatusItemFactory.setBusy(this.languageStatusItem);
 		} else {
 			if (this.isAdvancedStatusBarItem) {
 				(this.statusBarItem as any).name = "Java Server Status";
@@ -63,16 +60,16 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public setBusy(): void {
-		if (this.languageStatusItemAPI) {
-			LanguageStatusItemFactory.setBusy(this.languageStatusItem);
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.setBusy(this.languageStatusItem);
 		} else {
 			this.statusBarItem.text = StatusIcon.Busy;
 		}
 	}
 
 	public setError(): void {
-		if (this.languageStatusItemAPI) {
-			LanguageStatusItemFactory.setError(this.languageStatusItem);
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.setError(this.languageStatusItem);
 			this.showCleanItem();
 		} else {
 			this.statusBarItem.text = StatusIcon.Error;
@@ -81,8 +78,8 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public setWarning(): void {
-		if (this.languageStatusItemAPI) {
-			LanguageStatusItemFactory.setWarning(this.languageStatusItem);
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.setWarning(this.languageStatusItem);
 			this.showCleanItem();
 		} else {
 			this.statusBarItem.text = StatusIcon.Warning;
@@ -92,8 +89,8 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public setReady(): void {
-		if (this.languageStatusItemAPI) {
-			LanguageStatusItemFactory.setReady(this.languageStatusItem);
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.setReady(this.languageStatusItem);
 			this.hideCleanItem();
 		} else {
 			this.statusBarItem.text = StatusIcon.Ready;
@@ -103,7 +100,7 @@ class ServerStatusBarProvider implements Disposable {
 	}
 
 	public updateTooltip(tooltip: string): void {
-		if (!this.languageStatusItemAPI) {
+		if (!supportsLanguageStatus()) {
 			this.statusBarItem.tooltip = tooltip;
 		}
 	}
