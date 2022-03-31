@@ -15,7 +15,7 @@ const languageServerDocumentSelector = [
 ];
 
 export function supportsLanguageStatus(): boolean {
-	return !vscode.languages.createLanguageStatusItem;
+	return !!vscode.languages.createLanguageStatusItem;
 }
 
 export namespace StatusCommands {
@@ -51,14 +51,14 @@ export namespace ServerStatusItemFactory {
 	}
 
 	export function showLightWeightStatus(item: any): void {
-		item.severity = (vscode as any).LanguageStatusSeverity?.Warning;
+		item.severity = vscode.LanguageStatusSeverity?.Warning;
 		item.text = StatusIcon.LightWeight;
 		item.detail = "Lightweight Mode";
 		item.command = StatusCommands.switchToStandardCommand;
 	}
 
 	export function showStandardStatus(item: any): void {
-		item.severity = (vscode as any).LanguageStatusSeverity?.Information;
+		item.severity = vscode.LanguageStatusSeverity?.Information;
 		item.command = StatusCommands.showServerStatusCommand;
 	}
 
@@ -69,7 +69,7 @@ export namespace ServerStatusItemFactory {
 
 	export function setError(item: any): void {
 		item.busy = false;
-		item.severity = (vscode as any).LanguageStatusSeverity?.Error;
+		item.severity = vscode.LanguageStatusSeverity?.Error;
 		item.command = {
 			title: "Open logs",
 			command: Commands.OPEN_LOGS
@@ -80,7 +80,7 @@ export namespace ServerStatusItemFactory {
 
 	export function setWarning(item: any): void {
 		item.busy = false;
-		item.severity = (vscode as any).LanguageStatusSeverity?.Error;
+		item.severity = vscode.LanguageStatusSeverity?.Error;
 		item.command = {
 			title: "Show PROBLEMS panel",
 			command: "workbench.panel.markers.view.focus",
@@ -92,7 +92,7 @@ export namespace ServerStatusItemFactory {
 
 	export function setReady(item: any): void {
 		item.busy = false;
-		item.severity = (vscode as any).LanguageStatusSeverity?.Information;
+		item.severity = vscode.LanguageStatusSeverity?.Information;
 		item.command = StatusCommands.showServerStatusCommand;
 		item.text = StatusIcon.Ready;
 		item.detail = "";
@@ -109,7 +109,7 @@ export namespace CleanServerStatusItemFactory {
 				command: Commands.CLEAN_WORKSPACE,
 				tooltip: "Click to clean Java language server workspace"
 			};
-			item.severity = (vscode as any).LanguageStatusSeverity?.Error;
+			item.severity = vscode.LanguageStatusSeverity?.Error;
 			item.text = "Project out of sync";
 			return item;
 		}
@@ -121,7 +121,7 @@ export namespace RuntimeStatusItemFactory {
 	export function create(text: string): any {
 		if (supportsLanguageStatus()) {
 			const item = vscode.languages.createLanguageStatusItem("javaRuntimeStatusItem", languageServerDocumentSelector);
-			item.severity = (vscode as any).LanguageStatusSeverity?.Information;
+			item.severity = vscode.LanguageStatusSeverity?.Information;
 			item.name = "Java Runtime";
 			item.text = text;
 			item.command = StatusCommands.configureJavaRuntimeCommand;
@@ -136,7 +136,7 @@ export namespace BuildFileStatusItemFactory {
 		if (supportsLanguageStatus()) {
 			const fileName = path.basename(buildFilePath);
 			const item = vscode.languages.createLanguageStatusItem("javaBuildFileStatusItem", languageServerDocumentSelector);
-			item.severity = (vscode as any).LanguageStatusSeverity?.Information;
+			item.severity = vscode.LanguageStatusSeverity?.Information;
 			item.name = "Java Build File";
 			item.text = fileName;
 			item.command = {
