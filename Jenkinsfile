@@ -70,14 +70,11 @@ node('rhel8'){
 	stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
 
 	stage 'Upload vscode-java to staging'
-	def artifacts = findFiles(glob: '**.vsix')
 	def artifactDir = "java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}"
 	sh "mkdir ${artifactDir}"
 	sh "mv *.vsix ${artifactDir}"
 
-	for(artifact in artifacts){
-		sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/jdt.ls/staging"
-	}
+	sh "sftp ${UPLOAD_LOCATION}/jdt.ls/staging <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
 	// Clean up build vsix
 	sh "rm -rf ${artifactDir}"
 }
@@ -114,7 +111,6 @@ node('rhel8'){
 		}
 
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
-		def artifacts = findFiles(glob: '**.vsix')
 		def artifactDir = "java-${env.EXTENSION_VERSION}"
 		sh "mkdir ${artifactDir}"
 		sh "mv *.vsix ${artifactDir}"
@@ -122,8 +118,6 @@ node('rhel8'){
 		archive includes:"${artifactDir}/**/*.*"
 
 		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
-		for(artifact in artifacts){
-			sh "rsync -Pzrlt --rsh=ssh --protocol=28 --relative ${artifactDir}/${artifact.path} ${UPLOAD_LOCATION}/static/jdt.ls/stable/"
-		}
+		sh "sftp ${UPLOAD_LOCATION}/static/jdt.ls/stable/ <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
 	}// if publishToMarketPlace
 }
