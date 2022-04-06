@@ -185,6 +185,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	cleanJavaWorkspaceStorage();
 
+	serverStatusBarProvider.initialize();
+
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
@@ -424,7 +426,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (event === ServerMode.STANDARD) {
 					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
-					runtimeStatusBarProvider.initialize(context.storagePath);
+					runtimeStatusBarProvider.initialize(context);
 				}
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
@@ -544,7 +546,7 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptio
 	return true;
 }
 
-async function hasBuildToolConflicts(): Promise<boolean> {
+export async function hasBuildToolConflicts(): Promise<boolean> {
 	const projectConfigurationUris: Uri[] = await getBuildFilesInWorkspace();
 	const projectConfigurationFsPaths: string[] = projectConfigurationUris.map((uri) => uri.fsPath);
 	const eclipseDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, [], ".project");
