@@ -22,7 +22,7 @@ export namespace StatusCommands {
 	export const switchToStandardCommand = {
 		title: "Load Projects",
 		command: Commands.SWITCH_SERVER_MODE,
-		arguments: ["Standard"],
+		arguments: ["Standard", true],
 		tooltip: "LightWeight mode only provides limited features, please load projects to get full feature set"
 	};
 
