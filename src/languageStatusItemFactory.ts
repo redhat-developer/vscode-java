@@ -29,7 +29,7 @@ export namespace StatusCommands {
 	export const showServerStatusCommand = {
 		title: "Show Build Status",
 		command: Commands.SHOW_SERVER_TASK_STATUS,
-		tooltip: "Show build status"
+		tooltip: "Show Build Status"
 	};
 
 	export const configureJavaRuntimeCommand = {
@@ -82,12 +82,12 @@ export namespace ServerStatusItemFactory {
 		item.busy = false;
 		item.severity = vscode.LanguageStatusSeverity?.Error;
 		item.command = {
-			title: "Show PROBLEMS panel",
+			title: "Show PROBLEMS Panel",
 			command: "workbench.panel.markers.view.focus",
 			tooltip: "Errors occurred in project configurations, click to show the PROBLEMS panel"
 		};
 		item.text = StatusIcon.Warning;
-		item.detail = "Project configuration error";
+		item.detail = "Project Configuration Error";
 	}
 
 	export function setReady(item: any): void {
@@ -99,35 +99,25 @@ export namespace ServerStatusItemFactory {
 	}
 }
 
-export namespace CleanServerStatusItemFactory {
-	export function create(): any {
-		if (supportsLanguageStatus()) {
-			const item = vscode.languages.createLanguageStatusItem("javaServerCleanItem", languageServerDocumentSelector);
-			item.name = "Clean Java language server workspace";
-			item.command = {
-				title: "Clean workspace",
-				command: Commands.CLEAN_WORKSPACE,
-				tooltip: "Click to clean Java language server workspace"
-			};
-			item.severity = vscode.LanguageStatusSeverity?.Error;
-			item.text = "Project out of sync";
-			return item;
-		}
-		return undefined;
-	}
-}
-
 export namespace RuntimeStatusItemFactory {
-	export function create(text: string): any {
+	export function create(text: string, vmInstallPath: string): any {
 		if (supportsLanguageStatus()) {
 			const item = vscode.languages.createLanguageStatusItem("javaRuntimeStatusItem", languageServerDocumentSelector);
 			item.severity = vscode.LanguageStatusSeverity?.Information;
 			item.name = "Java Runtime";
 			item.text = text;
 			item.command = StatusCommands.configureJavaRuntimeCommand;
+			if (vmInstallPath) {
+				item.command.tooltip = `Language Level: ${text} <${vmInstallPath}>`;
+			}
 			return item;
 		}
 		return undefined;
+	}
+
+	export function update(item: any, text: string, vmInstallPath: string): void {
+		item.text = text;
+		item.command.tooltip = vmInstallPath ? `Language Level: ${text} <${vmInstallPath}>` : "Configure Java Runtime";
 	}
 }
 
@@ -139,14 +129,25 @@ export namespace BuildFileStatusItemFactory {
 			item.severity = vscode.LanguageStatusSeverity?.Information;
 			item.name = "Java Build File";
 			item.text = fileName;
-			item.command = {
-				title: `Open config file`,
-				command: Commands.OPEN_BROWSER,
-				arguments: [vscode.Uri.file(buildFilePath)],
-				tooltip: `Open config file`
-			};
+			item.command = getOpenBuildFileCommand(buildFilePath);
 			return item;
 		}
 		return undefined;
+	}
+
+	export function update(item: any, buildFilePath: string): void {
+		const fileName = path.basename(buildFilePath);
+		item.text = fileName;
+		item.command = getOpenBuildFileCommand(buildFilePath);
+	}
+
+	function getOpenBuildFileCommand(buildFilePath: string): vscode.Command {
+		const relativePath = vscode.workspace.asRelativePath(buildFilePath);
+		return {
+			title: `Open Config File`,
+			command: Commands.OPEN_BROWSER,
+			arguments: [vscode.Uri.file(buildFilePath)],
+			tooltip: `Open ${relativePath}`
+		};
 	}
 }

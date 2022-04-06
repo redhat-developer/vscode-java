@@ -546,7 +546,7 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptio
 	return true;
 }
 
-async function hasBuildToolConflicts(): Promise<boolean> {
+export async function hasBuildToolConflicts(): Promise<boolean> {
 	const projectConfigurationUris: Uri[] = await getBuildFilesInWorkspace();
 	const projectConfigurationFsPaths: string[] = projectConfigurationUris.map((uri) => uri.fsPath);
 	const eclipseDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, [], ".project");

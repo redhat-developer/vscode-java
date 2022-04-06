@@ -9,6 +9,8 @@ import { apiManager } from "./apiManager";
 import * as semver from "semver";
 import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
+import { getJavaConfiguration } from "./utils";
+import { hasBuildToolConflicts } from "./extension";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -189,13 +191,17 @@ class RuntimeStatusBarProvider implements Disposable {
 
 		const text = this.getJavaRuntimeFromVersion(projectInfo.sourceLevel);
 		if (supportsLanguageStatus()) {
+			const buildFilePath = await this.getBuildFilePath(context, projectPath);
 			if (!this.runtimeStatusItem) {
-				this.runtimeStatusItem = RuntimeStatusItemFactory.create(text);
-				const buildFilePath = await this.getBuildFilePath(context, projectPath);
+				this.runtimeStatusItem = RuntimeStatusItemFactory.create(text, projectInfo.vmInstallPath);
 				if (buildFilePath) {
 					this.buildFileStatusItem = BuildFileStatusItemFactory.create(buildFilePath);
 				}
-
+			} else {
+				RuntimeStatusItemFactory.update(this.runtimeStatusItem, text, projectInfo.vmInstallPath);
+				if (buildFilePath) {
+					BuildFileStatusItemFactory.update(this.buildFileStatusItem, buildFilePath);
+				}
 			}
 		} else {
 			this.statusBarItem.text = text;
@@ -223,20 +229,32 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	private async getBuildFilePath(context: ExtensionContext, projectPath: string): Promise<string | undefined> {
-		let buildFilePath: string | undefined;
-		const activeBuildTool: string | undefined = context.workspaceState.get(ACTIVE_BUILD_TOOL_STATE);
-		if (!activeBuildTool) {
-			// only one build tool exists in the project
-			buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]);
-		} else if (activeBuildTool.toLocaleLowerCase().includes("maven")) {
-			buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["pom.xml"]);
-		} else if (activeBuildTool.toLocaleLowerCase().includes("gradle")) {
-			buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]);
-		}
-		if (!buildFilePath) {
+		const isMavenEnabled: boolean = getJavaConfiguration().get<boolean>("import.maven.enabled");
+		const isGradleEnabled: boolean = getJavaConfiguration().get<boolean>("import.gradle.enabled");
+		if (isMavenEnabled && isGradleEnabled) {
+			let buildFilePath: string | undefined;
+			const activeBuildTool: string | undefined = context.workspaceState.get(ACTIVE_BUILD_TOOL_STATE);
+			if (!activeBuildTool) {
+				if (!hasBuildToolConflicts()) {
+					// only one build tool exists in the project
+					buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]);
+				} else {
+					// the user has not resolved build conflicts yet
+					return undefined;
+				}
+			} else if (activeBuildTool.toLocaleLowerCase().includes("maven")) {
+				buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["pom.xml"]);
+			} else if (activeBuildTool.toLocaleLowerCase().includes("gradle")) {
+				buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]);
+			}
+			return buildFilePath;
+		} else if (isMavenEnabled) {
+			return this.getBuildFilePathFromNames(projectPath, ["pom.xml"]);
+		} else if (isGradleEnabled) {
+			return this.getBuildFilePathFromNames(projectPath, ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]);
+		} else {
 			return undefined;
 		}
-		return buildFilePath;
 	}
 
 	private async getBuildFilePathFromNames(projectPath: string, buildFileNames: string[]): Promise<string> {

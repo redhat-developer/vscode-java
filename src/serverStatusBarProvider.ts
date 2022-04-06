@@ -1,15 +1,14 @@
 'use strict';
 
-import { StatusBarItem, window, StatusBarAlignment, version, languages } from "vscode";
+import { StatusBarItem, window, StatusBarAlignment, version } from "vscode";
 import { Commands } from "./commands";
 import { Disposable } from "vscode-languageclient";
 import * as semver from "semver";
-import { ServerStatusItemFactory, StatusCommands, CleanServerStatusItemFactory, supportsLanguageStatus } from "./languageStatusItemFactory";
+import { ServerStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
 
 class ServerStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
 	private languageStatusItem: any;
-	private cleanServerStatusItem: any;
 	// Adopt new API for status bar item, meanwhile keep the compatibility with Theia.
 	// See: https://github.com/redhat-developer/vscode-java/issues/1982
 	private isAdvancedStatusBarItem: boolean;
@@ -70,7 +69,6 @@ class ServerStatusBarProvider implements Disposable {
 	public setError(): void {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setError(this.languageStatusItem);
-			this.showCleanItem();
 		} else {
 			this.statusBarItem.text = StatusIcon.Error;
 			this.statusBarItem.command = Commands.OPEN_LOGS;
@@ -80,7 +78,6 @@ class ServerStatusBarProvider implements Disposable {
 	public setWarning(): void {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setWarning(this.languageStatusItem);
-			this.showCleanItem();
 		} else {
 			this.statusBarItem.text = StatusIcon.Warning;
 			this.statusBarItem.command = "workbench.panel.markers.view.focus";
@@ -91,7 +88,6 @@ class ServerStatusBarProvider implements Disposable {
 	public setReady(): void {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setReady(this.languageStatusItem);
-			this.hideCleanItem();
 		} else {
 			this.statusBarItem.text = StatusIcon.Ready;
 			this.statusBarItem.command = Commands.SHOW_SERVER_TASK_STATUS;
@@ -105,22 +101,9 @@ class ServerStatusBarProvider implements Disposable {
 		}
 	}
 
-	private showCleanItem(): void {
-		if (this.cleanServerStatusItem) {
-			return;
-		}
-		this.cleanServerStatusItem = CleanServerStatusItemFactory.create();
-	}
-
-	private hideCleanItem(): void {
-		this.cleanServerStatusItem?.dispose();
-		this.cleanServerStatusItem = undefined;
-	}
-
 	public dispose(): void {
 		this.statusBarItem?.dispose();
 		this.languageStatusItem?.dispose();
-		this.cleanServerStatusItem?.dispose();
 	}
 }
 
