@@ -235,7 +235,7 @@ class RuntimeStatusBarProvider implements Disposable {
 			let buildFilePath: string | undefined;
 			const activeBuildTool: string | undefined = context.workspaceState.get(ACTIVE_BUILD_TOOL_STATE);
 			if (!activeBuildTool) {
-				if (!hasBuildToolConflicts()) {
+				if (!(await hasBuildToolConflicts())) {
 					// only one build tool exists in the project
 					buildFilePath = await this.getBuildFilePathFromNames(projectPath, ["pom.xml", "build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]);
 				} else {
