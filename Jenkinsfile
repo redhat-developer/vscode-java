@@ -12,25 +12,6 @@ def buildVscodeExtension(){
 	sh "npm run vscode:prepublish"
 }
 
-def packageGenericExtension() {
-	stage "Package vscode-java"
-	def packageJson = readJSON file: 'package.json'
-	env.EXTENSION_VERSION = "${packageJson.version}"
-
-	if (publishPreRelease.equals('true')) {
-		sh "vsce package --pre-release -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-	} else {
-		sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-	}
-
-	stage 'Test vscode-java for staging'
-	wrap([$class: 'Xvnc']) {
-		sh "npm run compile" //compile the test code too
-		env.SKIP_COMMANDS_TEST="true"
-		sh "npm test --silent"
-	}
-}
-
 def packageSpecificExtensions() {
 	stage "Package platform specific vscode-java"
 	def platforms = ["win32-x64", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64"]
@@ -49,18 +30,19 @@ def publishPreReleaseExtensions() {
 	stage "replace extension version"
 	sh "node ./scripts/prepare-nightly-build.js"
 	sh "mv ./package.insiders.json ./package.json"
-	packageGenericExtension()
-	def vsix = findFiles(glob: '**.vsix')
+
+	def packageJson = readJSON file: 'package.json'
+	env.EXTENSION_VERSION = "${packageJson.version}"
 
 	stage "publish generic version"
 	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-		sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+		sh 'vsce publish --pre-release -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
 	}
+	def vsix = findFiles(glob: '**.vsix')
 
 	stage "publish specific version"
 	packageSpecificExtensions()
 	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-		sh 'npx gulp clean_jre'
 		def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
 		for(platformVsix in platformVsixes){
 			sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
@@ -103,7 +85,18 @@ node('rhel8'){
 	if (publishPreRelease.equals('true')) {
 		publishPreReleaseExtensions()
 	} else {
-		packageGenericExtension()
+		stage "Package vscode-java"
+		def packageJson = readJSON file: 'package.json'
+		env.EXTENSION_VERSION = "${packageJson.version}"
+
+		sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+
+		stage 'Test vscode-java for staging'
+		wrap([$class: 'Xvnc']) {
+			sh "npm run compile" //compile the test code too
+			env.SKIP_COMMANDS_TEST="true"
+			sh "npm test --silent"
+		}
 		def vsix = findFiles(glob: '**.vsix')
 		stash name:'vsix', includes:vsix[0].path
 
