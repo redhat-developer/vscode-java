@@ -38,12 +38,11 @@ def publishPreReleaseExtensions() {
 	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
 		sh 'vsce publish --pre-release -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
 	}
-	def vsix = findFiles(glob: '**.vsix')
 
 	stage "publish specific version"
 	packageSpecificExtensions()
 	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-		def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
+		def platformVsixes = findFiles(glob: '**.vsix')
 		for(platformVsix in platformVsixes){
 			sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
 		}
