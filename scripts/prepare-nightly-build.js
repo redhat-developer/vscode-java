@@ -22,4 +22,4 @@ const insiderPackageJson = Object.assign(json, {
     version: `${major}.${minor}.${patch}`,
 });
 
-fs.writeFileSync("./package.insiders.json", JSON.stringify(insiderPackageJson));
+fs.writeFileSync("./package.insiders.json", JSON.stringify(insiderPackageJson, null, 2));

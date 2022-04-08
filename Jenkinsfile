@@ -12,15 +12,55 @@ def buildVscodeExtension(){
 	sh "npm run vscode:prepublish"
 }
 
-def publishToVSCodeMarketplace(vsix){
-	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-		// Clean up embedded jre folder from previous build
-		sh 'npx gulp clean_jre'
-		// Publish a generic version
-		sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+def packageGenericExtension() {
+	stage "Package vscode-java"
+	def packageJson = readJSON file: 'package.json'
+	env.EXTENSION_VERSION = "${packageJson.version}"
 
-		// Publish platform specific versions
-		unstash 'platformVsix'
+	if (publishPreRelease.equals('true')) {
+		sh "vsce package --pre-release -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+	} else {
+		sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+	}
+
+	stage 'Test vscode-java for staging'
+	wrap([$class: 'Xvnc']) {
+		sh "npm run compile" //compile the test code too
+		env.SKIP_COMMANDS_TEST="true"
+		sh "npm test --silent"
+	}
+}
+
+def packageSpecificExtensions() {
+	stage "Package platform specific vscode-java"
+	def platforms = ["win32-x64", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64"]
+	def embeddedJRE = 17
+	for(platform in platforms){
+		sh "npx gulp download_jre --target ${platform} --javaVersion ${embeddedJRE}"
+		if (publishPreRelease.equals('true')) {
+			sh "vsce package --pre-release --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+		} else {
+			sh "vsce package --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
+		}
+	}
+}
+
+def publishPreReleaseExtensions() {
+	stage "replace extension version"
+	sh "node ./scripts/prepare-nightly-build.js"
+	sh "mv ./package.insiders.json ./package.json"
+	packageGenericExtension()
+	def vsix = findFiles(glob: '**.vsix')
+
+	stage "publish generic version"
+	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+		sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+	}
+
+	stage "publish specific version"
+	packageSpecificExtensions()
+	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+		sh 'npx gulp clean_jre'
 		def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
 		for(platformVsix in platformVsixes){
 			sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
@@ -60,43 +100,26 @@ node('rhel8'){
 	sh "mkdir ./server"
 	sh "tar -xvzf ${files[0].path} -C ./server"
 
-	if (!publishToMarketPlace.equals('true')) {
-		sh "node ./scripts/prepare-nightly-build.js"
-		sh "mv ./package.insiders.json ./package.json"
+	if (publishPreRelease.equals('true')) {
+		publishPreReleaseExtensions()
+	} else {
+		packageGenericExtension()
+		def vsix = findFiles(glob: '**.vsix')
+		stash name:'vsix', includes:vsix[0].path
+
+		// Package platform specific versions
+		packageSpecificExtensions()
+		stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
+
+		stage 'Upload vscode-java to staging'
+		def artifactDir = "java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}"
+		sh "mkdir ${artifactDir}"
+		sh "mv *.vsix ${artifactDir}"
+
+		sh "sftp ${UPLOAD_LOCATION}/jdt.ls/staging <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
+		// Clean up build vsix
+		sh "rm -rf ${artifactDir}"
 	}
-	stage "Package vscode-java"
-	def packageJson = readJSON file: 'package.json'
-	env.EXTENSION_VERSION = "${packageJson.version}"
-	sh "vsce package ${publishToMarketPlace.equals('true') ? "" : "--pre-release"} -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-
-	stage 'Test vscode-java for staging'
-	wrap([$class: 'Xvnc']) {
-		sh "npm run compile" //compile the test code too
-		env.SKIP_COMMANDS_TEST="true"
-		sh "npm test --silent"
-	}
-
-	def vsix = findFiles(glob: '**.vsix')
-	stash name:'vsix', includes:vsix[0].path
-
-	// Package platform specific versions
-	stage "Package platform specific vscode-java"
-	def platforms = ["win32-x64", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64"]
-	def embeddedJRE = 17
-	for(platform in platforms){
-		sh "npx gulp download_jre --target ${platform} --javaVersion ${embeddedJRE}"
-		sh "vsce package ${publishToMarketPlace.equals('true') ? "" : "--pre-release"} --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-	}
-	stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
-
-	stage 'Upload vscode-java to staging'
-	def artifactDir = "java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}"
-	sh "mkdir ${artifactDir}"
-	sh "mv *.vsix ${artifactDir}"
-
-	sh "sftp ${UPLOAD_LOCATION}/jdt.ls/staging <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
-	// Clean up build vsix
-	sh "rm -rf ${artifactDir}"
 }
 
 node('rhel8'){
@@ -116,7 +139,19 @@ node('rhel8'){
 
 		stage "Publish to VS Code Marketplace"
 		// VS Code Marketplace
-		publishToVSCodeMarketplace(vsix)
+		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+			// Clean up embedded jre folder from previous build
+			sh 'npx gulp clean_jre'
+			// Publish a generic version
+			sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+
+			// Publish platform specific versions
+			unstash 'platformVsix'
+			def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
+			for(platformVsix in platformVsixes){
+				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
+			}
+		}
 
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
 		def artifactDir = "java-${env.EXTENSION_VERSION}"
@@ -127,10 +162,5 @@ node('rhel8'){
 
 		// copy this stable build to Akamai-mirrored /static/ URL, so staging can be cleaned out more easily
 		sh "sftp ${UPLOAD_LOCATION}/static/jdt.ls/stable/ <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
-	} else {
-		stage "Publish pre release to VS Code Marketplace"
-		unstash 'vsix'
-		def vsix = findFiles(glob: '**.vsix')
-		publishToVSCodeMarketplace(vsix)
-	}
+	}// if publishToMarketPlace
 }
