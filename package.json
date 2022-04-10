@@ -1243,12 +1243,7 @@
       ]
     }
   },
-  "resolutions": {
-    "minimist": "^1.2.5",
-    "yargs-parser": "^18.1.2"
-  },
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "vscode:prepublish": "webpack --mode production",
     "compile": "tsc -p ./&webpack --mode development",
     "watch": "webpack --mode development --watch",
@@ -1257,8 +1252,7 @@
     "build-server": "./node_modules/.bin/gulp build_server",
     "fast-build-server": "./node_modules/.bin/gulp dev_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
-    "eslint": "eslint .",
-    "tslint": "tslint -p ."
+    "eslint": "eslint ."
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",
@@ -1286,9 +1280,7 @@
     "request": "^2.88.2",
     "sinon": "^14.0.0",
     "ts-loader": "^9.2.6",
-    "tslint": "^5.11.0",
     "typescript": "^4.2.4",
-    "typescript-tslint-plugin": "^0.3.1",
     "webpack": "^5.28.0",
     "webpack-cli": "^4.6.0"
   },

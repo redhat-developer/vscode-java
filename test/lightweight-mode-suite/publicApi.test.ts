@@ -12,7 +12,7 @@ import { constants } from '../common';
 
 const pomPath: string = path.join(constants.projectFsPath, 'pom.xml');
 
-// tslint:disable: only-arrow-functions
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Public APIs - LightWeight', () => {
 
 	suiteSetup(async function() {

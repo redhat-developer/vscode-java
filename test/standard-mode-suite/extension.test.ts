@@ -8,7 +8,7 @@ import * as requirements from '../../src/requirements';
 import { Commands } from '../../src/commands';
 import { env } from 'process';
 
-// tslint:disable: only-arrow-functions
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Java Language Extension - Standard', () => {
 
 	test('Extension should be present', () => {

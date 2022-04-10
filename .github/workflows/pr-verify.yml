@@ -28,7 +28,7 @@ jobs:
       - run: npm run vscode:prepublish
       - run: vsce package
       - run: ls -ll java-*vsix
-      - run: npm run tslint
+      - run: npm run eslint
       - name: Run Tests
         if: runner.os == 'Linux'
         env:

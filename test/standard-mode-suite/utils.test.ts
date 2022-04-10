@@ -13,7 +13,7 @@ const IMPORT_EXCLUSION: string = "import.exclusions";
 const IMPORT_MAVEN_ENABLED: string = "import.maven.enabled";
 const IMPORT_GRADLE_ENABLED: string = "import.gradle.enabled";
 
-// tslint:disable: only-arrow-functions
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Utils Test', () => {
 
 	suiteSetup(async function() {

@@ -60,7 +60,18 @@
 		"no-trailing-spaces": "error",
 		"no-underscore-dangle": "error",
 		"no-var": "error",
-		"prefer-arrow/prefer-arrow-functions": "error",
+		"prefer-arrow/prefer-arrow-functions": [
+			"error",
+			{
+				"disallowPrototype": true,
+				"singleReturnOnly": false,
+				"classPropertiesAllowed": false
+			}
+		],
+		"prefer-arrow-callback": [
+			"error",
+			{ "allowNamedFunctions": true }
+		],
 		"prefer-const": "error",
 		"prefer-template": "error",
 		"quote-props": [
@@ -88,6 +99,7 @@
 				"@typescript-eslint/naming-convention": "off",
 				"@typescript-eslint/semi": "off",
 				"prefer-arrow/prefer-arrow-functions": "off",
+				"prefer-arrow-callback": "off",
 				"no-useless-escape": "off",
 				"spaced-comment": "off",
 				"semi": "off",

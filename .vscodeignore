@@ -20,6 +20,6 @@ node_modules
 .travis.yml
 gulpfile.js
 Jenkinsfile
-tslint.json
+.eslintrc.json
 webpack.config.js
 .DS_Store

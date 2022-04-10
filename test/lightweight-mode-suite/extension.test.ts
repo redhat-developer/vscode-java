@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import { Commands } from '../../src/commands';
 import { extensions } from 'vscode';
 
-// tslint:disable: only-arrow-functions
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Java Language Extension - LightWeight', () => {
 
 	suiteSetup(async function() {

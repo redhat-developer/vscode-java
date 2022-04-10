@@ -9,7 +9,7 @@ const originFilePath: string = path.join(constants.projectFsPath, 'src', 'main',
 const newFilePath: string = path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo1.java');
 
 // Rename refactoring will pop up a dialog for confirm, didn't find a way to bypass it. So skip this test case.
-// tslint:disable: only-arrow-functions
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite.skip('Rename tests', () => {
 
 	suiteSetup(async function() {

@@ -8,7 +8,7 @@ import { Commands } from '../../src/commands';
 const projectFsPath: string = path.join(__dirname, '..', '..', '..', 'test', 'resources', 'projects', 'maven', 'salut');
 const fileFsPath: string = path.join(projectFsPath, 'src', 'main', 'java', 'java', 'Foo3.java');
 
-// tslint:disable: only-arrow-functions
+/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Goto Super Implementation', () => {
 
 	suiteSetup(async function() {
