@@ -135,7 +135,6 @@ The following settings are supported:
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
 * `java.maxConcurrentBuilds`: Set max simultaneous project builds.
 * `java.completion.enabled` : Enable/disable code completion support.
-* `java.completion.overwrite` : When set to true, code completion overwrites the current text. When set to false, code is simply added instead.
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.filteredTypes`: Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
@@ -199,9 +198,13 @@ The following settings are supported:
  * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
  * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
  * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
+ * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(isable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
 
-New in 1.3.0:
-* `java.jdt.ls.java.home`: Absolute path to JDK home folder used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. Requires VS Code restart.
+New in 1.5.0:
+* `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(Disable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
+
+Removed in 1.5.0:
+* `java.completion.overwrite`: Please use `editor.suggest.insertMode` instead. Meanwhile, you can quickly switch to another mode by pressing `Shift` + `Tab` or `Shift` + `Enter` (the shortcut may be different depending on the local keymap settings).
 
 Semantic Highlighting
 ===============
