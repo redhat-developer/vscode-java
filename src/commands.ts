@@ -256,4 +256,6 @@ export namespace Commands {
     export const RUNTIME_VALIDATION_OPEN = 'java.runtimeValidation.open';
 
     export const RESOLVE_WORKSPACE_SYMBOL = 'java.project.resolveWorkspaceSymbol';
+
+	export const GET_WORKSPACE_PATH = '_java.workspace.path';
 }

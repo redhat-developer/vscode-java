@@ -377,6 +377,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
 
+			context.subscriptions.push(commands.registerCommand(Commands.GET_WORKSPACE_PATH, () => workspacePath));
+
 			context.subscriptions.push(onConfigurationChange(workspacePath));
 
 			/**
