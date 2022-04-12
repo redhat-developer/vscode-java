@@ -81,7 +81,7 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
              * We'll keep it for compatibility.
              */
             if (javaHome) {
-                logger.info("Use the JDK from 'java.home' setting as the initial default project JDK.");
+                logger.info(`Use the JDK from '${preferenceName}' setting as the initial default project JDK.`);
             } else if (javaRuntimes.length) {
                 sortJdksBySource(javaRuntimes);
                 javaHome = javaRuntimes[0].homedir;
