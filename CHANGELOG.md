@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.5.0 (April 13th, 2022)
+ * performance - Adopt new CompletionProposal API to ignore types before creating certain proposals. See [JLS#2034](https://github.com/eclipse/eclipse.jdt.ls/pull/2034).
+ * enhancement - Provide Java 18 support. See [#2364](https://github.com/redhat-developer/vscode-java/pull/2364).
+ * enhancement - Support inlay hints for parameter names. See [#2099](https://github.com/redhat-developer/vscode-java/issues/2099).
+ * enhancement - Show server status through the language status item. See [#2351](https://github.com/redhat-developer/vscode-java/issues/2351).
+ * enhancement - Add code action to extract lambda body to method. See [JLS#2027](https://github.com/eclipse/eclipse.jdt.ls/issues/2027).
+ * enhancement - Navigate to class declaration. See [#2132](https://github.com/redhat-developer/vscode-java/pull/2132).
+ * enhancement - Support completion insert/replace capability. See [#2343](https://github.com/redhat-developer/vscode-java/pull/2343).
+ * bug fix - Provide file & type comments for newly created compilation units. See [JLS#2047](https://github.com/eclipse/eclipse.jdt.ls/pull/2047).
+ * bug fix - Code snippets should be usable even before LS done resolving dependencies. See [#684](https://github.com/redhat-developer/vscode-java/issues/684).
+ * bug fix - Fix an occurrence of duplicate quick fixes at the line level See [#2339](https://github.com/redhat-developer/vscode-java/issues/2339).
+ * bug fix - Cannot refactor in static block. See [#2370](https://github.com/redhat-developer/vscode-java/issues/2370).
+ * bug fix - Make `java.configuration.runtimes` & `java.jdt.ls.vmargs` machine-overridable. See [#2001](https://github.com/redhat-developer/vscode-java/issues/2001), [#2368](https://github.com/redhat-developer/vscode-java/pull/2368).
+ * bug fix - The number of method signatures cannot be displayed in some cases. See [#2341](https://github.com/redhat-developer/vscode-java/issues/2341).
+ * bug fix - Ensure that client-side commands do not clash with server-side. See [#2331](https://github.com/redhat-developer/vscode-java/issues/2331).
+ * bug fix - Fix issue in JDK detection logic. See [#2025](https://github.com/redhat-developer/vscode-java/issues/2025).
+ * other - Increase the maximum size of client.log file. See [#2356](https://github.com/redhat-developer/vscode-java/pull/2356).
+
 ## 1.4.0 (March 3rd, 2022)
  * enhancement - Trigger completion after `new` keyword. See [#1666](https://github.com/redhat-developer/vscode-java/issues/1666).
  * enhancement - Improve occurrences highlighting. See [JLS#1941](https://github.com/eclipse/eclipse.jdt.ls/pull/1941).
