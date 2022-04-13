@@ -7,7 +7,6 @@
  * enhancement - Show server status through the language status item. See [#2351](https://github.com/redhat-developer/vscode-java/issues/2351).
  * enhancement - Add code action to extract lambda body to method. See [JLS#2027](https://github.com/eclipse/eclipse.jdt.ls/issues/2027).
  * enhancement - Navigate to class declaration. See [#2132](https://github.com/redhat-developer/vscode-java/pull/2132).
- * enhancement - Support completion insert/replace capability. See [#2343](https://github.com/redhat-developer/vscode-java/pull/2343).
  * bug fix - Provide file & type comments for newly created compilation units. See [JLS#2047](https://github.com/eclipse/eclipse.jdt.ls/pull/2047).
  * bug fix - Code snippets should be usable even before LS done resolving dependencies. See [#684](https://github.com/redhat-developer/vscode-java/issues/684).
  * bug fix - Fix an occurrence of duplicate quick fixes at the line level See [#2339](https://github.com/redhat-developer/vscode-java/issues/2339).
