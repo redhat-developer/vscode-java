@@ -477,6 +477,12 @@
           "description": "Enable/disable code completion support",
           "scope": "window"
         },
+        "java.completion.overwrite": {
+          "type": "boolean",
+          "default": true,
+          "description": "When set to true, code completion overwrites the current text. When set to false, code is simply added instead.",
+          "scope": "window"
+        },
         "java.completion.guessMethodArguments": {
           "type": "boolean",
           "default": false,
