@@ -202,6 +202,8 @@ The following settings are supported:
  * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
  * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(isable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
 
+New in 1.6.0:
+* `java.signatureHelp.description.enabled`: Enable/disable to show the description in signature help. Defaults to `false`.
 
 Semantic Highlighting
 ===============
