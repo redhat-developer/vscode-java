@@ -328,6 +328,12 @@
           "description": "Enable/disable the signature help.",
           "scope": "window"
         },
+        "java.signatureHelp.description.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable to show the description in signature help.",
+          "scope": "window"
+        },
         "java.implementationsCodeLens.enabled": {
           "type": "boolean",
           "default": false,
