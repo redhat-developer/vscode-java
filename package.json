@@ -880,6 +880,21 @@
           "default": "literals",
           "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n",
           "scope": "window"
+        },
+        "java.project.encoding": {
+          "enum": [
+            "ignore",
+            "warning",
+            "setDefault"
+          ],
+          "enumDescriptions": [
+            "Ignore project encoding settings",
+            "Show warning if a project has no explicit encoding set",
+            "Set the default workspace encoding settings"
+          ],
+          "default": "ignore",
+          "markdownDescription": "Project encoding settings",
+          "scope": "window"
         }
       }
     },

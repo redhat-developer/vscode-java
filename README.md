@@ -200,10 +200,14 @@ The following settings are supported:
  * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
  * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
  * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
- * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(isable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
+ * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(disable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
 
-New in 1.6.0:
+New in 1.6.0
 * `java.signatureHelp.description.enabled`: Enable/disable to show the description in signature help. Defaults to `false`.
+* `java.project.encoding`: Project encoding settings.
+  - `ignore`: Ignore project encoding settings (default).
+  - `warning`: Show warning if a project has no explicit encoding set.
+  - `setDefault`: Set the default workspace encoding settings.
 
 Semantic Highlighting
 ===============
