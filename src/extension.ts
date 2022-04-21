@@ -246,7 +246,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						resolveAdditionalTextEditsSupport: true,
 						advancedIntroduceParameterRefactoringSupport: true,
 						actionableRuntimeNotificationSupport: true,
-						shouldLanguageServerExitOnShutdown: true
+						shouldLanguageServerExitOnShutdown: true,
+						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
 					},
 					triggerFiles,
 				},
