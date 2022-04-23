@@ -209,7 +209,7 @@ New in 1.6.0
   - `setDefault`: Set the default workspace encoding settings.
 
 Removed in 1.6.0
-* `java.completion.overwrite`: Please use `editor.suggest.insertMode` instead. Meanwhile, you can quickly switch to another mode by pressing `Shift` + `Tab` or `Shift` + `Enter` (the shortcut may be different depending on the local keymap settings).
+* `java.completion.overwrite`: Please use `editor.suggest.insertMode` instead. You can quickly toggle between `insert` & `replace` modes with `Shift` + `Tab` or `Shift` + `Enter` (default keyboard shortcuts). See `acceptAlternativeSelectedSuggestion` from the keyboard shortcuts menu for further details.
 
 Semantic Highlighting
 ===============
