@@ -391,7 +391,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					const button = "Manage Workspace Trust";
 					const choice = await window.showInformationMessage("For security concern, Java language server cannot be switched to Standard mode in untrusted workspaces.", button);
 					if (choice === button) {
-						commands.executeCommand("workbench.action.manageTrust");
+						commands.executeCommand("workbench.trust.manage");
 					}
 					return;
 				}
