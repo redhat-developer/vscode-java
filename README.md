@@ -136,7 +136,6 @@ The following settings are supported:
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
 * `java.maxConcurrentBuilds`: Set max simultaneous project builds.
 * `java.completion.enabled` : Enable/disable code completion support.
-* `java.completion.overwrite` : When set to true, code completion overwrites the current text. When set to false, code is simply added instead.
 * `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
 * `java.completion.filteredTypes`: Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
@@ -208,6 +207,9 @@ New in 1.6.0
   - `ignore`: Ignore project encoding settings (default).
   - `warning`: Show warning if a project has no explicit encoding set.
   - `setDefault`: Set the default workspace encoding settings.
+
+Removed in 1.6.0
+* `java.completion.overwrite`: Please use `editor.suggest.insertMode` instead. You can quickly toggle between `insert` & `replace` modes with `Shift` + `Tab` or `Shift` + `Enter` (default keyboard shortcuts). See `acceptAlternativeSelectedSuggestion` from the keyboard shortcuts menu for further details.
 
 Semantic Highlighting
 ===============
