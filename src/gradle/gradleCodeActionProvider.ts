@@ -1,0 +1,55 @@
+'use strict';
+
+import * as fse from "fs-extra";
+import * as path from "path";
+import { CancellationToken, CodeAction, CodeActionContext, CodeActionKind, CodeActionProvider, CodeActionProviderMetadata, Command, commands, Diagnostic, DiagnosticRelatedInformation, ExtensionContext, ProviderResult, Range, Selection, TextDocument, Uri } from "vscode";
+import { Commands } from "../commands";
+import { upgradeGradle } from "../standardLanguageClient";
+
+export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> {
+
+	private static UPGRADE_GRADLE_WRAPPER_TITLE = "Upgrade Gradle Wrapper";
+	private static WRAPPER_PROPERTIES_DESCRIPTOR = "gradle/wrapper/gradle-wrapper.properties";
+	private static GRADLE_INVALID_TYPE_CODE_MESSAGE = "Exact exceptions are not shown due to an outdated Gradle version, please consider to update your Gradle version.";
+
+	constructor(context: ExtensionContext) {
+		context.subscriptions.push(commands.registerCommand(Commands.UPGRADE_GRADLE_WRAPPER, (projectUri: string) => {
+			upgradeGradle(projectUri);
+		}));
+	}
+
+	public provideCodeActions(document: TextDocument, range: Range | Selection, context: CodeActionContext, token: CancellationToken): ProviderResult<(CodeAction | Command)[]> {
+		if (context?.diagnostics?.length && context.diagnostics[0].source === "Java") {
+			return this.provideGradleCodeActions(document, context.diagnostics);
+		}
+		return undefined;
+	}
+
+	private async provideGradleCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): Promise<CodeAction[]> {
+		const codeActions = [];
+		for (const diagnostic of diagnostics) {
+			const documentUri = document.uri.toString();
+			if (documentUri.endsWith(GradleCodeActionProvider.WRAPPER_PROPERTIES_DESCRIPTOR) && diagnostic.message === GradleCodeActionProvider.GRADLE_INVALID_TYPE_CODE_MESSAGE) {
+				const projectPath = path.resolve(Uri.parse(documentUri).fsPath, "..", "..", "..").normalize();
+				if (await fse.pathExists(projectPath)) {
+					const projectUri = Uri.file(projectPath).toString();
+					const upgradeWrapperCommand: Command = {
+						title: GradleCodeActionProvider.UPGRADE_GRADLE_WRAPPER_TITLE,
+						command: Commands.UPGRADE_GRADLE_WRAPPER,
+						arguments: [projectUri]
+					};
+					const codeAction = new CodeAction(GradleCodeActionProvider.UPGRADE_GRADLE_WRAPPER_TITLE, CodeActionKind.QuickFix.append("gradle"));
+					codeAction.command = upgradeWrapperCommand;
+					codeActions.push(codeAction);
+				}
+			}
+		}
+		return codeActions;
+	}
+}
+
+export const gradleCodeActionMetadata: CodeActionProviderMetadata = {
+	providedCodeActionKinds: [
+		CodeActionKind.QuickFix.append("gradle")
+	]
+};

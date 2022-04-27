@@ -257,5 +257,7 @@ export namespace Commands {
 
     export const RESOLVE_WORKSPACE_SYMBOL = 'java.project.resolveWorkspaceSymbol';
 
-	export const GET_WORKSPACE_PATH = '_java.workspace.path';
+    export const GET_WORKSPACE_PATH = '_java.workspace.path';
+
+    export const UPGRADE_GRADLE_WRAPPER = '_java.gradle.upgradeWrapper';
 }
