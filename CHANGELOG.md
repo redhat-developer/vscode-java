@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.6.0 (May 5th, 2022)
+ * enhancement - Trigger signature help on completion item selected. See [#2426](https://github.com/redhat-developer/vscode-java/pull/2426).
+ * enhancement - Support completion insert/replace capability. Use the setting `editor.suggest.insertMode` to control whether to overwrite words when accepting completions. You can also quickly toggle between insert & replace modes with `Shift + Tab` or `Shift + Enter` (default keyboard shortcuts). See [#2427](https://github.com/redhat-developer/vscode-java/pull/2427).
+ * enhancement - Add a new preference `java.signatureHelp.description.enabled` to disable/enable signature description. See [#2404](https://github.com/redhat-developer/vscode-java/pull/2404).
+ * bug fix - Fix the "Manage Workspace Trust" command. See [#2431](https://github.com/redhat-developer/vscode-java/issues/2431).
+ * bug fix - Improve the signature help feature by handling some special cases. See [JLS#2025](https://github.com/eclipse/eclipse.jdt.ls/issues/2025).
+ * bug fix - Do not show signature help at the end of an invocation. See [JLS#2079](https://github.com/eclipse/eclipse.jdt.ls/pull/2079).
+ * bug fix - Show error status when the project is not created. See [JLS#2058](https://github.com/eclipse/eclipse.jdt.ls/issues/2058).
+ * bug fix - Error during importing an Eclipse project whose sources are at root. See [#2436](https://github.com/redhat-developer/vscode-java/issues/2436).
+ * bug fix - Fix NPE in isCompletionInsertReplaceSupport check. See [JLS#2070](https://github.com/eclipse/eclipse.jdt.ls/pull/2070).
+ * bug fix - Unexpected 'Project xxx has no explicit encoding set' warnings. See [#2416](https://github.com/redhat-developer/vscode-java/issues/2416).
+ * bug fix - Fix issue where JDT-LS's logback configuration was being ignored. See [JLS#2077](https://github.com/eclipse/eclipse.jdt.ls/pull/2077).
+
 ## 1.5.0 (April 13th, 2022)
  * performance - Adopt new CompletionProposal API to ignore types before creating certain proposals. See [JLS#2034](https://github.com/eclipse/eclipse.jdt.ls/pull/2034).
  * enhancement - Provide Java 18 support. See [#2364](https://github.com/redhat-developer/vscode-java/pull/2364).
