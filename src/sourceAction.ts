@@ -254,9 +254,23 @@ async function generateAccessors(languageClient: LanguageClient, params: CodeAct
             originalField: accessor,
         };
     });
+    let accessorsKind: string;
+    switch (kind) {
+        case AccessorKind.BOTH:
+            accessorsKind = "getters and setters";
+            break;
+        case AccessorKind.GETTER:
+            accessorsKind = "getters";
+            break;
+        case AccessorKind.SETTER:
+            accessorsKind = "setters";
+            break;
+        default:
+            return;
+    }
     const selectedAccessors = await window.showQuickPick(accessorItems, {
         canPickMany: true,
-        placeHolder:  'Select the fields to generate getters and setters.'
+        placeHolder: `Select the fields to generate ${accessorsKind}`
     });
     if (!selectedAccessors || !selectedAccessors.length) {
         return;
