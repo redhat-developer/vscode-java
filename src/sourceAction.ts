@@ -1,7 +1,7 @@
 'use strict';
 
-import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable } from 'vscode';
-import { CodeActionParams } from 'vscode-languageclient';
+import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable, TextEditorRevealType, workspace } from 'vscode';
+import { CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
@@ -63,6 +63,7 @@ function registerOverrideMethodsCommand(languageClient: LanguageClient, context:
             overridableMethods: selectedItems.map((item) => item.originalMethod),
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -106,6 +107,7 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: 
             regenerate
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -113,6 +115,7 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
     context.subscriptions.push(commands.registerCommand(Commands.ORGANIZE_IMPORTS, async (params: CodeActionParams) => {
         const workspaceEdit = await languageClient.sendRequest(OrganizeImportsRequest.type, params);
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -204,6 +207,7 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             fields,
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -241,6 +245,7 @@ function registerGenerateAccessorsCommand(languageClient: LanguageClient, contex
             accessors: selectedAccessors.map((item) => item.originalField),
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -295,6 +300,7 @@ function registerGenerateConstructorsCommand(languageClient: LanguageClient, con
             fields: selectedFields,
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -356,5 +362,18 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
             delegateEntries,
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
+}
+
+async function revealWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageClient: LanguageClient): Promise<void> {
+    const codeWorkspaceEdit = languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
+    for (const entry of codeWorkspaceEdit.entries()) {
+        await workspace.openTextDocument(entry[0]);
+        if (entry[1].length > 0) {
+            // reveal first available change of the workspace edit
+            window.activeTextEditor.revealRange(entry[1][0].range, TextEditorRevealType.InCenter);
+            break;
+        }
+    }
 }
