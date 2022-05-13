@@ -543,7 +543,7 @@
         },
         "java.format.settings.url": {
           "type": "string",
-          "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
+          "markdownDescription": "Specifies the url or file path to the Eclipse formatter xml. \n\nFor example: \n\n`\"java.format.settings.url\":\"file://home/myuser/format.xml\"`\n\n `\"java.format.settings.url\": \"https://raw.githubusercontent.com/google/styleguide/gh-pages/eclipse-java-google-style.xml\"`\n\n`\"java.format.settings.url\":\".vscode/format.xml\"`\n\n `\"java.format.settings.url\":\".vscode\\\\format.xml\" (Windows)` \n\n`\"java.format.settings.url\":\"file:///C:/Users/MyUser/format.xml\" (Windows)` \n\n`\"java.format.settings.url\":\"C:\\\\Users\\\\MyUser\\\\format.xml\" (Windows)` \n\nSee [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
           "default": null,
           "scope": "window"
         },
@@ -839,7 +839,7 @@
         },
         "java.settings.url": {
           "type": "string",
-          "markdownDescription": "Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)",
+          "markdownDescription": "Specifies the url or file path to the workspace Java settings. \n\nFor example: \n\n`\"java.settings.url\":\"file://home/myuser/settings.prefs\"`\n\n`\"java.settings.url\":\".vscode/settings.prefs\"`\n\n `\"java.settings.url\":\".vscode\\\\settings.prefs\" (Windows)` \n\n`\"java.settings.url\":\"file:///C:/Users/MyUser/settings.prefs\" (Windows)` \n\n`\"java.settings.url\":\"C:\\\\Users\\\\MyUser\\\\settings.prefs\" (Windows)` \n\nSee [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)",
           "default": null,
           "scope": "window"
         },

@@ -14,7 +14,7 @@ import { initialize as initializeRecommendation } from './recommendation';
 import { Commands } from './commands';
 import { ExtensionAPI, ClientStatus } from './extension.api';
 import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob, ensureExists } from './utils';
-import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE, handleTextBlockClosing } from './settings';
+import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE, handleTextBlockClosing, checkJavaPreferences, checkSettings, isRemote } from './settings';
 import { logger, initializeLogFile } from './log';
 import glob = require('glob');
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
@@ -184,6 +184,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	registerOutOfMemoryDetection(storagePath);
 
 	cleanJavaWorkspaceStorage();
+
+	checkSettings('format.settings.url');
+
+	checkSettings('settings.url');
 
 	serverStatusBarProvider.initialize();
 
@@ -854,10 +858,6 @@ function openDocument(extensionPath, formatterUrl, defaultFormatter, relativePat
 				return didOpen;
 			}
 		});
-}
-
-function isRemote(f) {
-	return f !== null && f.startsWith('http:/') || f.startsWith('https:/') || f.startsWith('file:/');
 }
 
 async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath) {
