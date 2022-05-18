@@ -246,6 +246,7 @@ export interface AccessorField {
     isStatic: boolean;
     generateGetter: boolean;
     generateSetter: boolean;
+    typeName: string;
 }
 
 export interface AccessorCodeActionParams extends CodeActionParams {
