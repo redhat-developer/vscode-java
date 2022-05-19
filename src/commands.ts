@@ -173,14 +173,6 @@ export namespace Commands {
      */
     export const GENERATE_ACCESSORS_PROMPT = 'java.action.generateAccessorsPrompt';
     /**
-     * Generate Getters and Setters.
-     */
-    export const GENERATE_GETTERS_PROMPT = 'java.action.generateGettersPrompt';
-    /**
-     * Generate Getters and Setters.
-     */
-    export const GENERATE_SETTERS_PROMPT = 'java.action.generateSettersPrompt';
-    /**
      * Generate Constructors.
      */
     export const GENERATE_CONSTRUCTORS_PROMPT = 'java.action.generateConstructorsPrompt';

@@ -6,7 +6,7 @@ import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, ResolveUnimplementedAccessorsRequest, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -15,8 +15,6 @@ export function registerCommands(languageClient: LanguageClient, context: Extens
     registerChooseImportCommand(context);
     registerGenerateToStringCommand(languageClient, context);
     registerGenerateAccessorsCommand(languageClient, context);
-    registerGenerateGettersCommand(languageClient, context);
-    registerGenerateSettersCommand(languageClient, context);
     registerGenerateConstructorsCommand(languageClient, context);
     registerGenerateDelegateMethodsCommand(languageClient, context);
 }
@@ -214,28 +212,13 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
 }
 
 function registerGenerateAccessorsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_ACCESSORS_PROMPT, async (params: CodeActionParams) => {
-        await generateAccessors(languageClient, params, AccessorKind.BOTH);
+    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_ACCESSORS_PROMPT, async (params: AccessorCodeActionParams) => {
+        await generateAccessors(languageClient, params);
     }));
 }
 
-function registerGenerateGettersCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_GETTERS_PROMPT, async (params: CodeActionParams) => {
-        await generateAccessors(languageClient, params, AccessorKind.GETTER);
-    }));
-}
-
-function registerGenerateSettersCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_SETTERS_PROMPT, async (params: CodeActionParams) => {
-        await generateAccessors(languageClient, params, AccessorKind.SETTER);
-    }));
-}
-
-async function generateAccessors(languageClient: LanguageClient, params: CodeActionParams, kind: AccessorKind): Promise<void> {
-    const accessors = await languageClient.sendRequest(ResolveUnimplementedAccessorsRequest.type, {
-        context: params,
-        kind: kind
-    });
+async function generateAccessors(languageClient: LanguageClient, params: AccessorCodeActionParams): Promise<void> {
+    const accessors = await languageClient.sendRequest(AccessorCodeActionRequest.type, params);
     if (!accessors || !accessors.length) {
         return;
     }
@@ -255,7 +238,7 @@ async function generateAccessors(languageClient: LanguageClient, params: CodeAct
         };
     });
     let accessorsKind: string;
-    switch (kind) {
+    switch (params.kind) {
         case AccessorKind.BOTH:
             accessorsKind = "getters and setters";
             break;

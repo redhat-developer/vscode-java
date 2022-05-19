@@ -248,13 +248,12 @@ export interface AccessorField {
     generateSetter: boolean;
 }
 
-export interface ResolveUnimplementedAccessorsParams {
-    context: CodeActionParams;
+export interface AccessorCodeActionParams extends CodeActionParams {
     kind: AccessorKind;
 }
 
-export namespace ResolveUnimplementedAccessorsRequest {
-    export const type = new RequestType<ResolveUnimplementedAccessorsParams, AccessorField[], void>('java/resolveUnimplementedAccessors');
+export namespace AccessorCodeActionRequest {
+    export const type = new RequestType<AccessorCodeActionParams, AccessorField[], void>('java/resolveUnimplementedAccessors');
 }
 
 export interface GenerateAccessorsParams {
