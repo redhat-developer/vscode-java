@@ -73,7 +73,7 @@ export enum ClientStatus {
 	Stopping = "Stopping",
 }
 
-export const ExtensionApiVersion = '0.6';
+export const ExtensionApiVersion = '0.7';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -110,4 +110,11 @@ export interface ExtensionAPI {
 	 * An event which fires when the server mode has been switched.
 	 */
 	readonly onDidServerModeChange: Event<ServerMode>;
+
+	/**
+	 * A promise that will be resolved when the standard language server is ready.
+	 * @since API version 0.7
+	 * @since extension version 1.7.0
+	 */
+	readonly waitForServerReady: () => Promise<boolean>;
 }
