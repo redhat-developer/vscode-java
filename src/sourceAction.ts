@@ -1,12 +1,12 @@
 'use strict';
 
-import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable } from 'vscode';
-import { CodeActionParams } from 'vscode-languageclient';
+import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable, workspace, TextEditorRevealType } from 'vscode';
+import { CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, ResolveUnimplementedAccessorsRequest, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -63,6 +63,7 @@ function registerOverrideMethodsCommand(languageClient: LanguageClient, context:
             overridableMethods: selectedItems.map((item) => item.originalMethod),
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -106,6 +107,7 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: 
             regenerate
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -204,44 +206,64 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             fields,
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
 function registerGenerateAccessorsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_ACCESSORS_PROMPT, async (params: CodeActionParams) => {
-        const accessors = await languageClient.sendRequest(ResolveUnimplementedAccessorsRequest.type, params);
-        if (!accessors || !accessors.length) {
-            return;
-        }
-
-        const accessorItems = accessors.map((accessor) => {
-            const description = [];
-            if (accessor.generateGetter) {
-                description.push('getter');
-            }
-            if (accessor.generateSetter) {
-                description.push('setter');
-            }
-            return {
-                label: accessor.fieldName,
-                description: (accessor.isStatic ? 'static ' : '')+ description.join(', '),
-                originalField: accessor,
-            };
-        });
-        const selectedAccessors = await window.showQuickPick(accessorItems, {
-            canPickMany: true,
-            placeHolder:  'Select the fields to generate getters and setters.'
-        });
-        if (!selectedAccessors || !selectedAccessors.length) {
-            return;
-        }
-
-        const workspaceEdit = await languageClient.sendRequest(GenerateAccessorsRequest.type, {
-            context: params,
-            accessors: selectedAccessors.map((item) => item.originalField),
-        });
-        await applyWorkspaceEdit(workspaceEdit, languageClient);
+    context.subscriptions.push(commands.registerCommand(Commands.GENERATE_ACCESSORS_PROMPT, async (params: AccessorCodeActionParams) => {
+        await generateAccessors(languageClient, params);
     }));
+}
+
+async function generateAccessors(languageClient: LanguageClient, params: AccessorCodeActionParams): Promise<void> {
+    const accessors = await languageClient.sendRequest(AccessorCodeActionRequest.type, params);
+    if (!accessors || !accessors.length) {
+        return;
+    }
+
+    const accessorItems = accessors.map((accessor) => {
+        const description = [];
+        if (accessor.generateGetter) {
+            description.push('getter');
+        }
+        if (accessor.generateSetter) {
+            description.push('setter');
+        }
+        return {
+            label: accessor.fieldName,
+            description: (accessor.isStatic ? 'static ' : '')+ description.join(', '),
+            originalField: accessor,
+        };
+    });
+    let accessorsKind: string;
+    switch (params.kind) {
+        case AccessorKind.BOTH:
+            accessorsKind = "getters and setters";
+            break;
+        case AccessorKind.GETTER:
+            accessorsKind = "getters";
+            break;
+        case AccessorKind.SETTER:
+            accessorsKind = "setters";
+            break;
+        default:
+            return;
+    }
+    const selectedAccessors = await window.showQuickPick(accessorItems, {
+        canPickMany: true,
+        placeHolder: `Select the fields to generate ${accessorsKind}`
+    });
+    if (!selectedAccessors || !selectedAccessors.length) {
+        return;
+    }
+
+    const workspaceEdit = await languageClient.sendRequest(GenerateAccessorsRequest.type, {
+        context: params,
+        accessors: selectedAccessors.map((item) => item.originalField),
+    });
+    await applyWorkspaceEdit(workspaceEdit, languageClient);
+    await revealWorkspaceEdit(workspaceEdit, languageClient);
 }
 
 function registerGenerateConstructorsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
@@ -295,6 +317,7 @@ function registerGenerateConstructorsCommand(languageClient: LanguageClient, con
             fields: selectedFields,
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -356,5 +379,21 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
             delegateEntries,
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
+        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
+}
+
+async function revealWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageClient: LanguageClient): Promise<void> {
+    const codeWorkspaceEdit = languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
+    if (!codeWorkspaceEdit) {
+        return;
+    }
+    for (const entry of codeWorkspaceEdit.entries()) {
+        await workspace.openTextDocument(entry[0]);
+        if (entry[1].length > 0) {
+            // reveal first available change of the workspace edit
+            window.activeTextEditor.revealRange(entry[1][0].range, TextEditorRevealType.InCenter);
+            break;
+        }
+    }
 }

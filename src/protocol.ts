@@ -68,6 +68,12 @@ export enum CompileWorkspaceStatus {
     CANCELLED = 3,
 }
 
+export enum AccessorKind {
+    GETTER = 0,
+    SETTER = 1,
+    BOTH = 2
+}
+
 export interface StatusReport {
 	message: string;
 	type: string;
@@ -242,8 +248,12 @@ export interface AccessorField {
     generateSetter: boolean;
 }
 
-export namespace ResolveUnimplementedAccessorsRequest {
-    export const type = new RequestType<CodeActionParams, AccessorField[], void>('java/resolveUnimplementedAccessors');
+export interface AccessorCodeActionParams extends CodeActionParams {
+    kind: AccessorKind;
+}
+
+export namespace AccessorCodeActionRequest {
+    export const type = new RequestType<AccessorCodeActionParams, AccessorField[], void>('java/resolveUnimplementedAccessors');
 }
 
 export interface GenerateAccessorsParams {
