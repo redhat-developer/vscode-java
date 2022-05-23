@@ -231,7 +231,7 @@ async function generateAccessors(languageClient: LanguageClient, params: Accesso
             description.push('setter');
         }
         return {
-            label: accessor.fieldName,
+            label: `${accessor.fieldName}: ${accessor.typeName}`,
             description: (accessor.isStatic ? 'static ' : '')+ description.join(', '),
             originalField: accessor,
         };
