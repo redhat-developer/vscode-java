@@ -115,7 +115,6 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
     context.subscriptions.push(commands.registerCommand(Commands.ORGANIZE_IMPORTS, async (params: CodeActionParams) => {
         const workspaceEdit = await languageClient.sendRequest(OrganizeImportsRequest.type, params);
         await applyWorkspaceEdit(workspaceEdit, languageClient);
-        await revealWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
@@ -386,6 +385,9 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
 
 async function revealWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageClient: LanguageClient): Promise<void> {
     const codeWorkspaceEdit = languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
+    if (!codeWorkspaceEdit) {
+        return;
+    }
     for (const entry of codeWorkspaceEdit.entries()) {
         await workspace.openTextDocument(entry[0]);
         if (entry[1].length > 0) {
