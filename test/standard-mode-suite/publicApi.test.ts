@@ -163,6 +163,11 @@ suite('Public APIs - Standard', () => {
 		});
 	});
 
+	test('waitForServerReady() should work', async function () {
+		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
+		await api.waitForServerReady();
+	});
+
 	suiteTeardown(async function() {
 		// revert the pom content
 		const pomContent: string = await fse.readFile(pomPath, 'utf-8');

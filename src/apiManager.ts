@@ -16,6 +16,7 @@ class ApiManager {
     private onDidClasspathUpdateEmitter: Emitter<Uri> = new Emitter<Uri>();
     private onDidServerModeChangeEmitter: Emitter<ServerMode> = new Emitter<ServerMode>();
     private onDidProjectsImportEmitter: Emitter<Uri[]> = new Emitter<Uri[]>();
+    private serverReadyPromiseResolve: (result: boolean) => void;
 
     public initialize(requirements: RequirementsData, serverMode: ServerMode): void {
         const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
@@ -37,6 +38,13 @@ class ApiManager {
         const onDidServerModeChange = this.onDidServerModeChangeEmitter.event;
         const onDidProjectsImport = this.onDidProjectsImportEmitter.event;
 
+        const serverReadyPromise: Promise<boolean> = new Promise<boolean>((resolve) => {
+            this.serverReadyPromiseResolve = resolve;
+        });
+        const waitForServerReady = async () => {
+            return serverReadyPromise;
+        };
+
         this.api = {
             apiVersion: ExtensionApiVersion,
             javaRequirement: requirements,
@@ -51,6 +59,7 @@ class ApiManager {
             serverMode,
             onDidServerModeChange,
             onDidProjectsImport,
+            waitForServerReady,
         };
     }
 
@@ -80,6 +89,10 @@ class ApiManager {
 
     public updateStatus(status: ClientStatus): void {
         this.api.status = status;
+    }
+
+    public standardServerReady(): void {
+        this.serverReadyPromiseResolve(true);
     }
 }
 
