@@ -10,7 +10,8 @@ export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> 
 
 	private static UPGRADE_GRADLE_WRAPPER_TITLE = "Upgrade Gradle Wrapper";
 	private static WRAPPER_PROPERTIES_DESCRIPTOR = "gradle/wrapper/gradle-wrapper.properties";
-	private static GRADLE_INVALID_TYPE_CODE_MESSAGE = "Exact exceptions are not shown due to an outdated Gradle version, please consider to update your Gradle version.";
+	private static GRADLE_PROBLEM_ID = 0x00080000;
+	private static GRADLE_INVALID_TYPE_CODE_ID = GradleCodeActionProvider.GRADLE_PROBLEM_ID + 1;
 
 	constructor(context: ExtensionContext) {
 		context.subscriptions.push(commands.registerCommand(Commands.UPGRADE_GRADLE_WRAPPER, (projectUri: string) => {
@@ -29,7 +30,7 @@ export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> 
 		const codeActions = [];
 		for (const diagnostic of diagnostics) {
 			const documentUri = document.uri.toString();
-			if (documentUri.endsWith(GradleCodeActionProvider.WRAPPER_PROPERTIES_DESCRIPTOR) && diagnostic.message === GradleCodeActionProvider.GRADLE_INVALID_TYPE_CODE_MESSAGE) {
+			if (documentUri.endsWith(GradleCodeActionProvider.WRAPPER_PROPERTIES_DESCRIPTOR) && diagnostic.code === GradleCodeActionProvider.GRADLE_INVALID_TYPE_CODE_ID.toString()) {
 				const projectPath = path.resolve(Uri.parse(documentUri).fsPath, "..", "..", "..").normalize();
 				if (await fse.pathExists(projectPath)) {
 					const projectUri = Uri.file(projectPath).toString();
