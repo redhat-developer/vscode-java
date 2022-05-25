@@ -23,7 +23,7 @@ export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> 
 		if (context?.diagnostics?.length && context.diagnostics[0].source === "Java") {
 			return this.provideGradleCodeActions(document, context.diagnostics);
 		}
-		return undefined;
+		return [];
 	}
 
 	private async provideGradleCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): Promise<CodeAction[]> {
