@@ -59,6 +59,7 @@ export enum EventType {
     ClasspathUpdated = 100,
     ProjectsImported = 200,
     IncompatibleGradleJdkIssue = 300,
+	UpgradeGradleWrapper = 400,
 }
 
 export enum CompileWorkspaceStatus {
@@ -424,4 +425,10 @@ export interface GradleCompatibilityInfo {
     message: string;
     highestJavaVersion: string;
     recommendedGradleVersion: string;
+}
+
+export interface UpgradeGradleWrapperInfo {
+	projectUri: string;
+	message: string;
+	recommendedGradleVersion: string;
 }
