@@ -92,7 +92,6 @@ export class SyntaxLanguageClient {
 	public stop() {
 		this.status = ClientStatus.Stopping;
 		if (this.languageClient) {
-			this.languageClient.stop();
 			this.languageClient = null;
 		}
 	}
