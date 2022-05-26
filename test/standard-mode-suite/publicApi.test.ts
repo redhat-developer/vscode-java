@@ -163,9 +163,9 @@ suite('Public APIs - Standard', () => {
 		});
 	});
 
-	test('waitForServerReady() should work', async function () {
+	test('serverReady() should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		await api.standardServerReady();
+		await api.serverReady();
 	});
 
 	suiteTeardown(async function() {
