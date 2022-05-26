@@ -113,8 +113,9 @@ export interface ExtensionAPI {
 
 	/**
 	 * A promise that will be resolved when the standard language server is ready.
+	 * Note: The server here denotes for the standard server, not the lightweight.
 	 * @since API version 0.7
 	 * @since extension version 1.7.0
 	 */
-	readonly waitForServerReady: () => Promise<boolean>;
+	readonly serverReady: () => Promise<boolean>;
 }

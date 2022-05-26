@@ -41,7 +41,7 @@ class ApiManager {
         const serverReadyPromise: Promise<boolean> = new Promise<boolean>((resolve) => {
             this.serverReadyPromiseResolve = resolve;
         });
-        const waitForServerReady = async () => {
+        const serverReady = async () => {
             return serverReadyPromise;
         };
 
@@ -59,7 +59,7 @@ class ApiManager {
             serverMode,
             onDidServerModeChange,
             onDidProjectsImport,
-            waitForServerReady,
+            serverReady,
         };
     }
 
@@ -91,7 +91,7 @@ class ApiManager {
         this.api.status = status;
     }
 
-    public standardServerReady(): void {
+    public resolveServerReadyPromise(): void {
         this.serverReadyPromiseResolve(true);
     }
 }
