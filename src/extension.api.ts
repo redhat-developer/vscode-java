@@ -116,5 +116,5 @@ export interface ExtensionAPI {
 	 * @since API version 0.7
 	 * @since extension version 1.7.0
 	 */
-	readonly waitForServerReady: () => Promise<boolean>;
+	readonly standardServerReady: () => Promise<boolean>;
 }

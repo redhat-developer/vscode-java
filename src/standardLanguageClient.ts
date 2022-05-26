@@ -109,7 +109,7 @@ export class StandardLanguageClient {
 					case 'ServiceReady':
 						apiManager.updateServerMode(ServerMode.STANDARD);
 						apiManager.fireDidServerModeChange(ServerMode.STANDARD);
-						apiManager.standardServerReady();
+						apiManager.resolveServerReadyPromise();
 						activationProgressNotification.hide();
 						if (!hasImported) {
 							showImportFinishNotification(context);
