@@ -201,6 +201,14 @@ The following settings are supported:
  * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
  * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(disable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
 
+New in 1.7.0
+* `java.inlayHints.parameterNames.exclusions`: The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:
+  - `java.lang.Math.*` - All the methods from java.lang.Math.
+  - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.
+  - `*.println(*)` - Methods named as 'println'.
+  - `(from, to)` - Methods with two parameters named as 'from' and 'to'.
+  - `(arg*)` - Methods with one parameter whose name starts with 'arg'.
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).
