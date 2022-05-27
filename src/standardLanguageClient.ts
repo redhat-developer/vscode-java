@@ -520,7 +520,6 @@ export class StandardLanguageClient {
 
 	public stop() {
 		if (this.languageClient) {
-			this.languageClient.stop();
 			this.status = ClientStatus.Stopping;
 		}
 	}
