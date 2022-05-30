@@ -46,15 +46,8 @@
 			"'"
 		],
 		{
-			"open": "/**",
-			"close": " */",
-			"notIn": [
-				"string"
-			]
-		},
-		{
 			"open": "/*",
-			"close": "*/",
+			"close": " */",
 			"notIn": [
 				"string"
 			]

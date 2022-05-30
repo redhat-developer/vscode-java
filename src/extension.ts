@@ -680,15 +680,9 @@ function enableJavadocSymbols() {
 		onEnterRules: [
 			{
 				// e.g. /** | */
-				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				beforeText: /^\s*\/\*\*?(?!\/)([^\*]|\*(?!\/))*$/,
 				afterText: /^\s*\*\/$/,
 				action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
-			},
-			{
-				// e.g. /* | */
-				beforeText: /^\s*\/\*(?!\/)([^\*]|\*(?!\/))*$/,
-				afterText: /^\s*\*\/$/,
-				action: { indentAction: IndentAction.IndentOutdent, appendText: '* ' }
 			},
 			{
 				// e.g. /** ...|
@@ -698,11 +692,6 @@ function enableJavadocSymbols() {
 			{
 				// e.g.  * ...|
 				beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
-				action: { indentAction: IndentAction.None, appendText: '* ' }
-			},
-			{
-				// e.g. * ...|
-				beforeText: /^(\t|(\ \ ))*\*(\ ([^\*]|\*(?!\/))*)?$/,
 				action: { indentAction: IndentAction.None, appendText: '* ' }
 			},
 			{
