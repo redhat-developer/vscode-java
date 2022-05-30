@@ -477,6 +477,12 @@
           "markdownDescription": "Maximum number of completion results (not including snippets).\n`0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit.",
           "scope": "window"
         },
+        "java.completion.constructors.resolveParameterNamesThreshold": {
+          "type": "integer",
+          "default": "30",
+          "markdownDescription": "A threshold to control whether the parameter names will be resolved in the completion list. If the number of constructors in the completion list is larger than the threshold, parameter names will not be resolved.\n\nTo make the parameter names always be resolved, please set it to `0`.",
+          "scope": "window"
+        },
         "java.completion.enabled": {
           "type": "boolean",
           "default": true,
