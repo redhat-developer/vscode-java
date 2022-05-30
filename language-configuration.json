@@ -46,7 +46,7 @@
 			"'"
 		],
 		{
-			"open": "/**",
+			"open": "/*",
 			"close": " */",
 			"notIn": [
 				"string"

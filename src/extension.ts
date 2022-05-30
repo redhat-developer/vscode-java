@@ -679,8 +679,8 @@ function enableJavadocSymbols() {
 		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
 		onEnterRules: [
 			{
-				// e.g. /** | */
-				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
+				// e.g. /** | */ or /* | */
+				beforeText: /^\s*\/\*\*?(?!\/)([^\*]|\*(?!\/))*$/,
 				afterText: /^\s*\*\/$/,
 				action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
 			},
