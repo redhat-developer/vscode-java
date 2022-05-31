@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.7.0 (June 1st, 2022)
+ * enhancment - Support separate "Generate Getters" and "Generate Setters". See [#2362](https://github.com/redhat-developer/vscode-java/issues/2362).
+ * enhancement - Show field type when generating accessors. See [#2459](https://github.com/redhat-developer/vscode-java/pull/2459).
+ * enhancement - Show quick fixes for generating accessors in field declarations. See [JLS#2092](https://github.com/eclipse/eclipse.jdt.ls/pull/2092).
+ * enhancement - Support exclusion list for inlay hints. See [#2412](https://github.com/redhat-developer/vscode-java/issues/2412).
+ * enhancement - Support Gradle invalid type code error check. See [#1594](https://github.com/redhat-developer/vscode-java/issues/1594).
+ * bug fix - Add support to open decompiled symbols through the symbols list. See [JLS#2087](https://github.com/eclipse/eclipse.jdt.ls/issues/2087).
+ * bug fix - Add completion support for multiline comment blocks. See [#2484](https://github.com/redhat-developer/vscode-java/pull/2484).
+ * bug fix - Ensure the standard server shuts down immediately after the client. See [#2471](https://github.com/redhat-developer/vscode-java/issues/2471).
+ * bug fix - Fix `java.completion.importOrder`. See [#2489](https://github.com/redhat-developer/vscode-java/pull/2489).
+ * other - Add a new API to wait for standard server ready. See [#2461](https://github.com/redhat-developer/vscode-java/pull/2461).
+ * other - Support publishing pre-release versions. See [#2285](https://github.com/redhat-developer/vscode-java/issues/2285).
+
 ## 1.6.0 (May 5th, 2022)
  * enhancement - Trigger signature help on completion item selected. See [#2426](https://github.com/redhat-developer/vscode-java/pull/2426).
  * enhancement - Support completion insert/replace capability. Use the setting `editor.suggest.insertMode` to control whether to overwrite words when accepting completions. You can also quickly toggle between insert & replace modes with `Shift + Tab` or `Shift + Enter` (default keyboard shortcuts). See [#2427](https://github.com/redhat-developer/vscode-java/pull/2427).
