@@ -524,8 +524,8 @@
           "default": [
             "java",
             "javax",
-            "com",
-            "org"
+            "org",
+            "com"
           ],
           "scope": "window"
         },
