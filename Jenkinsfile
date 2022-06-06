@@ -120,7 +120,7 @@ def publishExtensions() {
 node('rhel8'){
 	stage 'Build JDT LS'
 
-	env.JAVA_HOME="${tool 'openjdk-11'}"
+	env.JAVA_HOME="${tool 'openjdk-17'}"
 	env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
 	sh 'java -version'
 
@@ -132,7 +132,7 @@ node('rhel8'){
 }
 
 node('rhel8'){
-	env.JAVA_HOME="${tool 'openjdk-11'}"
+	env.JAVA_HOME="${tool 'openjdk-17'}"
 	env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
 	stage 'Checkout vscode-java code'
 	deleteDir()

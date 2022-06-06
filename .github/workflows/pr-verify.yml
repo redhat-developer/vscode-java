@@ -18,7 +18,7 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
+          java-version: '17'
           distribution: 'adopt'
       - run: npm install -g typescript "vsce@<2"
       - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
