@@ -9,7 +9,7 @@ import { Commands } from './commands';
 import { logger } from './log';
 import { checkJavaPreferences } from './settings';
 
-const REQUIRED_JDK_VERSION = 11;
+const REQUIRED_JDK_VERSION = 17;
 export interface RequirementsData {
     tooling_jre: string;
     tooling_jre_version: number;
