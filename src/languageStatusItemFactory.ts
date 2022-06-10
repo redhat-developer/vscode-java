@@ -63,6 +63,9 @@ export namespace ServerStatusItemFactory {
 	}
 
 	export function setBusy(item: any): void {
+		if (item.busy === true) {
+			return;
+		}
 		item.text = "Building";
 		item.busy = true;
 	}
@@ -91,6 +94,9 @@ export namespace ServerStatusItemFactory {
 	}
 
 	export function setReady(item: any): void {
+		if (item.text === StatusIcon.Ready) {
+			return;
+		}
 		item.busy = false;
 		item.severity = vscode.LanguageStatusSeverity?.Information;
 		item.command = StatusCommands.showServerStatusCommand;
