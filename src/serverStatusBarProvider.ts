@@ -60,9 +60,7 @@ class ServerStatusBarProvider implements Disposable {
 
 	public setBusy(): void {
 		if (supportsLanguageStatus()) {
-			if (!this.languageStatusItem.busy) {
-				ServerStatusItemFactory.setBusy(this.languageStatusItem);
-			}
+			ServerStatusItemFactory.setBusy(this.languageStatusItem);
 		} else {
 			this.statusBarItem.text = StatusIcon.Busy;
 		}
