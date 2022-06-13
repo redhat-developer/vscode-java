@@ -427,9 +427,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
 				if (event === ServerMode.STANDARD) {
-					syntaxClient.getClient().stop().then(client => {
-						syntaxClient.stop();
-					});
+					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context);
 				}
@@ -635,16 +633,17 @@ export function getJavaConfig(javaHome: string) {
 	return javaConfig;
 }
 
-export function deactivate(): Promise<void> {
-	return getActiveLanguageClient().then(client => {
-		standardClient.stop();
-		syntaxClient.stop();
-		if (!client) {
-			return undefined;
-		} else {
-			return client.stop();
-		}
-	});
+export function deactivate(): Promise<void[]> {
+	const promises: Promise<void>[] = [];
+	const standardStopPromise = standardClient.stop();
+	if (standardStopPromise) {
+		promises.push(standardStopPromise);
+	}
+	const syntaxStopPromise = syntaxClient.stop();
+	if (syntaxStopPromise) {
+		promises.push(syntaxStopPromise);
+	}
+	return Promise.all<void>(promises);
 }
 
 export async function getActiveLanguageClient(): Promise<LanguageClient | undefined> {

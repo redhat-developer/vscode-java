@@ -518,9 +518,14 @@ export class StandardLanguageClient {
 		}
 	}
 
-	public stop() {
+	public stop(): Promise<void> {
+		this.status = ClientStatus.Stopping;
 		if (this.languageClient) {
-			this.status = ClientStatus.Stopping;
+			try {
+				return this.languageClient.stop();
+			} finally {
+				this.languageClient = null;
+			}
 		}
 	}
 

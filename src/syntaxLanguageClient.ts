@@ -89,10 +89,14 @@ export class SyntaxLanguageClient {
 		}
 	}
 
-	public stop() {
+	public stop(): Promise<void> {
 		this.status = ClientStatus.Stopping;
 		if (this.languageClient) {
-			this.languageClient = null;
+			try {
+				return this.languageClient.stop();
+			} finally {
+				this.languageClient = null;
+			}
 		}
 	}
 
