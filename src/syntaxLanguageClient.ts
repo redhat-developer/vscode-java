@@ -98,6 +98,7 @@ export class SyntaxLanguageClient {
 				this.languageClient = null;
 			}
 		}
+		return Promise.resolve();
 	}
 
 	public isAlive(): boolean {

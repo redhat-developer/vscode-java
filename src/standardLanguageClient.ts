@@ -527,6 +527,7 @@ export class StandardLanguageClient {
 				this.languageClient = null;
 			}
 		}
+		return Promise.resolve();
 	}
 
 	public getClient(): LanguageClient {

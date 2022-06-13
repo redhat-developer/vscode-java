@@ -634,16 +634,10 @@ export function getJavaConfig(javaHome: string) {
 }
 
 export function deactivate(): Promise<void[]> {
-	const promises: Promise<void>[] = [];
-	const standardStopPromise = standardClient.stop();
-	if (standardStopPromise) {
-		promises.push(standardStopPromise);
-	}
-	const syntaxStopPromise = syntaxClient.stop();
-	if (syntaxStopPromise) {
-		promises.push(syntaxStopPromise);
-	}
-	return Promise.all<void>(promises);
+	return Promise.all<void>([
+		standardClient.stop(),
+		syntaxClient.stop(),
+	]);
 }
 
 export async function getActiveLanguageClient(): Promise<LanguageClient | undefined> {
