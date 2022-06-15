@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position, QuickPickItem } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
@@ -585,21 +585,97 @@ function setIncompleteClasspathSeverity(severity: string) {
 	);
 }
 
-function projectConfigurationUpdate(languageClient: LanguageClient, uri?: Uri) {
-	let resource = uri;
-	if (!(resource instanceof Uri)) {
-		if (window.activeTextEditor) {
-			resource = window.activeTextEditor.document.uri;
+async function projectConfigurationUpdate(languageClient: LanguageClient, uris?: Uri | Uri[]) {
+	let resources = [];
+	if (!uris) {
+		resources = await askForProjectToUpdate();
+	} else if (uris instanceof Uri) {
+		resources.push(uris);
+	} else if (Array.isArray(uris)) {
+		for (const uri of uris) {
+			if (uri instanceof Uri) {
+				resources.push(uri);
+			}
 		}
 	}
-	if (!resource) {
-		return window.showWarningMessage('No Java project to update!').then(() => false);
-	}
-	if (isJavaConfigFile(resource.path)) {
+	if (resources.length === 1) {
 		languageClient.sendNotification(ProjectConfigurationUpdateRequest.type, {
-			uri: resource.toString()
+			uri: resources[0].toString(),
+		});
+	} else if (resources.length > 1) {
+		languageClient.sendNotification(ProjectConfigurationUpdateRequest.typeV2, {
+			identifiers: resources.map(r => {
+				return { uri: r.toString() };
+			}),
 		});
 	}
+}
+
+async function askForProjectToUpdate(): Promise<Uri[]> {
+	let uriCandidate: Uri;
+	if (window.activeTextEditor) {
+		uriCandidate = window.activeTextEditor.document.uri;
+	}
+
+	if (uriCandidate && isJavaConfigFile(uriCandidate.fsPath)) {
+		return [uriCandidate];
+	}
+
+	let projectUriStrings: string[];
+	try {
+		projectUriStrings = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+	} catch (e) {
+		return uriCandidate ? [uriCandidate] : [];
+	}
+
+	const projectPicks: QuickPickItem[] = projectUriStrings.map(uriString => {
+		const projectPath = Uri.parse(uriString).fsPath;
+		if (path.basename(projectPath) === "jdt.ls-java-project") {
+			return undefined;
+		}
+
+		return {
+			label: path.basename(projectPath),
+			detail: projectPath,
+		};
+	}).filter(Boolean);
+
+	if (projectPicks.length === 0) {
+		return [];
+	}
+
+	// pre-select an active project based on the uri candidate.
+	if (uriCandidate) {
+		const candidatePath = uriCandidate.fsPath;
+		let belongingIndex = -1;
+		for (let i = 0; i < projectPicks.length; i++) {
+			if (candidatePath.startsWith(projectPicks[i].detail)) {
+				if (belongingIndex < 0
+						|| projectPicks[i].detail.length > projectPicks[belongingIndex].detail.length) {
+					belongingIndex = i;
+				}
+			}
+		}
+		if (belongingIndex >= 0) {
+			projectPicks[belongingIndex].picked = true;
+		}
+	}
+
+	if (projectPicks.length === 1) {
+		return [Uri.file(projectPicks[0].detail)];
+	} else {
+		const choices: QuickPickItem[] | undefined = await window.showQuickPick(projectPicks, {
+			matchOnDetail: true,
+			placeHolder: "Select the project to update.",
+			ignoreFocusOut: true,
+			canPickMany: true,
+		});
+		if (choices && choices.length) {
+			return choices.map(c => Uri.file(c.detail));
+		}
+	}
+
+	return [];
 }
 
 function isJavaConfigFile(filePath: string) {
