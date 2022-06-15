@@ -4,7 +4,7 @@ import * as expandHomeDir from 'expand-home-dir';
 import * as fse from 'fs-extra';
 import { findRuntimes, getRuntime, getSources, IJavaRuntime, JAVAC_FILENAME, JAVA_FILENAME } from 'jdk-utils';
 import * as path from 'path';
-import { env, ExtensionContext, Uri, workspace } from 'vscode';
+import { env, ExtensionContext, Uri, window, workspace } from 'vscode';
 import { Commands } from './commands';
 import { logger } from './log';
 import { checkJavaPreferences } from './settings';
@@ -54,8 +54,16 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
             }
             javaVersion = await getMajorVersion(javaHome);
             if (preferenceName === "java.jdt.ls.java.home" || !toolingJre) {
-                toolingJre = javaHome;
-                toolingJreVersion = javaVersion;
+                if (javaVersion >= REQUIRED_JDK_VERSION) {
+                    toolingJre = javaHome;
+                    toolingJreVersion = javaVersion;
+                } else {
+                    const neverShow: boolean | undefined = context.workspaceState.get<boolean>("java.home.failsMinRequiredFirstTime");
+                    if (!neverShow) {
+                        context.workspaceState.update("java.home.failsMinRequiredFirstTime", true);
+                        window.showInformationMessage(`The Java runtime set by 'java.jdt.ls.java.home' does not meet the minimum required version of '${REQUIRED_JDK_VERSION}' and will not be used.`);
+                    }
+                }
             }
         }
 
