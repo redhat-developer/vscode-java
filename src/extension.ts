@@ -376,7 +376,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(context.extensionPath)));
 
-			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, () => cleanWorkspace(workspacePath)));
+			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, (force?: boolean) => cleanWorkspace(workspacePath, force)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.GET_WORKSPACE_PATH, () => workspacePath));
 
@@ -715,16 +715,18 @@ function makeRandomHexString(length) {
 	return result;
 }
 
-async function cleanWorkspace(workspacePath) {
-	const doIt = 'Restart and delete';
-	window.showWarningMessage('Are you sure you want to clean the Java language server workspace?', 'Cancel', doIt).then(selection => {
-		if (selection === doIt) {
-			ensureExists(workspacePath);
-			const file = path.join(workspacePath, cleanWorkspaceFileName);
-			fs.closeSync(fs.openSync(file, 'w'));
-			commands.executeCommand(Commands.RELOAD_WINDOW);
+async function cleanWorkspace(workspacePath, force?: boolean) {
+	if (!force) {
+		const doIt = 'Restart and delete';
+		const selection = await window.showWarningMessage('Are you sure you want to clean the Java language server workspace?', 'Cancel', doIt);
+		if (selection !== doIt) {
+			return;
 		}
-	});
+	}
+	ensureExists(workspacePath);
+	const file = path.join(workspacePath, cleanWorkspaceFileName);
+	fs.closeSync(fs.openSync(file, 'w'));
+	commands.executeCommand(Commands.RELOAD_WINDOW);
 }
 
 function openServerLogFile(workspacePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
