@@ -642,31 +642,29 @@ async function askForProjectToUpdate(): Promise<Uri[]> {
 
 	if (projectPicks.length === 0) {
 		return [];
-	}
-
-	// pre-select an active project based on the uri candidate.
-	if (uriCandidate) {
-		const candidatePath = uriCandidate.fsPath;
-		let belongingIndex = -1;
-		for (let i = 0; i < projectPicks.length; i++) {
-			if (candidatePath.startsWith(projectPicks[i].detail)) {
-				if (belongingIndex < 0
-						|| projectPicks[i].detail.length > projectPicks[belongingIndex].detail.length) {
-					belongingIndex = i;
-				}
-			}
-		}
-		if (belongingIndex >= 0) {
-			projectPicks[belongingIndex].picked = true;
-		}
-	}
-
-	if (projectPicks.length === 1) {
+	} else if (projectPicks.length === 1) {
 		return [Uri.file(projectPicks[0].detail)];
 	} else {
+		// pre-select an active project based on the uri candidate.
+		if (uriCandidate) {
+			const candidatePath = uriCandidate.fsPath;
+			let belongingIndex = -1;
+			for (let i = 0; i < projectPicks.length; i++) {
+				if (candidatePath.startsWith(projectPicks[i].detail)) {
+					if (belongingIndex < 0
+							|| projectPicks[i].detail.length > projectPicks[belongingIndex].detail.length) {
+						belongingIndex = i;
+					}
+				}
+			}
+			if (belongingIndex >= 0) {
+				projectPicks[belongingIndex].picked = true;
+			}
+		}
+
 		const choices: QuickPickItem[] | undefined = await window.showQuickPick(projectPicks, {
 			matchOnDetail: true,
-			placeHolder: "Select the project to update.",
+			placeHolder: "Please select the project(s) to update.",
 			ignoreFocusOut: true,
 			canPickMany: true,
 		});
