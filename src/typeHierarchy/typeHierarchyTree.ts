@@ -23,7 +23,11 @@ export class TypeHierarchyTree {
 	}
 
 	public async initialize() {
-		this.api = await vscode.extensions.getExtension<SymbolTree>('ms-vscode.references-view').activate();
+		// It uses a new publisher id in June 2022 Update, check both old/new id for compatibility
+		// See https://github.com/microsoft/vscode/pull/152213
+		const referencesViewExt = vscode.extensions.getExtension<SymbolTree>('vscode.references-view')
+			?? vscode.extensions.getExtension<SymbolTree>('ms-vscode.references-view');
+		this.api = await referencesViewExt?.activate();
 		this.client = await getActiveLanguageClient();
 		this.initialized = true;
 	}
