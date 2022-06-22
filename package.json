@@ -924,19 +924,21 @@
       },
       {
         "command": "java.open.serverLog",
-        "when": "false"
+        "title": "%java.open.serverLog%",
+        "category": "Java"
       },
       {
         "command": "java.open.serverStdoutLog",
-        "when": "false"
+        "title": "%java.open.serverStdoutLog%"
       },
       {
         "command": "java.open.serverStderrLog",
-        "when": "false"
+        "title": "%java.open.serverStderrLog%"
       },
       {
         "command": "java.open.clientLog",
-        "when": "false"
+        "title": "%java.open.clientLog%",
+        "category": "Java"
       },
       {
         "command": "java.open.logs",
@@ -1085,6 +1087,14 @@
         {
           "command": "java.project.import.command",
           "when": "javaLSReady"
+        },
+        {
+          "command": "java.open.serverStdoutLog",
+          "when": "false"
+        },
+        {
+          "command": "java.open.serverStderrLog",
+          "when": "false"
         },
         {
           "command": "java.action.navigateToSuperImplementation",
