@@ -116,6 +116,11 @@ export namespace ClassFileContentsRequest {
 
 export namespace ProjectConfigurationUpdateRequest {
     export const type = new NotificationType<TextDocumentIdentifier> ('java/projectConfigurationUpdate');
+    export const typeV2 = new NotificationType<ProjectConfigurationsUpdateParam> ('java/projectConfigurationsUpdate');
+}
+
+export interface ProjectConfigurationsUpdateParam {
+    identifiers: TextDocumentIdentifier[];
 }
 
 export namespace ActionableNotification {
