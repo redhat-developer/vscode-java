@@ -4,6 +4,7 @@
 	"java.project.import": "Import Java Projects into Workspace",
 	"java.open.logs": "Open All Log Files",
 	"java.workspace.compile": "Force Java Compilation",
+	"java.project.build": "Rebuild Projects",
 	"java.open.formatter.settings": "Open Java Formatter Settings",
 	"java.clean.workspace": "Clean Java Language Server Workspace",
 	"java.project.updateSourceAttachment": "Attach Source",

@@ -949,6 +949,11 @@
         "category": "Java"
       },
       {
+        "command": "java.project.build",
+        "title": "%java.project.build%",
+        "category": "Java"
+      },
+      {
         "command": "java.open.formatter.settings",
         "title": "%java.open.formatter.settings%",
         "category": "Java"
@@ -1092,6 +1097,10 @@
         },
         {
           "command": "java.workspace.compile",
+          "when": "javaLSReady"
+        },
+        {
+          "command": "java.project.build",
           "when": "javaLSReady"
         },
         {

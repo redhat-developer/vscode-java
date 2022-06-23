@@ -135,6 +135,15 @@ export namespace CompileWorkspaceRequest {
     export const type = new RequestType<boolean, CompileWorkspaceStatus, void>('java/buildWorkspace');
 }
 
+export namespace BuildProjectRequest {
+    export const type = new RequestType<BuildProjectParams, CompileWorkspaceStatus, void>('java/buildProjects');
+}
+
+export interface BuildProjectParams {
+    identifiers: TextDocumentIdentifier[];
+    isFullBuild: boolean;
+}
+
 export namespace ExecuteClientCommandRequest {
     export const type = new RequestType<ExecuteCommandParams, any, void>('workspace/executeClientCommand');
 }

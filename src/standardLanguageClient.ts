@@ -1,13 +1,13 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position, QuickPickItem } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position, QuickPickItem, QuickPickItemKind } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
 import { getJavaConfig, applyWorkspaceEdit } from "./extension";
 import { LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams, ConfigurationRequest, ConfigurationParams } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
-import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo, UpgradeGradleWrapperInfo } from "./protocol";
+import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo, UpgradeGradleWrapperInfo, BuildProjectRequest, BuildProjectParams } from "./protocol";
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange, collectBuildFilePattern } from "./plugin";
 import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
@@ -395,6 +395,54 @@ export class StandardLanguageClient {
 				typeHierarchyTree.changeBaseItem(item);
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.REBUILD_PROJECT, async (uris: Uri[], isFullBuild: boolean, token: CancellationToken) => {
+				if (!uris?.length) {
+					uris = await askForProjects(
+						window.activeTextEditor?.document.uri,
+						"Please select the project(s) to rebuild.",
+					);
+					if (!uris?.length) {
+						return;
+					}
+				}
+				const params: BuildProjectParams = {
+					identifiers: uris.map((u => {
+						return { uri: u.toString() };
+					})),
+					// we can consider expose 'isFullBuild' according to users' feedback,
+					// currently set it to true by default.
+					isFullBuild: isFullBuild === undefined ? true : isFullBuild,
+				};
+
+				return window.withProgress({ location: ProgressLocation.Window }, async p => {
+					p.report({ message: 'Rebuilding projects...' });
+					return new Promise(async (resolve, reject) => {
+						const start = new Date().getTime();
+
+						let res: CompileWorkspaceStatus;
+						try {
+							res = token ? await this.languageClient.sendRequest(BuildProjectRequest.type, params, token) :
+								await this.languageClient.sendRequest(BuildProjectRequest.type, params);
+						} catch (error) {
+							if (error && error.code === -32800) { // Check if the request is cancelled.
+								res = CompileWorkspaceStatus.CANCELLED;
+							}
+							reject(error);
+						}
+	
+						const elapsed = new Date().getTime() - start;
+						const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
+						setTimeout(() => { // set a timeout so user would still see the message when build time is short
+							if (res === CompileWorkspaceStatus.SUCCEED) {
+								resolve(res);
+							} else {
+								reject(res);
+							}
+						}, humanVisibleDelay);
+					});
+				});
+			}));
+
 			context.subscriptions.push(commands.registerCommand(Commands.COMPILE_WORKSPACE, (isFullCompile: boolean, token?: CancellationToken) => {
 				return window.withProgress({ location: ProgressLocation.Window }, async p => {
 					if (typeof isFullCompile !== 'boolean') {
@@ -588,7 +636,13 @@ function setIncompleteClasspathSeverity(severity: string) {
 async function projectConfigurationUpdate(languageClient: LanguageClient, uris?: Uri | Uri[]) {
 	let resources = [];
 	if (!uris) {
-		resources = await askForProjectToUpdate();
+		const activeFileUri: Uri | undefined = window.activeTextEditor?.document.uri;
+
+		if (activeFileUri && isJavaConfigFile(activeFileUri.fsPath)) {
+			resources = [activeFileUri];
+		} else {
+			resources = await askForProjects(activeFileUri, "Please select the project(s) to update.");
+		}
 	} else if (uris instanceof Uri) {
 		resources.push(uris);
 	} else if (Array.isArray(uris)) {
@@ -611,21 +665,44 @@ async function projectConfigurationUpdate(languageClient: LanguageClient, uris?:
 	}
 }
 
-async function askForProjectToUpdate(): Promise<Uri[]> {
-	let uriCandidate: Uri;
-	if (window.activeTextEditor) {
-		uriCandidate = window.activeTextEditor.document.uri;
+/**
+ * Ask user to select projects and return the selected projects' uris.
+ * @param activeFileUri the uri of the active file.
+ * @param placeHolder message to be shown in quick pick.
+ */
+async function askForProjects(activeFileUri: Uri | undefined, placeHolder: string): Promise<Uri[]> {
+	const projectPicks: QuickPickItem[] = await generateProjectPicks(activeFileUri);
+	if (!projectPicks?.length) {
+		return [];
+	} else if (projectPicks.length === 1) {
+		return [Uri.file(projectPicks[0].detail)];
+	} else {
+		const choices: QuickPickItem[] | undefined = await window.showQuickPick(projectPicks, {
+			matchOnDetail: true,
+			placeHolder: placeHolder,
+			ignoreFocusOut: true,
+			canPickMany: true,
+		});
+
+		if (choices?.length) {
+			return choices.map(c => Uri.file(c.detail));
+		}
 	}
 
-	if (uriCandidate && isJavaConfigFile(uriCandidate.fsPath)) {
-		return [uriCandidate];
-	}
+	return [];
+}
 
+/**
+ * Generate the quick picks for projects selection. An `undefined` value will be return if
+ * it's failed to generate picks.
+ * @param activeFileUri the uri of the active document.
+ */
+async function generateProjectPicks(activeFileUri: Uri | undefined): Promise<QuickPickItem[] | undefined> {
 	let projectUriStrings: string[];
 	try {
 		projectUriStrings = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
 	} catch (e) {
-		return uriCandidate ? [uriCandidate] : [];
+		return undefined;
 	}
 
 	const projectPicks: QuickPickItem[] = projectUriStrings.map(uriString => {
@@ -640,40 +717,24 @@ async function askForProjectToUpdate(): Promise<Uri[]> {
 		};
 	}).filter(Boolean);
 
-	if (projectPicks.length === 0) {
-		return [];
-	} else if (projectPicks.length === 1) {
-		return [Uri.file(projectPicks[0].detail)];
-	} else {
-		// pre-select an active project based on the uri candidate.
-		if (uriCandidate) {
-			const candidatePath = uriCandidate.fsPath;
-			let belongingIndex = -1;
-			for (let i = 0; i < projectPicks.length; i++) {
-				if (candidatePath.startsWith(projectPicks[i].detail)) {
-					if (belongingIndex < 0
-							|| projectPicks[i].detail.length > projectPicks[belongingIndex].detail.length) {
-						belongingIndex = i;
-					}
+	// pre-select an active project based on the uri candidate.
+	if (activeFileUri && activeFileUri.scheme === "file") {
+		const candidatePath = activeFileUri.fsPath;
+		let belongingIndex = -1;
+		for (let i = 0; i < projectPicks.length; i++) {
+			if (candidatePath.startsWith(projectPicks[i].detail)) {
+				if (belongingIndex < 0
+						|| projectPicks[i].detail.length > projectPicks[belongingIndex].detail.length) {
+					belongingIndex = i;
 				}
 			}
-			if (belongingIndex >= 0) {
-				projectPicks[belongingIndex].picked = true;
-			}
 		}
-
-		const choices: QuickPickItem[] | undefined = await window.showQuickPick(projectPicks, {
-			matchOnDetail: true,
-			placeHolder: "Please select the project(s) to update.",
-			ignoreFocusOut: true,
-			canPickMany: true,
-		});
-		if (choices && choices.length) {
-			return choices.map(c => Uri.file(c.detail));
+		if (belongingIndex >= 0) {
+			projectPicks[belongingIndex].picked = true;
 		}
 	}
 
-	return [];
+	return projectPicks;
 }
 
 function isJavaConfigFile(filePath: string) {
