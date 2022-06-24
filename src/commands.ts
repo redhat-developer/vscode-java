@@ -40,7 +40,7 @@ export namespace Commands {
     export const MARKDOWN_API_RENDER = 'markdown.api.render';
 
     /**
-     * Update project configuration
+     * Reload project
      */
     export const CONFIGURATION_UPDATE = 'java.projectConfiguration.update';
 

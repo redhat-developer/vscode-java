@@ -42,7 +42,7 @@ Some Maven projects use 3rd party Maven plugins to generate sources or resources
 
 For example, add [a processing instruction in the pom.xml](https://www.eclipse.org/m2e/documentation/release-notes-17.html#new-syntax-for-specifying-lifecycle-mapping-metadata) like `<?m2e execute onConfiguration?>` to execute it on every project configuration update.
 
-You can use quick fixes to generate the inline lifecycle mapping in pom.xml, or manually configure it in pom.xml. If it's yourself that manually configure it, you have to let VS Code update the project configuration as well. The command is `"Java: Update Project"`.
+You can use quick fixes to generate the inline lifecycle mapping in pom.xml, or manually configure it in pom.xml. If it's yourself that manually configure it, you have to let VS Code update the project configuration as well. The command is `"Java: Reload Project"`.
 
 ```xml
 <project>
