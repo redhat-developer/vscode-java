@@ -14,13 +14,13 @@ jobs:
       - name: Set Up NodeJS
         uses: actions/setup-node@v2
         with:
-          node-version: '12.22.1'
+          node-version: '14'
       - name: Set Up Java
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'adopt'
-      - run: npm install -g typescript "vsce@<2"
+      - run: npm install -g typescript "vsce"
       - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
       - run: mkdir server && tar -xvzf jdt-language-server-latest.tar.gz -C ./server && rm jdt-language-server-latest.tar.gz
       - run: npm install
