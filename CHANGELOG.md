@@ -1,5 +1,30 @@
 # Change Log
 
+## 1.8.0 (June 30th, 2022)
+ * enhancement - Improve the Lombok support. See [#2519](https://github.com/redhat-developer/vscode-java/pull/2519).
+ * enhancement - Show `Add javadoc for` in quick assists. See [JLS#2133](https://github.com/eclipse/eclipse.jdt.ls/pull/2133).
+ * enhancement - Show `Change modifiers to final` in quick assists. See [JLS#2134](https://github.com/eclipse/eclipse.jdt.ls/pull/2134).
+ * enhancement - Support project reload selection. See [#2513](https://github.com/redhat-developer/vscode-java/pull/2513).
+ * enhancement - Auto-select field when generating constructors. See [#2125](https://github.com/redhat-developer/vscode-java/pull/2508).
+ * enhancement - Allow to build selected projects. See [#2526](https://github.com/redhat-developer/vscode-java/pull/2526).
+ * enhancement - Support multiple selections for generate accessors. See [JLS#2136](https://github.com/eclipse/eclipse.jdt.ls/pull/2136).
+ * bug fix - Fix NPE when triggering signature help in class file. See [JLS#2102](https://github.com/eclipse/eclipse.jdt.ls/issues/2102).
+ * bug fix - Support for renaming record attributes. See [#2433](https://github.com/redhat-developer/vscode-java/issues/2433).
+ * bug fix - Add logback tracing to JDT-LS. See [JLS#2108](https://github.com/eclipse/eclipse.jdt.ls/issues/2108).
+ * bug fix - `Open All Log Files` should also include the standard output/error log files. See [#2367](https://github.com/redhat-developer/vscode-java/issues/2367).
+ * bug fix - Verify that `java.jdt.ls.java.home` meets minimum JRE requirement. See [#2512](https://github.com/redhat-developer/vscode-java/pull/2512).
+ * bug fix - Avoid repeatedly setting busy and ready for language server status. See [#2494](https://github.com/redhat-developer/vscode-java/pull/2494).
+ * bug fix - Fix ParentProcessWatcher on macOS. See [#2488](https://github.com/redhat-developer/vscode-java/issues/2488).
+ * bug fix - Change the order for configuration updating options. See [JLS#2135](https://github.com/eclipse/eclipse.jdt.ls/pull/2135).
+ * bug fix - Show Type Hierarchy breaks in vscode-insiders. See [#2524](https://github.com/redhat-developer/vscode-java/issues/2524).
+ * bug fix - TypeError: Cannot read properties of undefined (reading 'stop'). See [#2503](https://github.com/redhat-developer/vscode-java/issues/2503).
+ * build - Move to Java 17. See [#2495](https://github.com/redhat-developer/vscode-java/pull/2495).
+ * debt - GitHub Actions job should use Node.js 14. See [#2532](https://github.com/redhat-developer/vscode-java/pull/2532).
+ * other - Adjust the order of code actions. See [JLS#2109](https://github.com/eclipse/eclipse.jdt.ls/pull/2109).
+ * other - Add DCO documentation. See [#2521](https://github.com/redhat-developer/vscode-java/pull/2521).
+ * other - Allow to clean workspace without pop-up notification. See [#2514](https://github.com/redhat-developer/vscode-java/pull/2514).
+
+
 ## 1.7.0 (June 1st, 2022)
  * enhancment - Support separate "Generate Getters" and "Generate Setters". See [#2362](https://github.com/redhat-developer/vscode-java/issues/2362).
  * enhancement - Show field type when generating accessors. See [#2459](https://github.com/redhat-developer/vscode-java/pull/2459).
