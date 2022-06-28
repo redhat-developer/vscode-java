@@ -192,6 +192,7 @@ export interface VariableBinding {
     name: string;
     type: string;
     isField: boolean;
+    isSelected?: boolean;
 }
 
 export interface CheckHashCodeEqualsResponse {

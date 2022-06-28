@@ -298,6 +298,7 @@ function registerGenerateConstructorsCommand(languageClient: LanguageClient, con
                 return {
                     label: `${field.name}: ${field.type}`,
                     originalField: field,
+                    picked: field.isSelected
                 };
             });
             const selectedFieldItems = await window.showQuickPick(fieldItems, {
