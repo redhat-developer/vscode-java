@@ -36,7 +36,7 @@ import { findRuntimes, IJavaRuntime } from "jdk-utils";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
-import { checkLombokDependency, enableLombokSupport } from "./lombokSupport";
+import { checkLombokDependency, isLombokSupportEnabled } from "./lombokSupport";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -115,7 +115,7 @@ export class StandardLanguageClient {
 						if (!hasImported) {
 							showImportFinishNotification(context);
 						}
-						if (enableLombokSupport()) {
+						if (isLombokSupportEnabled()) {
 							checkLombokDependency(context);
 							apiManager.getApiInstance().onDidClasspathUpdate((e: Uri) => {
 								checkLombokDependency(context);

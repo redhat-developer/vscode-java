@@ -1,16 +1,16 @@
 'use strict';
 
 import * as fse from "fs-extra";
+import * as path from "path";
 import * as vscode from "vscode";
-import { ExtensionContext, window, commands, Uri, Position, Location, Selection } from "vscode";
+import { ExtensionContext, window, commands, Uri, Position, Location, Selection, env } from "vscode";
 import { Commands } from "./commands";
 import { apiManager } from "./apiManager";
 import { supportsLanguageStatus } from "./languageStatusItemFactory";
 import htmlparser2 = require("htmlparser2");
+import { CodeLensResolveRequest } from "vscode-languageclient";
 
-export const JAVA_LOMBOK_VERSION = "java.lombokVersion";
-
-export const JAVA_LOMBOK_IMPORTED = "java.importLombok";
+export const JAVA_ACTIVE_LOMBOK_PATH = "java.activeLombokPath";
 
 export const JAVA_LOMBOK_PATH = "java.lombokPath";
 
@@ -23,41 +23,48 @@ const languageServerDocumentSelector = [
 	{ pattern: '**/{build,settings}.gradle.kts'}
 ];
 
-let hasLombokChangeVersionCommand: boolean = false;
+let isLombokCommandInitialized: boolean = false;
 const lombokSupportEnable: boolean = vscode.workspace.getConfiguration().get("java.jdt.ls.lombokSupport.enabled");
 
-export function enableLombokSupport(): boolean {
+export function isLombokSupportEnabled(): boolean {
 	return lombokSupportEnable;
 }
 
-export function importedLombok(context: ExtensionContext): boolean {
-	return context.workspaceState.get(JAVA_LOMBOK_IMPORTED);
+export function isLombokImported(context: ExtensionContext): boolean {
+	return context.workspaceState.get(JAVA_LOMBOK_PATH)!==undefined;
+}
+
+export function cleanupLombokCache(context: ExtensionContext): boolean {
+	const result = isLombokImported(context);
+	context.workspaceState.update(JAVA_LOMBOK_PATH, undefined);
+	context.workspaceState.update(JAVA_ACTIVE_LOMBOK_PATH, undefined);
+	return result;
 }
 
 export function getLombokVersion(context: ExtensionContext): string {
 	const reg = /lombok-.*\.jar/;
-	const lombokVersion = reg.exec(context.workspaceState.get(JAVA_LOMBOK_VERSION))[0].split('.jar')[0];
+	const lombokVersion = reg.exec(context.workspaceState.get(JAVA_ACTIVE_LOMBOK_PATH))[0].split('.jar')[0];
 	return lombokVersion;
 }
 
 export function addLombokParam(context: ExtensionContext, params: string[]) {
-	context.workspaceState.update(JAVA_LOMBOK_VERSION, "");
-	if (context.workspaceState.get(JAVA_LOMBOK_IMPORTED)===true) {
+	context.workspaceState.update(JAVA_ACTIVE_LOMBOK_PATH, "");
+	if (isLombokImported(context)) {
 		// Exclude user setting lombok agent parameter
-		const reg = /[\\|/]lombok.*\.jar/;
+		const reg = /-javaagent:[\s\S]*?[\\|/]lombok.*\.jar/;
 	    const deleteIndex = [];
 		for (let i = 0; i<params.length; i++) {
 			if (reg.test(params[i])) {
 				deleteIndex.push(i);
 			}
 		}
-		for (const index of deleteIndex) {
-			params.splice(index, 1);
+		for (let i = deleteIndex.length - 1; i>=0; i--) {
+			params.splice(deleteIndex[i], 1);
 		}
 		// add -javaagent arg to support lombok
 		const lombokAgentParam = '-javaagent:' + context.workspaceState.get(JAVA_LOMBOK_PATH);
 		params.push(lombokAgentParam);
-		context.workspaceState.update(JAVA_LOMBOK_VERSION, context.workspaceState.get(JAVA_LOMBOK_PATH));
+		context.workspaceState.update(JAVA_ACTIVE_LOMBOK_PATH, context.workspaceState.get(JAVA_LOMBOK_PATH));
 	}
 }
 
@@ -74,7 +81,7 @@ export async function checkLombokDependency(context: ExtensionContext) {
 		for (const classpath of classpathResult.classpaths) {
 			if (reg.test(classpath)) {
 				currentLombokClasspath = classpath;
-				if (context.workspaceState.get(JAVA_LOMBOK_IMPORTED)===true) {
+				if (isLombokImported(context)) {
 					currentLombokVersion = reg.exec(classpath)[0];
 					previousLombokVersion = reg.exec(context.workspaceState.get(JAVA_LOMBOK_PATH))[0];
 					if (currentLombokVersion!==previousLombokVersion) {
@@ -85,6 +92,7 @@ export async function checkLombokDependency(context: ExtensionContext) {
 				}
 				else {
 					needReload = true;
+					context.workspaceState.update(JAVA_LOMBOK_PATH, currentLombokClasspath);
 				}
 				break;
 			}
@@ -96,8 +104,8 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	if (needReload) {
 		if (versionChange) {
 			const msg = `Lombok version changed from ${previousLombokVersion.split('.jar')[0].split('-')[1]} to ${currentLombokVersion.split('.jar')[0].split('-')[1]} \
-								. Do you want to reload the vscode for new version Lombok support?`;
-			const action = 'Reload';
+							. Do you want to reload the window to load the new lombok version?`;
+			const action = 'Reload Now';
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showInformationMessage(msg, action).then((selection) => {
 				if (action === selection) {
@@ -106,14 +114,12 @@ export async function checkLombokDependency(context: ExtensionContext) {
 			});
 		}
 		else {
-			const msg = `Do you want to reload the vscode for Lombok support?`;
-			const action = 'Reload';
+			const msg = `Lombok is detected in your project, please reload the window to enable lombok support.`;
+			const action = 'Reload Now';
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showInformationMessage(msg, action).then((selection) => {
 				if (action === selection) {
 					// Before user selects "Reload", we do not save lombok agent path into the workspace cache.
-					context.workspaceState.update(JAVA_LOMBOK_IMPORTED, true);
-					context.workspaceState.update(JAVA_LOMBOK_PATH, currentLombokClasspath);
 					commands.executeCommand(restartId);
 				}
 			});
@@ -122,7 +128,6 @@ export async function checkLombokDependency(context: ExtensionContext) {
 }
 
 async function getParentBuildFilePath(buildFilePath: string, relativePath: string) {
-	const path = require('path');
 	const parentBuildFilePath = path.join(path.dirname(buildFilePath), relativePath, path.basename(buildFilePath));
 	if (await fse.pathExists(parentBuildFilePath)) {
 		return parentBuildFilePath;
@@ -130,15 +135,14 @@ async function getParentBuildFilePath(buildFilePath: string, relativePath: strin
 	return undefined;
 }
 
-export function addLombokChangeVersionCommand(context: ExtensionContext) {
-	if (hasLombokChangeVersionCommand) {
+export function registerLombokConfigureCommand(context: ExtensionContext) {
+	if (isLombokCommandInitialized) {
 		return;
 	}
 	context.subscriptions.push(commands.registerCommand(Commands.LOMBOK_CONFIGURE, async (buildFilePath: string) => {
 		if (isMavenProject(buildFilePath)) {
 			let pos = 0;
 			while (true) {
-				console.log(buildFilePath);
 				const document = await vscode.workspace.openTextDocument(Uri.file(buildFilePath));
 				const fullText = document.getText();
 				let tagList: [string, number][] = [];
@@ -158,7 +162,7 @@ export function addLombokChangeVersionCommand(context: ExtensionContext) {
 						}
 					},
 					ontext(text) {
-						if (tagList.length>0) {
+						if (tagList.length) {
 							tagList.push([text, parser.startIndex]);
 						}
 						if (getRelativePath) {
@@ -210,30 +214,42 @@ export function addLombokChangeVersionCommand(context: ExtensionContext) {
 			if (buildFilePath) {
 				await commands.executeCommand(Commands.OPEN_BROWSER, Uri.file(buildFilePath));
 				if (pos>0) {
-					gotoLombokConfigure(pos, buildFilePath);
+					gotoLombokLocation(pos, buildFilePath);
 				}
 			}
 		}
 		else if (isGradleProject(buildFilePath)) {
-			const document = await vscode.workspace.openTextDocument(Uri.file(buildFilePath));
-			const fullText = document.getText();
-			const deleteCommentReg = /\/\/.*|(\/\*[\s\S]*?\*\/)/g;
-			const content = fullText.replace(deleteCommentReg, (match) => {
-				let newString = '';
-				for (const letter of match) {
-					newString += '@';
+			while (true) {
+				const document = await vscode.workspace.openTextDocument(Uri.file(buildFilePath));
+				const fullText = document.getText();
+				const deleteCommentReg = /\/\/.*|(\/\*[\s\S]*?\*\/)/g;
+				const content = fullText.replace(deleteCommentReg, (match) => {
+					let newString = '';
+					for (const letter of match) {
+						newString += '@';
+					}
+					return newString;
+				});
+				const lombokReg = /org.projectlombok/;
+				const result = lombokReg.exec(content);
+				if (result) {
+					const pos = result.index;
+					await commands.executeCommand(Commands.OPEN_BROWSER, Uri.file(buildFilePath));
+					gotoLombokLocation(pos, buildFilePath);
+					break;
 				}
-				return newString;
-			});
-			const lombokReg = /org.projectlombok/;
-			const result = lombokReg.exec(content);
-			if (result) {
-				const pos = result.index;
-				gotoLombokConfigure(pos, buildFilePath);
+				else {
+					const currentBuildFilePath = buildFilePath;
+					buildFilePath = await getParentBuildFilePath(buildFilePath, "..");
+					if (buildFilePath===undefined) {
+						await commands.executeCommand(Commands.OPEN_BROWSER, Uri.file(currentBuildFilePath));
+						break;
+					}
+				}
 			}
 		}
 	}));
-	hasLombokChangeVersionCommand = true;
+	isLombokCommandInitialized = true;
 }
 
 export namespace LombokVersionItemFactory {
@@ -269,7 +285,7 @@ export namespace LombokVersionItemFactory {
 	}
 }
 
-function gotoLombokConfigure(position: number, buildFilePath: string): void {
+function gotoLombokLocation(position: number, buildFilePath: string): void {
 	const newPosition = window.activeTextEditor.document.positionAt(position);
 	const newSelection = new Selection(newPosition, newPosition);
 	window.activeTextEditor.selection = newSelection;

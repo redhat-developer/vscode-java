@@ -10,7 +10,7 @@ import { getJavaEncoding, IS_WORKSPACE_VMARGS_ALLOWED, getKey, getJavaagentFlag,
 import { logger } from './log';
 import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } from './utils';
 import { workspace, ExtensionContext, window } from 'vscode';
-import { addLombokParam, enableLombokSupport } from './lombokSupport';
+import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
@@ -114,7 +114,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 
 	parseVMargs(params, vmargs);
 
-	if (enableLombokSupport()) {
+	if (isLombokSupportEnabled()) {
 		addLombokParam(context, params);
 	}
 

@@ -382,7 +382,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.GET_WORKSPACE_PATH, () => workspacePath));
 
-			context.subscriptions.push(onConfigurationChange(workspacePath));
+			context.subscriptions.push(onConfigurationChange(workspacePath, context));
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
