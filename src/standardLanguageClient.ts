@@ -395,18 +395,30 @@ export class StandardLanguageClient {
 				typeHierarchyTree.changeBaseItem(item);
 			}));
 
-			context.subscriptions.push(commands.registerCommand(Commands.REBUILD_PROJECT, async (uris: Uri[], isFullBuild: boolean, token: CancellationToken) => {
-				if (!uris?.length) {
-					uris = await askForProjects(
+			context.subscriptions.push(commands.registerCommand(Commands.BUILD_PROJECT, async (uris: Uri[] | Uri, isFullBuild: boolean, token: CancellationToken) => {
+				let resources: Uri[] = [];
+				if (uris instanceof Uri) {
+					resources.push(uris);
+				} else if (Array.isArray(uris)) {
+					for (const uri of uris) {
+						if (uri instanceof Uri) {
+							resources.push(uri);
+						}
+					}
+				}
+
+				if (!resources.length) {
+					resources = await askForProjects(
 						window.activeTextEditor?.document.uri,
 						"Please select the project(s) to rebuild.",
 					);
-					if (!uris?.length) {
+					if (!resources?.length) {
 						return;
 					}
 				}
+
 				const params: BuildProjectParams = {
-					identifiers: uris.map((u => {
+					identifiers: resources.map((u => {
 						return { uri: u.toString() };
 					})),
 					// we can consider expose 'isFullBuild' according to users' feedback,
@@ -718,7 +730,7 @@ async function generateProjectPicks(activeFileUri: Uri | undefined): Promise<Qui
 	}).filter(Boolean);
 
 	// pre-select an active project based on the uri candidate.
-	if (activeFileUri && activeFileUri.scheme === "file") {
+	if (activeFileUri?.scheme === "file") {
 		const candidatePath = activeFileUri.fsPath;
 		let belongingIndex = -1;
 		for (let i = 0; i < projectPicks.length; i++) {

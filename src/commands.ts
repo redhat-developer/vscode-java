@@ -82,7 +82,7 @@ export namespace Commands {
     /**
      * Execute build for projects
      */
-    export const REBUILD_PROJECT = 'java.project.build';
+    export const BUILD_PROJECT = 'java.project.build';
 
     /**
     * Open Java Language Server Log file
