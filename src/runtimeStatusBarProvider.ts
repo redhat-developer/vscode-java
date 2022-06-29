@@ -11,11 +11,13 @@ import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
 import { getJavaConfiguration } from "./utils";
 import { hasBuildToolConflicts } from "./extension";
+import { registerLombokConfigureCommand, LombokVersionItemFactory, getLombokVersion, isLombokActive } from "./lombokSupport";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
 	private runtimeStatusItem: any;
 	private buildFileStatusItem: any;
+	private lombokVersionItem: any;
 	private javaProjects: Map<string, IProjectInfo>;
 	private fileProjectMapping: Map<string, string>;
 	private storagePath: string | undefined;
@@ -96,10 +98,16 @@ class RuntimeStatusBarProvider implements Disposable {
 		this.buildFileStatusItem = undefined;
 	}
 
+	private hideLombokVersionItem(): void {
+		this.lombokVersionItem?.dispose();
+		this.lombokVersionItem = undefined;
+	}
+
 	public dispose(): void {
 		this.statusBarItem?.dispose();
 		this.runtimeStatusItem?.dispose();
 		this.buildFileStatusItem?.dispose();
+		this.lombokVersionItem?.dispose();
 		for (const disposable of this.disposables) {
 			disposable.dispose();
 		}
@@ -166,12 +174,17 @@ class RuntimeStatusBarProvider implements Disposable {
 			return;
 		}
 
+		if (isLombokActive(context)) {
+			registerLombokConfigureCommand(context);
+		}
+
 		const uri: Uri = textEditor.document.uri;
 		const projectPath: string = this.findOwnerProject(uri);
 		if (!projectPath) {
 			if (supportsLanguageStatus()) {
 				this.hideRuntimeStatusItem();
 				this.hideBuildFileStatusItem();
+				this.hideLombokVersionItem();
 			} else {
 				this.statusBarItem?.hide();
 			}
@@ -183,6 +196,7 @@ class RuntimeStatusBarProvider implements Disposable {
 			if (supportsLanguageStatus()) {
 				this.hideRuntimeStatusItem();
 				this.hideBuildFileStatusItem();
+				this.hideLombokVersionItem();
 			} else {
 				this.statusBarItem?.hide();
 			}
@@ -197,10 +211,16 @@ class RuntimeStatusBarProvider implements Disposable {
 				if (buildFilePath) {
 					this.buildFileStatusItem = BuildFileStatusItemFactory.create(buildFilePath);
 				}
+				if (isLombokActive(context)) {
+					this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion(context), buildFilePath);
+				}
 			} else {
 				RuntimeStatusItemFactory.update(this.runtimeStatusItem, text, projectInfo.vmInstallPath);
 				if (buildFilePath) {
 					BuildFileStatusItemFactory.update(this.buildFileStatusItem, buildFilePath);
+				}
+				if (isLombokActive(context)) {
+					LombokVersionItemFactory.update(this.lombokVersionItem, getLombokVersion(context), buildFilePath);
 				}
 			}
 		} else {

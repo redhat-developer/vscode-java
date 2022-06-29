@@ -6,6 +6,8 @@ import { window, Uri, workspace, WorkspaceConfiguration, commands, Configuration
 import { Commands } from './commands';
 import { cleanWorkspaceFileName } from './extension';
 import { ensureExists, getJavaConfiguration } from './utils';
+import { checkLombokDependency, cleanupLombokCache } from './lombokSupport';
+import { CodeLensResolveRequest } from 'vscode-languageclient';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -26,7 +28,7 @@ export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // ja
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 const gradleWrapperPromptDialogs = [];
 
-export function onConfigurationChange(workspacePath: string) {
+export function onConfigurationChange(workspacePath: string, context: ExtensionContext) {
 	return workspace.onDidChangeConfiguration(params => {
 		if (!params.affectsConfiguration('java')) {
 			return;
@@ -52,6 +54,23 @@ export function onConfigurationChange(workspacePath: string) {
 					commands.executeCommand(restartId);
 				}
 			});
+		}
+		if (hasConfigKeyChanged('jdt.ls.lombokSupport.enabled', oldConfig, newConfig)) {
+			if (newConfig.get("jdt.ls.lombokSupport.enabled")) {
+				checkLombokDependency(context);
+			}
+			else {
+				if (cleanupLombokCache(context)) {
+					const msg = `Lombok support is disabled, please restart ${env.appName}.`;
+					const action = 'Restart Now';
+					const restartId = Commands.RELOAD_WINDOW;
+					window.showWarningMessage(msg, action).then((selection) => {
+						if (action === selection) {
+							commands.executeCommand(restartId);
+						}
+					});
+				}
+			}
 		}
 		// update old config
 		oldConfig = newConfig;
