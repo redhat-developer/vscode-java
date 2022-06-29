@@ -445,11 +445,7 @@ export class StandardLanguageClient {
 						const elapsed = new Date().getTime() - start;
 						const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
 						setTimeout(() => { // set a timeout so user would still see the message when build time is short
-							if (res === CompileWorkspaceStatus.SUCCEED) {
-								resolve(res);
-							} else {
-								reject(res);
-							}
+							resolve(res);
 						}, humanVisibleDelay);
 					});
 				});
