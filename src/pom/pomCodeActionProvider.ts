@@ -26,9 +26,9 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 			if (diagnostic.message?.startsWith("Plugin execution not covered by lifecycle configuration")) {
 				const indentation = this.getNewTextIndentation(document, diagnostic);
 				const saveAndUpdateConfigCommand: Command = {
-					title: "Save and update project configuration",
+					title: "Save and reload project",
 					command: "_java.projectConfiguration.saveAndUpdate",
-					arguments: [ document.uri ],
+					arguments: [document.uri],
 				};
 
 				const action1 = new CodeAction("Enable this execution in project configuration phase", CodeActionKind.QuickFix.append("pom"));

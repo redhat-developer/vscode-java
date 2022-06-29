@@ -1,6 +1,6 @@
 {
 	"java.server.mode.switch": "切换到标准模式",
-	"java.projectConfiguration.update": "更新项目",
+	"java.projectConfiguration.update": "重新加载项目",
 	"java.project.import": "将 Java 项目导入工作区",
 	"java.open.serverLog": "打开 Java 语言服务器日志文件",
 	"java.open.serverStdoutLog": "打开 Java 语言服务器输出日志文件",

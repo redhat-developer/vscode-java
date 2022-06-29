@@ -1,6 +1,6 @@
 {
 	"java.server.mode.switch": "Switch to Standard Mode",
-	"java.projectConfiguration.update": "Update Project",
+	"java.projectConfiguration.update": "Reload Project",
 	"java.project.import": "Import Java Projects into Workspace",
 	"java.open.serverLog": "Open Java Language Server Log File",
 	"java.open.serverStdoutLog": "Open Java Language Server Output Log File",
