@@ -8,7 +8,6 @@ import { Commands } from "./commands";
 import { apiManager } from "./apiManager";
 import { supportsLanguageStatus } from "./languageStatusItemFactory";
 import htmlparser2 = require("htmlparser2");
-import { CodeLensResolveRequest } from "vscode-languageclient";
 
 export const JAVA_LOMBOK_PATH = "java.lombokPath";
 
@@ -281,12 +280,11 @@ export namespace LombokVersionItemFactory {
 	}
 
 	function getLombokChangeCommand(buildFilePath: string): vscode.Command {
-		const relativePath = vscode.workspace.asRelativePath(buildFilePath);
 		return {
-			title: `Configure Lombok Version`,
+			title: `Configure Version`,
 			command: Commands.LOMBOK_CONFIGURE,
 			arguments: [buildFilePath],
-			tooltip: `Open ${relativePath}`
+			tooltip: `Configure Lombok Version`
 		};
 	}
 }
