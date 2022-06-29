@@ -61,7 +61,7 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 			}
 			else {
 				if (cleanupLombokCache(context)) {
-					const msg = `Lombok Support is disable, please restart ${env.appName}.`;
+					const msg = `Lombok support is disabled, please restart ${env.appName}.`;
 					const action = 'Restart Now';
 					const restartId = Commands.RELOAD_WINDOW;
 					window.showWarningMessage(msg, action).then((selection) => {

@@ -10,8 +10,6 @@ import { supportsLanguageStatus } from "./languageStatusItemFactory";
 import htmlparser2 = require("htmlparser2");
 import { CodeLensResolveRequest } from "vscode-languageclient";
 
-export const JAVA_ACTIVE_LOMBOK_PATH = "java.activeLombokPath";
-
 export const JAVA_LOMBOK_PATH = "java.lombokPath";
 
 const languageServerDocumentSelector = [
@@ -23,35 +21,41 @@ const languageServerDocumentSelector = [
 	{ pattern: '**/{build,settings}.gradle.kts'}
 ];
 
+let activeLombokPath: string = undefined;
 let isLombokCommandInitialized: boolean = false;
-const lombokSupportEnable: boolean = vscode.workspace.getConfiguration().get("java.jdt.ls.lombokSupport.enabled");
 
 export function isLombokSupportEnabled(): boolean {
-	return lombokSupportEnable;
+	return vscode.workspace.getConfiguration().get("java.jdt.ls.lombokSupport.enabled");
 }
 
 export function isLombokImported(context: ExtensionContext): boolean {
 	return context.workspaceState.get(JAVA_LOMBOK_PATH)!==undefined;
 }
 
+export function updateActiveLombokPath(path: string) {
+	activeLombokPath = path;
+}
+
+export function isLombokActive(context: ExtensionContext): boolean {
+	return activeLombokPath!==undefined;
+}
+
 export function cleanupLombokCache(context: ExtensionContext): boolean {
 	const result = isLombokImported(context);
 	context.workspaceState.update(JAVA_LOMBOK_PATH, undefined);
-	context.workspaceState.update(JAVA_ACTIVE_LOMBOK_PATH, undefined);
 	return result;
 }
 
 export function getLombokVersion(context: ExtensionContext): string {
 	const reg = /lombok-.*\.jar/;
-	const lombokVersion = reg.exec(context.workspaceState.get(JAVA_ACTIVE_LOMBOK_PATH))[0].split('.jar')[0];
+	const lombokVersion = reg.exec(activeLombokPath)[0].split('.jar')[0];
 	return lombokVersion;
 }
 
 export function addLombokParam(context: ExtensionContext, params: string[]) {
-	context.workspaceState.update(JAVA_ACTIVE_LOMBOK_PATH, "");
 	if (isLombokImported(context)) {
 		// Exclude user setting lombok agent parameter
-		const reg = /-javaagent:[\s\S]*?[\\|/]lombok.*\.jar/;
+		const reg = /-javaagent:.*[\\|/]lombok.*\.jar/;
 	    const deleteIndex = [];
 		for (let i = 0; i<params.length; i++) {
 			if (reg.test(params[i])) {
@@ -64,11 +68,14 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 		// add -javaagent arg to support lombok
 		const lombokAgentParam = '-javaagent:' + context.workspaceState.get(JAVA_LOMBOK_PATH);
 		params.push(lombokAgentParam);
-		context.workspaceState.update(JAVA_ACTIVE_LOMBOK_PATH, context.workspaceState.get(JAVA_LOMBOK_PATH));
+		updateActiveLombokPath(context.workspaceState.get(JAVA_LOMBOK_PATH));
 	}
 }
 
 export async function checkLombokDependency(context: ExtensionContext) {
+	if (!isLombokSupportEnabled()) {
+		return;
+	}
 	const reg = /lombok-.*\.jar/;
 	let needReload = false;
 	let versionChange = false;
@@ -119,7 +126,6 @@ export async function checkLombokDependency(context: ExtensionContext) {
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showInformationMessage(msg, action).then((selection) => {
 				if (action === selection) {
-					// Before user selects "Reload", we do not save lombok agent path into the workspace cache.
 					commands.executeCommand(restartId);
 				}
 			});
@@ -277,7 +283,7 @@ export namespace LombokVersionItemFactory {
 	function getLombokChangeCommand(buildFilePath: string): vscode.Command {
 		const relativePath = vscode.workspace.asRelativePath(buildFilePath);
 		return {
-			title: `Change Verison`,
+			title: `Configure Lombok Version`,
 			command: Commands.LOMBOK_CONFIGURE,
 			arguments: [buildFilePath],
 			tooltip: `Open ${relativePath}`

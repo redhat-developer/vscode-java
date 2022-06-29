@@ -11,7 +11,7 @@ import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
 import { getJavaConfiguration } from "./utils";
 import { hasBuildToolConflicts } from "./extension";
-import { registerLombokConfigureCommand, LombokVersionItemFactory, isLombokImported, getLombokVersion, isLombokSupportEnabled } from "./lombokSupport";
+import { registerLombokConfigureCommand, LombokVersionItemFactory, getLombokVersion, isLombokActive } from "./lombokSupport";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -174,7 +174,7 @@ class RuntimeStatusBarProvider implements Disposable {
 			return;
 		}
 
-		if (isLombokSupportEnabled()&&isLombokImported(context)) {
+		if (isLombokActive(context)) {
 			registerLombokConfigureCommand(context);
 		}
 
@@ -211,7 +211,7 @@ class RuntimeStatusBarProvider implements Disposable {
 				if (buildFilePath) {
 					this.buildFileStatusItem = BuildFileStatusItemFactory.create(buildFilePath);
 				}
-				if (isLombokSupportEnabled()&&isLombokImported(context)) {
+				if (isLombokActive(context)) {
 					this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion(context), buildFilePath);
 				}
 			} else {
@@ -219,7 +219,7 @@ class RuntimeStatusBarProvider implements Disposable {
 				if (buildFilePath) {
 					BuildFileStatusItemFactory.update(this.buildFileStatusItem, buildFilePath);
 				}
-				if (isLombokSupportEnabled()&&isLombokImported(context)) {
+				if (isLombokActive(context)) {
 					LombokVersionItemFactory.update(this.lombokVersionItem, getLombokVersion(context), buildFilePath);
 				}
 			}
