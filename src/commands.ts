@@ -80,6 +80,11 @@ export namespace Commands {
     export const COMPILE_WORKSPACE = 'java.workspace.compile';
 
     /**
+     * Execute build for projects
+     */
+    export const BUILD_PROJECT = 'java.project.build';
+
+    /**
     * Open Java Language Server Log file
     */
     export const OPEN_SERVER_LOG = 'java.open.serverLog';

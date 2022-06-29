@@ -97,6 +97,7 @@ The following commands are available:
 - `Java: Open Java Extension Log File`: opens the Java extension log file, useful for troubleshooting problems.
 - `Java: Open All Log Files`: opens both the Java Language Server log file and the Java extension log file.
 - `Java: Force Java Compilation` (`Shift+Alt+B`): manually triggers compilation of the workspace.
+- `Java: Rebuild Projects`: manually triggers a full build of the selected projects.
 - `Java: Open Java Formatter Settings`: opens the Eclipse formatter settings. Creates a new settings file if none exists.
 - `Java: Clean Java Language Server Workspace`: cleans the Java language server workspace.
 - `Java: Attach Source`: attaches a jar/zip source to the currently opened binary class file. This command is only available in the editor context menu.

@@ -8,6 +8,7 @@
 	"java.open.clientLog": "打开 Java 插件日志文件",
 	"java.open.logs": "打开所有日志文件",
 	"java.workspace.compile": "强制编译",
+	"java.project.build": "重新构建项目",
 	"java.open.formatter.settings": "打开 Java 格式设置",
 	"java.clean.workspace": "清理 Java 语言服务器工作区",
 	"java.project.updateSourceAttachment": "附加源代码",
