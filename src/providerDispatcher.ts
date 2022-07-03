@@ -110,7 +110,26 @@ const START_OF_DOCUMENT = new Range(new Position(0, 0), new Position(0, 0));
 
 function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: WorkspaceSymbolProvider): WorkspaceSymbolProvider  {
 	return {
-		provideWorkspaceSymbols: existingWorkspaceSymbolProvider.provideWorkspaceSymbols,
+		provideWorkspaceSymbols: async (query: string, token: CancellationToken) => {
+			// This is a workaround until vscode add support for qualified symbol search which is tracked by
+			// https://github.com/microsoft/vscode/issues/98125
+			const result = existingWorkspaceSymbolProvider.provideWorkspaceSymbols(query, token);
+			if (query.indexOf('.') > -1) { // seems like a qualified name
+				return new Promise<SymbolInformation[]>((resolve) => {
+					((result as Promise<SymbolInformation[]>)).then((symbols) => {
+						if (symbols === null) {
+							resolve(null);
+						} else {
+							resolve(symbols?.map((s) => {
+								s.name = `${s.containerName}.${s.name}`;
+								return s;
+							}));
+						}
+					});
+				});
+			}
+			return result;
+		},
 		resolveWorkspaceSymbol: async (symbol: SymbolInformation, token: CancellationToken): Promise<SymbolInformation> => {
 			const range = symbol.location.range;
 			if (range && !range.isEqual(START_OF_DOCUMENT)) {
