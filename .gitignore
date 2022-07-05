@@ -8,6 +8,7 @@ undefined
 target
 dist
 jre
+lombok
 bin/
 .settings
 .classpath

@@ -11,7 +11,7 @@ import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
 import { getJavaConfiguration } from "./utils";
 import { hasBuildToolConflicts } from "./extension";
-import { registerLombokConfigureCommand, LombokVersionItemFactory, getLombokVersion, isLombokActive } from "./lombokSupport";
+import { registerLombokConfigureCommand, LombokVersionItemFactory, getLombokVersion, isLombokImported } from "./lombokSupport";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -86,6 +86,11 @@ class RuntimeStatusBarProvider implements Disposable {
 		}));
 
 		await this.updateItem(context, window.activeTextEditor);
+	}
+
+	public initializeLombokStatusBar(context: ExtensionContext) {
+		registerLombokConfigureCommand(context);
+		this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion());
 	}
 
 	private hideRuntimeStatusItem(): void {
@@ -174,10 +179,6 @@ class RuntimeStatusBarProvider implements Disposable {
 			return;
 		}
 
-		if (isLombokActive(context)) {
-			registerLombokConfigureCommand(context);
-		}
-
 		const uri: Uri = textEditor.document.uri;
 		const projectPath: string = this.findOwnerProject(uri);
 		if (!projectPath) {
@@ -211,16 +212,19 @@ class RuntimeStatusBarProvider implements Disposable {
 				if (buildFilePath) {
 					this.buildFileStatusItem = BuildFileStatusItemFactory.create(buildFilePath);
 				}
-				if (isLombokActive(context)) {
-					this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion(context), buildFilePath);
-				}
 			} else {
 				RuntimeStatusItemFactory.update(this.runtimeStatusItem, text, projectInfo.vmInstallPath);
 				if (buildFilePath) {
 					BuildFileStatusItemFactory.update(this.buildFileStatusItem, buildFilePath);
 				}
-				if (isLombokActive(context)) {
-					LombokVersionItemFactory.update(this.lombokVersionItem, getLombokVersion(context), buildFilePath);
+			}
+			if (!this.lombokVersionItem) {
+				if (isLombokImported()) {
+					this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion());
+				}
+			} else {
+				if (isLombokImported()) {
+					LombokVersionItemFactory.update(this.lombokVersionItem, getLombokVersion());
 				}
 			}
 		} else {

@@ -57,19 +57,25 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 		}
 		if (hasConfigKeyChanged('jdt.ls.lombokSupport.enabled', oldConfig, newConfig)) {
 			if (newConfig.get("jdt.ls.lombokSupport.enabled")) {
-				checkLombokDependency(context);
+				const msg = `Lombok support is enabled, please restart ${env.appName}.`;
+				const action = 'Restart Now';
+				const restartId = Commands.RELOAD_WINDOW;
+				window.showWarningMessage(msg, action).then((selection) => {
+					if (action === selection) {
+						commands.executeCommand(restartId);
+					}
+				});
 			}
 			else {
-				if (cleanupLombokCache(context)) {
-					const msg = `Lombok support is disabled, please restart ${env.appName}.`;
-					const action = 'Restart Now';
-					const restartId = Commands.RELOAD_WINDOW;
-					window.showWarningMessage(msg, action).then((selection) => {
-						if (action === selection) {
-							commands.executeCommand(restartId);
-						}
-					});
-				}
+				cleanupLombokCache(context);
+				const msg = `Lombok support is disabled, please restart ${env.appName}.`;
+				const action = 'Restart Now';
+				const restartId = Commands.RELOAD_WINDOW;
+				window.showWarningMessage(msg, action).then((selection) => {
+					if (action === selection) {
+						commands.executeCommand(restartId);
+					}
+				});
 			}
 		}
 		// update old config

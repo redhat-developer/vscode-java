@@ -12,6 +12,11 @@ def buildVscodeExtension(){
 	sh "npm run vscode:prepublish"
 }
 
+def downloadLombokJar(){
+	stage "Download lombok.jar"
+	sh "npx gulp download_lombok"
+}
+
 def packageSpecificExtensions() {
 	stage "Package platform specific vscode-java"
 	def platforms = ["win32-x64", "linux-x64", "linux-arm64", "darwin-x64", "darwin-arm64"]
@@ -158,6 +163,8 @@ node('rhel8'){
 		env.SKIP_COMMANDS_TEST="true"
 		sh "npm test --silent"
 	}
+
+	downloadLombokJar()
 
 	packageExtensions()
 
