@@ -20,6 +20,8 @@ const languageServerDocumentSelector = [
 	{ pattern: '**/{build,settings}.gradle.kts'}
 ];
 
+const lombokJarRegex = /lombok-\d+.*\.jar/;
+
 let activeLombokPath: string = undefined;
 let isLombokCommandInitialized: boolean = false;
 
@@ -46,8 +48,7 @@ export function cleanupLombokCache(context: ExtensionContext): boolean {
 }
 
 export function getLombokVersion(context: ExtensionContext): string {
-	const reg = /lombok-.*\.jar/;
-	const lombokVersion = reg.exec(activeLombokPath)[0].split('.jar')[0];
+	const lombokVersion = lombokJarRegex.exec(activeLombokPath)[0].split('.jar')[0];
 	return lombokVersion;
 }
 
@@ -75,7 +76,6 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	if (!isLombokSupportEnabled()) {
 		return;
 	}
-	const reg = /lombok-.*\.jar/;
 	let needReload = false;
 	let versionChange = false;
 	let currentLombokVersion = "";
@@ -85,11 +85,11 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	for (const projectUri of projectUris) {
 		const classpathResult = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'runtime'});
 		for (const classpath of classpathResult.classpaths) {
-			if (reg.test(classpath)) {
+			if (lombokJarRegex.test(classpath)) {
 				currentLombokClasspath = classpath;
 				if (isLombokImported(context)) {
-					currentLombokVersion = reg.exec(classpath)[0];
-					previousLombokVersion = reg.exec(context.workspaceState.get(JAVA_LOMBOK_PATH))[0];
+					currentLombokVersion = lombokJarRegex.exec(classpath)[0];
+					previousLombokVersion = lombokJarRegex.exec(context.workspaceState.get(JAVA_LOMBOK_PATH))[0];
 					if (currentLombokVersion!==previousLombokVersion) {
 						needReload = true;
 						versionChange = true;
