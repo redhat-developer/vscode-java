@@ -264,7 +264,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					// https://github.com/redhat-developer/vscode-java/issues/2130
 					// include all diagnostics for the current line in the CodeActionContext params for the performance reason
 					provideCodeActions: (document, range, context, token, next) => {
-						const client: any = standardClient.getClient();
+						const client: LanguageClient = standardClient.getClient();
 						const params: CodeActionParams = {
 							textDocument: client.code2ProtocolConverter.asTextDocumentIdentifier(document),
 							range: client.code2ProtocolConverter.asRange(range),
@@ -307,8 +307,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							}
 							return result;
 						}, (error) => {
-							client.logFailedRequest(CodeActionRequest.type, error);
-							return Promise.resolve([]);
+							return client.handleFailedRequest(CodeActionRequest.type, token, error, []);
 						});
 					}
 				},
