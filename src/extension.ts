@@ -747,7 +747,6 @@ function openRollingServerLogFile(workspacePath, filename, column: ViewColumn = 
 				const logFile = path.join(dirname, files[files.length - 1]);
 				openLogFile(logFile, `Could not open Java Language Server log file ${filename}`, column).then((result) => resolve(result));
 			} else {
-				window.showWarningMessage(`Could not find Java Language Server log file ${filename} in ${dirname}`);
 				resolve(false);
 			}
 		});
