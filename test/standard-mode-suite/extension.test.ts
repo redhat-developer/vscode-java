@@ -60,6 +60,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.ORGANIZE_IMPORTS,
 				Commands.OVERRIDE_METHODS_PROMPT,
 				Commands.PROJECT_CONFIGURATION_STATUS,
+				Commands.BUILD_PROJECT,
 				Commands.REMOVE_FROM_SOURCEPATH_CMD,
 				Commands.RENAME_COMMAND,
 				Commands.SHOW_JAVA_IMPLEMENTATIONS,

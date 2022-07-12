@@ -1216,6 +1216,7 @@
     "@types/vscode": "^1.65.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
+    "@vscode/test-electron": "^2.1.5",
     "gulp": "^4.0.2",
     "gulp-decompress": "^3.0.0",
     "gulp-download": "0.0.1",
@@ -1228,7 +1229,6 @@
     "tslint": "^5.11.0",
     "typescript": "^4.2.4",
     "typescript-tslint-plugin": "^0.3.1",
-    "vscode-test": "^1.4.0",
     "webpack": "^5.28.0",
     "webpack-cli": "^4.6.0"
   },
@@ -1238,12 +1238,12 @@
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
     "glob": "^7.1.3",
+    "htmlparser2": "6.0.1",
     "jdk-utils": "^0.4.3",
     "semver": "^7.3.5",
     "vscode-languageclient": "7.1.0-next.5",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^3.10.0",
-    "htmlparser2": "6.0.1"
+    "winston-daily-rotate-file": "^3.10.0"
   }
 }
