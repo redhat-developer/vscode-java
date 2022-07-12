@@ -21,7 +21,7 @@ const languageServerDocumentSelector = [
 	{ pattern: '**/{build,settings}.gradle.kts'}
 ];
 
-const lombokJarRegex = /lombok-\d+.*\.jar/;
+const lombokJarRegex = /lombok-\d+.*\.jar$/;
 
 let activeLombokPath: string = undefined;
 let isLombokCommandInitialized: boolean = false;
@@ -48,18 +48,15 @@ export function cleanupLombokCache(context: ExtensionContext) {
 	context.workspaceState.update(JAVA_LOMBOK_PATH, undefined);
 }
 
-function getExtensionInstance(): Extension<any> {
-	const extensionId = `redhat.java`;
-	const instance = vscode.extensions.getExtension(extensionId);
-	if (!instance) {
-		throw new Error("Could not get extension instance with id " + extensionId);
+function getExtensionLombokPath(context: ExtensionContext): string {
+	if (!fse.pathExistsSync(context.asAbsolutePath("lombok"))) {
+		return undefined;
 	}
-	return instance;
-}
-
-function getExtensionLombokPath(): string {
-	const files = fse.readdirSync(path.join(getExtensionInstance().extensionPath, "lombok"));
-	return path.join(getExtensionInstance().extensionPath, "lombok", files[0]);
+	const files = fse.readdirSync(context.asAbsolutePath("lombok"));
+	if (!files.length) {
+		return undefined;
+	}
+	return path.join(context.asAbsolutePath("lombok"), files[0]);
 }
 
 function lombokPath2Version(lombokPath: string): string {
@@ -73,14 +70,14 @@ export function getLombokVersion(): string {
 
 export function addLombokParam(context: ExtensionContext, params: string[]) {
 	// Exclude user setting lombok agent parameter
-	const reg = /-javaagent:.*[\\|/]lombok.*\.jar/;
+	const reg = /-javaagent:.*[\\|/]lombok.*\.jar$/;
 	const deleteIndex = [];
-	for (let i = 0; i<params.length; i++) {
+	for (let i = 0; i < params.length; i++) {
 		if (reg.test(params[i])) {
 			deleteIndex.push(i);
 		}
 	}
-	for (let i = deleteIndex.length - 1; i>=0; i--) {
+	for (let i = deleteIndex.length - 1; i >= 0; i--) {
 		params.splice(deleteIndex[i], 1);
 	}
 	// add -javaagent arg to support lombok
@@ -91,7 +88,11 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 	}
 	else {
 		isExtensionLombok = true;
-		lombokJarPath = getExtensionLombokPath();
+		lombokJarPath = getExtensionLombokPath(context);
+	}
+	// check if the lombok.jar exists.
+	if (!lombokJarPath) {
+		return;
 	}
 	const lombokAgentParam = '-javaagent:' + lombokJarPath;
 	params.push(lombokAgentParam);
@@ -104,6 +105,7 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	}
 	let needReload: boolean = false;
 	let versionChange: boolean = false;
+	let lombokFound: boolean = false;
 	let currentLombokVersion: string = undefined;
 	let previousLombokVersion: string = undefined;
 	let currentLombokClasspath: string = undefined;
@@ -116,7 +118,7 @@ export async function checkLombokDependency(context: ExtensionContext) {
 				if (context.workspaceState.get(JAVA_LOMBOK_PATH)) {
 					currentLombokVersion = lombokJarRegex.exec(classpath)[0];
 					previousLombokVersion = lombokJarRegex.exec(context.workspaceState.get(JAVA_LOMBOK_PATH))[0];
-					if (currentLombokVersion!==previousLombokVersion) {
+					if (currentLombokVersion !== previousLombokVersion) {
 						needReload = true;
 						versionChange = true;
 					}
@@ -124,10 +126,11 @@ export async function checkLombokDependency(context: ExtensionContext) {
 				else {
 					needReload = true;
 				}
+				lombokFound = true;
 				break;
 			}
 		}
-		if (needReload) {
+		if (needReload || lombokFound) {
 			break;
 		}
 	}
@@ -135,11 +138,11 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	/* if projectLombokPath is undefined, it means that this project has not imported lombok.
 	 * We don't need initalize lombok status bar in this case.
 	*/
-	if (!isLombokCommandInitialized&&projectLombokPath) {
+	if (!isLombokCommandInitialized && projectLombokPath) {
 		runtimeStatusBarProvider.initializeLombokStatusBar(context);
 		isLombokCommandInitialized = true;
 	}
-	if (needReload&&!isExtensionLombok) {
+	if (needReload &&! isExtensionLombok) {
 		if (versionChange) {
 			context.workspaceState.update(JAVA_LOMBOK_PATH, currentLombokClasspath);
 			const msg = `Lombok version changed from ${previousLombokVersion.split('.jar')[0].split('-')[1]} to ${currentLombokVersion.split('.jar')[0].split('-')[1]} \
@@ -157,36 +160,29 @@ export async function checkLombokDependency(context: ExtensionContext) {
 
 export function registerLombokConfigureCommand(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(Commands.LOMBOK_CONFIGURE, async (buildFilePath: string) => {
-		const extensionLombokPath: string = getExtensionLombokPath();
-		/* Usually, the users change the project's lombok version before they change the lombok classpath.
-		   It is necessary to search the project's lombok classpath each time*/
-		await window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: "Searching the project's lombok classpath...",
-			cancellable: false,
-		}, async() => {
-			await checkLombokDependency(context);
-		});
+		const extensionLombokPath: string = getExtensionLombokPath(context);
+		const extensionItemLabel = 'Use Extension\'s Version';
+		const extensionItemLabelCheck = `$(check) ${extensionItemLabel}`;
+		const projectItemLabel = 'Use Project\'s Version';
+		const projectItemLabelCheck = `$(check) ${projectItemLabel}`;
 		const lombokPathItems = [
 			{
-				label: 'Use Extension\'s Version',
-				description: lombokPath2Version(extensionLombokPath),
-				detail: extensionLombokPath
+				label: isExtensionLombok? extensionItemLabelCheck : extensionItemLabel,
+				description: lombokPath2Version(extensionLombokPath)
 			},
 			{
-				label: 'Use Project\'s Version',
-				description: lombokPath2Version(projectLombokPath),
-				detail: projectLombokPath
+				label: isExtensionLombok? projectItemLabel : projectItemLabelCheck,
+				description: lombokPath2Version(projectLombokPath)
 			}
 		];
 		const selectLombokPathItem = await window.showQuickPick(lombokPathItems, {
-			placeHolder: 'Select Lombok Version'
+			placeHolder: 'Select the lombok version used in the Java extension'
 		});
 		let shouldReload: boolean = false;
 		if (!selectLombokPathItem) {
 			return;
 		}
-		if (selectLombokPathItem.label==='Use Extension\'s Version') {
+		if (selectLombokPathItem.label === extensionItemLabel || selectLombokPathItem.label === extensionItemLabelCheck) {
 			if (!isExtensionLombok) {
 				shouldReload = true;
 				cleanupLombokCache(context);
@@ -200,7 +196,7 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 			}
 		}
 		if (shouldReload) {
-			const msg = `Lombok classpath has changed, please reload the window.`;
+			const msg = `The Lombok version used in Java extension has changed, please reload the window.`;
 			const action = 'Reload Now';
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showInformationMessage(msg, action).then((selection) => {
