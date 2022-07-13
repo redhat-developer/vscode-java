@@ -1,6 +1,6 @@
 import * as path from 'path';
-import { runTests } from 'vscode-test';
 import * as fse from 'fs-extra';
+import { runTests } from '@vscode/test-electron';
 
 async function main() {
 	const testProjectOriginPath: string = path.join(__dirname, '..', '..', 'test', 'resources', 'projects', 'maven', 'salut');
