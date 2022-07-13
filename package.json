@@ -40,12 +40,12 @@
   ],
   "activationEvents": [
     "onLanguage:java",
-    "workspaceContains:pom.xml",
-    "workspaceContains:build.gradle",
-    "workspaceContains:settings.gradle",
-    "workspaceContains:build.gradle.kts",
-    "workspaceContains:settings.gradle.kts",
-    "workspaceContains:.classpath",
+    "workspaceContains:{*/,}pom.xml",
+    "workspaceContains:{*/,}build.gradle",
+    "workspaceContains:{*/,}settings.gradle",
+    "workspaceContains:{*/,}build.gradle.kts",
+    "workspaceContains:{*/,}settings.gradle.kts",
+    "workspaceContains:{*/,}.classpath",
     "onCommand:_java.templateVariables",
     "onCommand:_java.metadataFilesGeneration"
   ],
