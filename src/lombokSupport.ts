@@ -8,6 +8,7 @@ import { Commands } from "./commands";
 import { apiManager } from "./apiManager";
 import { supportsLanguageStatus } from "./languageStatusItemFactory";
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
+import { logger } from './log';
 import htmlparser2 = require("htmlparser2");
 
 export const JAVA_LOMBOK_PATH = "java.lombokPath";
@@ -22,7 +23,7 @@ const languageServerDocumentSelector = [
 ];
 
 const lombokJarRegex = /lombok-\d+.*\.jar$/;
-
+const noSupportVersion = '1.18.2';
 let activeLombokPath: string = undefined;
 let isLombokCommandInitialized: boolean = false;
 let isExtensionLombok: boolean = false;		// whether use extension's lombok or not
@@ -64,13 +65,38 @@ function lombokPath2Version(lombokPath: string): string {
 	return lombokVersion;
 }
 
+function lombokPath2VersionNumber(lombokPath: string): string {
+	const lombokVersioNumber = lombokPath2Version(lombokPath).split('-')[1];
+	return lombokVersioNumber;
+}
+
 export function getLombokVersion(): string {
 	return lombokPath2Version(activeLombokPath);
 }
 
+function isSupportLombokVersion(currentVersion: string): boolean {
+	const currentVersionNumberList = currentVersion.split('.').map((item) => {
+		return Number(item);
+	});
+	const noSupportVersionNumberList = noSupportVersion.split('.').map((item) => {
+		return Number(item);
+	});
+	if (currentVersionNumberList[0] === noSupportVersionNumberList[0]) {
+		if (currentVersionNumberList[1] === noSupportVersionNumberList[1]) {
+			return currentVersionNumberList[2] > noSupportVersionNumberList[2];
+		}
+		else {
+			return currentVersionNumberList[1] > currentVersionNumberList[1];
+		}
+	}
+	else {
+		return currentVersionNumberList[0] > noSupportVersionNumberList[0];
+	}
+}
+
 export function addLombokParam(context: ExtensionContext, params: string[]) {
 	// Exclude user setting lombok agent parameter
-	const reg = /-javaagent:.*[\\|/]lombok.*\.jar$/;
+	const reg = /-javaagent:.*[\\|/]lombok.*\.jar/;
 	const deleteIndex = [];
 	for (let i = 0; i < params.length; i++) {
 		if (reg.test(params[i])) {
@@ -80,18 +106,25 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 	for (let i = deleteIndex.length - 1; i >= 0; i--) {
 		params.splice(deleteIndex[i], 1);
 	}
-	// add -javaagent arg to support lombok
-	let lombokJarPath: string;
-	if (context.workspaceState.get(JAVA_LOMBOK_PATH)) {
-		isExtensionLombok = false;
-		lombokJarPath = context.workspaceState.get(JAVA_LOMBOK_PATH);
+	// add -javaagent arg to support lombok.
+	// use the extension's lombok version by default.
+	isExtensionLombok = true;
+	let lombokJarPath: string = context.workspaceState.get(JAVA_LOMBOK_PATH);
+	if (lombokJarPath && fse.existsSync(lombokJarPath)) {
+		if (isSupportLombokVersion(lombokPath2VersionNumber(lombokJarPath))) {
+			isExtensionLombok = false;
+		}
+		else {
+			cleanupLombokCache(context);
+			logger.warn(`The project's lombok version ${lombokPath2VersionNumber(lombokJarPath)} is not supported, switch to the extension's lombok version ${lombokPath2VersionNumber(getExtensionLombokPath(context))}`);
+		}
 	}
-	else {
-		isExtensionLombok = true;
+	if (isExtensionLombok) {
 		lombokJarPath = getExtensionLombokPath(context);
 	}
 	// check if the lombok.jar exists.
 	if (!lombokJarPath) {
+		logger.warn("Could not find lombok.jar path.");
 		return;
 	}
 	const lombokAgentParam = '-javaagent:' + lombokJarPath;
@@ -162,9 +195,9 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(Commands.LOMBOK_CONFIGURE, async (buildFilePath: string) => {
 		const extensionLombokPath: string = getExtensionLombokPath(context);
 		const extensionItemLabel = 'Use Extension\'s Version';
-		const extensionItemLabelCheck = `$(check) ${extensionItemLabel}`;
+		const extensionItemLabelCheck = `• ${extensionItemLabel}`;
 		const projectItemLabel = 'Use Project\'s Version';
-		const projectItemLabelCheck = `$(check) ${projectItemLabel}`;
+		const projectItemLabelCheck = `• ${projectItemLabel}`;
 		const lombokPathItems = [
 			{
 				label: isExtensionLombok? extensionItemLabelCheck : extensionItemLabel,
@@ -172,7 +205,8 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 			},
 			{
 				label: isExtensionLombok? projectItemLabel : projectItemLabelCheck,
-				description: lombokPath2Version(projectLombokPath)
+				description: lombokPath2Version(projectLombokPath),
+				detail: projectLombokPath
 			}
 		];
 		const selectLombokPathItem = await window.showQuickPick(lombokPathItems, {
@@ -190,9 +224,22 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 		}
 		else {
 			if (isExtensionLombok) {
-				shouldReload = true;
-				isExtensionLombok = false;
-				context.workspaceState.update(JAVA_LOMBOK_PATH, projectLombokPath);
+				const projectLombokVersion = lombokPath2VersionNumber(projectLombokPath);
+				if (!isSupportLombokVersion(projectLombokVersion)) {
+					const msg = `The project's lombok version ${projectLombokVersion} is not supported. Do you still want to change the lombok version?`;
+					const action1 = "Yes";
+					const action2 = "No";
+					await window.showWarningMessage(msg, action1, action2).then((selection) => {
+						if (action1 === selection) {
+							shouldReload = true;
+							context.workspaceState.update(JAVA_LOMBOK_PATH, projectLombokPath);
+						}
+					});
+				}
+				else {
+					shouldReload = true;
+					context.workspaceState.update(JAVA_LOMBOK_PATH, projectLombokPath);
+				}
 			}
 		}
 		if (shouldReload) {
@@ -201,7 +248,7 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showInformationMessage(msg, action).then((selection) => {
 				if (action === selection) {
-						commands.executeCommand(restartId);
+					commands.executeCommand(restartId);
 				}
 			});
 		}
