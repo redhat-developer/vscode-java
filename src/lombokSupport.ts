@@ -2,6 +2,7 @@
 
 import * as fse from "fs-extra";
 import * as path from "path";
+import * as semver from 'semver';
 import * as vscode from "vscode";
 import { ExtensionContext, window, commands, Uri, Position, Location, Selection, env, Extension } from "vscode";
 import { Commands } from "./commands";
@@ -9,7 +10,6 @@ import { apiManager } from "./apiManager";
 import { supportsLanguageStatus } from "./languageStatusItemFactory";
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { logger } from './log';
-import semver = require('semver');
 
 export const JAVA_LOMBOK_PATH = "java.lombokPath";
 
@@ -128,10 +128,8 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	let currentLombokClasspath: string = undefined;
 	const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
 	for (const projectUri of projectUris) {
-		const classpathRuntime = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'runtime'});
-		const classpathTest = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'test'});
-		const classpathResult = classpathRuntime.classpaths.concat(classpathTest.classpaths);
-		for (const classpath of classpathResult) {
+		const classpathResult = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'test'});
+		for (const classpath of classpathResult.classpaths) {
 			if (lombokJarRegex.test(classpath)) {
 				currentLombokClasspath = classpath;
 				if (context.workspaceState.get(JAVA_LOMBOK_PATH)) {
