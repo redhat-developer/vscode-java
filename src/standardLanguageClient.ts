@@ -1,13 +1,13 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position, QuickPickItem, QuickPickItemKind } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
 import { getJavaConfig, applyWorkspaceEdit } from "./extension";
 import { LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams, ConfigurationRequest, ConfigurationParams } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
-import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, ProjectConfigurationUpdateRequest, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo, UpgradeGradleWrapperInfo, BuildProjectRequest, BuildProjectParams } from "./protocol";
+import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo, UpgradeGradleWrapperInfo, BuildProjectRequest, BuildProjectParams } from "./protocol";
 import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
 import { onExtensionChange, collectBuildFilePattern } from "./plugin";
 import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
@@ -30,13 +30,13 @@ import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvider";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
-import { buildFilePatterns } from './plugin';
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
-import { findRuntimes, IJavaRuntime } from "jdk-utils";
+import { findRuntimes } from "jdk-utils";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { checkLombokDependency } from "./lombokSupport";
+import { askForProjects, projectConfigurationUpdate } from "./standardLanguageClientUtils";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -644,116 +644,6 @@ function setIncompleteClasspathSeverity(severity: string) {
 		() => logger.info(`${section} globally set to ${severity}`),
 		(error) => logger.error(error)
 	);
-}
-
-async function projectConfigurationUpdate(languageClient: LanguageClient, uris?: Uri | Uri[]) {
-	let resources = [];
-	if (!uris) {
-		const activeFileUri: Uri | undefined = window.activeTextEditor?.document.uri;
-
-		if (activeFileUri && isJavaConfigFile(activeFileUri.fsPath)) {
-			resources = [activeFileUri];
-		} else {
-			resources = await askForProjects(activeFileUri, "Please select the project(s) to update.");
-		}
-	} else if (uris instanceof Uri) {
-		resources.push(uris);
-	} else if (Array.isArray(uris)) {
-		for (const uri of uris) {
-			if (uri instanceof Uri) {
-				resources.push(uri);
-			}
-		}
-	}
-	if (resources.length === 1) {
-		languageClient.sendNotification(ProjectConfigurationUpdateRequest.type, {
-			uri: resources[0].toString(),
-		});
-	} else if (resources.length > 1) {
-		languageClient.sendNotification(ProjectConfigurationUpdateRequest.typeV2, {
-			identifiers: resources.map(r => {
-				return { uri: r.toString() };
-			}),
-		});
-	}
-}
-
-/**
- * Ask user to select projects and return the selected projects' uris.
- * @param activeFileUri the uri of the active file.
- * @param placeHolder message to be shown in quick pick.
- */
-async function askForProjects(activeFileUri: Uri | undefined, placeHolder: string): Promise<Uri[]> {
-	const projectPicks: QuickPickItem[] = await generateProjectPicks(activeFileUri);
-	if (!projectPicks?.length) {
-		return [];
-	} else if (projectPicks.length === 1) {
-		return [Uri.file(projectPicks[0].detail)];
-	} else {
-		const choices: QuickPickItem[] | undefined = await window.showQuickPick(projectPicks, {
-			matchOnDetail: true,
-			placeHolder: placeHolder,
-			ignoreFocusOut: true,
-			canPickMany: true,
-		});
-
-		if (choices?.length) {
-			return choices.map(c => Uri.file(c.detail));
-		}
-	}
-
-	return [];
-}
-
-/**
- * Generate the quick picks for projects selection. An `undefined` value will be return if
- * it's failed to generate picks.
- * @param activeFileUri the uri of the active document.
- */
-async function generateProjectPicks(activeFileUri: Uri | undefined): Promise<QuickPickItem[] | undefined> {
-	let projectUriStrings: string[];
-	try {
-		projectUriStrings = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
-	} catch (e) {
-		return undefined;
-	}
-
-	const projectPicks: QuickPickItem[] = projectUriStrings.map(uriString => {
-		const projectPath = Uri.parse(uriString).fsPath;
-		if (path.basename(projectPath) === "jdt.ls-java-project") {
-			return undefined;
-		}
-
-		return {
-			label: path.basename(projectPath),
-			detail: projectPath,
-		};
-	}).filter(Boolean);
-
-	// pre-select an active project based on the uri candidate.
-	if (activeFileUri?.scheme === "file") {
-		const candidatePath = activeFileUri.fsPath;
-		let belongingIndex = -1;
-		for (let i = 0; i < projectPicks.length; i++) {
-			if (candidatePath.startsWith(projectPicks[i].detail)) {
-				if (belongingIndex < 0
-						|| projectPicks[i].detail.length > projectPicks[belongingIndex].detail.length) {
-					belongingIndex = i;
-				}
-			}
-		}
-		if (belongingIndex >= 0) {
-			projectPicks[belongingIndex].picked = true;
-		}
-	}
-
-	return projectPicks;
-}
-
-function isJavaConfigFile(filePath: string) {
-	const fileName = path.basename(filePath);
-	const regEx = new RegExp(buildFilePatterns.map(r => `(${r})`).join('|'), 'i');
-	return regEx.test(fileName);
 }
 
 function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri, status: FeatureStatus) {
