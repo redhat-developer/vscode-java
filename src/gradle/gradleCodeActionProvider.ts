@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import * as path from "path";
 import { CancellationToken, CodeAction, CodeActionContext, CodeActionKind, CodeActionProvider, CodeActionProviderMetadata, Command, commands, Diagnostic, DiagnosticRelatedInformation, ExtensionContext, ProviderResult, Range, Selection, TextDocument, Uri } from "vscode";
 import { Commands } from "../commands";
-import { upgradeGradle } from "../standardLanguageClient";
+import { upgradeGradle } from "../standardLanguageClientUtils";
 
 export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> {
 
@@ -29,6 +29,17 @@ export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> 
 	private async provideGradleCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): Promise<CodeAction[]> {
 		const codeActions = [];
 		for (const diagnostic of diagnostics) {
+			if (diagnostic.message?.startsWith("The build file has been changed")) {
+				const reloadProjectAction = new CodeAction("Reload project", CodeActionKind.QuickFix);
+				reloadProjectAction.command = {
+					title: "Reload Project",
+					command: Commands.CONFIGURATION_UPDATE,
+					arguments: [document.uri],
+				};
+				codeActions.push(reloadProjectAction);
+				continue;
+			}
+
 			const documentUri = document.uri.toString();
 			if (documentUri.endsWith(GradleCodeActionProvider.WRAPPER_PROPERTIES_DESCRIPTOR) && diagnostic.code === GradleCodeActionProvider.GRADLE_INVALID_TYPE_CODE_ID.toString()) {
 				const projectPath = path.resolve(Uri.parse(documentUri).fsPath, "..", "..", "..").normalize();

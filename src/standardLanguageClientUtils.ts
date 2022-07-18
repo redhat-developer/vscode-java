@@ -1,7 +1,8 @@
 'use strict';
 
-import { commands, QuickPickItem, Uri, window } from "vscode";
+import { commands, ConfigurationTarget, Position, ProgressLocation, QuickPickItem, Range, Uri, window, workspace } from "vscode";
 import * as path from "path";
+import * as fse from "fs-extra";
 import { TextDocumentIdentifier } from "vscode-languageclient";
 import { LanguageClient } from "vscode-languageclient/node";
 import { buildFilePatterns } from "./plugin";
@@ -119,4 +120,32 @@ async function generateProjectPicks(activeFileUri: Uri | undefined): Promise<Qui
 	}
 
 	return projectPicks;
+}
+
+export async function upgradeGradle(projectUri: string, version?: string): Promise<void> {
+	const useWrapper = workspace.getConfiguration().get<boolean>("java.import.gradle.wrapper.enabled");
+	if (!useWrapper) {
+		await workspace.getConfiguration().update("java.import.gradle.wrapper.enabled", true, ConfigurationTarget.Workspace);
+	}
+	const result = await window.withProgress({
+		location: ProgressLocation.Notification,
+		title: "Upgrading Gradle wrapper...",
+		cancellable: true,
+	}, (_progress, token) => {
+		return commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, "java.project.upgradeGradle", projectUri, version, token);
+	});
+	if (result) {
+		const propertiesFile = path.join(Uri.parse(projectUri).fsPath, "gradle", "wrapper", "gradle-wrapper.properties");
+		if (fse.pathExists(propertiesFile)) {
+			const content = await fse.readFile(propertiesFile);
+			const offset = content.toString().indexOf("distributionUrl");
+			if (offset >= 0) {
+				const document = await workspace.openTextDocument(propertiesFile);
+				const position = document.positionAt(offset);
+				const distributionUrlRange = document.getWordRangeAtPosition(position);
+				window.showTextDocument(document, {selection: new Range(distributionUrlRange.start, new Position(distributionUrlRange.start.line + 1, 0))});
+			}
+		}
+		commands.executeCommand(Commands.IMPORT_PROJECTS_CMD);
+	}
 }
