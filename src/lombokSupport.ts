@@ -121,7 +121,6 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	if (!isLombokSupportEnabled()) {
 		return;
 	}
-	let needReload: boolean = false;
 	let versionChange: boolean = false;
 	let lombokFound: boolean = false;
 	let currentLombokVersion: string = undefined;
@@ -133,22 +132,18 @@ export async function checkLombokDependency(context: ExtensionContext) {
 		for (const classpath of classpathResult.classpaths) {
 			if (lombokJarRegex.test(classpath)) {
 				currentLombokClasspath = classpath;
-				if (context.workspaceState.get(JAVA_LOMBOK_PATH)) {
+				if (activeLombokPath && !isExtensionLombok) {
 					currentLombokVersion = lombokJarRegex.exec(classpath)[0];
-					previousLombokVersion = lombokJarRegex.exec(context.workspaceState.get(JAVA_LOMBOK_PATH))[0];
+					previousLombokVersion = lombokJarRegex.exec(activeLombokPath)[0];
 					if (currentLombokVersion !== previousLombokVersion) {
-						needReload = true;
 						versionChange = true;
 					}
-				}
-				else {
-					needReload = true;
 				}
 				lombokFound = true;
 				break;
 			}
 		}
-		if (needReload || lombokFound) {
+		if (lombokFound) {
 			break;
 		}
 	}
@@ -167,20 +162,19 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	if (isLombokStatusBarInitialized && !projectLombokPath) {
 		runtimeStatusBarProvider.destroyLombokStatusBar();
 		isLombokStatusBarInitialized = false;
+		cleanupLombokCache(context);
 	}
-	if (needReload && !isExtensionLombok) {
-		if (versionChange) {
-			context.workspaceState.update(JAVA_LOMBOK_PATH, currentLombokClasspath);
-			const msg = `Lombok version changed from ${previousLombokVersion.split('.jar')[0].split('-')[1]} to ${currentLombokVersion.split('.jar')[0].split('-')[1]} \
-							. Do you want to reload the window to load the new Lombok version?`;
-			const action = 'Reload Now';
-			const restartId = Commands.RELOAD_WINDOW;
-			window.showInformationMessage(msg, action).then((selection) => {
-				if (action === selection) {
-					commands.executeCommand(restartId);
-				}
-			});
-		}
+	if (versionChange && !isExtensionLombok) {
+		context.workspaceState.update(JAVA_LOMBOK_PATH, currentLombokClasspath);
+		const msg = `Lombok version changed from ${previousLombokVersion.split('.jar')[0].split('-')[1]} to ${currentLombokVersion.split('.jar')[0].split('-')[1]} \
+						. Do you want to reload the window to load the new Lombok version?`;
+		const action = 'Reload Now';
+		const restartId = Commands.RELOAD_WINDOW;
+		window.showInformationMessage(msg, action).then((selection) => {
+			if (action === selection) {
+				commands.executeCommand(restartId);
+			}
+		});
 	}
 }
 

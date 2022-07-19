@@ -112,7 +112,7 @@ Supported VS Code settings
 The following settings are supported:
 
 * `java.home` : **Deprecated, please use 'java.jdt.ls.java.home' instead.** Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
-* `java.jdt.ls.lombokSupport.enabled`: Whether to load lombok processors from project classpath. Defaults to `true`.
+* `java.jdt.ls.lombokSupport.enabled`: Whether to enable lombok support. Defaults to `true`.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
