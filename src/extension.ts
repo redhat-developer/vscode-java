@@ -27,6 +27,7 @@ import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import * as chokidar from 'chokidar';
+import { cleanupLombokCache } from "./lombokSupport";
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -359,6 +360,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
 			if (cleanWorkspaceExists) {
 				try {
+					cleanupLombokCache(context);
 					deleteDirectory(workspacePath);
 					deleteDirectory(syntaxServerWorkspacePath);
 				} catch (error) {

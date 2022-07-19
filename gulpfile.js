@@ -116,6 +116,18 @@ gulp.task('download_jre', async function(done) {
 	done();
 });
 
+gulp.task('download_lombok', function(done) {
+	if (fse.existsSync('./lombok')) {
+		fse.removeSync('./lombok');
+	}
+	const lombokVersion = '1.18.24';
+	// The latest lombok version can be found on the website https://projectlombok.org/downloads
+	const lombokUrl = `https://projectlombok.org/downloads/lombok-${lombokVersion}.jar`;
+	download(lombokUrl)
+		.pipe(gulp.dest('./lombok/'))
+	done();
+});
+
 gulp.task('download_server', function(done) {
 	fse.removeSync('./server');
 	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
