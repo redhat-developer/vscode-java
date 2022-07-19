@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import * as path from "path";
 import * as semver from 'semver';
 import * as vscode from "vscode";
-import { ExtensionContext, window, commands, Uri, Position, Location, Selection, env, Extension } from "vscode";
+import { ExtensionContext, window, commands } from "vscode";
 import { Commands } from "./commands";
 import { apiManager } from "./apiManager";
 import { supportsLanguageStatus } from "./languageStatusItemFactory";
@@ -25,6 +25,7 @@ const languageServerDocumentSelector = [
 const lombokJarRegex = /lombok-\d+.*\.jar$/;
 const compatibleVersion = '1.18.4';
 let activeLombokPath: string = undefined;
+let isLombokStatusBarInitialized: boolean = false;
 let isLombokCommandInitialized: boolean = false;
 let isExtensionLombok: boolean = false;		// whether use extension's Lombok or not
 let projectLombokPath: string = undefined;	// the project's Lombok classpath
@@ -155,9 +156,17 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	/* if projectLombokPath is undefined, it means that this project has not imported Lombok.
 	 * We don't need initalize Lombok status bar in this case.
 	*/
-	if (!isLombokCommandInitialized && projectLombokPath) {
-		runtimeStatusBarProvider.initializeLombokStatusBar(context);
-		isLombokCommandInitialized = true;
+	if (!isLombokStatusBarInitialized && projectLombokPath) {
+		if (!isLombokCommandInitialized) {
+			registerLombokConfigureCommand(context);
+			isLombokCommandInitialized = true;
+		}
+		runtimeStatusBarProvider.initializeLombokStatusBar();
+		isLombokStatusBarInitialized = true;
+	}
+	if (isLombokStatusBarInitialized && !projectLombokPath) {
+		runtimeStatusBarProvider.destroyLombokStatusBar();
+		isLombokStatusBarInitialized = false;
 	}
 	if (needReload && !isExtensionLombok) {
 		if (versionChange) {
@@ -178,6 +187,9 @@ export async function checkLombokDependency(context: ExtensionContext) {
 export function registerLombokConfigureCommand(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(Commands.LOMBOK_CONFIGURE, async (buildFilePath: string) => {
 		const extensionLombokPath: string = getExtensionLombokPath(context);
+		if (!extensionLombokPath || !projectLombokPath) {
+			return;
+		}
 		const extensionItemLabel = 'Use Extension\'s Version';
 		const extensionItemLabelCheck = `• ${extensionItemLabel}`;
 		const projectItemLabel = 'Use Project\'s Version';

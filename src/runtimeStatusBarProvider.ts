@@ -11,7 +11,7 @@ import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
 import { getJavaConfiguration } from "./utils";
 import { hasBuildToolConflicts } from "./extension";
-import { registerLombokConfigureCommand, LombokVersionItemFactory, getLombokVersion, isLombokImported } from "./lombokSupport";
+import { LombokVersionItemFactory, getLombokVersion, isLombokImported } from "./lombokSupport";
 
 class RuntimeStatusBarProvider implements Disposable {
 	private statusBarItem: StatusBarItem;
@@ -88,9 +88,12 @@ class RuntimeStatusBarProvider implements Disposable {
 		await this.updateItem(context, window.activeTextEditor);
 	}
 
-	public initializeLombokStatusBar(context: ExtensionContext) {
-		registerLombokConfigureCommand(context);
+	public initializeLombokStatusBar() {
 		this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion());
+	}
+
+	public destroyLombokStatusBar(): void {
+		this.hideLombokVersionItem();
 	}
 
 	private hideRuntimeStatusItem(): void {
