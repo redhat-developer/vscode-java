@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, Range, Position } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
@@ -36,7 +36,7 @@ import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { checkLombokDependency } from "./lombokSupport";
-import { askForProjects, projectConfigurationUpdate } from "./standardLanguageClientUtils";
+import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -559,7 +559,7 @@ export class StandardLanguageClient {
 
 			languages.registerCodeActionsProvider({
 				scheme: "file",
-				pattern: "**/gradle/wrapper/gradle-wrapper.properties"
+				pattern: "**/{gradle/wrapper/gradle-wrapper.properties,build.gradle,build.gradle.kts,settings.gradle,settings.gradle.kts}"
 			}, new GradleCodeActionProvider(context), gradleCodeActionMetadata);
 
 			if (languages.registerInlayHintsProvider) {
@@ -673,32 +673,4 @@ export function showNoLocationFound(message: string): void {
 		'goto',
 		message
 	);
-}
-
-export async function upgradeGradle(projectUri: string, version?: string): Promise<void> {
-	const useWrapper = workspace.getConfiguration().get<boolean>("java.import.gradle.wrapper.enabled");
-	if (!useWrapper) {
-		await workspace.getConfiguration().update("java.import.gradle.wrapper.enabled", true, ConfigurationTarget.Workspace);
-	}
-	const result = await window.withProgress({
-		location: ProgressLocation.Notification,
-		title: "Upgrading Gradle wrapper...",
-		cancellable: true,
-	}, (_progress, token) => {
-		return commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, "java.project.upgradeGradle", projectUri, version, token);
-	});
-	if (result) {
-		const propertiesFile = path.join(Uri.parse(projectUri).fsPath, "gradle", "wrapper", "gradle-wrapper.properties");
-		if (fse.pathExists(propertiesFile)) {
-			const content = await fse.readFile(propertiesFile);
-			const offset = content.toString().indexOf("distributionUrl");
-			if (offset >= 0) {
-				const document = await workspace.openTextDocument(propertiesFile);
-				const position = document.positionAt(offset);
-				const distributionUrlRange = document.getWordRangeAtPosition(position);
-				window.showTextDocument(document, {selection: new Range(distributionUrlRange.start, new Position(distributionUrlRange.start.line + 1, 0))});
-			}
-		}
-		commands.executeCommand(Commands.IMPORT_PROJECTS_CMD);
-	}
 }

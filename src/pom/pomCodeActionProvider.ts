@@ -14,13 +14,13 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 
 	provideCodeActions(document: TextDocument, range: Range | Selection, context: CodeActionContext, token: CancellationToken): ProviderResult<(Command | CodeAction)[]> {
 		if (context?.diagnostics?.length && context.diagnostics[0].source === "Java") {
-			return this.collectCodeActionsForNotCoveredExecutions(document, context.diagnostics);
+			return this.collectCodeActions(document, context.diagnostics);
 		}
 
 		return undefined;
 	}
 
-	private collectCodeActionsForNotCoveredExecutions(document: TextDocument, diagnostics: readonly Diagnostic[]): CodeAction[] {
+	private collectCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): CodeAction[] {
 		const codeActions: CodeAction[] = [];
 		for (const diagnostic of diagnostics) {
 			if (diagnostic.message?.startsWith("Plugin execution not covered by lifecycle configuration")) {
@@ -48,6 +48,14 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 				action3.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e ignore?>");
 				action3.command = saveAndUpdateConfigCommand;
 				codeActions.push(action3);
+			} else if (diagnostic.message?.startsWith("The build file has been changed")) {
+				const reloadProjectAction = new CodeAction("Reload project", CodeActionKind.QuickFix);
+				reloadProjectAction.command = {
+					title: "Reload Project",
+					command: Commands.CONFIGURATION_UPDATE,
+					arguments: [document.uri],
+				};
+				codeActions.push(reloadProjectAction);
 			}
 		}
 
