@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.9.0 (July 21st, 2022)
+ * enhancement - Package lombok into extension for use when lombok support enabled, and not on project classpath. See [#2550](https://github.com/redhat-developer/vscode-java/pull/2550).
+ * enhancement - Add support for qualified workspace symbols. See [#2538](https://github.com/redhat-developer/vscode-java/pull/2538).
+ * enhancement - Refresh the unmanaged project's classpath on demand. See [#1282](https://github.com/redhat-developer/vscode-java/issues/1282).
+ * enhancement - Provide reload project diagnostics on demand. See [#2575](https://github.com/redhat-developer/vscode-java/pull/2575).
+ * bug fix - Missing completions for fully qualified constructor names. See [JLS#2147](https://github.com/eclipse/eclipse.jdt.ls/issues/2147).
+ * bug fix - Completion replacement for a type proposal is incorrect in some cases. See [#2534](https://github.com/redhat-developer/vscode-java/issues/2534).
+ * bug fix - Project configuration is not updated after modifying build file. See [#2566](https://github.com/redhat-developer/vscode-java/issues/2566).
+ * bug fix - Fixed language server crashing because of wrong lombok jar. See [#2542](https://github.com/redhat-developer/vscode-java/pull/2542).
+ * bug fix - Do not warn about missing JDT-LS stdout/stderr log files. See [#2535](https://github.com/redhat-developer/vscode-java/issues/2535).
+ * bug fix - Scan two levels of directories for activation indicators. See [#2280](https://github.com/redhat-developer/vscode-java/issues/2280).
+ * bug fix - Correct typo in gradle checksum mismatch error message. See [JLS#2161](https://github.com/eclipse/eclipse.jdt.ls/pull/2161).
+ * build - wrong JRE embedded in pre-release package. See [#2559](https://github.com/redhat-developer/vscode-java/issues/2559).
+ * build - TypeError: `s.logFailedRequest` is not a function. See [#2480](https://github.com/redhat-developer/vscode-java/issues/2480).
+ * build - Compile error in `MavenBuildSupport.update(IProject, boolean, IProgressMonitor)`. See [JLS#2150](https://github.com/eclipse/eclipse.jdt.ls/issues/2150).
+ * build - Migrate to `@vscode/test-electron`. See [#2555](https://github.com/redhat-developer/vscode-java/pull/2555).
+ * build - Update moment & terser packages. See [#2580](https://github.com/redhat-developer/vscode-java/pull/2580).
+
 ## 1.8.0 (June 30th, 2022)
  * enhancement - Improve the Lombok support. See [#2519](https://github.com/redhat-developer/vscode-java/pull/2519).
  * enhancement - Show `Add javadoc for` in quick assists. See [JLS#2133](https://github.com/eclipse/eclipse.jdt.ls/pull/2133).
@@ -220,7 +238,7 @@
  * bug fix - Improve handling of exported settings files. See [#1939](https://github.com/redhat-developer/vscode-java/issues/1939).
  * bug fix - A 'keyword' semantic token will sometimes appear when typing an expression. See [#1921](https://github.com/redhat-developer/vscode-java/issues/1921).
  * other - Update hosted-git-info dependency. See [#1940](https://github.com/redhat-developer/vscode-java/pull/1940).
- * other - Update lodash dependency.. See [#1934](https://github.com/redhat-developer/vscode-java/pull/1934).
+ * other - Update lodash dependency. See [#1934](https://github.com/redhat-developer/vscode-java/pull/1934).
 
 ## 0.79.1 (May 3rd, 2021)
 * bug fix - Formatter doesn't load format config after update. See [#1917](https://github.com/redhat-developer/vscode-java/issues/1917).
@@ -320,7 +338,7 @@
  * bug fix - Error in every java file after updating to macOS Big Sur. See [#1700](https://github.com/redhat-developer/vscode-java/issues/1700).
  * bug fix - Fix jdk detection: cover symlink folder on Linux. See [#1704](https://github.com/redhat-developer/vscode-java/pull/1704).
  * bug fix - Fix jdk detection: cover common JDK installation places on Linux. See [#1706](https://github.com/redhat-developer/vscode-java/pull/1706).
- * other - Improve tracing capability of m2e through m2e.logback.configuration.. See [JLS#1589](https://github.com/eclipse/eclipse.jdt.ls/pull/1589).
+ * other - Improve tracing capability of m2e through m2e.logback.configuration. See [JLS#1589](https://github.com/eclipse/eclipse.jdt.ls/pull/1589).
  * other - Infer expressions if there is no selection range when extracting method. See [#1680](https://github.com/redhat-developer/vscode-java/pull/1680).
 
 ## 0.70.0 (November 4th, 2020)
