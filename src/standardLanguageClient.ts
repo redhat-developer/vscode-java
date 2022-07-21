@@ -14,7 +14,7 @@ import { Commands } from "./commands";
 import { ClientStatus } from "./extension.api";
 import * as fileEventHandler from './fileEventHandler';
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
-import { awaitServerConnection, prepareExecutable } from "./javaServerStarter";
+import { awaitServerConnection, prepareExecutable, DEBUG } from "./javaServerStarter";
 import { logger } from "./log";
 import { checkLombokDependency } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
@@ -106,7 +106,7 @@ export class StandardLanguageClient {
 		}
 
 		// Create the language client and start the client.
-		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions);
+		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);

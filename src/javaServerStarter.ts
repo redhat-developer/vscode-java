@@ -14,7 +14,7 @@ import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp } fro
 
 // eslint-disable-next-line no-var
 declare var v8debug;
-const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
+export const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 
 /**
  * Argument that tells the program where to generate the heap dump that is created when an OutOfMemoryError is raised and `HEAP_DUMP` has been passed

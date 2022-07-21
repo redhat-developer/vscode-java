@@ -13,6 +13,7 @@ import { RequirementsData } from "./requirements";
 import { ServerMode } from "./settings";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import { getJavaConfig } from "./utils";
+import { DEBUG } from "./javaServerStarter";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 
@@ -55,7 +56,7 @@ export class SyntaxLanguageClient {
 		}
 
 		if (serverOptions) {
-			this.languageClient = new LanguageClient('java', extensionName, serverOptions, newClientOptions);
+			this.languageClient = new LanguageClient('java', extensionName, serverOptions, newClientOptions, DEBUG);
 		}
 
 		this.status = ClientStatus.initialized;

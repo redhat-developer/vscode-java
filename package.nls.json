@@ -23,5 +23,6 @@
 	"java.action.showSubtypeHierarchy": "Show Subtype Hierarchy",
 	"java.action.changeBaseType": "Base on this Type",
 	"java.project.createModuleInfo.command": "Create module-info.java",
-	"java.clean.sharedIndexes": "Clean Shared Indexes"
+	"java.clean.sharedIndexes": "Clean Shared Indexes",
+	"java.server.restart": "Restart Java Language Server"
 }
