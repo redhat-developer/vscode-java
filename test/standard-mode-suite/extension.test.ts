@@ -96,6 +96,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.RESOLVE_TYPE_HIERARCHY,
 				Commands.RESOLVE_WORKSPACE_SYMBOL,
 				Commands.RUNTIME_VALIDATION_OPEN,
+				Commands.RESTART_LANGUAGE_SERVER,
 				Commands.SHOW_JAVA_IMPLEMENTATIONS,
 				Commands.SHOW_JAVA_REFERENCES,
 				Commands.SHOW_SERVER_TASK_STATUS,

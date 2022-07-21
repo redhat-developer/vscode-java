@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, ProgressLocation } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -328,6 +328,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			}));
 
 			context.subscriptions.push(onConfigurationChange(workspacePath, context));
+
+			registerRestartJavaLanguageServerCommand(context);
 
 			/**
 			 * Command to switch the server mode. Currently it only supports switch from lightweight to standard.
@@ -964,4 +966,25 @@ function registerOutOfMemoryDetection(storagePath: string) {
 		}
 		showOOMMessage();
 	});
+}
+
+function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
+	context.subscriptions.push(commands.registerCommand(Commands.RESTART_LANGUAGE_SERVER, async () => {
+		switch (getJavaServerMode()) {
+			case (ServerMode.standard):
+				// Standard server restart
+				await standardClient.getClient().restart();
+				break;
+			case (ServerMode.lightWeight):
+				// Syntax server restart
+				await syntaxClient.getClient().restart();
+				break;
+			case (ServerMode.hybrid):
+				if (syntaxClient.isAlive()) {
+					await syntaxClient.getClient().restart();
+				}
+				await standardClient.getClient().restart();
+				break;
+		}
+	}));
 }

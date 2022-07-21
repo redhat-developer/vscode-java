@@ -108,6 +108,7 @@ The following commands are available:
 - `Java: List All Java Source Paths`: lists all the Java source paths recognized by the Java Language Server workspace.
 - `Java: Show Build Job Status`: shows the Java Language Server job status in Visual Studio Code terminal.
 - `Java: Go to Super Implementation`: goes to the super implementation for the current selected symbol in editor.
+- `Java: Restart Java Language Server`: restarts the Java language server.
 
 Supported VS Code settings
 ==========================
