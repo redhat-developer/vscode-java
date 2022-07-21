@@ -76,11 +76,23 @@ def publishExtensions() {
 		}
 
 		stage "publish specific version"
+
+		def platformVsixes = findFiles(glob: '**.vsix')
+
 		// for pre-release versions, vsixs are not stashed and kept in project folder
+
+		// VS Code Marketplace
 		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			def platformVsixes = findFiles(glob: '**.vsix')
 			for(platformVsix in platformVsixes){
 				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
+			}
+		}
+
+		// Open VSX Marketplace
+		sh 'npm install -g "ovsx"'
+		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+			for(platformVsix in platformVsixes){
+				sh 'ovsx publish -p ${OVSX_TOKEN}' + " --packagePath ${platformVsix.path}"
 			}
 		}
 	} else if (publishToMarketPlace.equals('true')) {
@@ -88,14 +100,7 @@ def publishExtensions() {
 			input message:'Approve deployment?', submitter: 'fbricon,rgrunber'
 		}
 
-		stage "Publish to Open-vsx Marketplace"
-		unstash 'vsix'
-		def vsix = findFiles(glob: '**.vsix')
-		// Open-vsx Marketplace
-		sh 'npm install -g "ovsx"'
-		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
-			sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${vsix[0].path}"
-		}
+		def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
 
 		stage "Publish to VS Code Marketplace"
 		// VS Code Marketplace
@@ -107,9 +112,19 @@ def publishExtensions() {
 
 			// Publish platform specific versions
 			unstash 'platformVsix'
-			def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
 			for(platformVsix in platformVsixes){
 				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
+			}
+		}
+
+		// Open VSX Marketplace
+		stage "Publish to Open VSX Marketplace"
+		sh 'npm install -g "ovsx"'
+		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+			// Publish a generic version
+			sh 'ovsx publish -p ${OVSX_TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+			for(platformVsix in platformVsixes){
+				sh 'ovsx publish -p ${OVSX_TOKEN}' + " --packagePath ${platformVsix.path}"
 			}
 		}
 
