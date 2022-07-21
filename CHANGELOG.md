@@ -44,7 +44,7 @@
 
 
 ## 1.7.0 (June 1st, 2022)
- * enhancment - Support separate "Generate Getters" and "Generate Setters". See [#2362](https://github.com/redhat-developer/vscode-java/issues/2362).
+ * enhancement - Support separate "Generate Getters" and "Generate Setters". See [#2362](https://github.com/redhat-developer/vscode-java/issues/2362).
  * enhancement - Show field type when generating accessors. See [#2459](https://github.com/redhat-developer/vscode-java/pull/2459).
  * enhancement - Show quick fixes for generating accessors in field declarations. See [JLS#2092](https://github.com/eclipse/eclipse.jdt.ls/pull/2092).
  * enhancement - Support exclusion list for inlay hints. See [#2412](https://github.com/redhat-developer/vscode-java/issues/2412).
@@ -581,7 +581,7 @@
 * enhancement - code action: improve "Invert Condition" refactoring trigger. See [JLS#1230](https://github.com/eclipse/eclipse.jdt.ls/issues/1230).
 * enhancement - refresh the extension bundles after uninstalling. See [JLS#1253](https://github.com/eclipse/eclipse.jdt.ls/pull/1253).
 * bug fixed - fixed Maven import failure caused by m2e-apt unable to parse maven-compiler-plugin configuration. See [#1131](https://github.com/redhat-developer/vscode-java/issues/1131).
-* bug fixed  - add Java 13 support for Gradle projects. See [JLS#1196](https://github.com/eclipse/eclipse.jdt.ls/issues/1196).
+* bug fixed - add Java 13 support for Gradle projects. See [JLS#1196](https://github.com/eclipse/eclipse.jdt.ls/issues/1196).
 * bug fixed - fixed errors reported from unrelated gradle projects outside the workspace. See [JLS#1261](https://github.com/eclipse/eclipse.jdt.ls/issues/1261).
 
 ## 0.52.0 (October 23rd, 2019)
