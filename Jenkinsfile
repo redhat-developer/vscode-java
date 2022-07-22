@@ -75,6 +75,13 @@ def publishExtensions() {
 			sh 'vsce publish --pre-release -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
 		}
 
+
+		sh 'npm install -g "ovsx"'
+		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+			// Publish a generic version
+			sh 'vsce publish --pre-release -p ${OVSX_TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+		}
+
 		stage "publish specific version"
 
 		def platformVsixes = findFiles(glob: '**.vsix')
@@ -89,7 +96,6 @@ def publishExtensions() {
 		}
 
 		// Open VSX Marketplace
-		sh 'npm install -g "ovsx"'
 		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
 			for(platformVsix in platformVsixes){
 				sh 'ovsx publish -p ${OVSX_TOKEN}' + " --packagePath ${platformVsix.path}"
