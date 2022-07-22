@@ -28,5 +28,6 @@
 	"java.edit.smartSemicolonDetection": "Java Smart Semicolon Detection",
 	"java.action.filesExplorerPasteAction": "Paste Clipboard Text Into a File",
 	"java.action.doCleanup": "Performs Cleanup Actions",
-	"java.change.searchScope": "Change Search Scope"
+	"java.change.searchScope": "Change Search Scope",
+	"java.action.showExtendedOutline": "Open Extended Outline"
 }

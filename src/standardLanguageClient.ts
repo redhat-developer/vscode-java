@@ -41,6 +41,7 @@ import { registerDocumentValidationListener } from './diagnostic';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 import { ClientCodeActionProvider } from './clientCodeActionProvider';
 import { BuildFileSelector } from './buildFilesSelector';
+import { extendedOutlineQuickPick } from "./outline/extendedOutlineQuickPick";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -590,6 +591,17 @@ export class StandardLanguageClient {
 				// Notify jdt content provider to rerender the classfile contents.
 				jdtEventEmitter.fire(classFileUri);
 				return true;
+			}
+		}));
+
+		context.subscriptions.push(commands.registerCommand(Commands.SHOW_EXTEND_OUTLINE, (location: any) => {
+			if (location instanceof Uri) {
+				extendedOutlineQuickPick.open(location);
+			} else {
+				if (window.activeTextEditor?.document?.languageId !== "java") {
+					return;
+				}
+				extendedOutlineQuickPick.open(window.activeTextEditor.document.uri);
 			}
 		}));
 
