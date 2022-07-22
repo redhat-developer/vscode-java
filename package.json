@@ -1727,7 +1727,11 @@
       },
       {
         "command": "java.change.searchScope",
-        "title": "%java.change.searchScope%",
+        "title": "%java.change.searchScope%"
+      },
+      {
+        "command": "java.action.showExtendedOutline",
+        "title": "%java.action.showExtendedOutline%",
         "category": "Java"
       }
     ],
@@ -1757,6 +1761,11 @@
         "command": "java.action.doCleanup",
         "key": "ctrl+shift+alt+s",
         "when": "javaLSReady && editorLangId == java"
+      },
+      {
+        "command": "java.action.showExtendedOutline",
+        "key": "ctrl+o",
+        "when": "javaLSReady && inQuickOpen"
       }
     ],
     "menus": {
