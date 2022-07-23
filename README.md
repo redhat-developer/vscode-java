@@ -1,8 +1,11 @@
 Language support for Java &trade; for Visual Studio Code
 =====================
 
-[![Join the chat at https://gitter.im/redhat-developer/vscode-java](https://badges.gitter.im/redhat-developer/vscode-java.svg)](https://gitter.im/redhat-developer/vscode-java?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Build Status](https://travis-ci.org/redhat-developer/vscode-java.svg?branch=master)](https://travis-ci.org/redhat-developer/vscode-java) [![Marketplace Version](https://vsmarketplacebadge.apphb.com/version/redhat.java.svg "Current Release")](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/redhat.java?style=for-the-badge&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[![Installs](https://img.shields.io/visual-studio-marketplace/i/redhat.java?style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=redhat.java)
+[![Join the chat at https://gitter.im/redhat-developer/vscode-java](https://img.shields.io/gitter/room/redhat-developer/vscode-java?style=for-the-badge&logo=gitter)](https://gitter.im/redhat-developer/vscode-java)
+[![Build Status](https://img.shields.io/github/workflow/status/redhat-developer/vscode-java/pr-verify?style=for-the-badge&logo=github)](https://github.com/redhat-developer/vscode-java/actions?query=workflow:pr-verify)
+[![License](https://img.shields.io/github/license/redhat-developer/vscode-java?style=for-the-badge&logo=eclipse)](https://github.com/redhat-developer/vscode-java/blob/master/LICENSE)
 
 Provides Java &trade; language support via
 [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls), which utilizes
