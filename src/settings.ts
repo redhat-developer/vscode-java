@@ -46,8 +46,8 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 			fs.closeSync(fs.openSync(file, 'w'));
 		}
 		if (isFsModeChanged || hasJavaConfigChanged(oldConfig, newConfig)) {
-			const msg = `Java Language Server configuration changed, please restart ${env.appName}.`;
-			const action = 'Restart Now';
+			const msg = `Java Language Server configuration changed, please reload ${env.appName}.`;
+			const action = 'Reload';
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showWarningMessage(msg, action).then((selection) => {
 				if (action === selection) {
@@ -57,8 +57,8 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 		}
 		if (hasConfigKeyChanged('jdt.ls.lombokSupport.enabled', oldConfig, newConfig)) {
 			if (newConfig.get("jdt.ls.lombokSupport.enabled")) {
-				const msg = `Lombok support is enabled, please restart ${env.appName}.`;
-				const action = 'Restart Now';
+				const msg = `Lombok support is enabled, please reload ${env.appName}.`;
+				const action = 'Reload';
 				const restartId = Commands.RELOAD_WINDOW;
 				window.showWarningMessage(msg, action).then((selection) => {
 					if (action === selection) {
@@ -68,8 +68,8 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 			}
 			else {
 				cleanupLombokCache(context);
-				const msg = `Lombok support is disabled, please restart ${env.appName}.`;
-				const action = 'Restart Now';
+				const msg = `Lombok support is disabled, please reload ${env.appName}.`;
+				const action = 'Reload';
 				const restartId = Commands.RELOAD_WINDOW;
 				window.showWarningMessage(msg, action).then((selection) => {
 					if (action === selection) {
