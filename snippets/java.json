@@ -12,7 +12,7 @@
 		"prefix": "ctor",
 		"body": [
 			"public ${1:${TM_FILENAME_BASE}}($2) {",
-			"\t${0:super();}",
+			"\t${3:super();}$0",
 			"}"
 		],
 		"description": "Public constructor"
@@ -23,7 +23,7 @@
 			"try {",
 			"\t$1",
 			"} catch (${2:Exception} ${3:e}) {",
-			"\t$4//${0:TODO}: handle exception",
+			"\t$0// TODO: handle exception",
 			"}"
 		],
 		"description": "try/catch block"
@@ -34,7 +34,7 @@
 			"try ($1) {",
 			"\t$2",
 			"} catch (${3:Exception} ${4:e}) {",
-			"\t$5//${0:TODO}: handle exception",
+			"\t$0// TODO: handle exception",
 			"}"
 		]
 	},
@@ -100,7 +100,8 @@
 	"newObject": {
 		"prefix": "new",
 		"body": [
-			"${0:Object} ${1:foo} = new ${0:Object}();"
+			"${1:Object} ${2:foo} = new ${1}($3);",
+			"$0"
 		],
 		"description": "Create new Object"
 	},
