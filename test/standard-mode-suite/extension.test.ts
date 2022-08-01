@@ -15,9 +15,22 @@ suite('Java Language Extension - Standard', () => {
 		assert.ok(vscode.extensions.getExtension('redhat.java'));
 	});
 
-	test('should activate', function () {
+	test('should activate', async function () {
+		this.timeout(60000 * 2);
+		const ext = vscode.extensions.getExtension('redhat.java');
+		while (true) {
+			await new Promise(resolve => {
+				setTimeout(resolve, 5000);
+			});
+			if (ext.isActive) {
+				break;
+			}
+		}
+	});
+
+	test('should return api after activation', function () {
 		return vscode.extensions.getExtension('redhat.java').activate().then((api) => {
-			assert.ok(true);
+			assert.ok(!!api);
 		});
 	});
 

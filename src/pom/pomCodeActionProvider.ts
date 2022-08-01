@@ -20,7 +20,7 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 		return undefined;
 	}
 
-	private collectCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): CodeAction[] {
+	collectCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): CodeAction[] {
 		const codeActions: CodeAction[] = [];
 		for (const diagnostic of diagnostics) {
 			if (diagnostic.message?.startsWith("Plugin execution not covered by lifecycle configuration")) {
@@ -62,7 +62,7 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 		return codeActions;
 	}
 
-	private getNewTextIndentation(document: TextDocument, diagnostic: Diagnostic): string {
+	getNewTextIndentation(document: TextDocument, diagnostic: Diagnostic): string {
 		const textline = document.lineAt(diagnostic.range.end.line);
 		if (textline.text.lastIndexOf("</execution>") > diagnostic.range.end.character) {
 			return "";
