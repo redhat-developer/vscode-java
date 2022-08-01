@@ -26,7 +26,7 @@ export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> 
 		return [];
 	}
 
-	private async provideGradleCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): Promise<CodeAction[]> {
+	async provideGradleCodeActions(document: TextDocument, diagnostics: readonly Diagnostic[]): Promise<CodeAction[]> {
 		const codeActions = [];
 		for (const diagnostic of diagnostics) {
 			if (diagnostic.message?.startsWith("The build file has been changed")) {

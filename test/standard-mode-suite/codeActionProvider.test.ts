@@ -2,6 +2,7 @@
 
 import * as assert from 'assert';
 import * as path from 'path';
+import * as sinon from 'sinon';
 import { CodeAction, CodeActionContext, CodeActionKind, CodeActionTriggerKind, DiagnosticSeverity, ExtensionContext, Position, Range, Uri, window } from "vscode";
 import { Commands } from '../../src/commands';
 import { GradleCodeActionProvider } from '../../src/gradle/gradleCodeActionProvider';
@@ -14,10 +15,10 @@ const gradleProjectFsPath: string = path.join(__dirname, '..', '..', '..', 'test
 suite('Code Action Provider Test', () => {
 
 	test('Provide reload project action on demand for pom file', async function () {
-		const contextMock = {
-			subscriptions: []
-		};
-		const provider = new PomCodeActionProvider(contextMock as ExtensionContext);
+		const provider = sinon.createStubInstance(PomCodeActionProvider);
+		provider.provideCodeActions.restore();
+		provider.getNewTextIndentation.restore();
+		provider.collectCodeActions.restore();
 
 		const codeActionContext: CodeActionContext = {
 			triggerKind: CodeActionTriggerKind.Invoke,
@@ -36,10 +37,9 @@ suite('Code Action Provider Test', () => {
 	});
 
 	test('Provide reload project action on demand for gradle file', async function () {
-		const contextMock = {
-			subscriptions: []
-		};
-		const provider = new GradleCodeActionProvider(contextMock as ExtensionContext);
+		const provider = sinon.createStubInstance(GradleCodeActionProvider);
+		provider.provideCodeActions.restore();
+		provider.provideGradleCodeActions.restore();
 
 		const codeActionContext: CodeActionContext = {
 			triggerKind: CodeActionTriggerKind.Invoke,
