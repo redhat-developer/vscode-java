@@ -164,7 +164,7 @@ export async function checkJavaPreferences(context: ExtensionContext): Promise<{
 	const key = getKey(IS_WORKSPACE_JLS_JDK_ALLOWED, context.storagePath, javaHome);
 	const globalState = context.globalState;
 	if (!isVerified) {
-		isVerified = globalState.get(key);
+		isVerified = workspace.isTrusted || globalState.get(key);
 		if (isVerified === undefined) {
 			await window.showErrorMessage(`Security Warning! Do you allow this workspace to set the java.jdt.ls.java.home variable? \n java.jdt.ls.java.home: ${javaHome}`, disallow, allow).then(async selection => {
 				if (selection === allow) {
@@ -191,7 +191,7 @@ export async function checkJavaPreferences(context: ExtensionContext): Promise<{
 		const key = getKey(IS_WORKSPACE_JDK_ALLOWED, context.storagePath, javaHome);
 		const globalState = context.globalState;
 		if (!isVerified) {
-			isVerified = globalState.get(key);
+			isVerified = workspace.isTrusted || globalState.get(key);
 			if (isVerified === undefined) {
 				await window.showErrorMessage(`Security Warning! Do you allow this workspace to set the java.home variable? \n java.home: ${javaHome}`, disallow, allow).then(async selection => {
 					if (selection === allow) {
