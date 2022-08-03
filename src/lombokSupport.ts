@@ -168,7 +168,7 @@ export async function checkLombokDependency(context: ExtensionContext) {
 		context.workspaceState.update(JAVA_LOMBOK_PATH, currentLombokClasspath);
 		const msg = `Lombok version changed from ${previousLombokVersion.split('.jar')[0].split('-')[1]} to ${currentLombokVersion.split('.jar')[0].split('-')[1]} \
 						. Do you want to reload the window to load the new Lombok version?`;
-		const action = 'Reload Now';
+		const action = 'Reload';
 		const restartId = Commands.RELOAD_WINDOW;
 		window.showInformationMessage(msg, action).then((selection) => {
 			if (action === selection) {
@@ -228,7 +228,7 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 		}
 		if (shouldReload) {
 			const msg = `The Lombok version used in Java extension has changed, please reload the window.`;
-			const action = 'Reload Now';
+			const action = 'Reload';
 			const restartId = Commands.RELOAD_WINDOW;
 			window.showInformationMessage(msg, action).then((selection) => {
 				if (action === selection) {

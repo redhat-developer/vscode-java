@@ -720,7 +720,7 @@ function makeRandomHexString(length) {
 
 async function cleanWorkspace(workspacePath, force?: boolean) {
 	if (!force) {
-		const doIt = 'Restart and delete';
+		const doIt = 'Reload and delete';
 		const selection = await window.showWarningMessage('Are you sure you want to clean the Java language server workspace?', 'Cancel', doIt);
 		if (selection !== doIt) {
 			return;
