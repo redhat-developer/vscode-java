@@ -94,7 +94,7 @@ Available commands
 ==========================
 The following commands are available:
 - `Switch to Standard Mode`: switches the Java Language Server to `Standard` mode. This command is only available when the Java Language Server is in `LightWeight` mode.
-- `Java: Reload Project` (`Shift+Alt+U`): It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
+- `Java: Reload Projects` (`Shift+Alt+U`): It forces project configuration / classpath updates (eg. dependency changes or Java compilation level), according to the project build descriptor.
 - `Java: Import Java Projects into Workspace`: detects and imports all the Java projects into the Java Language Server workspace.
 - `Java: Open Java Language Server Log File`: opens the Java Language Server log file, useful for troubleshooting problems.
 - `Java: Open Java Extension Log File`: opens the Java extension log file, useful for troubleshooting problems.
