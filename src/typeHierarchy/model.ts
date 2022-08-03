@@ -194,7 +194,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 		}
 		if (this.model.getDirection() === TypeHierarchyDirection.children || this.model.getDirection() === TypeHierarchyDirection.both) {
 			if (!element.children) {
-				if (TypeHierarchyTreeDataProvider.isWhiteListType(element)) {
+				if (TypeHierarchyTreeDataProvider.isAllowedType(element)) {
 					return [TypeHierarchyTreeDataProvider.getFakeItem(element)];
 				}
 				const resolvedItem = await resolveTypeHierarchy(this.client, element, this.model.getDirection(), this.token);
@@ -223,7 +223,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 		return undefined;
 	}
 
-	private static isWhiteListType(item: TypeHierarchyItem): boolean {
+	private static isAllowedType(item: TypeHierarchyItem): boolean {
 		if (item.name === "Object" && item.detail === "java.lang") {
 			return true;
 		}

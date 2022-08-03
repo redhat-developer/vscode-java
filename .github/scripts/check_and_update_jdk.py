@@ -30,7 +30,7 @@ print(f'Current supported JDK version: {current_jdk}')
 if latest_jdk != current_jdk:
     print(f'New JDK version detected: {latest_jdk}')
     # Create a formatted string template from the URI structure
-    uri_base = 'https://ci.eclipse.org/ls/job/jdt-ls-master/lastCompletedBuild/testReport/org.eclipse.jdt.ls.core.internal.{package}/{java_class}/{method}/api/python'
+    uri_base = 'https://ci.eclipse.org/ls/job/jdt-ls-main/lastCompletedBuild/testReport/org.eclipse.jdt.ls.core.internal.{package}/{java_class}/{method}/api/python'
     # Define the test URLs to check using the template and list comprehension
     tests = [
         uri_base.format(package='managers', java_class=c, method=m) for c, m in [('EclipseProjectImporterTest', 'testPreviewFeaturesDisabledByDefault'), ('InvisibleProjectImporterTest', 'testPreviewFeaturesEnabledByDefault'), ('MavenProjectImporterTest', f'testJava{latest_jdk}Project')]

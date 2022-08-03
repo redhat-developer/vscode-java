@@ -4,8 +4,8 @@ Language support for Java &trade; for Visual Studio Code
 [![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/redhat.java?style=for-the-badge&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 [![Installs](https://img.shields.io/visual-studio-marketplace/i/redhat.java?style=for-the-badge)](https://marketplace.visualstudio.com/items?itemName=redhat.java)
 [![Join the chat at https://gitter.im/redhat-developer/vscode-java](https://img.shields.io/gitter/room/redhat-developer/vscode-java?style=for-the-badge&logo=gitter)](https://gitter.im/redhat-developer/vscode-java)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/redhat-developer/vscode-java/pr-verify.yml?branch=master&style=for-the-badge&logo=github)](https://github.com/redhat-developer/vscode-java/actions?query=workflow:pr-verify)
-[![License](https://img.shields.io/github/license/redhat-developer/vscode-java?style=for-the-badge&logo=eclipse)](https://github.com/redhat-developer/vscode-java/blob/master/LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/redhat-developer/vscode-java/pr-verify.yml?branch=main&style=for-the-badge&logo=github)](https://github.com/redhat-developer/vscode-java/actions?query=workflow:pr-verify)
+[![License](https://img.shields.io/github/license/redhat-developer/vscode-java?style=for-the-badge&logo=eclipse)](https://github.com/redhat-developer/vscode-java/blob/main/LICENSE)
 
 Provides Java &trade; language support via
 [Eclipse &trade; JDT Language Server](https://github.com/eclipse/eclipse.jdt.ls), which utilizes
@@ -22,7 +22,7 @@ If on another platform, or using the "universal" version, you can [set](#setting
 
 Features
 =========
-![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/vscode-java.0.0.1.gif)
+![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/main/images/vscode-java.0.0.1.gif)
 
 * Supports code from Java 1.8 to Java 24
 * Maven pom.xml project support
@@ -267,7 +267,7 @@ Troubleshooting
 It should show ready (thumbs up) as on the image below. You can click on the status and open the
 language tool logs for further information in case of a failure.
 
-![ status indicator ](https://raw.githubusercontent.com/redhat-developer/vscode-java/master/images/statusMarker.png)
+![ status indicator ](https://raw.githubusercontent.com/redhat-developer/vscode-java/main/images/statusMarker.png)
 
 2. Read the [troubleshooting guide](https://github.com/redhat-developer/vscode-java/wiki/Troubleshooting) for collecting informations about issues you might encounter.
 
