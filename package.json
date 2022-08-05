@@ -916,6 +916,12 @@
           "default": true,
           "description": "Whether to load lombok processors from project classpath",
           "scope": "window"
+        },
+        "java.codeAction.sortMembers.avoidVolatileChanges": {
+          "type": "boolean",
+          "default": true,
+          "description": "Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring.",
+          "scope": "window"
         }
       }
     },
