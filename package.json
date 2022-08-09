@@ -250,6 +250,12 @@
           "description": "Enable/disable the Maven importer.",
           "scope": "window"
         },
+        "java.import.maven.offline.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable the Maven offline mode.",
+          "scope": "window"
+        },
         "java.import.gradle.enabled": {
           "type": "boolean",
           "default": true,
