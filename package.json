@@ -17,7 +17,8 @@
         "java.jdt.ls.java.home",
         "java.home",
         "java.jdt.ls.vmargs",
-        "java.configuration.runtimes"
+        "java.configuration.runtimes",
+        "java.import.gradle.java.home"
       ]
     },
     "virtualWorkspaces": false
@@ -284,7 +285,7 @@
           "type": "string",
           "default": null,
           "description": "The location to the JVM used to run the Gradle daemon.",
-          "scope": "machine"
+          "scope": "machine-overridable"
         },
         "java.import.gradle.offline.enabled": {
           "type": "boolean",
