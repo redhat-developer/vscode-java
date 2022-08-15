@@ -1269,7 +1269,7 @@
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "eslint": "^8.13.0",
-    "eslint-plugin-prefer-arrow": "^1.2.3",
+    "eslint-webpack-plugin": "^3.2.0",
     "gulp": "^4.0.2",
     "gulp-decompress": "^3.0.0",
     "gulp-download": "0.0.1",

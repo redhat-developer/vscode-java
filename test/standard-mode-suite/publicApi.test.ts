@@ -14,7 +14,6 @@ import { env } from 'process';
 const pomPath: string = path.join(constants.projectFsPath, 'pom.xml');
 const gradleTestFolder: string = path.join(constants.projectFsPath, 'testGradle');
 
-/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Public APIs - Standard', () => {
 
 	suiteSetup(async function() {

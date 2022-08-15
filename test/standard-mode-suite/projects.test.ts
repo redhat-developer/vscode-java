@@ -10,7 +10,6 @@ import { projectConfigurationUpdate } from '../../src/standardLanguageClientUtil
 
 const projectFsPath: string = path.join(__dirname, '..', '..', '..', 'test', 'resources', 'projects', 'maven', 'salut');
 
-// tslint:disable: only-arrow-functions
 suite('Project Operations Test', () => {
 
 	test('Reload project by test document identifier', async function () {

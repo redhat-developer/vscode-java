@@ -7,7 +7,7 @@
             "type": "npm",
             "script": "watch",
             "problemMatcher": [
-                "$ts-webpack-watch"
+                "$eslint-stylish"
             ],
             "isBackground": true,
             "presentation": {

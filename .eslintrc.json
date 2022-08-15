@@ -9,8 +9,7 @@
 		"project": "tsconfig.json"
 	},
 	"plugins": [
-		"@typescript-eslint",
-		"eslint-plugin-prefer-arrow"
+		"@typescript-eslint"
 	],
 	"rules": {
 		"@typescript-eslint/member-delimiter-style": [
@@ -60,14 +59,6 @@
 		"no-trailing-spaces": "error",
 		"no-underscore-dangle": "error",
 		"no-var": "error",
-		"prefer-arrow/prefer-arrow-functions": [
-			"error",
-			{
-				"disallowPrototype": true,
-				"singleReturnOnly": false,
-				"classPropertiesAllowed": false
-			}
-		],
 		"prefer-arrow-callback": [
 			"error",
 			{ "allowNamedFunctions": true }
@@ -105,6 +96,14 @@
 				"semi": "off",
 				"prefer-template": "off",
 				"prefer-const": "off"
+			}
+		},
+		{
+			"files": [
+				"**/*.test.ts"
+			],
+			"rules": {
+				"prefer-arrow-callback": "off"
 			}
 		}
 	]

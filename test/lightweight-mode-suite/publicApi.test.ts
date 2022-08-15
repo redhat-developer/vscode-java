@@ -12,7 +12,6 @@ import { constants } from '../common';
 
 const pomPath: string = path.join(constants.projectFsPath, 'pom.xml');
 
-/* eslint-disable prefer-arrow-callback, prefer-arrow/prefer-arrow-functions  */
 suite('Public APIs - LightWeight', () => {
 
 	suiteSetup(async function() {
@@ -142,7 +141,7 @@ suite('Public APIs - LightWeight', () => {
 				}
 			});
 
-			await commands.executeCommand(Commands.SWITCH_SERVER_MODE, "Standard", true/*force*/);
+			await commands.executeCommand(Commands.SWITCH_SERVER_MODE, "Standard", true/* force */);
 		});
 
 		assert.equal(onDidChangeServerModeCount, 2);
