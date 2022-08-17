@@ -128,6 +128,10 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	let currentLombokClasspath: string = undefined;
 	const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
 	for (const projectUri of projectUris) {
+		const projectPath = vscode.Uri.parse(projectUri).fsPath;
+		if (path.basename(projectPath) === "jdt.ls-java-project") {
+			continue;
+		}
 		const classpathResult = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'test'});
 		for (const classpath of classpathResult.classpaths) {
 			if (lombokJarRegex.test(classpath)) {
