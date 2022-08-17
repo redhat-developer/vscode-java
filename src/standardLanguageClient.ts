@@ -49,10 +49,10 @@ const GRADLE_IMPORT_JVM = "java.import.gradle.java.home";
 export class StandardLanguageClient {
 
 	private languageClient: LanguageClient;
-	private status: ClientStatus = ClientStatus.Uninitialized;
+	private status: ClientStatus = ClientStatus.uninitialized;
 
 	public async initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve: (value: ExtensionAPI) => void): Promise<void> {
-		if (this.status !== ClientStatus.Uninitialized) {
+		if (this.status !== ClientStatus.uninitialized) {
 			return;
 		}
 
@@ -68,11 +68,11 @@ export class StandardLanguageClient {
 
 		serverStatus.initialize();
 		serverStatus.onServerStatusChanged(status => {
-			if (status === ServerStatusKind.Busy) {
+			if (status === ServerStatusKind.busy) {
 				serverStatusBarProvider.setBusy();
-			} else if (status === ServerStatusKind.Error) {
+			} else if (status === ServerStatusKind.error) {
 				serverStatusBarProvider.setError();
-			} else if (status === ServerStatusKind.Warning) {
+			} else if (status === ServerStatusKind.warning) {
 				serverStatusBarProvider.setWarning();
 			} else {
 				serverStatusBarProvider.setReady();
@@ -84,7 +84,7 @@ export class StandardLanguageClient {
 		if (!port) {
 			const lsPort = process.env['JDTLS_CLIENT_PORT'];
 			if (!lsPort) {
-				serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfig(requirements.java_home), context, false);
+				serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfig(requirements.javaHome), context, false);
 			} else {
 				serverOptions = () => {
 					const socket = net.connect(lsPort);
@@ -108,8 +108,8 @@ export class StandardLanguageClient {
 			this.languageClient.onNotification(StatusNotification.type, (report) => {
 				switch (report.type) {
 					case 'ServiceReady':
-						apiManager.updateServerMode(ServerMode.STANDARD);
-						apiManager.fireDidServerModeChange(ServerMode.STANDARD);
+						apiManager.updateServerMode(ServerMode.standard);
+						apiManager.fireDidServerModeChange(ServerMode.standard);
 						apiManager.resolveServerReadyPromise();
 						activationProgressNotification.hide();
 						if (!hasImported) {
@@ -123,25 +123,25 @@ export class StandardLanguageClient {
 						snippetCompletionProvider.dispose();
 						break;
 					case 'Started':
-						this.status = ClientStatus.Started;
-						serverStatus.updateServerStatus(ServerStatusKind.Ready);
+						this.status = ClientStatus.started;
+						serverStatus.updateServerStatus(ServerStatusKind.ready);
 						commands.executeCommand('setContext', 'javaLSReady', true);
-						apiManager.updateStatus(ClientStatus.Started);
+						apiManager.updateStatus(ClientStatus.started);
 						resolve(apiManager.getApiInstance());
 						break;
 					case 'Error':
-						this.status = ClientStatus.Error;
-						serverStatus.updateServerStatus(ServerStatusKind.Error);
-						apiManager.updateStatus(ClientStatus.Error);
+						this.status = ClientStatus.error;
+						serverStatus.updateServerStatus(ServerStatusKind.error);
+						apiManager.updateStatus(ClientStatus.error);
 						resolve(apiManager.getApiInstance());
 						break;
 					case 'ProjectStatus':
 						if (report.message === "WARNING") {
-							serverStatus.updateServerStatus(ServerStatusKind.Warning);
+							serverStatus.updateServerStatus(ServerStatusKind.warning);
 						} else if (report.message === "OK") {
-							this.status = ClientStatus.Started;
+							this.status = ClientStatus.started;
 							serverStatus.errorResolved();
-							serverStatus.updateServerStatus(ServerStatusKind.Ready);
+							serverStatus.updateServerStatus(ServerStatusKind.ready);
 						}
 						return;
 					case 'Starting':
@@ -160,10 +160,10 @@ export class StandardLanguageClient {
 
 			this.languageClient.onNotification(EventNotification.type, async (notification) => {
 				switch (notification.eventType) {
-					case EventType.ClasspathUpdated:
+					case EventType.classpathUpdated:
 						apiManager.fireDidClasspathUpdate(Uri.parse(notification.data));
 						break;
-					case EventType.ProjectsImported:
+					case EventType.projectsImported:
 						const projectUris: Uri[] = [];
 						if (notification.data) {
 							for (const uriString of notification.data) {
@@ -174,7 +174,7 @@ export class StandardLanguageClient {
 							apiManager.fireDidProjectsImport(projectUris);
 						}
 						break;
-					case EventType.IncompatibleGradleJdkIssue:
+					case EventType.incompatibleGradleJdkIssue:
 						const options: string[] = [];
 						const info = notification.data as GradleCompatibilityInfo;
 						const highestJavaVersion = Number(info.highestJavaVersion);
@@ -192,7 +192,7 @@ export class StandardLanguageClient {
 						}
 						this.showGradleCompatibilityIssueNotification(info.message, options, info.projectUri, info.recommendedGradleVersion, runtimes[0]?.homedir);
 						break;
-					case EventType.UpgradeGradleWrapper:
+					case EventType.upgradeGradleWrapper:
 						const neverShow: boolean | undefined = context.globalState.get<boolean>("java.neverShowUpgradeWrapperNotification");
 						if (!neverShow) {
 							const upgradeInfo = notification.data as UpgradeGradleWrapperInfo;
@@ -264,7 +264,7 @@ export class StandardLanguageClient {
 							result.push(null);
 						}
 					} else {
-						result.push(workspace.getConfiguration(null, scopeUri).get(item.section, null /*defaultValue*/));
+						result.push(workspace.getConfiguration(null, scopeUri).get(item.section, null /* defaultValue */));
 					}
 				}
 				return result;
@@ -276,11 +276,11 @@ export class StandardLanguageClient {
 
 		collectBuildFilePattern(extensions.all);
 
-		this.status = ClientStatus.Initialized;
+		this.status = ClientStatus.initialized;
 	}
 
 	private showGradleCompatibilityIssueNotification(message: string, options: string[], projectUri: string, gradleVersion: string, newJavaHome: string) {
-		window.showErrorMessage(message + " [Learn More](https://docs.gradle.org/current/userguide/compatibility.html)", ...options).then(async (choice) => {
+		window.showErrorMessage(`${message} [Learn More](https://docs.gradle.org/current/userguide/compatibility.html)`, ...options).then(async (choice) => {
 			if (choice === GET_JDK) {
 				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(getJdkUrl()));
 			} else if (choice.startsWith(USE_JAVA)) {
@@ -375,25 +375,25 @@ export class StandardLanguageClient {
 
 			context.subscriptions.push(commands.registerCommand(Commands.SHOW_TYPE_HIERARCHY, (location: any) => {
 				if (location instanceof Uri) {
-					typeHierarchyTree.setTypeHierarchy(new Location(location, window.activeTextEditor.selection.active), TypeHierarchyDirection.Both);
+					typeHierarchyTree.setTypeHierarchy(new Location(location, window.activeTextEditor.selection.active), TypeHierarchyDirection.both);
 				} else {
 					if (window.activeTextEditor?.document?.languageId !== "java") {
 						return;
 					}
-					typeHierarchyTree.setTypeHierarchy(new Location(window.activeTextEditor.document.uri, window.activeTextEditor.selection.active), TypeHierarchyDirection.Both);
+					typeHierarchyTree.setTypeHierarchy(new Location(window.activeTextEditor.document.uri, window.activeTextEditor.selection.active), TypeHierarchyDirection.both);
 				}
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.SHOW_CLASS_HIERARCHY, () => {
-				typeHierarchyTree.changeDirection(TypeHierarchyDirection.Both);
+				typeHierarchyTree.changeDirection(TypeHierarchyDirection.both);
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUPERTYPE_HIERARCHY, () => {
-				typeHierarchyTree.changeDirection(TypeHierarchyDirection.Parents);
+				typeHierarchyTree.changeDirection(TypeHierarchyDirection.parents);
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUBTYPE_HIERARCHY, () => {
-				typeHierarchyTree.changeDirection(TypeHierarchyDirection.Children);
+				typeHierarchyTree.changeDirection(TypeHierarchyDirection.children);
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.CHANGE_BASE_TYPE, async (item: TypeHierarchyItem) => {
@@ -442,7 +442,7 @@ export class StandardLanguageClient {
 								await this.languageClient.sendRequest(BuildProjectRequest.type, params);
 						} catch (error) {
 							if (error && error.code === -32800) { // Check if the request is cancelled.
-								res = CompileWorkspaceStatus.CANCELLED;
+								res = CompileWorkspaceStatus.cancelled;
 							}
 							reject(error);
 						}
@@ -470,7 +470,7 @@ export class StandardLanguageClient {
 							: await this.languageClient.sendRequest(CompileWorkspaceRequest.type, isFullCompile);
 					} catch (error) {
 						if (error && error.code === -32800) { // Check if the request is cancelled.
-							res = CompileWorkspaceStatus.CANCELLED;
+							res = CompileWorkspaceStatus.cancelled;
 						} else {
 							throw error;
 						}
@@ -480,7 +480,7 @@ export class StandardLanguageClient {
 					const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
 					return new Promise((resolve, reject) => {
 						setTimeout(() => { // set a timeout so user would still see the message when build time is short
-							if (res === CompileWorkspaceStatus.SUCCEED) {
+							if (res === CompileWorkspaceStatus.succeed) {
 								resolve(res);
 							} else {
 								reject(res);
@@ -509,6 +509,7 @@ export class StandardLanguageClient {
 					canSelectFolders: false,
 					canSelectMany: false,
 					filters: {
+						// eslint-disable-next-line @typescript-eslint/naming-convention
 						'Source files': ['jar', 'zip']
 					},
 				});
@@ -573,14 +574,14 @@ export class StandardLanguageClient {
 	}
 
 	public start(): void {
-		if (this.languageClient && this.status === ClientStatus.Initialized) {
+		if (this.languageClient && this.status === ClientStatus.initialized) {
 			this.languageClient.start();
-			this.status = ClientStatus.Starting;
+			this.status = ClientStatus.starting;
 		}
 	}
 
 	public stop(): Promise<void> {
-		this.status = ClientStatus.Stopping;
+		this.status = ClientStatus.stopping;
 		if (this.languageClient) {
 			try {
 				return this.languageClient.stop();

@@ -40,7 +40,12 @@ const config = {
 		}]
 	},
 	plugins: [
-		new ESLintWebpackPlugin()
+		new ESLintWebpackPlugin({
+			extensions: [
+				".ts",
+				".js"
+			]
+		})
 	]
 }
 module.exports = config;

@@ -5,7 +5,7 @@ import { TextDocumentPositionParams, HoverRequest } from "vscode-languageclient"
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from "./commands";
 import { FindLinks } from "./protocol";
-import { provideHoverCommandFn } from "./extension.api";
+import { ProvideHoverCommandFn } from "./extension.api";
 import { logger } from "./log";
 
 export function createClientHoverProvider(languageClient: LanguageClient): JavaHoverProvider {
@@ -47,8 +47,8 @@ function encodeBase64(text: string): string {
     return Buffer.from(text).toString('base64');
 }
 
-const hoverCommandRegistry: provideHoverCommandFn[] = [];
-export function registerHoverCommand(callback: provideHoverCommandFn): void {
+const hoverCommandRegistry: ProvideHoverCommandFn[] = [];
+export function registerHoverCommand(callback: ProvideHoverCommandFn): void {
     hoverCommandRegistry.push(callback);
 }
 

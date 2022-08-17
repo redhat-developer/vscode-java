@@ -12,6 +12,7 @@ import { getJavaConfiguration, deleteDirectory, ensureExists, getTimestamp } fro
 import { workspace, ExtensionContext, window } from 'vscode';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 
+// eslint-disable-next-line no-var
 declare var v8debug;
 const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
 
@@ -30,7 +31,7 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	const options: ExecutableOptions = Object.create(null);
 	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
 	executable.options = options;
-	executable.command = path.resolve(requirements.tooling_jre + '/bin/java');
+	executable.command = path.resolve(`${requirements.toolingJre}/bin/java`);
 	executable.args = prepareParams(requirements, javaConfig, workspacePath, context, isSyntaxServer);
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
@@ -40,13 +41,13 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 	return new Promise((res, rej) => {
 		const server = net.createServer(stream => {
 			server.close();
-			logger.info('JDT LS connection established on port ' + addr);
+			logger.info(`JDT LS connection established on port ${addr}`);
 			res({ reader: stream, writer: stream });
 		});
 		server.on('error', rej);
 		server.listen(addr, () => {
 			server.removeListener('error', rej);
-			logger.info('Awaiting JDT LS connection on port ' + addr);
+			logger.info(`Awaiting JDT LS connection on port ${addr}`);
 		});
 		return server;
 	});
@@ -97,7 +98,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 	let vmargs;
 	if (vmargsCheck !== undefined) {
-		vmargs = vmargsCheck + '';
+		vmargs = String(vmargsCheck);
 	} else {
 		vmargs = '';
 	}
@@ -108,7 +109,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	if (os.platform() === 'win32') {
 		const watchParentProcess = '-DwatchParentProcess=';
 		if (vmargs.indexOf(watchParentProcess) < 0) {
-			params.push(watchParentProcess + 'false');
+			params.push(`${watchParentProcess}false`);
 		}
 	}
 	if (vmargs.indexOf('-Xlog:jni+resolve=') < 0) {
@@ -133,7 +134,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
 	// were deprecated in JDK 13 and will likely be removed in a future release."
 	// so only add -noverify for older versions
-	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.tooling_jre_version < 13) {
+	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.toolingJreVersion < 13) {
 		params.push('-noverify');
 	}
 

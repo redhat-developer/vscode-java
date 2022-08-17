@@ -152,7 +152,7 @@ export function getJavaEncoding(): string {
 	return javaEncoding;
 }
 
-export async function checkJavaPreferences(context: ExtensionContext): Promise<{javaHome?: string, preference: string}> {
+export async function checkJavaPreferences(context: ExtensionContext): Promise<{javaHome?: string; preference: string}> {
 	const allow = 'Allow';
 	const disallow = 'Disallow';
 	let preference: string = 'java.jdt.ls.java.home';
@@ -236,7 +236,7 @@ export async function checkJavaPreferences(context: ExtensionContext): Promise<{
 }
 
 export function getKey(prefix, storagePath, value) {
-	const workspacePath = path.resolve(storagePath + '/jdt_ws');
+	const workspacePath = path.resolve(`${storagePath}/jdt_ws`);
 	if (workspace.name !== undefined) {
 		return `${prefix}::${workspacePath}::${value}`;
 	}
@@ -263,14 +263,14 @@ export function isInWorkspaceFolder(loc: string, workspaceFolders: readonly Work
 }
 
 export enum ServerMode {
-	STANDARD = 'Standard',
-	LIGHTWEIGHT = 'LightWeight',
-	HYBRID = 'Hybrid'
+	standard = 'Standard',
+	lightWeight = 'LightWeight',
+	hybrid = 'Hybrid'
 }
 
 export function getJavaServerMode(): ServerMode {
 	return workspace.getConfiguration().get('java.server.launchMode')
-		|| ServerMode.HYBRID;
+		|| ServerMode.hybrid;
 }
 
 export function setGradleWrapperChecksum(wrapper: string, sha256?: string) {

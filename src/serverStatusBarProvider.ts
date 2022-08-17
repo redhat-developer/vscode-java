@@ -36,7 +36,7 @@ class ServerStatusBarProvider implements Disposable {
 			if (this.isAdvancedStatusBarItem) {
 				(this.statusBarItem as any).name = "Java Server Mode";
 			}
-			this.statusBarItem.text = StatusIcon.LightWeight;
+			this.statusBarItem.text = StatusIcon.lightWeight;
 			this.statusBarItem.command = StatusCommands.switchToStandardCommand;
 			this.statusBarItem.tooltip = "Java language server is running in LightWeight mode, click to switch to Standard mode";
 			this.statusBarItem.show();
@@ -51,7 +51,7 @@ class ServerStatusBarProvider implements Disposable {
 			if (this.isAdvancedStatusBarItem) {
 				(this.statusBarItem as any).name = "Java Server Status";
 			}
-			this.statusBarItem.text = StatusIcon.Busy;
+			this.statusBarItem.text = StatusIcon.busy;
 			this.statusBarItem.command = Commands.SHOW_SERVER_TASK_STATUS;
 			this.statusBarItem.tooltip = "";
 			this.statusBarItem.show();
@@ -62,7 +62,7 @@ class ServerStatusBarProvider implements Disposable {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setBusy(this.languageStatusItem);
 		} else {
-			this.statusBarItem.text = StatusIcon.Busy;
+			this.statusBarItem.text = StatusIcon.busy;
 		}
 	}
 
@@ -70,7 +70,7 @@ class ServerStatusBarProvider implements Disposable {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setError(this.languageStatusItem);
 		} else {
-			this.statusBarItem.text = StatusIcon.Error;
+			this.statusBarItem.text = StatusIcon.error;
 			this.statusBarItem.command = Commands.OPEN_LOGS;
 		}
 	}
@@ -79,7 +79,7 @@ class ServerStatusBarProvider implements Disposable {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setWarning(this.languageStatusItem);
 		} else {
-			this.statusBarItem.text = StatusIcon.Warning;
+			this.statusBarItem.text = StatusIcon.warning;
 			this.statusBarItem.command = "workbench.panel.markers.view.focus";
 			this.statusBarItem.tooltip = "Errors occurred in project configurations, click to show the PROBLEMS panel";
 		}
@@ -89,7 +89,7 @@ class ServerStatusBarProvider implements Disposable {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.setReady(this.languageStatusItem);
 		} else {
-			this.statusBarItem.text = StatusIcon.Ready;
+			this.statusBarItem.text = StatusIcon.ready;
 			this.statusBarItem.command = Commands.SHOW_SERVER_TASK_STATUS;
 			this.statusBarItem.tooltip = "ServiceReady";
 		}
@@ -108,11 +108,11 @@ class ServerStatusBarProvider implements Disposable {
 }
 
 export enum StatusIcon {
-	LightWeight = "$(rocket)",
-	Busy = "$(sync~spin)",
-	Ready = "$(thumbsup)",
-	Warning = "$(thumbsdown)",
-	Error = "$(thumbsdown)"
+	lightWeight = "$(rocket)",
+	busy = "$(sync~spin)",
+	ready = "$(thumbsup)",
+	warning = "$(thumbsdown)",
+	error = "$(thumbsdown)"
 }
 
 export const serverStatusBarProvider: ServerStatusBarProvider = new ServerStatusBarProvider();

@@ -15,7 +15,7 @@ const extensionName = "Language Support for Java (Syntax Server)";
 
 export class SyntaxLanguageClient {
 	private languageClient: LanguageClient;
-	private status: ClientStatus = ClientStatus.Uninitialized;
+	private status: ClientStatus = ClientStatus.uninitialized;
 
 	public initialize(requirements, clientOptions: LanguageClientOptions, resolve: (value: ExtensionAPI) => void, serverOptions?: ServerOptions) {
 		const newClientOptions: LanguageClientOptions = Object.assign({}, clientOptions, {
@@ -60,37 +60,37 @@ export class SyntaxLanguageClient {
 				this.languageClient.onNotification(StatusNotification.type, (report) => {
 					switch (report.type) {
 						case 'Started':
-							this.status = ClientStatus.Started;
-							apiManager.updateStatus(ClientStatus.Started);
+							this.status = ClientStatus.started;
+							apiManager.updateStatus(ClientStatus.started);
 							// Disable the client-side snippet provider since LS is ready.
 							snippetCompletionProvider.dispose();
 							break;
 						case 'Error':
-							this.status = ClientStatus.Error;
-							apiManager.updateStatus(ClientStatus.Error);
+							this.status = ClientStatus.error;
+							apiManager.updateStatus(ClientStatus.error);
 							break;
 						default:
 							break;
 					}
-					if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
+					if (apiManager.getApiInstance().serverMode === ServerMode.lightWeight) {
 						this.resolveApiOnReady(resolve);
 					}
 				});
 			});
 		}
 
-		this.status = ClientStatus.Initialized;
+		this.status = ClientStatus.initialized;
 	}
 
 	public start(): void {
 		if (this.languageClient) {
 			this.languageClient.start();
-			this.status = ClientStatus.Starting;
+			this.status = ClientStatus.starting;
 		}
 	}
 
 	public stop(): Promise<void> {
-		this.status = ClientStatus.Stopping;
+		this.status = ClientStatus.stopping;
 		if (this.languageClient) {
 			try {
 				return this.languageClient.stop();
@@ -102,7 +102,7 @@ export class SyntaxLanguageClient {
 	}
 
 	public isAlive(): boolean {
-		return !!this.languageClient && this.status !== ClientStatus.Stopping;
+		return !!this.languageClient && this.status !== ClientStatus.stopping;
 	}
 
 	public getClient(): LanguageClient {
@@ -110,13 +110,13 @@ export class SyntaxLanguageClient {
 	}
 
 	public resolveApi(resolve: (value: ExtensionAPI) => void): void {
-		apiManager.getApiInstance().serverMode = ServerMode.LIGHTWEIGHT;
-		apiManager.fireDidServerModeChange(ServerMode.LIGHTWEIGHT);
+		apiManager.getApiInstance().serverMode = ServerMode.lightWeight;
+		apiManager.fireDidServerModeChange(ServerMode.lightWeight);
 		this.resolveApiOnReady(resolve);
 	}
 
 	private resolveApiOnReady(resolve: (value: ExtensionAPI) => void): void {
-		if ([ClientStatus.Started, ClientStatus.Error].includes(this.status)) {
+		if ([ClientStatus.started, ClientStatus.error].includes(this.status)) {
 			resolve(apiManager.getApiInstance());
 		}
 	}

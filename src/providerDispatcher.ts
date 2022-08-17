@@ -47,7 +47,7 @@ export class ClientHoverProvider implements HoverProvider {
 		}
 
 		const serverMode: ServerMode = apiManager.getApiInstance().serverMode;
-		if (serverMode === ServerMode.STANDARD) {
+		if (serverMode === ServerMode.standard) {
 			if (!this.delegateProvider) {
 				this.delegateProvider = createClientHoverProvider(languageClient);
 			}
@@ -159,7 +159,7 @@ function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: Workspac
 
 function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
 	const disposable =  apiManager.getApiInstance().onDidServerModeChange( async (mode) => {
-		if (mode === ServerMode.STANDARD) {
+		if (mode === ServerMode.standard) {
 			const feature =  (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
 			const providers = feature.getProviders();
 			if (providers && providers.length > 0) {

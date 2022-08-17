@@ -11,10 +11,10 @@ import { checkJavaPreferences } from './settings';
 
 const REQUIRED_JDK_VERSION = 17;
 export interface RequirementsData {
-    tooling_jre: string;
-    tooling_jre_version: number;
-    java_home: string;
-    java_version: number;
+    toolingJre: string;
+    toolingJreVersion: number;
+    javaHome: string;
+    javaVersion: number;
 }
 
 interface ErrorData {
@@ -108,10 +108,10 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         }
 
         resolve({
-            tooling_jre: toolingJre,  // Used to launch Java extension.
-            tooling_jre_version: toolingJreVersion,
-            java_home: javaHome, // Used as default project JDK.
-            java_version: javaVersion,
+            toolingJre,  // Used to launch Java extension.
+            toolingJreVersion,
+            javaHome, // Used as default project JDK.
+            javaVersion,
         });
     });
 }

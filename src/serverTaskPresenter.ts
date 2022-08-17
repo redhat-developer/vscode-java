@@ -67,15 +67,15 @@ async function killExistingExecutions() {
 }
 
 class ServerTaskTerminal implements Pseudoterminal {
-	private _onDidWriteEvent = new EventEmitter<string>();
-	private _onDidCloseEvent = new EventEmitter<number | void>();
-	private _subscription: Disposable  = null;
+	private onDidWriteEvent = new EventEmitter<string>();
+	private onDidCloseEvent = new EventEmitter<number | void>();
+	private subscription: Disposable  = null;
 
-	onDidWrite: Event<string> = this._onDidWriteEvent.event;
-	onDidClose?: Event<number | void> = this._onDidCloseEvent.event;
+	onDidWrite: Event<string> = this.onDidWriteEvent.event;
+	onDidClose?: Event<number | void> = this.onDidCloseEvent.event;
 
 	constructor() {
-		this._subscription = serverTasks.onDidUpdateServerTask(serverTasks => {
+		this.subscription = serverTasks.onDidUpdateServerTask(serverTasks => {
 			this.printTasks(serverTasks);
 		});
 	}
@@ -86,16 +86,16 @@ class ServerTaskTerminal implements Pseudoterminal {
 	}
 
 	private clearScreen() {
-		this._onDidWriteEvent.fire("\u001Bc");
+		this.onDidWriteEvent.fire("\u001Bc");
 	}
 
 	private printTask(report: ProgressReport) {
 		if (report.complete) {
-			this._onDidWriteEvent.fire(`${report.id.slice(0, 8)} ${report.task} [Done]\r\n`);
+			this.onDidWriteEvent.fire(`${report.id.slice(0, 8)} ${report.task} [Done]\r\n`);
 			return;
 		}
 
-		this._onDidWriteEvent.fire(`${report.id.slice(0, 8)} ${report.task}: ${report.status} [${report.workDone}/${report.totalWork}]\r\n`);
+		this.onDidWriteEvent.fire(`${report.id.slice(0, 8)} ${report.task}: ${report.status} [${report.workDone}/${report.totalWork}]\r\n`);
 	}
 
 	open(initialDimensions: TerminalDimensions): void {
@@ -107,8 +107,8 @@ class ServerTaskTerminal implements Pseudoterminal {
 	close(): void {
 		presenterTaskExecution.terminate();
 		presenterTaskExecution = null;
-		this._subscription.dispose();
-		this._onDidCloseEvent.fire();
+		this.subscription.dispose();
+		this.onDidCloseEvent.fire();
 	}
 
 	setDimensions(dimensions: TerminalDimensions) {

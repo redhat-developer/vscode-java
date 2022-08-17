@@ -2,7 +2,7 @@
 
 import * as assert from 'assert';
 import * as path from 'path';
-import { ExtensionAPI, ExtensionApiVersion, ClasspathResult } from '../../src/extension.api';
+import { ExtensionAPI, extensionApiVersion, ClasspathResult } from '../../src/extension.api';
 import { Uri, DocumentSymbol, extensions, commands } from 'vscode';
 import { ServerMode } from '../../src/settings';
 import * as fse from 'fs-extra';
@@ -21,7 +21,7 @@ suite('Public APIs - LightWeight', () => {
 
 	test('version should be correct', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		assert.equal(api.apiVersion, ExtensionApiVersion);
+		assert.equal(api.apiVersion, extensionApiVersion);
 	});
 
 	test('requirement should be correct', async function () {
@@ -113,7 +113,7 @@ suite('Public APIs - LightWeight', () => {
 
 	test('server mode should be correct', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
-		assert.equal(api.serverMode, ServerMode.LIGHTWEIGHT);
+		assert.equal(api.serverMode, ServerMode.lightWeight);
 	});
 
 	test('onDidProjectsImport should work', async function () {
@@ -134,9 +134,9 @@ suite('Public APIs - LightWeight', () => {
 			api.onDidServerModeChange((mode) => {
 				onDidChangeServerModeCount++;
 				if (onDidChangeServerModeCount === 1) {
-					assert.equal(mode, ServerMode.HYBRID);
+					assert.equal(mode, ServerMode.hybrid);
 				} else if (onDidChangeServerModeCount === 2) {
-					assert.equal(mode, ServerMode.STANDARD);
+					assert.equal(mode, ServerMode.standard);
 					return resolve();
 				}
 			});

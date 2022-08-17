@@ -16,13 +16,13 @@ export class TypeHierarchyTreeInput implements SymbolTreeInput<TypeHierarchyItem
 	constructor(readonly location: vscode.Location, readonly direction: TypeHierarchyDirection, readonly token: CancellationToken, item: TypeHierarchyItem) {
 		this.baseItem = item;
 		switch (direction) {
-			case TypeHierarchyDirection.Both:
+			case TypeHierarchyDirection.both:
 				this.title = "Class Hierarchy";
 				break;
-			case TypeHierarchyDirection.Parents:
+			case TypeHierarchyDirection.parents:
 				this.title = "Supertype Hierarchy";
 				break;
-			case TypeHierarchyDirection.Children:
+			case TypeHierarchyDirection.children:
 				this.title = "Subtype Hierarchy";
 				break;
 			default:
@@ -39,7 +39,7 @@ export class TypeHierarchyTreeInput implements SymbolTreeInput<TypeHierarchyItem
 			resolve();
 		}, 1000));
 
-		this.rootItem = (this.direction === TypeHierarchyDirection.Both) ? await getRootItem(this.client, this.baseItem, this.token) : this.baseItem;
+		this.rootItem = (this.direction === TypeHierarchyDirection.both) ? await getRootItem(this.client, this.baseItem, this.token) : this.baseItem;
 		const model: TypeHierarchyModel = new TypeHierarchyModel(this.rootItem, this.direction, this.baseItem);
 		const provider = new TypeHierarchyTreeDataProvider(model, this.client, this.token);
 		const treeModel: SymbolTreeModel<TypeHierarchyItem> = {
@@ -96,19 +96,19 @@ export class TypeHierarchyModel implements SymbolItemNavigation<TypeHierarchyIte
 }
 
 class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHierarchyItem> {
-	private readonly _emitter: vscode.EventEmitter<TypeHierarchyItem> = new vscode.EventEmitter<TypeHierarchyItem>();
-	private readonly _modelListener: vscode.Disposable;
+	private readonly emitter: vscode.EventEmitter<TypeHierarchyItem> = new vscode.EventEmitter<TypeHierarchyItem>();
+	private readonly modelListener: vscode.Disposable;
 	private lazyLoad: boolean;
-	public readonly onDidChangeTreeData: vscode.Event<TypeHierarchyItem> = this._emitter.event;
+	public readonly onDidChangeTreeData: vscode.Event<TypeHierarchyItem> = this.emitter.event;
 
 	constructor(readonly model: TypeHierarchyModel, readonly client: LanguageClient, readonly token: CancellationToken) {
-		this._modelListener = model.onDidChangeEvent(e => this._emitter.fire(e instanceof TypeHierarchyItem ? e : undefined));
+		this.modelListener = model.onDidChangeEvent(e => this.emitter.fire(e instanceof TypeHierarchyItem ? e : undefined));
 		this.lazyLoad = workspace.getConfiguration().get("java.typeHierarchy.lazyLoad");
 	}
 
 	dispose(): void {
-		this._emitter.dispose();
-		this._modelListener.dispose();
+		this.emitter.dispose();
+		this.modelListener.dispose();
 	}
 
 	async getTreeItem(element: TypeHierarchyItem): Promise<vscode.TreeItem> {
@@ -130,7 +130,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 		treeItem.id = `${element.data}${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
 		if (element.expand) {
 			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-		} else if (this.model.getDirection() === TypeHierarchyDirection.Children || this.model.getDirection() === TypeHierarchyDirection.Both) {
+		} else if (this.model.getDirection() === TypeHierarchyDirection.children || this.model.getDirection() === TypeHierarchyDirection.both) {
 			// For an unresolved baseItem, will make it collapsed to show it early. It will be automatically expanded by model.nearest()
 			if (element === this.model.getBaseItem()) {
 				if (!element.children) {
@@ -154,7 +154,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 				}
 				treeItem.collapsibleState = (element.children.length === 0) ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
 			}
-		} else if (this.model.getDirection() === TypeHierarchyDirection.Parents) {
+		} else if (this.model.getDirection() === TypeHierarchyDirection.parents) {
 			if (element === this.model.getBaseItem()) {
 				if (!element.parents) {
 					treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
@@ -185,7 +185,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 		if (!element) {
 			return [this.model.getRootItem()];
 		}
-		if (this.model.getDirection() === TypeHierarchyDirection.Children || this.model.getDirection() === TypeHierarchyDirection.Both) {
+		if (this.model.getDirection() === TypeHierarchyDirection.children || this.model.getDirection() === TypeHierarchyDirection.both) {
 			if (!element.children) {
 				if (TypeHierarchyTreeDataProvider.isWhiteListType(element)) {
 					return [TypeHierarchyTreeDataProvider.getFakeItem(element)];
@@ -196,11 +196,11 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 				}
 				element.children = resolvedItem.children;
 				if (element.children.length === 0) {
-					this._emitter.fire(element);
+					this.emitter.fire(element);
 				}
 			}
 			return element.children;
-		} else if (this.model.getDirection() === TypeHierarchyDirection.Parents) {
+		} else if (this.model.getDirection() === TypeHierarchyDirection.parents) {
 			if (!element.parents) {
 				const resolvedItem = await resolveTypeHierarchy(this.client, element, this.model.getDirection(), this.token);
 				if (!resolvedItem) {
@@ -208,7 +208,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 				}
 				element.parents = resolvedItem.parents;
 				if (element.parents.length === 0) {
-					this._emitter.fire(element);
+					this.emitter.fire(element);
 				}
 			}
 			return element.parents;

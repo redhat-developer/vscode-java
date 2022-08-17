@@ -63,9 +63,9 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
         const isModuleInfo = typeName === 'module-info';
         const date = new Date();
         const context: any = {
-            file_name: path.basename(textDocuments[i].fileName),
-            package_name: "",
-            type_name: typeName,
+            fileName: path.basename(textDocuments[i].fileName),
+            packageName: "",
+            typeName: typeName,
             user: userInfo().username,
             date: date.toLocaleDateString(undefined, {month: "short", day: "2-digit", year: "numeric"}),
             time: date.toLocaleTimeString(),
@@ -78,7 +78,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
         };
 
         if (!isModuleInfo) {
-            context.package_name = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
+            context.packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
         }
 
         const snippets: string[] = [];
@@ -91,7 +91,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
 
         if (!isModuleInfo) {
             if (context.package_name) {
-                snippets.push(`package ${context.package_name};`);
+                snippets.push(`package ${context.packageName};`);
                 snippets.push("");
             }
         }
@@ -127,7 +127,7 @@ function getWillRenameHandler(client: LanguageClient) {
 
         e.waitUntil(new Promise(async (resolve, reject) => {
             try {
-                const javaRenameEvents: Array<{ oldUri: string, newUri: string }> = [];
+                const javaRenameEvents: Array<{ oldUri: string; newUri: string }> = [];
                 for (const file of e.files) {
                     if (await isJavaFileWillRename(file.oldUri, file.newUri)
                         || await isFolderWillRename(file.oldUri, file.newUri)

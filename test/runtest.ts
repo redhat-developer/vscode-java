@@ -14,10 +14,12 @@ async function main() {
 		// run tests for standard mode
 		await fse.copy(testProjectOriginPath, testProjectPath);
 		await fse.ensureDir(path.join(testProjectPath, '.vscode'));
+		/* eslint-disable @typescript-eslint/naming-convention */
 		await fse.writeJSON(settingsJsonPath, {
 			"java.server.launchMode": "Standard",
 			"java.configuration.updateBuildConfiguration": "automatic"
 		});
+		/* eslint-enable @typescript-eslint/naming-convention */
 
 		await runTests({
 			extensionDevelopmentPath,
@@ -31,9 +33,11 @@ async function main() {
 
 		// run tests for lightweight mode
 		console.log("setup settings.json for lightweight mode...");
+		/* eslint-disable @typescript-eslint/naming-convention */
 		await fse.writeJSON(settingsJsonPath, {
 			"java.server.launchMode": "LightWeight",
 		});
+		/* eslint-enable @typescript-eslint/naming-convention */
 
 		console.log("running lightweight cases...");
 		await runTests({

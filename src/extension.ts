@@ -200,18 +200,18 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}).then(async (requirements) => {
 		const triggerFiles = await getTriggerFiles();
 		return new Promise<ExtensionAPI>(async (resolve) => {
-			const workspacePath = path.resolve(storagePath + '/jdt_ws');
-			const syntaxServerWorkspacePath = path.resolve(storagePath + '/ss_ws');
+			const workspacePath = path.resolve(`${storagePath}/jdt_ws`);
+			const syntaxServerWorkspacePath = path.resolve(`${storagePath}/ss_ws`);
 
 			let serverMode = getJavaServerMode();
 			const isWorkspaceTrusted = (workspace as any).isTrusted; // TODO: use workspace.isTrusted directly when other clients catch up to adopt 1.56.0
 			if (isWorkspaceTrusted !== undefined && !isWorkspaceTrusted) { // keep compatibility for old engines < 1.56.0
-				serverMode = ServerMode.LIGHTWEIGHT;
+				serverMode = ServerMode.lightWeight;
 			}
 			commands.executeCommand('setContext', 'java:serverMode', serverMode);
 			const isDebugModeByClientPort = !!process.env['SYNTAXLS_CLIENT_PORT'] || !!process.env['JDTLS_CLIENT_PORT'];
-			const requireSyntaxServer = (serverMode !== ServerMode.STANDARD) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
-			let requireStandardServer = (serverMode !== ServerMode.LIGHTWEIGHT) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
+			const requireSyntaxServer = (serverMode !== ServerMode.standard) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
+			let requireStandardServer = (serverMode !== ServerMode.lightWeight) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
 
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
@@ -227,7 +227,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-					settings: { java: getJavaConfig(requirements.java_home) },
+					settings: { java: getJavaConfig(requirements.javaHome) },
 					extendedClientCapabilities: {
 						progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 						classFileContentsSupport: true,
@@ -257,7 +257,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						didChangeConfiguration: () => {
 							standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
-									java: getJavaConfig(requirements.java_home),
+									java: getJavaConfig(requirements.javaHome),
 								}
 							});
 						}
@@ -328,7 +328,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions, resolve);
 				} else {
-					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
+					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.javaHome), context, true));
 				}
 				syntaxClient.start();
 				serverStatusBarProvider.showLightWeightStatus();
@@ -336,7 +336,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
 				const api: ExtensionAPI = apiManager.getApiInstance();
-				if (api.serverMode === ServerMode.LIGHTWEIGHT) {
+				if (api.serverMode === ServerMode.lightWeight) {
 					console.warn(`The command: ${command} is not supported in LightWeight mode. See: https://github.com/redhat-developer/vscode-java/issues/1480`);
 					return;
 				}
@@ -401,12 +401,12 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 
 				const clientStatus: ClientStatus = standardClient.getClientStatus();
-				if (clientStatus === ClientStatus.Starting || clientStatus === ClientStatus.Started) {
+				if (clientStatus === ClientStatus.starting || clientStatus === ClientStatus.started) {
 					return;
 				}
 
 				const api: ExtensionAPI = apiManager.getApiInstance();
-				if (api.serverMode === switchTo || api.serverMode === ServerMode.STANDARD) {
+				if (api.serverMode === switchTo || api.serverMode === ServerMode.standard) {
 					return;
 				}
 
@@ -429,7 +429,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			registerClientProviders(context, { contentProviderEvent: jdtEventEmitter.event });
 
 			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
-				if (event === ServerMode.STANDARD) {
+				if (event === ServerMode.standard) {
 					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
 					runtimeStatusBarProvider.initialize(context);
@@ -437,7 +437,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
 
-			if (serverMode === ServerMode.HYBRID && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
+			if (serverMode === ServerMode.hybrid && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
 				const config = getJavaConfiguration();
 				const importOnStartupSection: string = "project.importOnFirstTimeStartup";
 				const importOnStartup = config.get(importOnStartupSection);
@@ -460,7 +460,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const onDidGrantWorkspaceTrust = (workspace as any).onDidGrantWorkspaceTrust;
 			if (onDidGrantWorkspaceTrust !== undefined) { // keep compatibility for old engines < 1.56.0
 				context.subscriptions.push(onDidGrantWorkspaceTrust(() => {
-					if (getJavaServerMode() !== ServerMode.LIGHTWEIGHT) {
+					if (getJavaServerMode() !== ServerMode.lightWeight) {
 						// See the issue https://github.com/redhat-developer/vscode-java/issues/1994
 						// Need to recollect the Java bundles before starting standard mode.
 						let pollingCount: number = 0;
@@ -470,7 +470,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							clientOptions.initializationOptions.bundles = collectJavaExtensions(extensions.all);
 							if (++pollingCount >= 10 || isContributedPartUpdated(existingJavaExtensions, clientOptions.initializationOptions.bundles)) {
 								clearInterval(intervalId);
-								commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.STANDARD, true);
+								commands.executeCommand(Commands.SWITCH_SERVER_MODE, ServerMode.standard, true);
 								return;
 							}
 						}, 100);
@@ -483,7 +483,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 }
 
 async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
-	if (standardClient.getClientStatus() !== ClientStatus.Uninitialized) {
+	if (standardClient.getClientStatus() !== ClientStatus.uninitialized) {
 		return;
 	}
 
@@ -492,10 +492,10 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		return;
 	}
 
-	if (apiManager.getApiInstance().serverMode === ServerMode.LIGHTWEIGHT) {
+	if (apiManager.getApiInstance().serverMode === ServerMode.lightWeight) {
 		// Before standard server is ready, we are in hybrid.
-		apiManager.getApiInstance().serverMode = ServerMode.HYBRID;
-		apiManager.fireDidServerModeChange(ServerMode.HYBRID);
+		apiManager.getApiInstance().serverMode = ServerMode.hybrid;
+		apiManager.fireDidServerModeChange(ServerMode.hybrid);
 	}
 	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
 	standardClient.start();
@@ -508,14 +508,14 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 	const inclusionPatterns: string[] = getBuildFilePatterns();
 	const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
 	if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
-			(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /*maxResults*/)).length > 0) {
+			(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /* maxResults */)).length > 0) {
 		return true;
 	}
 
 	// Nothing found in negated exclusion pattern, do a normal search then.
 	const inclusionBlob: string = convertToGlob(inclusionPatterns);
 	const exclusionBlob: string = getExclusionBlob();
-	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /*maxResults*/)).length > 0) {
+	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /* maxResults */)).length > 0) {
 		return true;
 	}
 
@@ -545,7 +545,7 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptio
 			clientOptions.initializationOptions.settings.java.import.maven.enabled = false;
 			context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
 		} else {
-			throw new Error ("Unknown build tool: " + activeBuildTool); // unreachable
+			throw new Error (`Unknown build tool: ${activeBuildTool}`); // unreachable
 		}
 	}
 
@@ -574,7 +574,7 @@ async function getBuildFilesInWorkspace(): Promise<Uri[]> {
 	// Since VS Code API does not support put negated exclusion pattern in findFiles(),
 	// here we first parse the negated exclusion to inclusion and do the search.
 	if (inclusionFilePatterns.length > 0 && inclusionFolderPatterns.length > 0) {
-		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionFilePatterns, inclusionFolderPatterns), null /*force not use default exclusion*/));
+		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionFilePatterns, inclusionFolderPatterns), null /* force not use default exclusion */));
 	}
 
 	const inclusionBlob: string = convertToGlob(inclusionFilePatterns);
@@ -607,7 +607,7 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			const importHintSection: string = "project.importHint";
 			const dontShowAgain: string = "Don't Show Again";
 			const showHint: boolean = config.get(importHintSection);
-			if (showHint && standardClient.getClientStatus() === ClientStatus.Uninitialized) {
+			if (showHint && standardClient.getClientStatus() === ClientStatus.uninitialized) {
 				const showRocketEmoji: boolean = process.platform === "win32" || process.platform === "darwin";
 				const message: string = `Java Language Server is running in LightWeight mode. Click the ${showRocketEmoji ? '🚀' : 'Rocket'} icon in the status bar if you want to import the projects later.`;
 				window.showInformationMessage(message, dontShowAgain)
@@ -662,7 +662,7 @@ export async function getActiveLanguageClient(): Promise<LanguageClient | undefi
 	let languageClient: LanguageClient;
 
 	const api: ExtensionAPI = apiManager.getApiInstance();
-	if (api.serverMode === ServerMode.STANDARD) {
+	if (api.serverMode === ServerMode.standard) {
 		languageClient = standardClient.getClient();
 	} else {
 		languageClient = syntaxClient.getClient();
@@ -720,7 +720,7 @@ function enableJavadocSymbols() {
 }
 
 function getTempWorkspace() {
-	return path.resolve(os.tmpdir(), 'vscodesws_' + makeRandomHexString(5));
+	return path.resolve(os.tmpdir(), `vscodesws_${makeRandomHexString(5)}`);
 }
 
 function makeRandomHexString(length) {
@@ -757,7 +757,7 @@ function openRollingServerLogFile(workspacePath, filename, column: ViewColumn = 
 		const dirname = path.join(workspacePath, '.metadata');
 
 		// find out the newest one
-		glob(filename + '-*', { cwd: dirname }, (err, files) => {
+		glob(`${filename}-*`, { cwd: dirname }, (err, files) => {
 			if (!err && files.length > 0) {
 				files.sort();
 
@@ -776,7 +776,7 @@ function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Acti
 		const dirname = path.dirname(logFile);
 
 		// find out the newest one
-		glob(filename + '.*', { cwd: dirname }, (err, files) => {
+		glob(`${filename}.*`, { cwd: dirname }, (err, files) => {
 			if (!err && files.length > 0) {
 				files.sort((a, b) => {
 					const dateA = a.slice(11, 21), dateB = b.slice(11, 21);

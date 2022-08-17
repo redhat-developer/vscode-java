@@ -7,7 +7,7 @@ import { showNoLocationFound } from "../standardLanguageClient";
 import { TypeHierarchyTreeInput } from "./model";
 import { LSPTypeHierarchyItem, TypeHierarchyDirection, TypeHierarchyItem } from "./protocol";
 import { SymbolTree } from "./references-view";
-import { ToTypeHierarchyItem } from "./util";
+import { toTypeHierarchyItem } from "./util";
 
 export class TypeHierarchyTree {
 	private api: SymbolTree;
@@ -61,10 +61,10 @@ export class TypeHierarchyTree {
 			return;
 		}
 		const symbolKind = this.client.protocol2CodeConverter.asSymbolKind(lspItem.kind);
-		if (direction === TypeHierarchyDirection.Both && symbolKind === vscode.SymbolKind.Interface) {
-			direction = TypeHierarchyDirection.Children;
+		if (direction === TypeHierarchyDirection.both && symbolKind === vscode.SymbolKind.Interface) {
+			direction = TypeHierarchyDirection.children;
 		}
-		const item: TypeHierarchyItem = ToTypeHierarchyItem(this.client, lspItem, direction);
+		const item: TypeHierarchyItem = toTypeHierarchyItem(this.client, lspItem, direction);
 		const input: TypeHierarchyTreeInput = new TypeHierarchyTreeInput(location, direction, this.cancelTokenSource.token, item);
 		this.location = location;
 		this.direction = direction;
