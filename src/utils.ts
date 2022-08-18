@@ -2,7 +2,8 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, WorkspaceConfiguration, TextDocument } from 'vscode';
+import { workspace, WorkspaceConfiguration, TextDocument, commands, Uri } from 'vscode';
+import { Commands } from './commands';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
@@ -114,4 +115,20 @@ function parseToStringGlob(patterns: string[]): string {
 	}
 
 	return `{${patterns.join(",")}}`;
+}
+
+/**
+ * Get all Java projects from Java Language Server.
+ * @param excludeDefaultProject whether the default project should be excluded from the list, defaults to true.
+ * @returns string array for the project uris.
+ */
+export async function getAllJavaProjects(excludeDefaultProject: boolean = true): Promise<string[]> {
+	let projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+	if (excludeDefaultProject) {
+		projectUris = projectUris.filter((uriString) => {
+			const projectPath = Uri.parse(uriString).fsPath;
+			return path.basename(projectPath) !== "jdt.ls-java-project";
+		});
+	}
+	return projectUris;
 }

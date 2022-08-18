@@ -8,6 +8,7 @@ import { LanguageClient } from "vscode-languageclient/node";
 import { buildFilePatterns } from "./plugin";
 import { ProjectConfigurationUpdateRequest } from "./protocol";
 import { Commands } from "./commands";
+import { getAllJavaProjects } from "./utils";
 
 export async function projectConfigurationUpdate(languageClient: LanguageClient, uris?: TextDocumentIdentifier | Uri | Uri[]) {
 	let resources = [];
@@ -85,17 +86,13 @@ export async function askForProjects(activeFileUri: Uri | undefined, placeHolder
 async function generateProjectPicks(activeFileUri: Uri | undefined): Promise<QuickPickItem[] | undefined> {
 	let projectUriStrings: string[];
 	try {
-		projectUriStrings = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+		projectUriStrings = await getAllJavaProjects();
 	} catch (e) {
 		return undefined;
 	}
 
 	const projectPicks: QuickPickItem[] = projectUriStrings.map(uriString => {
 		const projectPath = Uri.parse(uriString).fsPath;
-		if (path.basename(projectPath) === "jdt.ls-java-project") {
-			return undefined;
-		}
-
 		return {
 			label: path.basename(projectPath),
 			detail: projectPath,

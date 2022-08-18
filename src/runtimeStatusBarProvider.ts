@@ -9,7 +9,7 @@ import { apiManager } from "./apiManager";
 import * as semver from "semver";
 import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
-import { getJavaConfiguration } from "./utils";
+import { getAllJavaProjects, getJavaConfiguration } from "./utils";
 import { hasBuildToolConflicts } from "./extension";
 import { LombokVersionItemFactory, getLombokVersion, isLombokImported } from "./lombokSupport";
 
@@ -51,7 +51,7 @@ class RuntimeStatusBarProvider implements Disposable {
 
 		let projectUriStrings: string[];
 		try {
-			projectUriStrings = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+			projectUriStrings = await getAllJavaProjects(false);
 		} catch (e) {
 			return;
 		}
