@@ -15,7 +15,7 @@ import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from
 import * as net from 'net';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { getJavaConfiguration } from "./utils";
+import { getAllJavaProjects, getJavaConfiguration } from "./utils";
 import { logger } from "./log";
 import * as buildPath from './buildpath';
 import * as sourceAction from './sourceAction';
@@ -609,8 +609,8 @@ async function showImportFinishNotification(context: ExtensionContext) {
 			options.unshift("Show errors");
 			choice = await window.showWarningMessage("Errors occurred during import of Java projects.", ...options);
 		} else {
-			const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
-			if (projectUris.length === 0 || (projectUris.length === 1 && projectUris[0].includes("jdt.ls-java-project"))) {
+			const projectUris: string[] = await getAllJavaProjects();
+			if (projectUris.length === 0) {
 				return;
 			}
 

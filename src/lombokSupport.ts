@@ -10,6 +10,7 @@ import { apiManager } from "./apiManager";
 import { supportsLanguageStatus } from "./languageStatusItemFactory";
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { logger } from './log';
+import { getAllJavaProjects } from "./utils";
 
 export const JAVA_LOMBOK_PATH = "java.lombokPath";
 
@@ -126,12 +127,8 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	let currentLombokVersion: string = undefined;
 	let previousLombokVersion: string = undefined;
 	let currentLombokClasspath: string = undefined;
-	const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+	const projectUris: string[] = await getAllJavaProjects();
 	for (const projectUri of projectUris) {
-		const projectPath = vscode.Uri.parse(projectUri).fsPath;
-		if (path.basename(projectPath) === "jdt.ls-java-project") {
-			continue;
-		}
 		const classpathResult = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'test'});
 		for (const classpath of classpathResult.classpaths) {
 			if (lombokJarRegex.test(classpath)) {
