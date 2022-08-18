@@ -154,6 +154,20 @@
           ".class"
         ],
         "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "java-properties",
+        "extensions": [
+          ".properties"
+        ],
+        "configuration": "./java-properties-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "java-properties",
+        "scopeName": "source.java-properties",
+        "path": "./syntaxes/JavaProperties.tmLanguage.json"
       }
     ],
     "snippets": [
