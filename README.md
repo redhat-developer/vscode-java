@@ -209,7 +209,7 @@ The following settings are supported:
 New in 1.10.0
 * `java.import.maven.offline.enabled`: Enable/disable the Maven offline mode. Defaults to `false`.
 * `java.codeAction.sortMembers.avoidVolatileChanges`: Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring. Defaults to `true`.
-* `java.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
+* `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
 
 Semantic Highlighting
 ===============

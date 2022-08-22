@@ -917,7 +917,7 @@
           "description": "Whether to load lombok processors from project classpath",
           "scope": "window"
         },
-        "java.protobufSupport.enabled": {
+        "java.jdt.ls.protobufSupport.enabled": {
           "type": "boolean",
           "default": true,
           "markdownDescription": "Specify whether to automatically add Protobuf output source directories to the classpath.\n\n**Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher.",
