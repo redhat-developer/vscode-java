@@ -25,7 +25,7 @@ Features
 
 * Supports code from Java 1.5 to Java 18
 * Maven pom.xml project support
-* Basic Gradle Java project support (Android not supported)
+* Gradle Java project support (support Android projects with AGP `3.2.0` and above)
 * Standalone Java files support
 * As-you-type reporting of parsing and compilation errors
 * Code completion
@@ -47,8 +47,6 @@ Features
 * Diagnostic tags
 * Call Hierarchy
 * Type Hierarchy
-
-Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
 To launch and debug your Java programs, it's recommended you install *[Java Debug Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)*.
 
