@@ -924,6 +924,12 @@
           "markdownDescription": "Specify whether to automatically add Protobuf output source directories to the classpath.\n\n**Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher.",
           "scope": "window"
         },
+        "java.jdt.ls.androidSupport.enabled": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Specify whether to automatically import Android project.\n\n**Note:** Only works for Android Gradle Plugin `3.2.0` or higher.",
+          "scope": "window"
+        },
         "java.codeAction.sortMembers.avoidVolatileChanges": {
           "type": "boolean",
           "default": true,
