@@ -153,21 +153,24 @@
           ".java",
           ".class"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-support/java/language-configuration.json"
       },
       {
         "id": "java-properties",
+        "aliases": [
+          "Java Properties"
+        ],
         "extensions": [
           ".properties"
         ],
-        "configuration": "./java-properties-configuration.json"
+        "configuration": "./language-support/properties/java-properties-configuration.json"
       }
     ],
     "grammars": [
       {
         "language": "java-properties",
         "scopeName": "source.java-properties",
-        "path": "./syntaxes/JavaProperties.tmLanguage.json"
+        "path": "./language-support/properties/JavaProperties.tmLanguage.json"
       }
     ],
     "snippets": [
