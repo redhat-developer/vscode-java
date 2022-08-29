@@ -1,5 +1,29 @@
 # Change Log
 
+## 1.10.0 (August 31st, 2022)
+ * enhancement - Search more folders to infer source roots for invisible projects. See [JLS#2176](https://github.com/eclipse/eclipse.jdt.ls/pull/2176).
+ * enhancement - Experimental support for Android projects with `java.jdt.ls.androidSupport.enabled`. It is enabled by default only in VS Code Insiders. See [JLS#923](https://github.com/eclipse/eclipse.jdt.ls/issues/923).
+ * enhancement - Automatically add Protobuf output source directories to classpath & generate tasks, if necessary. See [#2629](https://github.com/redhat-developer/vscode-java/pull/2629) & [JLS#2195](https://github.com/eclipse/eclipse.jdt.ls/pull/2195).
+ * enhancement - Support "Sort Members" code action. See [#2139](https://github.com/redhat-developer/vscode-java/issues/2139).
+ * enhancement - Add grammar for Java Properties files. See [#2636](https://github.com/redhat-developer/vscode-java/pull/2636).
+ * enhancement - Always interpret the full workspace symbol query as a package name. See [JLS#2174](https://github.com/eclipse/eclipse.jdt.ls/pull/2174).
+ * enhancement - Add support for Maven offline mode (`java.import.maven.offline.enabled`). See [#2617](https://github.com/redhat-developer/vscode-java/pull/2617).
+ * enhancement - Add the `zh-TW` (Traditional Chinese) translation file. See [#2573](https://github.com/redhat-developer/vscode-java/pull/2573).
+ * bug fix - Prevent "Header must provide a Content-Length property" failure by restricting JVM logging. See [#2577](https://github.com/redhat-developer/vscode-java/issues/2577).
+ * bug fix - Infer the source root only when necessary. See [JLS#2178](https://github.com/eclipse/eclipse.jdt.ls/pull/2178).
+ * bug fix - Fix inlay hints for `record` classes. See [#2414](https://github.com/redhat-developer/vscode-java/issues/2414).
+ * bug fix - Fix formatting of the `new` snippets. See [#2605](https://github.com/redhat-developer/vscode-java/issues/2605).
+ * bug fix - Make `java.import.gradle.java.home` property machine-overridable. See [#2624](https://github.com/redhat-developer/vscode-java/pull/2624).
+ * bug fix - Set default severity of "Circular classpath" to "warning". See [#718](https://github.com/redhat-developer/vscode-java/issues/718).
+ * bug fix - Permit non-JDT errors to be reported in Java files. See [JLS#2154](https://github.com/eclipse/eclipse.jdt.ls/issues/2154).
+ * bug fix - Avoid naming conflicts between Gradle project modules. See [JLS#2190](https://github.com/eclipse/eclipse.jdt.ls/pull/2190).
+ * bug fix - Re-fetch the extension registry when delegate command lookup fails. See [JLS#2184](https://github.com/eclipse/eclipse.jdt.ls/pull/2184).
+ * bug fix - Skip the "default project" when detecting Lombok. See [#2633](https://github.com/redhat-developer/vscode-java/pull/2633).
+ * bug fix - Skip security check for `java.home` and `java.jdt.ls.java.home` in trusted workspace. See [#2600](https://github.com/redhat-developer/vscode-java/issues/2600).
+ * bug fix - Keep consistent style in notifications (eg. use "Reload") and use plural form for `Reload Projects` command title. See [#2585](https://github.com/redhat-developer/vscode-java/issues/2585) & [#2612](https://github.com/redhat-developer/vscode-java/pull/2612).
+ * dependencies - Update to `jdk-utils@0.4.4`. See [#2601](https://github.com/redhat-developer/vscode-java/pull/2601).
+ * debt - Remove stale Travis CI information from `README`. See [#2592](https://github.com/redhat-developer/vscode-java/issues/2592).
+
 ## 1.9.0 (July 21st, 2022)
  * enhancement - Package lombok into extension for use when lombok support enabled, and not on project classpath. See [#2550](https://github.com/redhat-developer/vscode-java/pull/2550).
  * enhancement - Add support for qualified workspace symbols. See [#2538](https://github.com/redhat-developer/vscode-java/pull/2538).
