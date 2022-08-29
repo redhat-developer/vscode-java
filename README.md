@@ -208,7 +208,7 @@ New in 1.10.0
 * `java.import.maven.offline.enabled`: Enable/disable the Maven offline mode. Defaults to `false`.
 * `java.codeAction.sortMembers.avoidVolatileChanges`: Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring. Defaults to `true`.
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
-* `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in VS Code insider and disabled in VS Code stable. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
+* `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 
 Semantic Highlighting
 ===============
