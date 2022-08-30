@@ -25,7 +25,7 @@ Features
 
 * Supports code from Java 1.5 to Java 18
 * Maven pom.xml project support
-* Basic Gradle Java project support (Android not supported)
+* Gradle project support (with experimental Android project import support)
 * Standalone Java files support
 * As-you-type reporting of parsing and compilation errors
 * Code completion
@@ -47,8 +47,6 @@ Features
 * Diagnostic tags
 * Call Hierarchy
 * Type Hierarchy
-
-Please note that [Gradle-based Android projects are not supported](https://github.com/redhat-developer/vscode-java/issues/10#issuecomment-268834749).
 
 To launch and debug your Java programs, it's recommended you install *[Java Debug Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)*.
 
@@ -210,6 +208,7 @@ New in 1.10.0
 * `java.import.maven.offline.enabled`: Enable/disable the Maven offline mode. Defaults to `false`.
 * `java.codeAction.sortMembers.avoidVolatileChanges`: Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring. Defaults to `true`.
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
+* `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 
 Semantic Highlighting
 ===============

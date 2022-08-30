@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic, CodeActionTriggerKind } from 'vscode';
+import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic, CodeActionTriggerKind, version } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
@@ -633,6 +633,21 @@ export function getJavaConfig(javaHome: string) {
 	const editorConfig = workspace.getConfiguration('editor');
 	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
 	javaConfig.format.tabSize = editorConfig.get('tabSize');
+	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
+	switch (androidSupport) {
+		case "auto":
+			javaConfig.jdt.ls.androidSupport.enabled = version.includes("insider") ? true : false;
+			break;
+		case "on":
+			javaConfig.jdt.ls.androidSupport.enabled = true;
+			break;
+		case "off":
+			javaConfig.jdt.ls.androidSupport.enabled = false;
+			break;
+		default:
+			javaConfig.jdt.ls.androidSupport.enabled = false;
+			break;
+	}
 	return javaConfig;
 }
 

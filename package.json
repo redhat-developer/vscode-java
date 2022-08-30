@@ -941,6 +941,17 @@
           "markdownDescription": "Specify whether to automatically add Protobuf output source directories to the classpath.\n\n**Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher.",
           "scope": "window"
         },
+        "java.jdt.ls.androidSupport.enabled": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "default": "auto",
+          "markdownDescription": "[Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders.\n\n**Note:** Only works for Android Gradle Plugin `3.2.0` or higher.",
+          "scope": "window"
+        },
         "java.codeAction.sortMembers.avoidVolatileChanges": {
           "type": "boolean",
           "default": true,
