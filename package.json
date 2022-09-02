@@ -728,7 +728,8 @@
                   "JavaSE-15",
                   "JavaSE-16",
                   "JavaSE-17",
-                  "JavaSE-18"
+                  "JavaSE-18",
+                  "JavaSE-19"
                 ],
                 "description": "Java Execution Environment name. Must be unique."
               },
