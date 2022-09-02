@@ -31,7 +31,7 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	const options: ExecutableOptions = Object.create(null);
 	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
 	executable.options = options;
-	executable.command = path.resolve(`${requirements.toolingJre}/bin/java`);
+	executable.command = path.resolve(`${requirements.tooling_jre}/bin/java`);
 	executable.args = prepareParams(requirements, javaConfig, workspacePath, context, isSyntaxServer);
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
@@ -134,7 +134,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
 	// were deprecated in JDK 13 and will likely be removed in a future release."
 	// so only add -noverify for older versions
-	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.toolingJreVersion < 13) {
+	if (params.indexOf('-noverify') < 0 && params.indexOf('-Xverify:none') < 0 && requirements.tooling_jre_version < 13) {
 		params.push('-noverify');
 	}
 

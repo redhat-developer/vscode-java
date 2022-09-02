@@ -227,7 +227,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-					settings: { java: getJavaConfig(requirements.javaHome) },
+					settings: { java: getJavaConfig(requirements.java_home) },
 					extendedClientCapabilities: {
 						progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 						classFileContentsSupport: true,
@@ -257,7 +257,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						didChangeConfiguration: () => {
 							standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
-									java: getJavaConfig(requirements.javaHome),
+									java: getJavaConfig(requirements.java_home),
 								}
 							});
 						}
@@ -328,7 +328,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions, resolve);
 				} else {
-					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.javaHome), context, true));
+					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
 				}
 				syntaxClient.start();
 				serverStatusBarProvider.showLightWeightStatus();

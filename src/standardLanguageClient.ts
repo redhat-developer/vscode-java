@@ -84,7 +84,7 @@ export class StandardLanguageClient {
 		if (!port) {
 			const lsPort = process.env['JDTLS_CLIENT_PORT'];
 			if (!lsPort) {
-				serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfig(requirements.javaHome), context, false);
+				serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfig(requirements.java_home), context, false);
 			} else {
 				serverOptions = () => {
 					const socket = net.connect(lsPort);
