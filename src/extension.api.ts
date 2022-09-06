@@ -1,12 +1,12 @@
-import { getDocumentSymbolsCommand } from './documentSymbols';
-import { goToDefinitionCommand } from './goToDefinition';
+import { GetDocumentSymbolsCommand } from './documentSymbols';
+import { GoToDefinitionCommand } from './goToDefinition';
 import { RequirementsData } from './requirements';
 import { TextDocumentPositionParams } from 'vscode-languageclient';
 import { CancellationToken, Command, ProviderResult, Uri, Event } from 'vscode';
 import { ServerMode } from './settings';
 
-export type provideHoverCommandFn = (params: TextDocumentPositionParams, token: CancellationToken) => ProviderResult<Command[] | undefined>;
-export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
+export type ProvideHoverCommandFn = (params: TextDocumentPositionParams, token: CancellationToken) => ProviderResult<Command[] | undefined>;
+export type RegisterHoverCommand = (callback: ProvideHoverCommandFn) => void;
 
 /**
  * Gets the project settings. This API is not supported in light weight server mode so far.
@@ -22,7 +22,7 @@ export type registerHoverCommand = (callback: provideHoverCommandFn) => void;
  * @throws Will throw errors if the Uri does not belong to any project.
  */
 
-export type getProjectSettingsCommand = (uri: string, SettingKeys: string[]) => Promise<Object>;
+export type GetProjectSettingsCommand = (uri: string, SettingKeys: string[]) => Promise<Object>;
 
 /**
  * Gets the classpaths and modulepaths. This API is not supported in light weight server mode so far.
@@ -32,7 +32,7 @@ export type getProjectSettingsCommand = (uri: string, SettingKeys: string[]) => 
  * @throws Will throw errors if the Uri does not belong to any project.
  */
 
-export type getClasspathsCommand = (uri: string, options: ClasspathQueryOptions) => Promise<ClasspathResult>;
+export type GetClasspathsCommand = (uri: string, options: ClasspathQueryOptions) => Promise<ClasspathResult>;
 export type ClasspathQueryOptions = {
 	/**
 	 * Determines the scope of the classpath. Valid scopes are "runtime" and "test".
@@ -62,28 +62,28 @@ export type ClasspathResult = {
  * @returns `true` if the input uri is a test file in its belonging project, otherwise returns false.
  * @throws Will throw errors if the Uri does not belong to any project.
  */
-export type isTestFileCommand = (uri: string) => Promise<boolean>;
+export type IsTestFileCommand = (uri: string) => Promise<boolean>;
 
 export enum ClientStatus {
-	Uninitialized = "Uninitialized",
-	Initialized = "Initialized",
-	Starting = "Starting",
-	Started = "Started",
-	Error = "Error",
-	Stopping = "Stopping",
+	uninitialized = "Uninitialized",
+	initialized = "Initialized",
+	starting = "Starting",
+	started = "Started",
+	error = "Error",
+	stopping = "Stopping",
 }
 
-export const ExtensionApiVersion = '0.7';
+export const extensionApiVersion = '0.7';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
 	readonly javaRequirement: RequirementsData;
 	status: ClientStatus;
-	readonly registerHoverCommand: registerHoverCommand;
-	readonly getDocumentSymbols: getDocumentSymbolsCommand;
-	readonly getProjectSettings: getProjectSettingsCommand;
-	readonly getClasspaths: getClasspathsCommand;
-	readonly isTestFile: isTestFileCommand;
+	readonly registerHoverCommand: RegisterHoverCommand;
+	readonly getDocumentSymbols: GetDocumentSymbolsCommand;
+	readonly getProjectSettings: GetProjectSettingsCommand;
+	readonly getClasspaths: GetClasspathsCommand;
+	readonly isTestFile: IsTestFileCommand;
 	/**
 	 * An event which fires on classpath update. This API is not supported in light weight server mode so far.
 	 *
@@ -98,7 +98,7 @@ export interface ExtensionAPI {
 	 * The Uris in the array point to the project root path.
 	 */
 	readonly onDidProjectsImport: Event<Uri[]>;
-	readonly goToDefinition: goToDefinitionCommand;
+	readonly goToDefinition: GoToDefinitionCommand;
 	/**
 	 * Indicates the current active mode for Java Language Server. Possible modes are:
 	 * - "Standard"

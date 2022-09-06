@@ -8,7 +8,7 @@
 		"moduleResolution": "node",
 		"outDir": "out",
 		"sourceMap": true,
-		"plugins": [{ "name": "typescript-tslint-plugin" }]
+		"plugins": [{ "name": "eslint" }]
 	},
 	"exclude": [
 		"node_modules",

@@ -35,7 +35,7 @@ export class JavaInlayHintsProvider implements InlayHintsProvider {
  *
  * @since 3.17.0 - proposed state
  */
- export type InlayHintParams = /*WorkDoneProgressParams &*/ {
+ export type InlayHintParams = /* WorkDoneProgressParams &*/ {
     /**
      * The text document.
      */

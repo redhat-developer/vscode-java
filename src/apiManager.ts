@@ -1,9 +1,9 @@
 'use strict';
 
-import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, ExtensionApiVersion, ClientStatus } from "./extension.api";
+import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, extensionApiVersion, ClientStatus } from "./extension.api";
 import { RequirementsData } from "./requirements";
-import { getDocumentSymbolsCommand, getDocumentSymbolsProvider } from "./documentSymbols";
-import { goToDefinitionCommand, goToDefinitionProvider } from "./goToDefinition";
+import { GetDocumentSymbolsCommand, getDocumentSymbolsProvider } from "./documentSymbols";
+import { GoToDefinitionCommand, goToDefinitionProvider } from "./goToDefinition";
 import { commands, Uri } from "vscode";
 import { Commands } from "./commands";
 import { Emitter } from "vscode-languageclient";
@@ -19,11 +19,11 @@ class ApiManager {
     private serverReadyPromiseResolve: (result: boolean) => void;
 
     public initialize(requirements: RequirementsData, serverMode: ServerMode): void {
-        const getDocumentSymbols: getDocumentSymbolsCommand = getDocumentSymbolsProvider();
-        const goToDefinition: goToDefinitionCommand = goToDefinitionProvider();
+        const getDocumentSymbols: GetDocumentSymbolsCommand = getDocumentSymbolsProvider();
+        const goToDefinition: GoToDefinitionCommand = goToDefinitionProvider();
 
-        const getProjectSettings = async (uri: string, SettingKeys: string[]) => {
-            return await commands.executeCommand<Object>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, uri, SettingKeys);
+        const getProjectSettings = async (uri: string, settingKeys: string[]) => {
+            return await commands.executeCommand<Object>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, uri, settingKeys);
         };
 
         const getClasspaths = async (uri: string, options: ClasspathQueryOptions) => {
@@ -46,9 +46,9 @@ class ApiManager {
         };
 
         this.api = {
-            apiVersion: ExtensionApiVersion,
+            apiVersion: extensionApiVersion,
             javaRequirement: requirements,
-            status: ClientStatus.Starting,
+            status: ClientStatus.starting,
             registerHoverCommand: registerHoverCommand,
             getDocumentSymbols,
             goToDefinition,

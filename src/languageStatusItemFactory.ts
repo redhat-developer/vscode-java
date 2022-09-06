@@ -52,7 +52,7 @@ export namespace ServerStatusItemFactory {
 
 	export function showLightWeightStatus(item: any): void {
 		item.severity = vscode.LanguageStatusSeverity?.Warning;
-		item.text = StatusIcon.LightWeight;
+		item.text = StatusIcon.lightWeight;
 		item.detail = "Lightweight Mode";
 		item.command = StatusCommands.switchToStandardCommand;
 	}
@@ -77,7 +77,7 @@ export namespace ServerStatusItemFactory {
 			title: "Open logs",
 			command: Commands.OPEN_LOGS
 		};
-		item.text = StatusIcon.Error;
+		item.text = StatusIcon.error;
 		item.detail = "Errors occurred in initializing language server";
 	}
 
@@ -89,18 +89,18 @@ export namespace ServerStatusItemFactory {
 			command: "workbench.panel.markers.view.focus",
 			tooltip: "Errors occurred in project configurations, click to show the PROBLEMS panel"
 		};
-		item.text = StatusIcon.Warning;
+		item.text = StatusIcon.warning;
 		item.detail = "Project Configuration Error";
 	}
 
 	export function setReady(item: any): void {
-		if (item.text === StatusIcon.Ready) {
+		if (item.text === StatusIcon.ready) {
 			return;
 		}
 		item.busy = false;
 		item.severity = vscode.LanguageStatusSeverity?.Information;
 		item.command = StatusCommands.showServerStatusCommand;
-		item.text = StatusIcon.Ready;
+		item.text = StatusIcon.ready;
 		item.detail = "";
 	}
 }

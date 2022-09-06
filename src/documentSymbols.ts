@@ -12,9 +12,9 @@ import { getActiveLanguageClient } from "./extension";
 
 type DocumentSymbolsResponse = DocumentSymbol[] | SymbolInformation[] | null;
 
-export type getDocumentSymbolsCommand = (params: DocumentSymbolParams, token?: CancellationToken) => Promise<DocumentSymbolsResponse>;
+export type GetDocumentSymbolsCommand = (params: DocumentSymbolParams, token?: CancellationToken) => Promise<DocumentSymbolsResponse>;
 
-export function getDocumentSymbolsProvider(): getDocumentSymbolsCommand {
+export function getDocumentSymbolsProvider(): GetDocumentSymbolsCommand {
     return async (params: DocumentSymbolParams, token?: CancellationToken): Promise<DocumentSymbolsResponse> => {
         const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
         if (!languageClient) {

@@ -18,7 +18,7 @@ export function run(testsRoot: string): Promise<void> {
 	const mocha = new Mocha({
 		ui: 'tdd',
 		useColors: true,
-		timeout: 1 * 60 * 1000, /*ms*/
+		timeout: 1 * 60 * 1000, /* ms*/
 	});
 
 	return new Promise((c, e) => {

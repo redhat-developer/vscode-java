@@ -238,13 +238,13 @@ async function generateAccessors(languageClient: LanguageClient, params: Accesso
     });
     let accessorsKind: string;
     switch (params.kind) {
-        case AccessorKind.BOTH:
+        case AccessorKind.both:
             accessorsKind = "getters and setters";
             break;
-        case AccessorKind.GETTER:
+        case AccessorKind.getter:
             accessorsKind = "getters";
             break;
-        case AccessorKind.SETTER:
+        case AccessorKind.setter:
             accessorsKind = "setters";
             break;
         default:

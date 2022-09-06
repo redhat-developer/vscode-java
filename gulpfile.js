@@ -15,7 +15,7 @@ const tempTestFolder = path.join(__dirname, 'test-temp');
 const testSettings = path.join(tempTestFolder, '.vscode', 'settings.json');
 //...
 
-gulp.task('clean_jre', function(done) {
+gulp.task('clean_jre', function (done) {
 	if (fse.existsSync('./jre')) {
 		fse.removeSync('./jre');
 	}
@@ -38,7 +38,7 @@ const LATEST_JRE = 17;
  *  darwin-x64,
  *  darwin-arm64
  */
-gulp.task('download_jre', async function(done) {
+gulp.task('download_jre', async function (done) {
 	if (fse.existsSync('./jre')) {
 		fse.removeSync('./jre');
 	}
@@ -58,9 +58,9 @@ gulp.task('download_jre', async function(done) {
 
 		const manifestUrl = `https://download.eclipse.org/justj/jres/${javaVersion}/downloads/latest/justj.manifest`;
 		// Download justj.manifest file
-		const manifest = await new Promise(function(resolve, reject) {
-			request.get(manifestUrl, function(err, response, body) {
-				if(err || response.statusCode >= 400) {
+		const manifest = await new Promise(function (resolve, reject) {
+			request.get(manifestUrl, function (err, response, body) {
+				if (err || response.statusCode >= 400) {
 					reject(err || `${response.statusCode} returned from ${manifestUrl}`);
 				} else {
 					resolve(String(body));
@@ -95,14 +95,14 @@ gulp.task('download_jre', async function(done) {
 		const jreDownloadUrl = `https://download.eclipse.org/justj/jres/${javaVersion}/downloads/latest/${jreIdentifier}`;
 		const parsedDownloadUrl = url.parse(jreDownloadUrl);
 		const jreFileName = path.basename(parsedDownloadUrl.pathname)
-								.replace(/[\.7z|\.bz2|\.gz|\.rar|\.tar|\.zip|\.xz]*$/, "");
+			.replace(/[\.7z|\.bz2|\.gz|\.rar|\.tar|\.zip|\.xz]*$/, "");
 		const idx = jreFileName.indexOf('-');
 		const jreVersionLabel = idx >= 0 ? jreFileName.substring(idx + 1) : jreFileName;
 		// Download justj JRE.
-		await new Promise(function(resolve, reject) {
+		await new Promise(function (resolve, reject) {
 			download(jreDownloadUrl)
 				.on('error', reject)
-				.pipe(decompress({strip: 0}))
+				.pipe(decompress({ strip: 0 }))
 				.pipe(gulp.dest('./jre/' + jreVersionLabel))
 				.on('end', resolve);
 		});
@@ -116,7 +116,7 @@ gulp.task('download_jre', async function(done) {
 	done();
 });
 
-gulp.task('download_lombok', function(done) {
+gulp.task('download_lombok', function (done) {
 	if (fse.existsSync('./lombok')) {
 		fse.removeSync('./lombok');
 	}
@@ -128,7 +128,7 @@ gulp.task('download_lombok', function(done) {
 	done();
 });
 
-gulp.task('download_server', function(done) {
+gulp.task('download_server', function (done) {
 	fse.removeSync('./server');
 	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
 		.pipe(decompress())
@@ -136,7 +136,7 @@ gulp.task('download_server', function(done) {
 	done();
 });
 
-gulp.task('build_server', function(done) {
+gulp.task('build_server', function (done) {
 	fse.removeSync('./server');
 	cp.execSync(mvnw() + ' -Pserver-distro clean package -Declipse.jdt.ls.skipGradleChecksums', { cwd: server_dir, stdio: [0, 1, 2] });
 	gulp.src(server_dir + '/org.eclipse.jdt.ls.product/distro/*.tar.gz')
@@ -145,27 +145,27 @@ gulp.task('build_server', function(done) {
 	done();
 });
 
-gulp.task('dev_server', function(done) {
+gulp.task('dev_server', function (done) {
 	let command = mvnw() + ' -o -pl org.eclipse.jdt.ls.core,org.eclipse.jdt.ls.target clean package -Declipse.jdt.ls.skipGradleChecksums';
-	console.log('executing '+command);
-	cp.execSync(command, {cwd:server_dir, stdio:[0,1,2]} );
-	glob.Glob(server_dir +'/org.eclipse.jdt.ls.core/target/org.eclipse.jdt.ls.core-*-SNAPSHOT.jar',
-	    (_error, sources) => {
+	console.log('executing ' + command);
+	cp.execSync(command, { cwd: server_dir, stdio: [0, 1, 2] });
+	glob.Glob(server_dir + '/org.eclipse.jdt.ls.core/target/org.eclipse.jdt.ls.core-*-SNAPSHOT.jar',
+		(_error, sources) => {
 			glob.Glob('./server/plugins/org.eclipse.jdt.ls.core_*.jar',
 				(_error, targets) => {
-					console.log('Copying '+sources[0]+ ' to '+targets[0]);
+					console.log('Copying ' + sources[0] + ' to ' + targets[0]);
 					fse.copy(sources[0], targets[0]);
-			});
-	});
+				});
+		});
 	done();
 });
 
-gulp.task('watch_server',function(done) {
-	gulp.watch(server_dir+'/org.eclipse.jdt.ls.core/**/*.java', gulp.series('dev_server'));
+gulp.task('watch_server', function (done) {
+	gulp.watch(server_dir + '/org.eclipse.jdt.ls.core/**/*.java', gulp.series('dev_server'));
 	done();
 });
 
-gulp.task('generate_standard_test_folder', function(done) {
+gulp.task('generate_standard_test_folder', function (done) {
 	fse.copySync(originalTestFolder, tempTestFolder);
 	fse.ensureDirSync(path.join(tempTestFolder, '.vscode'));
 	fse.writeJSONSync(testSettings, {
@@ -175,7 +175,7 @@ gulp.task('generate_standard_test_folder', function(done) {
 	done();
 });
 
-gulp.task('generate_lightweight_test_folder', function(done) {
+gulp.task('generate_lightweight_test_folder', function (done) {
 	fse.copySync(originalTestFolder, tempTestFolder);
 	fse.ensureDirSync(path.join(tempTestFolder, '.vscode'));
 	fse.writeJSONSync(testSettings, {
@@ -184,12 +184,12 @@ gulp.task('generate_lightweight_test_folder', function(done) {
 	done();
 });
 
-gulp.task('clean_test_folder', function(done) {
+gulp.task('clean_test_folder', function (done) {
 	fse.removeSync(tempTestFolder);
 	done();
 });
 
-gulp.task('prepare_pre_release', function(done) {
+gulp.task('prepare_pre_release', function (done) {
 	const json = JSON.parse(fse.readFileSync("./package.json").toString());
 	const stableVersion = json.version.match(/(\d+)\.(\d+)\.(\d+)/);
 	const major = stableVersion[1];
@@ -219,12 +219,12 @@ function isLinux() {
 }
 
 function mvnw() {
-	return isWin()?"mvnw.cmd":"./mvnw";
+	return isWin() ? "mvnw.cmd" : "./mvnw";
 }
 
-function prependZero(number) {
-	if (number > 99) {
+function prependZero(num) {
+	if (num > 99) {
 		throw "Unexpected value to prepend with zero";
 	}
-	return `${number < 10 ? "0" : ""}${number}`;
+	return `${num < 10 ? "0" : ""}${num}`;
 }

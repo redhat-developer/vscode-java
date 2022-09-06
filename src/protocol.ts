@@ -22,19 +22,19 @@ export enum MessageType {
     /**
      * An error message.
      */
-    Error = 1,
+    error = 1,
     /**
      * A warning message.
      */
-    Warning = 2,
+    warning = 2,
     /**
      * An information message.
      */
-    Info = 3,
+    info = 3,
     /**
      * A log message.
      */
-    Log = 4,
+    log = 4,
 }
 
 /**
@@ -56,23 +56,23 @@ export enum FeatureStatus {
 }
 
 export enum EventType {
-    ClasspathUpdated = 100,
-    ProjectsImported = 200,
-    IncompatibleGradleJdkIssue = 300,
-	UpgradeGradleWrapper = 400,
+    classpathUpdated = 100,
+    projectsImported = 200,
+    incompatibleGradleJdkIssue = 300,
+	upgradeGradleWrapper = 400,
 }
 
 export enum CompileWorkspaceStatus {
-    FAILED = 0,
-    SUCCEED = 1,
-    WITHERROR = 2,
-    CANCELLED = 3,
+    failed = 0,
+    succeed = 1,
+    withError = 2,
+    cancelled = 3,
 }
 
 export enum AccessorKind {
-    GETTER = 0,
-    SETTER = 1,
-    BOTH = 2
+    getter = 0,
+    setter = 1,
+    both = 2
 }
 
 export interface StatusReport {
@@ -428,7 +428,7 @@ export namespace FindLinks {
 }
 
 export interface RenameFilesParams {
-    files: Array<{ oldUri: string, newUri: string }>;
+    files: Array<{ oldUri: string; newUri: string }>;
 }
 
 export namespace WillRenameFiles {

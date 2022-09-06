@@ -9,7 +9,6 @@ const originFilePath: string = path.join(constants.projectFsPath, 'src', 'main',
 const newFilePath: string = path.join(constants.projectFsPath, 'src', 'main', 'java', 'java', 'Foo1.java');
 
 // Rename refactoring will pop up a dialog for confirm, didn't find a way to bypass it. So skip this test case.
-// tslint:disable: only-arrow-functions
 suite.skip('Rename tests', () => {
 
 	suiteSetup(async function() {
@@ -25,7 +24,7 @@ suite.skip('Rename tests', () => {
 		// wait for the extension to update the class name,
 		// if it's not updated, this case will fail on timeout - 60s.
 		while (true) {
-			await sleep(5 * 1000 /*ms*/);
+			await sleep(5 * 1000 /* ms */);
 			if (document.getText().includes("public class Foo1")) {
 				break;
 			}
@@ -41,7 +40,7 @@ suite.skip('Rename tests', () => {
 
 			const document: TextDocument = await workspace.openTextDocument(Uri.file(path.join(originFilePath)));
 			while (true) {
-				await sleep(5 * 1000 /*ms*/);
+				await sleep(5 * 1000 /* ms */);
 				if (document.getText().includes("public class Foo")) {
 					break;
 				}

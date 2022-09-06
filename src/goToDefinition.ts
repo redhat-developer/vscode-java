@@ -12,9 +12,9 @@ import { getActiveLanguageClient } from './extension';
 
 type GoToDefinitionResponse = Location | Location[] | LocationLink[] | null;
 
-export type goToDefinitionCommand = (params: DefinitionParams, token?: CancellationToken) => Promise<GoToDefinitionResponse>;
+export type GoToDefinitionCommand = (params: DefinitionParams, token?: CancellationToken) => Promise<GoToDefinitionResponse>;
 
-export function goToDefinitionProvider(): goToDefinitionCommand {
+export function goToDefinitionProvider(): GoToDefinitionCommand {
     return async (params: DefinitionParams, token?: CancellationToken): Promise<GoToDefinitionResponse> => {
         const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
         if (!languageClient) {

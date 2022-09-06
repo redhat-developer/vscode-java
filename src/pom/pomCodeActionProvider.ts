@@ -33,19 +33,19 @@ export class PomCodeActionProvider implements CodeActionProvider<CodeAction> {
 
 				const action1 = new CodeAction("Enable this execution in project configuration phase", CodeActionKind.QuickFix.append("pom"));
 				action1.edit = new WorkspaceEdit();
-				action1.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e execute onConfiguration?>");
+				action1.edit.insert(document.uri, diagnostic.range.end, `${indentation}<?m2e execute onConfiguration?>`);
 				action1.command = saveAndUpdateConfigCommand;
 				codeActions.push(action1);
 
 				const action2 = new CodeAction("Enable this execution in project build phase", CodeActionKind.QuickFix.append("pom"));
 				action2.edit = new WorkspaceEdit();
-				action2.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e execute onConfiguration,onIncremental?>");
+				action2.edit.insert(document.uri, diagnostic.range.end, `${indentation}<?m2e execute onConfiguration,onIncremental?>`);
 				action2.command = saveAndUpdateConfigCommand;
 				codeActions.push(action2);
 
 				const action3 = new CodeAction("Mark this execution as ignored in pom.xml", CodeActionKind.QuickFix.append("pom"));
 				action3.edit = new WorkspaceEdit();
-				action3.edit.insert(document.uri, diagnostic.range.end, indentation + "<?m2e ignore?>");
+				action3.edit.insert(document.uri, diagnostic.range.end, `${indentation}<?m2e ignore?>`);
 				action3.command = saveAndUpdateConfigCommand;
 				codeActions.push(action3);
 			} else if (diagnostic.message?.startsWith("The build file has been changed")) {

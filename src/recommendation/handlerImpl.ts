@@ -16,9 +16,9 @@ async function installExtensionCmdHandler(extensionName: string, displayName: st
 }
 
 enum UserChoice {
-	Install = "Install",
-	Never = "Never",
-	Later = "Later",
+	install = "Install",
+	never = "Never",
+	later = "Later",
 }
 
 export class HandlerImpl implements IHandler {
@@ -39,7 +39,7 @@ export class HandlerImpl implements IHandler {
 	}
 
 	canRecommendExtension(extName: string): boolean {
-		return this.userChoice()[extName] !== UserChoice.Never && !this.isExtensionInstalled(extName);
+		return this.userChoice()[extName] !== UserChoice.never && !this.isExtensionInstalled(extName);
 	}
 
 	async handle(extName: string, message: string): Promise<void> {
@@ -48,13 +48,13 @@ export class HandlerImpl implements IHandler {
 		}
 
 		const choice = this.userChoice();
-		if (choice[extName] === UserChoice.Never) {
+		if (choice[extName] === UserChoice.never) {
 			return;
 		}
 
 		const actions: Array<string> = Object.keys(UserChoice);
 		const answer = await vscode.window.showInformationMessage(message, ...actions);
-		if (answer === UserChoice.Install) {
+		if (answer === UserChoice.install) {
 			await installExtensionCmdHandler(extName, extName);
 		}
 

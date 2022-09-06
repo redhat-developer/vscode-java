@@ -3,7 +3,7 @@ import { LanguageClient } from "vscode-languageclient/node";
 import { Commands } from "../commands";
 import { LSPTypeHierarchyItem, TypeHierarchyDirection, TypeHierarchyItem } from "./protocol";
 
-export function ToSingleLSPTypeHierarchyItem(client: LanguageClient, typeHierarchyItem: TypeHierarchyItem): LSPTypeHierarchyItem {
+export function toSingleLSPTypeHierarchyItem(client: LanguageClient, typeHierarchyItem: TypeHierarchyItem): LSPTypeHierarchyItem {
 	if (!typeHierarchyItem) {
 		return undefined;
 	}
@@ -21,28 +21,28 @@ export function ToSingleLSPTypeHierarchyItem(client: LanguageClient, typeHierarc
 	};
 }
 
-export function ToTypeHierarchyItem(client: LanguageClient, lspTypeHierarchyItem: LSPTypeHierarchyItem, direction: TypeHierarchyDirection): TypeHierarchyItem {
+export function toTypeHierarchyItem(client: LanguageClient, lspTypeHierarchyItem: LSPTypeHierarchyItem, direction: TypeHierarchyDirection): TypeHierarchyItem {
 	if (!lspTypeHierarchyItem) {
 		return undefined;
 	}
 	let parents: TypeHierarchyItem[];
 	let children: TypeHierarchyItem[];
-	if (direction === TypeHierarchyDirection.Parents || direction === TypeHierarchyDirection.Both) {
+	if (direction === TypeHierarchyDirection.parents || direction === TypeHierarchyDirection.both) {
 		if (lspTypeHierarchyItem.parents) {
 			parents = [];
 			for (const parent of lspTypeHierarchyItem.parents) {
-				parents.push(ToTypeHierarchyItem(client, parent, TypeHierarchyDirection.Parents));
+				parents.push(toTypeHierarchyItem(client, parent, TypeHierarchyDirection.parents));
 			}
 			parents = parents.sort((a, b) => {
 				return (a.kind.toString() === b.kind.toString()) ? a.name.localeCompare(b.name) : b.kind.toString().localeCompare(a.kind.toString());
 			});
 		}
 	}
-	if (direction === TypeHierarchyDirection.Children || direction === TypeHierarchyDirection.Both) {
+	if (direction === TypeHierarchyDirection.children || direction === TypeHierarchyDirection.both) {
 		if (lspTypeHierarchyItem.children) {
 			children = [];
 			for (const child of lspTypeHierarchyItem.children) {
-				children.push(ToTypeHierarchyItem(client, child, TypeHierarchyDirection.Children));
+				children.push(toTypeHierarchyItem(client, child, TypeHierarchyDirection.children));
 			}
 			children = children.sort((a, b) => {
 				return (a.kind.toString() === b.kind.toString()) ? a.name.localeCompare(b.name) : b.kind.toString().localeCompare(a.kind.toString());
@@ -66,11 +66,11 @@ export function ToTypeHierarchyItem(client: LanguageClient, lspTypeHierarchyItem
 
 export function typeHierarchyDirectionToContextString(direction: TypeHierarchyDirection): string {
 	switch (direction) {
-		case TypeHierarchyDirection.Children:
+		case TypeHierarchyDirection.children:
 			return "children";
-		case TypeHierarchyDirection.Parents:
+		case TypeHierarchyDirection.parents:
 			return "parents";
-		case TypeHierarchyDirection.Both:
+		case TypeHierarchyDirection.both:
 			return "both";
 		default:
 			return undefined;
@@ -78,7 +78,7 @@ export function typeHierarchyDirectionToContextString(direction: TypeHierarchyDi
 }
 
 export async function resolveTypeHierarchy(client: LanguageClient, typeHierarchyItem: TypeHierarchyItem, direction: TypeHierarchyDirection, token: CancellationToken): Promise<TypeHierarchyItem> {
-	const lspTypeHierarchyItem = ToSingleLSPTypeHierarchyItem(client, typeHierarchyItem);
+	const lspTypeHierarchyItem = toSingleLSPTypeHierarchyItem(client, typeHierarchyItem);
 	let resolvedLSPItem: LSPTypeHierarchyItem;
 	try {
 		resolvedLSPItem = await commands.executeCommand<LSPTypeHierarchyItem>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.RESOLVE_TYPE_HIERARCHY, JSON.stringify(lspTypeHierarchyItem), JSON.stringify(direction), JSON.stringify(1), token);
@@ -86,7 +86,7 @@ export async function resolveTypeHierarchy(client: LanguageClient, typeHierarchy
 		// operation cancelled
 		return undefined;
 	}
-	const resolvedItem = ToTypeHierarchyItem(client, resolvedLSPItem, direction);
+	const resolvedItem = toTypeHierarchyItem(client, resolvedLSPItem, direction);
 	if (!resolvedItem) {
 		return undefined;
 	}
@@ -99,7 +99,7 @@ export async function getRootItem(client: LanguageClient, typeHierarchyItem: Typ
 		return undefined;
 	}
 	if (!typeHierarchyItem.parents) {
-		const resolvedItem = await resolveTypeHierarchy(client, typeHierarchyItem, TypeHierarchyDirection.Parents, token);
+		const resolvedItem = await resolveTypeHierarchy(client, typeHierarchyItem, TypeHierarchyDirection.parents, token);
 		if (!resolvedItem || !resolvedItem.parents) {
 			return typeHierarchyItem;
 		} else {

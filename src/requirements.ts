@@ -10,12 +10,14 @@ import { logger } from './log';
 import { checkJavaPreferences } from './settings';
 
 const REQUIRED_JDK_VERSION = 17;
+/* eslint-disable @typescript-eslint/naming-convention */
 export interface RequirementsData {
     tooling_jre: string;
     tooling_jre_version: number;
     java_home: string;
     java_version: number;
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 interface ErrorData {
     message: string;
@@ -107,12 +109,14 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
             openJDKDownload(reject, `Java ${REQUIRED_JDK_VERSION} or more recent is required to run the Java extension. Please download and install a recent JDK. You can still compile your projects with older JDKs by configuring ['java.configuration.runtimes'](https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes)`);
         }
 
+        /* eslint-disable @typescript-eslint/naming-convention */
         resolve({
-            tooling_jre: toolingJre,  // Used to launch Java extension.
+            tooling_jre: toolingJre,
             tooling_jre_version: toolingJreVersion,
-            java_home: javaHome, // Used as default project JDK.
+            java_home: javaHome,
             java_version: javaVersion,
         });
+        /* eslint-enable @typescript-eslint/naming-convention */
     });
 }
 

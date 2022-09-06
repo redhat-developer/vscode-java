@@ -113,7 +113,7 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 		logger.warn("Could not find lombok.jar path.");
 		return;
 	}
-	const lombokAgentParam = '-javaagent:' + lombokJarPath;
+	const lombokAgentParam = `-javaagent:${lombokJarPath}`;
 	params.push(lombokAgentParam);
 	updateActiveLombokPath(lombokJarPath);
 }

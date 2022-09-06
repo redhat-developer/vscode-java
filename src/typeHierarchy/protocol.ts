@@ -2,9 +2,9 @@ import * as vscode from "vscode";
 import { Range, SymbolKind } from "vscode-languageclient";
 
 export enum TypeHierarchyDirection {
-	Children,
-	Parents,
-	Both
+	children,
+	parents,
+	both
 }
 
 export class LSPTypeHierarchyItem {

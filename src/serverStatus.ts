@@ -4,50 +4,50 @@ import { EventEmitter } from "vscode";
 import { serverTasks } from "./serverTasks";
 
 export enum ServerStatusKind {
-	Ready = "Ready",
-	Warning = "Warning",
-	Error = "Error",
-	Busy = "Busy",
+	ready = "Ready",
+	warning = "Warning",
+	error = "Error",
+	busy = "Busy",
 }
 
-const _emitter = new EventEmitter<ServerStatusKind>();
-let _status: ServerStatusKind = ServerStatusKind.Ready;
-let _isBusy: boolean = false;
+const emitter = new EventEmitter<ServerStatusKind>();
+let status: ServerStatusKind = ServerStatusKind.ready;
+let isBusy: boolean = false;
 
 function fireEvent() {
-	if (_isBusy) {
-		_emitter.fire(ServerStatusKind.Busy);
+	if (isBusy) {
+		emitter.fire(ServerStatusKind.busy);
 		return;
 	}
 
-	_emitter.fire(_status);
+	emitter.fire(status);
 }
 
 export namespace serverStatus {
 
 	let hasError: boolean = false;
 
-	export const onServerStatusChanged = _emitter.event;
+	export const onServerStatusChanged = emitter.event;
 
 	export function initialize() {
 		serverTasks.onDidUpdateServerTask(tasks => {
-			_isBusy = tasks.some(task => !task.complete);
+			isBusy = tasks.some(task => !task.complete);
 			fireEvent();
 		});
 	}
 
-	export function updateServerStatus(status: ServerStatusKind) {
-		if (status === ServerStatusKind.Busy) {
+	export function updateServerStatus(newStatus: ServerStatusKind) {
+		if (newStatus === ServerStatusKind.busy) {
 			throw new Error("Busy status cannot be set directly.");
 		}
 
-		if (status === ServerStatusKind.Error || status === ServerStatusKind.Warning) {
+		if (newStatus === ServerStatusKind.error || newStatus === ServerStatusKind.warning) {
 			hasError = true;
 		} else if (hasError) {
 			return;
 		}
 
-		_status = status;
+		status = newStatus;
 		fireEvent();
 	}
 
