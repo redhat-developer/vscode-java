@@ -280,6 +280,12 @@
           "description": "Enable/disable the Gradle importer.",
           "scope": "window"
         },
+        "java.import.gradle.auto.sync": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically start project synchronization in the background when the build script changes.",
+          "scope": "window"
+        },
         "java.import.gradle.wrapper.enabled": {
           "type": "boolean",
           "default": true,
