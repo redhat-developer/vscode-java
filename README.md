@@ -210,6 +210,9 @@ New in 1.10.0
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 
+New in 1.11.0
+* `java.compile.annotation.nullAnalysis`: Specify the annotation artifact used by annotation-based null analysis. When set to `disabled`, the annotation-based null analysis is disabled. Support artifacts are: 'jsr305' and 'org.eclipse.jdt.annotation'. Defaults to `jsr305`.
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).

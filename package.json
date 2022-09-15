@@ -958,6 +958,22 @@
           "default": true,
           "description": "Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring.",
           "scope": "window"
+        },
+        "java.compile.annotation.nullAnalysis": {
+          "type": "string",
+          "default": "jsr305",
+          "description": "Specify the annotation artifact used by annotation-based null analysis. When set to `disabled`, the null analysis is disabled. Support artifacts are: 'jsr305' and 'org.eclipse.jdt.annotation'. Defaults to `jsr305`.",
+          "enum": [
+            "disabled",
+            "jsr305",
+            "org.eclipse.jdt.annotation"
+          ],
+          "enumDescriptions": [
+            "Disable the annotation-based null analysis.",
+            "Enable the annotation-based null analysis using annotations from 'jsr305'(javax.annotation.*).",
+            "Enable the annotation-based null analysis using annotations from 'org.eclipse.jdt.annotation'(org.eclipse.jdt.annotation.*)."
+          ],
+          "scope": "window"
         }
       }
     },
