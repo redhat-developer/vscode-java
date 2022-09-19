@@ -277,4 +277,14 @@ export namespace Commands {
     export const UPGRADE_GRADLE_WRAPPER = '_java.gradle.upgradeWrapper';
 
     export const LOMBOK_CONFIGURE = "java.lombokConfigure";
+
+    /**
+     * The JDT.LS command to create module-info.java
+     */
+    export const CREATE_MODULE_INFO = "java.project.createModuleInfo";
+
+    /**
+     * The VS Code command to create module-info.java
+     */
+    export const CREATE_MODULE_INFO_COMMAND = "java.project.createModuleInfo.command";
 }

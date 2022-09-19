@@ -552,6 +552,27 @@ export class StandardLanguageClient {
 				markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.LEARN_MORE_ABOUT_REFACTORING}.md`)), 'Java Refactoring', sectionId, context);
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.CREATE_MODULE_INFO_COMMAND, async () => {
+				const uri = await askForProjects(
+					window.activeTextEditor?.document.uri,
+					"Please select the project to create module-info.java",
+					false,
+				);
+				if (!uri?.length) {
+					return;
+				}
+
+				const moduleInfoUri: string = await commands.executeCommand(
+					Commands.EXECUTE_WORKSPACE_COMMAND,
+					Commands.CREATE_MODULE_INFO,
+					uri[0].toString(),
+				);
+
+				if (moduleInfoUri) {
+					await window.showTextDocument(Uri.parse(moduleInfoUri));
+				}
+			}));
+
 			languages.registerCodeActionsProvider({
 				language: "xml",
 				scheme: "file",

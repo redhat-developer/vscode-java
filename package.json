@@ -1085,6 +1085,11 @@
         "command": "java.action.changeBaseType",
         "title": "%java.action.changeBaseType%",
         "category": "Java"
+      },
+      {
+        "command": "java.project.createModuleInfo.command",
+        "title": "%java.project.createModuleInfo.command%",
+        "category": "Java"
       }
     ],
     "keybindings": [

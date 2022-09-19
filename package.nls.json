@@ -21,5 +21,6 @@
 	"java.action.showClassHierarchy": "Show Class Hierarchy",
 	"java.action.showSupertypeHierarchy": "Show Supertype Hierarchy",
 	"java.action.showSubtypeHierarchy": "Show Subtype Hierarchy",
-	"java.action.changeBaseType": "Base on this Type"
+	"java.action.changeBaseType": "Base on this Type",
+	"java.project.createModuleInfo.command": "Create module-info.java"
 }
