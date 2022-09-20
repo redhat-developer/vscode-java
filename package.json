@@ -550,12 +550,14 @@
         },
         "java.completion.importOrder": {
           "type": "array",
-          "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group.",
+          "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group. As a result, the empty string (e.g. '') can be used to group all other imports. Static imports are prefixed with a '#'",
           "default": [
+            "#",
             "java",
             "javax",
             "org",
-            "com"
+            "com",
+            ""
           ],
           "scope": "window"
         },
