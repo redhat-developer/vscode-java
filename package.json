@@ -962,7 +962,7 @@
         "java.compile.annotation.nullAnalysis": {
           "type": "string",
           "default": "jsr305",
-          "description": "Specify the annotation artifact used by annotation-based null analysis. When set to `disabled`, the null analysis is disabled. Support artifacts are: 'jsr305' and 'org.eclipse.jdt.annotation'. Defaults to `jsr305`.",
+          "markdownDescription": "Specify the annotation artifact used by annotation-based null analysis. When set to `disabled`, the null analysis is disabled. Supported artifacts are: `jsr305` and `org.eclipse.jdt.annotation`. Defaults to `jsr305`.",
           "enum": [
             "disabled",
             "jsr305",

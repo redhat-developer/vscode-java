@@ -14,6 +14,8 @@ enum AnnotationNullAnalysis {
 	eclipse = "org.eclipse.jdt.annotation",
 }
 
+let annotationNullAnalysisStatus: string | undefined = undefined;
+
 export async function updateAnnotationNullAnalysisConfiguration(): Promise<void> {
 	const annotation: string = getJavaConfiguration().get("compile.annotation.nullAnalysis");
 	let annotationRegex;
@@ -29,13 +31,19 @@ export async function updateAnnotationNullAnalysisConfiguration(): Promise<void>
 	for (const projectUri of projectUris) {
 		const classpathResult = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'test'});
 		for (const classpath of classpathResult.classpaths) {
-			if (annotationRegex.test(classpath)) {
-				commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_ANNOTATION_NULL_ANALYSIS, annotation);
+			if (annotationRegex.test(classpath) && annotationNullAnalysisStatus !== annotation) {
+				annotationNullAnalysisStatus = annotation;
+				await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_ANNOTATION_NULL_ANALYSIS, annotation);
+				await commands.executeCommand(Commands.COMPILE_WORKSPACE, true);
 				return;
 			}
 		}
 	}
 	// if the specific annotation type is not in the classpath, then we should disable null analysis to avoid errors
 	// See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=479389
-	commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_ANNOTATION_NULL_ANALYSIS, AnnotationNullAnalysis.disabled);
+	if (annotationNullAnalysisStatus !== AnnotationNullAnalysis.disabled) {
+		annotationNullAnalysisStatus = AnnotationNullAnalysis.disabled;
+		await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.UPDATE_ANNOTATION_NULL_ANALYSIS, AnnotationNullAnalysis.disabled);
+		await commands.executeCommand(Commands.COMPILE_WORKSPACE, true);
+	}
 }
