@@ -260,6 +260,8 @@ export namespace Commands {
      */
     export const SWITCH_SERVER_MODE = 'java.server.mode.switch';
 
+    export const UPDATE_ANNOTATION_NULL_ANALYSIS = 'java.compile.annotationNullAnalysis.update';
+
     export const LEARN_MORE_ABOUT_REFACTORING = '_java.learnMoreAboutRefactorings';
 
     export const TEMPLATE_VARIABLES = '_java.templateVariables';

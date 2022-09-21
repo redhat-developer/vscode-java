@@ -8,6 +8,7 @@ import { cleanWorkspaceFileName } from './extension';
 import { ensureExists, getJavaConfiguration } from './utils';
 import { checkLombokDependency, cleanupLombokCache } from './lombokSupport';
 import { CodeLensResolveRequest } from 'vscode-languageclient';
+import { updateAnnotationNullAnalysisConfiguration } from './annotationNullAnalysisSupport';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -77,6 +78,9 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 					}
 				});
 			}
+		}
+		if (hasConfigKeyChanged('compile.annotation.nullAnalysis', oldConfig, newConfig)) {
+			updateAnnotationNullAnalysisConfiguration();
 		}
 		// update old config
 		oldConfig = newConfig;
