@@ -90,7 +90,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
         }
 
         if (!isModuleInfo) {
-            if (context.package_name) {
+            if (context.packageName) {
                 snippets.push(`package ${context.packageName};`);
                 snippets.push("");
             }
