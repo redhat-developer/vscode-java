@@ -112,8 +112,8 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 			params.push(`${watchParentProcess}false`);
 		}
 	}
-	if (vmargs.indexOf('-Xlog:jni+resolve=') < 0) {
-		params.push('-Xlog:jni+resolve=off');
+	if (vmargs.indexOf('-Xlog:') < 0) {
+		params.push('-Xlog:disable');
 	}
 
 	parseVMargs(params, vmargs);
