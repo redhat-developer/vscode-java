@@ -62,24 +62,24 @@ export async function askForProjects(activeFileUri: Uri | undefined, placeHolder
 		return [];
 	} else if (projectPicks.length === 1) {
 		return [Uri.file(projectPicks[0].detail)];
-	} else {
-		const choices: QuickPickItem[] | QuickPickItem | undefined = await window.showQuickPick(projectPicks, {
-			matchOnDetail: true,
-			placeHolder: placeHolder,
-			ignoreFocusOut: true,
-			canPickMany: canPickMany,
-		});
-
-		if (!choices) {
-			return [];
-		}
-
-		if (Array.isArray(choices)) {
-			return choices.map(c => Uri.file(c.detail));
-		} else {
-			return [Uri.file(choices.detail)];
-		}
 	}
+
+	const choices: QuickPickItem[] | QuickPickItem | undefined = await window.showQuickPick(projectPicks, {
+		matchOnDetail: true,
+		placeHolder: placeHolder,
+		ignoreFocusOut: true,
+		canPickMany: canPickMany,
+	});
+
+	if (!choices) {
+		return [];
+	}
+
+	if (Array.isArray(choices)) {
+		return choices.map(c => Uri.file(c.detail));
+	}
+
+	return [Uri.file(choices.detail)];
 }
 
 /**
