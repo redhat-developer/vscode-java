@@ -37,7 +37,6 @@ import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { checkLombokDependency } from "./lombokSupport";
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
-import { updateAnnotationNullAnalysisConfiguration } from "./annotationNullAnalysisSupport";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -117,10 +116,8 @@ export class StandardLanguageClient {
 							showImportFinishNotification(context);
 						}
 						checkLombokDependency(context);
-						updateAnnotationNullAnalysisConfiguration();
 						apiManager.getApiInstance().onDidClasspathUpdate((e: Uri) => {
 							checkLombokDependency(context);
-							updateAnnotationNullAnalysisConfiguration();
 						});
 						// Disable the client-side snippet provider since LS is ready.
 						snippetCompletionProvider.dispose();

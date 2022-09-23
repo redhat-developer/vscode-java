@@ -211,7 +211,8 @@ New in 1.10.0
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 
 New in 1.11.0
-* `java.compile.annotation.nullAnalysis`: Specify the annotation artifact used by annotation-based null analysis. When set to `disabled`, the annotation-based null analysis is disabled. Support artifacts are: 'jsr305' and 'org.eclipse.jdt.annotation'. Defaults to `jsr305`.
+* `java.compile.nullAnalysis.nonnull`: Specify the nonnull annotation types used by the annotation-based null analysis. Leave it empty to disable the null analysis.
+* `java.compile.nullAnalysis.nullable`: Specify the nullable annotation types used by the annotation-based null analysis. Leave it empty to disable the null analysis.
 
 Semantic Highlighting
 ===============
