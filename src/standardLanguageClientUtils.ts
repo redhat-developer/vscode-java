@@ -56,26 +56,30 @@ function isJavaConfigFile(filePath: string) {
  * @param activeFileUri the uri of the active file.
  * @param placeHolder message to be shown in quick pick.
  */
-export async function askForProjects(activeFileUri: Uri | undefined, placeHolder: string): Promise<Uri[]> {
+export async function askForProjects(activeFileUri: Uri | undefined, placeHolder: string, canPickMany: boolean = true): Promise<Uri[]> {
 	const projectPicks: QuickPickItem[] = await generateProjectPicks(activeFileUri);
 	if (!projectPicks?.length) {
 		return [];
 	} else if (projectPicks.length === 1) {
 		return [Uri.file(projectPicks[0].detail)];
-	} else {
-		const choices: QuickPickItem[] | undefined = await window.showQuickPick(projectPicks, {
-			matchOnDetail: true,
-			placeHolder: placeHolder,
-			ignoreFocusOut: true,
-			canPickMany: true,
-		});
-
-		if (choices?.length) {
-			return choices.map(c => Uri.file(c.detail));
-		}
 	}
 
-	return [];
+	const choices: QuickPickItem[] | QuickPickItem | undefined = await window.showQuickPick(projectPicks, {
+		matchOnDetail: true,
+		placeHolder: placeHolder,
+		ignoreFocusOut: true,
+		canPickMany: canPickMany,
+	});
+
+	if (!choices) {
+		return [];
+	}
+
+	if (Array.isArray(choices)) {
+		return choices.map(c => Uri.file(c.detail));
+	}
+
+	return [Uri.file(choices.detail)];
 }
 
 /**

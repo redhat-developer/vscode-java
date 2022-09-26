@@ -21,5 +21,6 @@
 	"java.action.showClassHierarchy": "显示类的继承关系",
 	"java.action.showSupertypeHierarchy": "显示父类层次结构",
 	"java.action.showSubtypeHierarchy": "显示子类层次结构",
-	"java.action.changeBaseType": "基于此类型"
+	"java.action.changeBaseType": "基于此类型",
+	"java.project.createModuleInfo.command": "创建 module-info.java"
 }
