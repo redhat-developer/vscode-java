@@ -1,41 +1,42 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget } from "vscode";
-import { Commands } from "./commands";
-import { serverStatus, ServerStatusKind } from "./serverStatus";
-import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
-import { LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams, ConfigurationRequest, ConfigurationParams } from "vscode-languageclient";
-import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
-import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo, UpgradeGradleWrapperInfo, BuildProjectRequest, BuildProjectParams } from "./protocol";
-import { setGradleWrapperChecksum, excludeProjectSettingsFiles, ServerMode } from "./settings";
-import { onExtensionChange, collectBuildFilePattern } from "./plugin";
-import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
-import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from "./requirements";
-import * as net from 'net';
 import * as fse from 'fs-extra';
-import * as path from 'path';
-import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
-import { logger } from "./log";
-import * as buildPath from './buildpath';
-import * as sourceAction from './sourceAction';
-import * as refactorAction from './refactorAction';
-import * as pasteAction from './pasteAction';
-import { serverTasks } from "./serverTasks";
-import { apiManager } from "./apiManager";
-import { ExtensionAPI, ClientStatus } from "./extension.api";
-import { serverStatusBarProvider } from "./serverStatusBarProvider";
-import * as fileEventHandler from './fileEventHandler';
-import { markdownPreviewProvider } from "./markdownPreviewProvider";
-import { RefactorDocumentProvider, javaRefactorKinds } from "./codeActionProvider";
-import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
-import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
-import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
 import { findRuntimes } from "jdk-utils";
-import { snippetCompletionProvider } from "./snippetCompletionProvider";
-import { JavaInlayHintsProvider } from "./inlayHintsProvider";
+import * as net from 'net';
+import * as path from 'path';
+import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams } from "vscode-languageclient";
+import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
+import { apiManager } from "./apiManager";
+import * as buildPath from './buildpath';
+import { javaRefactorKinds, RefactorDocumentProvider } from "./codeActionProvider";
+import { Commands } from "./commands";
+import { ClientStatus, ExtensionAPI } from "./extension.api";
+import * as fileEventHandler from './fileEventHandler';
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
+import { JavaInlayHintsProvider } from "./inlayHintsProvider";
+import { awaitServerConnection, prepareExecutable } from "./javaServerStarter";
+import { logger } from "./log";
 import { checkLombokDependency } from "./lombokSupport";
+import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import * as pasteAction from './pasteAction';
+import { registerPasteEventHandler } from './pasteEventHandler';
+import { collectBuildFilePattern, onExtensionChange } from "./plugin";
+import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
+import { ActionableNotification, BuildProjectParams, BuildProjectRequest, CompileWorkspaceRequest, CompileWorkspaceStatus, EventNotification, EventType, ExecuteClientCommandRequest, FeatureStatus, FindLinks, GradleCompatibilityInfo, LinkLocation, ProgressReportNotification, ServerNotification, SourceAttachmentAttribute, SourceAttachmentRequest, SourceAttachmentResult, StatusNotification, UpgradeGradleWrapperInfo } from "./protocol";
+import * as refactorAction from './refactorAction';
+import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from "./requirements";
+import { serverStatus, ServerStatusKind } from "./serverStatus";
+import { serverStatusBarProvider } from "./serverStatusBarProvider";
+import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
+import { serverTasks } from "./serverTasks";
+import { excludeProjectSettingsFiles, ServerMode, setGradleWrapperChecksum } from "./settings";
+import { snippetCompletionProvider } from "./snippetCompletionProvider";
+import * as sourceAction from './sourceAction';
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
+import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
+import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
+import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -44,6 +45,11 @@ const USE_JAVA = "Use Java ";
 const AS_GRADLE_JVM = " as Gradle JVM";
 const UPGRADE_GRADLE = "Upgrade Gradle to ";
 const GRADLE_IMPORT_JVM = "java.import.gradle.java.home";
+export const JAVA_SELECTOR: DocumentSelector = [
+	{ scheme: "file", language: "java", pattern: "**/*.java" },
+	{ scheme: "jdt", language: "java", pattern: "**/*.class" },
+	{ scheme: "untitled", language: "java", pattern: "**/*.java" }
+];
 
 export class StandardLanguageClient {
 
@@ -588,12 +594,10 @@ export class StandardLanguageClient {
 			}, new GradleCodeActionProvider(context), gradleCodeActionMetadata);
 
 			if (languages.registerInlayHintsProvider) {
-				context.subscriptions.push(languages.registerInlayHintsProvider([
-					{ scheme: "file", language: "java", pattern: "**/*.java" },
-					{ scheme: "jdt", language: "java", pattern: "**/*.class" },
-					{ scheme: "untitled", language: "java", pattern: "**/*.java" }
-				], new JavaInlayHintsProvider(this.languageClient)));
+				context.subscriptions.push(languages.registerInlayHintsProvider(JAVA_SELECTOR, new JavaInlayHintsProvider(this.languageClient)));
 			}
+
+			registerPasteEventHandler(context, this.languageClient);
 		});
 	}
 
