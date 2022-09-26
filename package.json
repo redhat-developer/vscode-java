@@ -9,7 +9,9 @@
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
-  "enableProposedApi": false,
+  "enabledApiProposals": [
+    "documentPaste"
+  ],
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
@@ -1345,7 +1347,7 @@
     "build-server": "./node_modules/.bin/gulp build_server",
     "fast-build-server": "./node_modules/.bin/gulp dev_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
-    "eslint": "eslint --ignore-path .gitignore --ext .js,.ts ."
+    "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts ."
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",

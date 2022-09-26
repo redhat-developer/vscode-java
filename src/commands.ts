@@ -182,6 +182,10 @@ export namespace Commands {
      * Organize imports silently.
      */
     export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
+	/**
+	 * Handle a paste event.
+	 */
+	export const HANDLE_PASTE_EVENT = "java.edit.handlePasteEvent";
     /**
      * Custom paste action (triggers auto-import)
      */

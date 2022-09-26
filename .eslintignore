@@ -1,0 +1,22 @@
+# .gitignore
+out
+server
+node_modules
+*.vsix
+.DS_Store
+.vscode-test
+undefined
+target
+dist
+jre
+lombok
+bin/
+.settings
+.classpath
+.project
+test/resources/projects/**/.vscode
+test/resources/projects/maven/salut/testGradle
+test-temp
+
+# specific to eslint
+vscode*.d.ts
