@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.11.0 (September 29th, 2022)
+ * enhancement - Provide Java 19 preview support. See [#2650](https://github.com/redhat-developer/vscode-java/issues/2650).
+ * enhancement - Enable annotation-based `null` analysis. See [#1693](https://github.com/redhat-developer/vscode-java/issues/1693).
+ * enhancement - Show generate `toString()`, `hashCode()` and `equals()` quick fixes on demand. See [JLS#2213](https://github.com/eclipse/eclipse.jdt.ls/pull/2213).
+ * enhancement - Enable method argument guessing (`java.completion.guessMethodArguments`) by default. See [#2621](https://github.com/redhat-developer/vscode-java/issues/2621).
+ * enhancement - Enable signature help (`java.signatureHelp.enabled`) by default. See [#2063](https://github.com/redhat-developer/vscode-java/issues/2063).
+ * enhancement - Support creating `module-info.java`. See [#2680](https://github.com/redhat-developer/vscode-java/pull/2680).
+ * enhancement - Only add parentheses for lambda expression completions with multiple parameters. See [JLS#2100](https://github.com/eclipse/eclipse.jdt.ls/issues/2100).
+ * enhancement - Add buildship auto sync preference when build configuration update is set to `automatic`. See [JLS#2224](https://github.com/eclipse/eclipse.jdt.ls/pull/2224).
+ * bug fix - Show the field suggestions for the `toString()`, `hashCode()` and `equals()` generator dialogs in definition order. See [#2502](https://github.com/redhat-developer/vscode-java/issues/2502).
+ * bug fix - Fix Gradle project synchorization errors when init script path contains spaces. See [JLS#2245](https://github.com/eclipse/eclipse.jdt.ls/pull/2245), [JLS#2222](https://github.com/eclipse/eclipse.jdt.ls/issues/2222), [JLS#2249](https://github.com/eclipse/eclipse.jdt.ls/pull/2249).
+ * bug fix - Fix NPE in the protobuf init script. See [#2700](https://github.com/redhat-developer/vscode-java/issues/2700).
+ * bug fix - Disable JVM logging by default (`-Xlog:disable`). See [#2292](https://github.com/redhat-developer/vscode-java/issues/2292).
+ * bug fix - Fix type completion when type name conflicts. See [JLS#2232](https://github.com/eclipse/eclipse.jdt.ls/pull/2232).
+ * bug fix - Fix gradle project classpath calculation. See [#2628](https://github.com/redhat-developer/vscode-java/issues/2628).
+ * bug fix - Bad ".git" pattern in `.project` file's `filteredResources` element causes chaos. See [#2704](https://github.com/redhat-developer/vscode-java/pull/2704).
+ * bug fix - Creating a new Java file won't generate package statement. See [#2687](https://github.com/redhat-developer/vscode-java/issues/2687).
+ * bug fix - Improve documentation for static import order. See [#711](https://github.com/redhat-developer/vscode-java/issues/711).
+ * build - Migrate from tslint to eslint. See [#2415](https://github.com/redhat-developer/vscode-java/pull/2415).
+
 ## 1.10.0 (August 31st, 2022)
  * enhancement - Search more folders to infer source roots for invisible projects. See [JLS#2176](https://github.com/eclipse/eclipse.jdt.ls/pull/2176).
  * enhancement - Experimental support for Android projects with `java.jdt.ls.androidSupport.enabled`. It is enabled by default only in VS Code Insiders. See [JLS#923](https://github.com/eclipse/eclipse.jdt.ls/issues/923).
