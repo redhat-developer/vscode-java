@@ -960,6 +960,26 @@
           "default": true,
           "description": "Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring.",
           "scope": "window"
+        },
+        "java.compile.nullAnalysis.nonnull": {
+          "type": "array",
+          "default": [
+            "javax.annotation.Nonnull",
+            "org.eclipse.jdt.annotation.NonNull",
+            "org.springframework.lang.NonNull"
+          ],
+          "markdownDescription": "Specify the Nonnull annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies.",
+          "scope": "window"
+        },
+        "java.compile.nullAnalysis.nullable": {
+          "type": "array",
+          "default": [
+            "javax.annotation.Nullable",
+            "org.eclipse.jdt.annotation.Nullable",
+            "org.springframework.lang.Nullable"
+          ],
+          "markdownDescription": "Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies.",
+          "scope": "window"
         }
       }
     },
