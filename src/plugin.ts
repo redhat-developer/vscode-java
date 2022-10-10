@@ -3,9 +3,10 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Commands } from './commands';
+import { extensions } from 'vscode';
 
-let existingExtensions: Array<string>;
-export let buildFilePatterns: Array<string>;
+export let existingExtensions: Array<string> = [];
+export let buildFilePatterns: Array<string> = [];
 
 export function collectJavaExtensions(extensions: readonly vscode.Extension<any>[]): string[] {
 	const result = [];
@@ -44,17 +45,40 @@ export function collectBuildFilePattern(extensions: readonly vscode.Extension<an
 	return result;
 }
 
-export function onExtensionChange(extensions: readonly vscode.Extension<any>[]) {
-	if (isContributedPartUpdated(existingExtensions, collectJavaExtensions(extensions)) || isContributedPartUpdated(buildFilePatterns, collectBuildFilePattern(extensions))) {
-		const msg = `Java Extension Contributions changed, reloading ${vscode.env.appName} is required for the changes to take effect.`;
-		const action = 'Reload';
-		const restartId = Commands.RELOAD_WINDOW;
-		vscode.window.showWarningMessage(msg, action).then((selection) => {
-			if (action === selection) {
-				vscode.commands.executeCommand(restartId);
-			}
-		});
+export function getBundlesToReload(): string[] {
+	const previousContributions: string[] = [...existingExtensions];
+	const currentContributions = collectJavaExtensions(extensions.all);
+	if (isContributedPartUpdated(previousContributions, currentContributions)) {
+		return currentContributions;
 	}
+
+	return [];
+}
+
+export async function onExtensionChange(extensions: readonly vscode.Extension<any>[]): Promise<void> {
+	if (isContributedPartUpdated(buildFilePatterns, collectBuildFilePattern(extensions))) {
+		return promptToReload();
+	}
+
+	const bundlesToRefresh: string[] = getBundlesToReload();
+	if (bundlesToRefresh.length) {
+		const success = await vscode.commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.REFRESH_BUNDLES, bundlesToRefresh);
+		if (!success) {
+			// if hot refreshing bundle fails, fallback to reload window.
+			return promptToReload();
+		}
+	}
+}
+
+function promptToReload() {
+	const msg = `Java Extension Contributions changed, reloading ${vscode.env.appName} is required for the changes to take effect.`;
+	const action = 'Reload';
+	const restartId = Commands.RELOAD_WINDOW;
+	vscode.window.showWarningMessage(msg, action).then((selection) => {
+		if (action === selection) {
+			vscode.commands.executeCommand(restartId);
+		}
+	});
 }
 
 export function isContributedPartUpdated(oldContributedPart: Array<string>, newContributedPart: Array<string>) {

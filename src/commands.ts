@@ -287,4 +287,15 @@ export namespace Commands {
      * The VS Code command to create module-info.java
      */
     export const CREATE_MODULE_INFO_COMMAND = "java.project.createModuleInfo.command";
+
+    /**
+     * The JDT.LS command to reload the bundle list (java extension contributions).
+     */
+    export const REFRESH_BUNDLES = "java.reloadBundles";
+
+    /**
+     * The VS Code command to reload the bundle list.
+     * JDT.LS will call this command before set the server to ready state.
+     */
+    export const REFRESH_BUNDLES_COMMAND = "_java.reloadBundles.command";
 }
