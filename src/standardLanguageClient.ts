@@ -111,6 +111,13 @@ export class StandardLanguageClient {
 						apiManager.updateServerMode(ServerMode.standard);
 						apiManager.fireDidServerModeChange(ServerMode.standard);
 						apiManager.resolveServerReadyPromise();
+
+						if (extensions.onDidChange) {// Theia doesn't support this API yet
+							extensions.onDidChange(async () => {
+								await onExtensionChange(extensions.all);
+							});
+						}
+
 						activationProgressNotification.hide();
 						if (!hasImported) {
 							showImportFinishNotification(context);
@@ -539,11 +546,6 @@ export class StandardLanguageClient {
 			refactorAction.registerCommands(this.languageClient, context);
 			pasteAction.registerCommands(this.languageClient, context);
 
-			if (extensions.onDidChange) {// Theia doesn't support this API yet
-				extensions.onDidChange(() => {
-					onExtensionChange(extensions.all);
-				});
-			}
 			excludeProjectSettingsFiles();
 
 			context.subscriptions.push(languages.registerCodeActionsProvider({ scheme: 'file', language: 'java' }, new RefactorDocumentProvider(), RefactorDocumentProvider.metadata));

@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic, CodeActionTriggerKind, version } from 'vscode';
 import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
-import { collectJavaExtensions, isContributedPartUpdated } from './plugin';
+import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
 import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import * as requirements from './requirements';
 import { initialize as initializeRecommendation } from './recommendation';
@@ -382,6 +382,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, (force?: boolean) => cleanWorkspace(workspacePath, force)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.GET_WORKSPACE_PATH, () => workspacePath));
+
+			context.subscriptions.push(commands.registerCommand(Commands.REFRESH_BUNDLES_COMMAND, () => {
+				return getBundlesToReload();
+			}));
 
 			context.subscriptions.push(onConfigurationChange(workspacePath, context));
 
