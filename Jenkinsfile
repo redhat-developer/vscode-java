@@ -5,6 +5,7 @@ def installBuildRequirements(){
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
 	sh 'npm install -g "vsce"'
+	sh 'npm install -g "ovsx"'
 }
 
 def buildVscodeExtension(){
@@ -23,22 +24,19 @@ def packageSpecificExtensions() {
 	def embeddedJRE = 17
 	for(platform in platforms){
 		sh "npx gulp download_jre --target ${platform} --javaVersion ${embeddedJRE}"
-		if (publishPreRelease.equals('true')) {
-			sh "vsce package --pre-release --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-		} else {
-			sh "vsce package --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-		}
+		sh "vsce package ${env.publishPreReleaseFlag} --target ${platform} -o java-${platform}-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 	}
 }
 
 def packageExtensions() {
+	env.publishPreReleaseFlag = ""
 	if (publishPreRelease.equals('true')) {
-		// for pre-release versions we only package platform specific extensions
 		stage "replace extension version"
 		sh "npx gulp prepare_pre_release"
 
 		def packageJson = readJSON file: 'package.json'
 		env.EXTENSION_VERSION = "${packageJson.version}"
+		env.publishPreReleaseFlag = "--pre-release"
 
 		packageSpecificExtensions()
 	} else {
@@ -46,10 +44,7 @@ def packageExtensions() {
 		def packageJson = readJSON file: 'package.json'
 		env.EXTENSION_VERSION = "${packageJson.version}"
 
-		sh "vsce package -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
-
-		def vsix = findFiles(glob: '**.vsix')
-		stash name:'vsix', includes:vsix[0].path
+		sh "vsce package ${env.publishPreReleaseFlag} -o java-${env.EXTENSION_VERSION}-${env.BUILD_NUMBER}.vsix"
 
 		packageSpecificExtensions()
 		stash name:'platformVsix', includes:'java-win32-*.vsix,java-linux-*.vsix,java-darwin-*.vsix'
@@ -62,57 +57,48 @@ def packageExtensions() {
 		sh "sftp ${UPLOAD_LOCATION}/jdt.ls/staging <<< \$'mkdir ${artifactDir}\nput -r ${artifactDir}'"
 		// Clean up build vsix
 		sh "rm -rf ${artifactDir}"
+		unstash 'platformVsix'
 	}
 }
 
 def publishExtensions() {
-	if (publishPreRelease.equals('true')) {
-		stage "publish generic version"
-		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			// Clean up embedded jre folder from previous build
-			sh 'npx gulp clean_jre'
-			// Publish a generic version
-			sh 'vsce publish --pre-release -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
-		}
+	// Clean up embedded jre folder from previous build
+	sh 'npx gulp clean_jre'
 
-		stage "publish specific version"
-		// for pre-release versions, vsixs are not stashed and kept in project folder
-		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			def platformVsixes = findFiles(glob: '**.vsix')
-			for(platformVsix in platformVsixes){
-				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
-			}
-		}
-	} else if (publishToMarketPlace.equals('true')) {
+	if (publishToMarketPlace.equals('true') || publishToOVSX.equals('true')) {
 		timeout(time:5, unit:'DAYS') {
 			input message:'Approve deployment?', submitter: 'fbricon,rgrunber'
 		}
+	}
 
-		stage "Publish to Open-vsx Marketplace"
-		unstash 'vsix'
-		def vsix = findFiles(glob: '**.vsix')
-		// Open-vsx Marketplace
-		sh 'npm install -g "ovsx"'
-		withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
-			sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${vsix[0].path}"
+	def platformVsixes = findFiles(glob: '**.vsix')
+
+	stage "publish generic version to VS Code Marketplace"
+	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+		sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64' + " ${env.publishPreReleaseFlag}"
+	}
+
+	stage "publish specific version to VS Code Marketplace"
+
+	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
+		for(platformVsix in platformVsixes){
+			sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
 		}
+	}
 
-		stage "Publish to VS Code Marketplace"
-		// VS Code Marketplace
-		withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-			// Clean up embedded jre folder from previous build
-			sh 'npx gulp clean_jre'
-			// Publish a generic version
-			sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64'
+	stage "Publish generic version to Open-VSX Marketplace"
+	withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+		sh 'ovsx publish -p ${OVSX_TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64' + " ${env.publishPreReleaseFlag}"
+	}
 
-			// Publish platform specific versions
-			unstash 'platformVsix'
-			def platformVsixes = findFiles(glob: '**.vsix', excludes: vsix[0].path)
-			for(platformVsix in platformVsixes){
-				sh 'vsce publish -p ${TOKEN}' + " --packagePath ${platformVsix.path}"
-			}
+	stage "Publish specific version to Open-VSX Marketplace"
+	withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+		for(platformVsix in platformVsixes){
+			sh 'ovsx publish -p ${OVSX_TOKEN}' + " --packagePath ${platformVsix.path}"
 		}
+	}
 
+	if (publishToMarketPlace.equals('true') || publishToOVSX.equals('true')) {
 		stage "Publish to http://download.jboss.org/jbosstools/static/jdt.ls/stable/"
 		def artifactDir = "java-${env.EXTENSION_VERSION}"
 		sh "mkdir ${artifactDir}"
@@ -168,5 +154,7 @@ node('rhel8'){
 
 	packageExtensions()
 
-	publishExtensions()
+	if (publishPreRelease.equals('true') || publishToMarketPlace.equals('true') || publishToOVSX.equals('true')) {
+		publishExtensions()
+	}
 }
