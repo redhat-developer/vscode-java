@@ -211,7 +211,7 @@ The following settings are supported:
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 
 New in 1.12.0
-* `java.completion.postfix.enabled`: Enable/disable postfix completion support.
+* `java.completion.postfix.enabled`: Enable/disable postfix completion support. Defaults to `true`.
 
 Semantic Highlighting
 ===============

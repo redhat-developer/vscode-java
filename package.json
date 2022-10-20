@@ -563,7 +563,7 @@
         },
         "java.completion.postfix.enabled": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "markdownDescription": "Enable/disable postfix completion support. `#editor.snippetSuggestions#` can be used to customize how postfix snippets are sorted.",
           "scope": "window"
         },
