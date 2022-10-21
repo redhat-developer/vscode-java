@@ -330,6 +330,8 @@ export class StandardLanguageClient {
 
 			context.subscriptions.push(commands.registerCommand(Commands.PROJECT_CONFIGURATION_STATUS, (uri, status) => setProjectConfigurationUpdate(this.languageClient, uri, status)));
 
+			context.subscriptions.push(commands.registerCommand(Commands.NULL_ANALYSIS_SET_MODE, (status) => setNullAnalysisStatus(status)));
+
 			context.subscriptions.push(commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
 				applyWorkspaceEdit(obj, this.languageClient);
 			}));
@@ -682,6 +684,17 @@ function setProjectConfigurationUpdate(languageClient: LanguageClient, uri: Uri,
 	if (status !== FeatureStatus.disabled) {
 		projectConfigurationUpdate(languageClient, uri);
 	}
+}
+
+function setNullAnalysisStatus(status: FeatureStatus) {
+	const config = getJavaConfiguration();
+	const section = 'compile.nullAnalysis.mode';
+
+	const st = FeatureStatus[status];
+	config.update(section, st).then(
+		() => logger.info(`${section} set to ${st}`),
+		(error) => logger.error(error)
+	);
 }
 
 function decodeBase64(text: string): string {
