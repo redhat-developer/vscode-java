@@ -65,6 +65,11 @@ export namespace Commands {
     export const PROJECT_CONFIGURATION_STATUS = 'java.projectConfiguration.status';
 
     /**
+     * Set null analysis mode
+     */
+    export const NULL_ANALYSIS_SET_MODE = 'java.compile.nullAnalysis.setMode';
+
+    /**
      * Apply Workspace Edit
      */
     export const APPLY_WORKSPACE_EDIT = 'java.apply.workspaceEdit';
