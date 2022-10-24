@@ -6,12 +6,13 @@ import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams, AddAllMissingImportsRequest } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
     registerHashCodeEqualsCommand(languageClient, context);
     registerOrganizeImportsCommand(languageClient, context);
+    registerAddAllMissingImportsCommand(languageClient, context);
     registerChooseImportCommand(context);
     registerGenerateToStringCommand(languageClient, context);
     registerGenerateAccessorsCommand(languageClient, context);
@@ -118,8 +119,17 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
     }));
 }
 
+function registerAddAllMissingImportsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    context.subscriptions.push(commands.registerCommand(Commands.ADD_ALL_MISSING_IMPORTS, async (uri: string) => {
+        const workspaceEdit = await languageClient.sendRequest(AddAllMissingImportsRequest.type, {
+            documentUri: uri
+        });
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
+    }));
+}
+
 function registerChooseImportCommand(context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[]) => {
+    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[], restoreExistingImports?: boolean) => {
         const chosen: ImportCandidate[] = [];
         const fileUri: Uri = Uri.parse(uri);
         for (let i = 0; i < selections.length; i++) {
@@ -140,7 +150,7 @@ function registerChooseImportCommand(context: ExtensionContext): void {
             try {
                 const pick = await new Promise<any>((resolve, reject) => {
                     const input = window.createQuickPick();
-                    input.title = "Organize Imports";
+                    input.title = restoreExistingImports ? "Add All Missing Imports" : "Organize Imports";
                     input.step = i + 1;
                     input.totalSteps = selections.length;
                     input.placeholder = `Choose type '${typeName}' to import`;
