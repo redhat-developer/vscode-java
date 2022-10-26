@@ -997,6 +997,21 @@
           "default": "disabled",
           "markdownDescription": "Specify how to enable the annotation-based null analysis.",
           "scope": "window"
+        },
+        "java.cleanup.actionsOnSave": {
+          "type": "array",
+          "markdownDescription": "The list of clean ups to be run on the current document when it's saved. Clean ups can automatically fix code style or programming mistakes. Click [HERE](command:_java.learnMoreAboutCleanUps) to learn more about what each clean up does.",
+          "items": {
+            "type": "string",
+            "enum": [
+              "qualifyMembers",
+              "qualifyStaticMembers",
+              "addOverride",
+              "addDeprecated"
+            ]
+          },
+          "default": [],
+          "scope": "window"
         }
       }
     },
@@ -1128,6 +1143,11 @@
       {
         "command": "java.project.createModuleInfo.command",
         "title": "%java.project.createModuleInfo.command%",
+        "category": "Java"
+      },
+      {
+        "command": "_java.learnMoreAboutCleanUps",
+        "title": "Learn more about Java Clean Ups",
         "category": "Java"
       }
     ],

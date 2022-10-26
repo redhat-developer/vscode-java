@@ -86,6 +86,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.SHOW_SUBTYPE_HIERARCHY,
 				Commands.SHOW_SUPERTYPE_HIERARCHY,
 				Commands.SHOW_CLASS_HIERARCHY,
+				Commands.LEARN_MORE_ABOUT_CLEAN_UPS,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
