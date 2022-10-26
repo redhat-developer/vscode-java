@@ -267,6 +267,8 @@ export namespace Commands {
 
     export const LEARN_MORE_ABOUT_REFACTORING = '_java.learnMoreAboutRefactorings';
 
+    export const LEARN_MORE_ABOUT_CLEAN_UPS = '_java.learnMoreAboutCleanUps';
+
     export const TEMPLATE_VARIABLES = '_java.templateVariables';
 
     export const NOT_COVERED_EXECUTION = '_java.notCoveredExecution';
