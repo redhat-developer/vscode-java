@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.12.0 (October 27th, 2022)
+ * performance - Improve project initialization. See [JLS#2252](https://github.com/eclipse/eclipse.jdt.ls/pull/2252).
+ * performance - Re-use ExecutorService to avoid creating extra threads and resource leak. See [JLS#2041](https://github.com/eclipse/eclipse.jdt.ls/pull/2041).
+ * enhancement - Add support for postfix completion. See [#1455](https://github.com/redhat-developer/vscode-java/issues/1455).
+ * enhancement - Add quick fix for "remove all unused imports". See [JLS#2280](https://github.com/eclipse/eclipse.jdt.ls/pull/2280).
+ * enhancement - Add quick fixes for problems relating to sealed classes. See [JLS#2265](https://github.com/eclipse/eclipse.jdt.ls/pull/2265).
+ * bug fix - Signature help not working correctly for parameterized types. See [#2739](https://github.com/redhat-developer/vscode-java/issues/2739).
+ * bug fix - Avoid NPE for null analysis when updating classpath. See [#2712](https://github.com/redhat-developer/vscode-java/issues/2712).
+ * bug fix - Check the digest of the initializiation scripts for security and to prevent duplicates. See [#2692](https://github.com/redhat-developer/vscode-java/issues/2692).
+ * bug fix - Support `includeDeclaration` in `textDocument/references`. See [JLS#2148](https://github.com/eclipse/eclipse.jdt.ls/issues/2148).
+ * bug fix - Provide folding for import regions in `.class` files. See [#2133](https://github.com/redhat-developer/vscode-java/issues/2133).
+ * bug fix - Deadlock when using JDK 17 with Maven Java project. See [#2676](https://github.com/redhat-developer/vscode-java/issues/2676).
+ * bug fix - Ignore unnamed module for split packages. See [JLS#2273](https://github.com/eclipse/eclipse.jdt.ls/pull/2273).
+ * bug fix - The project preference should only persist non default values. See [JLS#2272](https://github.com/eclipse/eclipse.jdt.ls/issues/2272).
+ * bug fix - Synchronize contributed bundles on demand. See [#2729](https://github.com/redhat-developer/vscode-java/pull/2729).
+ * bug fix - Avoid unnecessary project updates when the default VM changes. See [JLS#2266](https://github.com/eclipse/eclipse.jdt.ls/pull/2266).
+ * bug fix - Exclude non-compile scope dependencies from consideration for enabling null analysis. See [JLS#2264](https://github.com/eclipse/eclipse.jdt.ls/pull/2264).
+ * bug fix - Add opportunistic support for Java/Kotlin polyglot Android projects. See [JLS#2261](https://github.com/eclipse/eclipse.jdt.ls/pull/2261).
+
+
 ## 1.11.0 (September 29th, 2022)
  * enhancement - Provide Java 19 preview support. See [#2650](https://github.com/redhat-developer/vscode-java/issues/2650).
  * enhancement - Enable annotation-based `null` analysis. See [#1693](https://github.com/redhat-developer/vscode-java/issues/1693).
