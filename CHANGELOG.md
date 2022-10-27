@@ -3,6 +3,7 @@
 ## 1.12.0 (October 27th, 2022)
  * performance - Improve project initialization. See [JLS#2252](https://github.com/eclipse/eclipse.jdt.ls/pull/2252).
  * performance - Re-use ExecutorService to avoid creating extra threads and resource leak. See [JLS#2041](https://github.com/eclipse/eclipse.jdt.ls/pull/2041).
+ * performance - Avoid triggering full rebuild of project after import completes (on Windows). See [#793](https://github.com/redhat-developer/vscode-java/issues/793).
  * enhancement - Add support for postfix completion. See [#1455](https://github.com/redhat-developer/vscode-java/issues/1455).
  * enhancement - Add quick fix for "remove all unused imports". See [JLS#2280](https://github.com/eclipse/eclipse.jdt.ls/pull/2280).
  * enhancement - Add quick fixes for problems relating to sealed classes. See [JLS#2265](https://github.com/eclipse/eclipse.jdt.ls/pull/2265).
