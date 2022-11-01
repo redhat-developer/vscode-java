@@ -291,7 +291,7 @@ export namespace Commands {
 
     export const GET_WORKSPACE_PATH = '_java.workspace.path';
 
-    export const UPGRADE_GRADLE_WRAPPER = '_java.gradle.upgradeWrapper';
+    export const UPGRADE_GRADLE_WRAPPER = 'java.project.upgradeGradle';
 
     export const LOMBOK_CONFIGURE = "java.lombokConfigure";
 

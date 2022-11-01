@@ -13,12 +13,6 @@ const GRADLE_INVALID_TYPE_CODE_ID = GRADLE_PROBLEM_ID + 1;
 
 export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> {
 
-	constructor(context: ExtensionContext) {
-		context.subscriptions.push(commands.registerCommand(Commands.UPGRADE_GRADLE_WRAPPER, (projectUri: string) => {
-			upgradeGradle(projectUri);
-		}));
-	}
-
 	public provideCodeActions(document: TextDocument, range: Range | Selection, context: CodeActionContext, token: CancellationToken): ProviderResult<(CodeAction | Command)[]> {
 		if (context?.diagnostics?.length && context.diagnostics[0].source === "Java") {
 			return this.provideGradleCodeActions(document, context.diagnostics);

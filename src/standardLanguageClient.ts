@@ -581,6 +581,10 @@ export class StandardLanguageClient {
 				}
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.UPGRADE_GRADLE_WRAPPER, (projectUri: string, version?: string) => {
+				upgradeGradle(projectUri, version);
+			}));
+
 			languages.registerCodeActionsProvider({
 				language: "xml",
 				scheme: "file",
@@ -590,7 +594,7 @@ export class StandardLanguageClient {
 			languages.registerCodeActionsProvider({
 				scheme: "file",
 				pattern: "**/{gradle/wrapper/gradle-wrapper.properties,build.gradle,build.gradle.kts,settings.gradle,settings.gradle.kts}"
-			}, new GradleCodeActionProvider(context), gradleCodeActionMetadata);
+			}, new GradleCodeActionProvider(), gradleCodeActionMetadata);
 
 			if (languages.registerInlayHintsProvider) {
 				context.subscriptions.push(languages.registerInlayHintsProvider(JAVA_SELECTOR, new JavaInlayHintsProvider(this.languageClient)));
