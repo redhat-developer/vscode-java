@@ -52,7 +52,8 @@ export class HandlerImpl implements IHandler {
 			return;
 		}
 
-		const actions: Array<string> = Object.keys(UserChoice);
+		// Object.values is not available before es2017
+		const actions: Array<string> = Object.keys(UserChoice).map(k => UserChoice[k]);
 		const answer = await vscode.window.showInformationMessage(message, ...actions);
 		if (answer === UserChoice.install) {
 			await installExtensionCmdHandler(extName, extName);
