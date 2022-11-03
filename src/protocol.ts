@@ -228,14 +228,6 @@ export namespace OrganizeImportsRequest {
     export const type = new RequestType<CodeActionParams, WorkspaceEdit, void>('java/organizeImports');
 }
 
-export interface AddAllMissingImportsParams {
-	documentUri: string;
-}
-
-export namespace AddAllMissingImportsRequest {
-    export const type = new RequestType<AddAllMissingImportsParams, WorkspaceEdit, void>('java/addAllMissingImports');
-}
-
 export interface ImportCandidate {
     fullyQualifiedName: string;
     id: string;

@@ -249,7 +249,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						actionableRuntimeNotificationSupport: true,
 						shouldLanguageServerExitOnShutdown: true,
 						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
-						addMissingImportsCommandSupport: true
 					},
 					triggerFiles,
 				},

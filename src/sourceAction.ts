@@ -6,13 +6,12 @@ import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
 import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams, AddAllMissingImportsRequest } from './protocol';
+OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams } from './protocol';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
     registerHashCodeEqualsCommand(languageClient, context);
     registerOrganizeImportsCommand(languageClient, context);
-    registerAddAllMissingImportsCommand(languageClient, context);
     registerChooseImportCommand(context);
     registerGenerateToStringCommand(languageClient, context);
     registerGenerateAccessorsCommand(languageClient, context);
@@ -115,15 +114,6 @@ function registerHashCodeEqualsCommand(languageClient: LanguageClient, context: 
 function registerOrganizeImportsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
     context.subscriptions.push(commands.registerCommand(Commands.ORGANIZE_IMPORTS, async (params: CodeActionParams) => {
         const workspaceEdit = await languageClient.sendRequest(OrganizeImportsRequest.type, params);
-        await applyWorkspaceEdit(workspaceEdit, languageClient);
-    }));
-}
-
-function registerAddAllMissingImportsCommand(languageClient: LanguageClient, context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.ADD_ALL_MISSING_IMPORTS, async (uri: string) => {
-        const workspaceEdit = await languageClient.sendRequest(AddAllMissingImportsRequest.type, {
-            documentUri: uri
-        });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }

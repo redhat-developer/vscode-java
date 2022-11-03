@@ -172,10 +172,6 @@ export namespace Commands {
      */
     export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
     /**
-     * Add all missing imports.
-     */
-     export const ADD_ALL_MISSING_IMPORTS = "java.action.addAllMissingImports";
-    /**
      * Custom paste action (triggers auto-import)
      */
     export const CLIPBOARD_ONPASTE = 'java.action.clipboardPasteAction';
