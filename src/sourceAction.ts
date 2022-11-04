@@ -119,7 +119,7 @@ function registerOrganizeImportsCommand(languageClient: LanguageClient, context:
 }
 
 function registerChooseImportCommand(context: ExtensionContext): void {
-    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[]) => {
+    context.subscriptions.push(commands.registerCommand(Commands.CHOOSE_IMPORTS, async (uri: string, selections: ImportSelection[], restoreExistingImports?: boolean) => {
         const chosen: ImportCandidate[] = [];
         const fileUri: Uri = Uri.parse(uri);
         for (let i = 0; i < selections.length; i++) {
@@ -140,7 +140,7 @@ function registerChooseImportCommand(context: ExtensionContext): void {
             try {
                 const pick = await new Promise<any>((resolve, reject) => {
                     const input = window.createQuickPick();
-                    input.title = "Organize Imports";
+                    input.title = restoreExistingImports ? "Add All Missing Imports" : "Organize Imports";
                     input.step = i + 1;
                     input.totalSteps = selections.length;
                     input.placeholder = `Choose type '${typeName}' to import`;
