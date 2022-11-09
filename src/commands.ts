@@ -177,6 +177,10 @@ export namespace Commands {
      */
     export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
     /**
+     * Add imports on paste.
+     */
+    export const ADD_IMPORTS_PASTE = "java.edit.addImportsOnPaste";
+    /**
      * Custom paste action (triggers auto-import)
      */
     export const CLIPBOARD_ONPASTE = 'java.action.clipboardPasteAction';

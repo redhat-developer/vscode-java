@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget } from "vscode";
+import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, ViewColumn, EventEmitter, extensions, Location, languages, CodeActionKind, TextEditor, CancellationToken, ConfigurationTarget, DocumentSelector } from "vscode";
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
@@ -37,6 +37,7 @@ import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { checkLombokDependency } from "./lombokSupport";
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
+import { registerPasteEventHandler } from "./pasteEventHandler";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -45,6 +46,12 @@ const USE_JAVA = "Use Java ";
 const AS_GRADLE_JVM = " as Gradle JVM";
 const UPGRADE_GRADLE = "Upgrade Gradle to ";
 const GRADLE_IMPORT_JVM = "java.import.gradle.java.home";
+
+export const JAVA_SELECTOR: DocumentSelector = [
+	{ scheme: "file", language: "java", pattern: "**/*.java" },
+	{ scheme: "jdt", language: "java", pattern: "**/*.class" },
+	{ scheme: "untitled", language: "java", pattern: "**/*.java" }
+];
 
 export class StandardLanguageClient {
 
@@ -589,12 +596,10 @@ export class StandardLanguageClient {
 			}, new GradleCodeActionProvider(context), gradleCodeActionMetadata);
 
 			if (languages.registerInlayHintsProvider) {
-				context.subscriptions.push(languages.registerInlayHintsProvider([
-					{ scheme: "file", language: "java", pattern: "**/*.java" },
-					{ scheme: "jdt", language: "java", pattern: "**/*.class" },
-					{ scheme: "untitled", language: "java", pattern: "**/*.java" }
-				], new JavaInlayHintsProvider(this.languageClient)));
+				context.subscriptions.push(languages.registerInlayHintsProvider(JAVA_SELECTOR, new JavaInlayHintsProvider(this.languageClient)));
 			}
+
+			registerPasteEventHandler(context, this.languageClient);
 		});
 	}
 

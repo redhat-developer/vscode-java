@@ -9,7 +9,9 @@
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
-  "enableProposedApi": false,
+  "enabledApiProposals": [
+    "documentPaste"
+  ],
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": "limited",
