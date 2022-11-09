@@ -994,7 +994,7 @@
             "interactive",
             "automatic"
           ],
-          "default": "disabled",
+          "default": "interactive",
           "markdownDescription": "Specify how to enable the annotation-based null analysis.",
           "scope": "window"
         },
