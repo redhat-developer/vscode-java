@@ -212,7 +212,7 @@ The following settings are supported:
 * `java.completion.postfix.enabled`: Enable/disable postfix completion support. Defaults to `true`.
 
 New in 1.13.0
-* `java.compile.nullAnalysis.mode`: Specify how to enable the annotation-based null analysis. Supported values are `disabled` (disable the null analysis), `interactive` (asks when null annotation types are detected), `automatic` (automatically enable null analysis when null annotation types are detected). Defaults to `disabled`.
+* `java.compile.nullAnalysis.mode`: Specify how to enable the annotation-based null analysis. Supported values are `disabled` (disable the null analysis), `interactive` (asks when null annotation types are detected), `automatic` (automatically enable null analysis when null annotation types are detected). Defaults to `interactive`.
 * `java.cleanup.actionsOnSave`: The list of clean ups to be run on the current document when it's saved. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
 
 Semantic Highlighting
