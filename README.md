@@ -214,6 +214,7 @@ The following settings are supported:
 New in 1.13.0
 * `java.compile.nullAnalysis.mode`: Specify how to enable the annotation-based null analysis. Supported values are `disabled` (disable the null analysis), `interactive` (asks when null annotation types are detected), `automatic` (automatically enable null analysis when null annotation types are detected). Defaults to `disabled`.
 * `java.cleanup.actionsOnSave`: The list of clean ups to be run on the current document when it's saved. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
+* `java.import.gradle.annotationProcessing.enabled`: Enable/disable the annotation processing on Gradle projects and delegate to JDT APT. Only works for Gradle 5.2 or higher.
 
 Semantic Highlighting
 ===============

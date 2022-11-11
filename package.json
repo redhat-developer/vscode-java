@@ -328,6 +328,12 @@
           "description": "Setting for GRADLE_USER_HOME.",
           "scope": "window"
         },
+        "java.import.gradle.annotationProcessing.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the annotation processing on Gradle projects and delegate Annotation Processing to JDT APT. Only works for Gradle 5.2 or higher.",
+          "scope": "window"
+        },
         "java.maven.downloadSources": {
           "type": "boolean",
           "default": false,
