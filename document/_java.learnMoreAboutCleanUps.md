@@ -122,3 +122,29 @@ public boolean isAGoat() {
 	return false;
 }
 ```
+
+### `stringConcatToTextBlock`
+
+Appropriate String concatenations will be converted into Java `Text Blocks`. Appropriate String concatenations must have at least 3 non-empty substrings with one per line and the Java level must be 15 or higher. Line comments for all substrings but the last line will be lost after conversion. Spaces at the end of substrings preceding the newline will result in `\s` being substituted while substrings that do not end with newlines will have a `\` added at the end of the line to preserve concatenation.
+
+For example:
+
+```java
+String x = "" +
+	"public class A {\n" +
+	"    public void m() {\n" +
+	"        System.out.println(\"abc\");\n" +
+	"    }\n" +
+	"}";
+```
+
+becomes:
+
+```java
+String x = """
+	public class A {
+		public void m() {
+			System.out.println("abc");
+		}
+	}""";
+```

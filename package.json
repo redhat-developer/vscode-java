@@ -1007,7 +1007,8 @@
               "qualifyMembers",
               "qualifyStaticMembers",
               "addOverride",
-              "addDeprecated"
+              "addDeprecated",
+              "stringConcatToTextBlock"
             ]
           },
           "default": [],
