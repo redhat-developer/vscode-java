@@ -130,6 +130,11 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		if (vmargs.indexOf(HEAP_DUMP_LOCATION) < 0) {
 			params.push(`${HEAP_DUMP_LOCATION}${path.dirname(workspacePath)}`);
 		}
+
+		const sharedIndexLocation: string = resolveIndexCache(context);
+		if (sharedIndexLocation) {
+			params.push(`-Djdt.core.sharedIndexLocation=${sharedIndexLocation}`);
+		}
 	}
 
 	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
@@ -163,6 +168,26 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 	params.push('-data'); params.push(workspacePath);
 	return params;
+}
+
+function resolveIndexCache(context: ExtensionContext) {
+	let sharedIndexLocation: string = getJavaConfiguration().get("sharedIndexes.location");
+	if (sharedIndexLocation === "$DEFAULT_CACHE") {
+		sharedIndexLocation = path.resolve(context.globalStoragePath, "index");
+	} else if (sharedIndexLocation && !path.isAbsolute(sharedIndexLocation)) {
+		logger.error(`Ignore the setting 'java.sharedIndexes.location' because its value '${sharedIndexLocation}' is not an absolute path.`);
+		sharedIndexLocation = "";
+	}
+
+	if (sharedIndexLocation) {
+		ensureExists(sharedIndexLocation);
+		if (!fs.existsSync(sharedIndexLocation)) {
+			logger.error(`Ignore the setting 'java.sharedIndexes.location' because it points to an invalid directory '${sharedIndexLocation}'.`);
+			sharedIndexLocation = "";
+		}
+	}
+
+	return sharedIndexLocation;
 }
 
 function resolveConfiguration(context, configDir) {

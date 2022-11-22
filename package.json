@@ -1039,6 +1039,12 @@
           },
           "default": [],
           "scope": "window"
+        },
+        "java.sharedIndexes.location": {
+          "type": "string",
+          "markdownDescription": "Specifies a common index location for all workspaces. The default value '`$DEFAULT_CACHE`' uses the extension global cache directory as the shared index location. And leaving it blank disables the shared indexes.",
+          "default": "$DEFAULT_CACHE",
+          "scope": "window"
         }
       }
     },
