@@ -148,3 +148,27 @@ String x = """
 		}
 	}""";
 ```
+
+### `invertEquals`
+
+Inverts calls to `Object.equals(Object)` and `String.equalsIgnoreCase(String)` to avoid useless null pointer exception.
+
+The caller must be nullable and the parameter must not be nullable.
+
+By avoiding null pointer exceptions, the behavior may change.
+
+For example:
+
+```java
+String message = getMessage();
+boolean result1 = message.equals("text");
+boolean result2 = message.equalsIgnoreCase("text");
+```
+
+becomes:
+
+```java
+String message = getMessage();
+boolean result1 = "text".equals(message);
+boolean result2 = "text".equalsIgnoreCase(message);
+```

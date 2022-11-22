@@ -1008,7 +1008,8 @@
               "qualifyStaticMembers",
               "addOverride",
               "addDeprecated",
-              "stringConcatToTextBlock"
+              "stringConcatToTextBlock",
+              "invertEquals"
             ]
           },
           "default": [],
