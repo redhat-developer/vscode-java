@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { Commands } from '../../src/commands';
 import { extensions } from 'vscode';
+import { Commands } from '../../src/commands';
 
 suite('Java Language Extension - LightWeight', () => {
 
@@ -22,6 +22,7 @@ suite('Java Language Extension - LightWeight', () => {
 				Commands.OPEN_FORMATTER,
 				Commands.CLEAN_WORKSPACE,
 				Commands.SWITCH_SERVER_MODE,
+				Commands.OPEN_FILE,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');

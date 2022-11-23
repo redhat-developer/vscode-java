@@ -1,11 +1,9 @@
 'use strict';
 
 import {
-	CancellationToken,
-	Location,
-	LocationLink,
-	DefinitionParams,
-	DefinitionRequest
+	CancellationToken, DefinitionParams,
+	DefinitionRequest, Location,
+	LocationLink
 } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { getActiveLanguageClient } from './extension';

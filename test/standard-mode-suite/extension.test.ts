@@ -1,12 +1,12 @@
 import * as assert from 'assert';
-import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as plugin from '../../src/plugin';
-import * as java from '../../src/javaServerStarter';
-import * as requirements from '../../src/requirements';
-import { Commands } from '../../src/commands';
 import { env } from 'process';
+import * as vscode from 'vscode';
+import { Commands } from '../../src/commands';
+import * as java from '../../src/javaServerStarter';
+import * as plugin from '../../src/plugin';
+import * as requirements from '../../src/requirements';
 
 suite('Java Language Extension - Standard', () => {
 
@@ -87,6 +87,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.SHOW_SUPERTYPE_HIERARCHY,
 				Commands.SHOW_CLASS_HIERARCHY,
 				Commands.LEARN_MORE_ABOUT_CLEAN_UPS,
+				Commands.OPEN_FILE,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');

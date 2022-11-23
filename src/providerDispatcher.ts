@@ -1,15 +1,14 @@
 'use strict';
 
-import { DocumentSymbolRequest, SymbolInformation as clientSymbolInformation, DocumentSymbol as clientDocumentSymbol, HoverRequest, WorkspaceSymbolRequest } from "vscode-languageclient";
+import { CancellationToken, commands, DocumentSymbol, DocumentSymbolProvider, Event, ExtensionContext, Hover, HoverProvider, languages, MarkdownString, MarkedString, Position, Range, SymbolInformation, SymbolKind, TextDocument, TextDocumentContentProvider, Uri, workspace, WorkspaceSymbolProvider } from "vscode";
+import { DocumentSymbol as clientDocumentSymbol, DocumentSymbolRequest, HoverRequest, SymbolInformation as clientSymbolInformation, WorkspaceSymbolRequest } from "vscode-languageclient";
 import { LanguageClient } from "vscode-languageclient/node";
-import { ExtensionContext, languages, DocumentSymbolProvider, TextDocument, CancellationToken, SymbolInformation, DocumentSymbol, TextDocumentContentProvider, workspace, Uri, Event, HoverProvider, Position, Hover, WorkspaceSymbolProvider, Range, commands, SymbolKind } from "vscode";
-import { ClassFileContentsRequest, StatusNotification } from "./protocol";
-import { createClientHoverProvider } from "./hoverAction";
-import { getActiveLanguageClient } from "./extension";
 import { apiManager } from "./apiManager";
-import { ServerMode } from "./settings";
-import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { Commands } from "./commands";
+import { getActiveLanguageClient } from "./extension";
+import { createClientHoverProvider } from "./hoverAction";
+import { ClassFileContentsRequest } from "./protocol";
+import { ServerMode } from "./settings";
 
 export interface ProviderOptions {
 	contentProviderEvent: Event<Uri>;
@@ -51,14 +50,16 @@ export class ClientHoverProvider implements HoverProvider {
 			if (!this.delegateProvider) {
 				this.delegateProvider = createClientHoverProvider(languageClient);
 			}
-			return this.delegateProvider.provideHover(document, position, token);
+			const hover = await this.delegateProvider.provideHover(document, position, token);
+			return fixJdtSchemeHoverLinks(hover);
 		} else {
 			const params = {
 				textDocument: languageClient.code2ProtocolConverter.asTextDocumentIdentifier(document),
 				position: languageClient.code2ProtocolConverter.asPosition(position)
 			};
 			const hoverResponse = await languageClient.sendRequest(HoverRequest.type, params, token);
-			return languageClient.protocol2CodeConverter.asHover(hoverResponse);
+			const hover = languageClient.protocol2CodeConverter.asHover(hoverResponse);
+			return fixJdtSchemeHoverLinks(hover);
 		}
 	}
 }
@@ -170,4 +171,35 @@ function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
 			}
 		}
 	});
+}
+
+const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\\\))|([^)]))+))\)/g;
+
+/**
+ * Returns the hover with all jdt:// links replaced with a command:// link that opens the jdt URI.
+ *
+ * VS Code doesn't render links with the `jdt` scheme in hover popups.
+ * To get around this, you can create a command:// link that invokes a command that opens the corresponding URI.
+ * VS Code will render command:// links in hover pop ups if they are marked as trusted.
+ *
+ * @param hover The hover to fix the jdt:// links for
+ * @returns the hover with all jdt:// links replaced with a command:// link that opens the jdt URI
+ */
+function fixJdtSchemeHoverLinks(hover: Hover): Hover {
+	const newContents: (MarkedString|MarkdownString)[] = [];
+	for (const content of hover.contents) {
+		if (content instanceof MarkdownString) {
+			const newContent: string = (<MarkdownString>content).value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
+				const uri = `command:${Commands.OPEN_FILE}?${encodeURI(JSON.stringify([encodeURIComponent(group2)]))}`;
+				return `${group1}${uri})`;
+			});
+			const mdString = new MarkdownString(newContent);
+			mdString.isTrusted = true;
+			newContents.push(mdString);
+		} else {
+			newContents.push(content);
+		}
+	}
+	hover.contents = newContents;
+	return hover;
 }

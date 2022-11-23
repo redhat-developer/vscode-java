@@ -1,14 +1,14 @@
 'use strict';
 
 import * as net from "net";
-import { LanguageClientOptions, DidChangeConfigurationNotification } from "vscode-languageclient";
-import { LanguageClient, StreamInfo, ServerOptions } from "vscode-languageclient/node";
-import { OutputInfoCollector, ClientErrorHandler, getJavaConfig } from "./extension";
-import { logger } from "./log";
-import { ServerMode } from "./settings";
-import { StatusNotification } from "./protocol";
+import { DidChangeConfigurationNotification, LanguageClientOptions } from "vscode-languageclient";
+import { LanguageClient, ServerOptions, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
-import { ExtensionAPI, ClientStatus } from "./extension.api";
+import { ClientErrorHandler, getJavaConfig, OutputInfoCollector } from "./extension";
+import { ClientStatus, ExtensionAPI } from "./extension.api";
+import { logger } from "./log";
+import { StatusNotification } from "./protocol";
+import { ServerMode } from "./settings";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 
 const extensionName = "Language Support for Java (Syntax Server)";
