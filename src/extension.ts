@@ -1,33 +1,33 @@
 'use strict';
 
-import * as path from 'path';
-import * as os from 'os';
+import * as chokidar from 'chokidar';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { workspace, extensions, ExtensionContext, window, commands, ViewColumn, Uri, languages, IndentAction, InputBoxOptions, EventEmitter, OutputChannel, TextDocument, RelativePattern, ConfigurationTarget, WorkspaceConfiguration, env, UIKind, CodeActionContext, Diagnostic, CodeActionTriggerKind, version } from 'vscode';
-import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, ErrorHandler, Message, ErrorAction, CloseAction, DidChangeConfigurationNotification, CancellationToken, CodeActionRequest, CodeActionParams, Command } from 'vscode-languageclient';
+import * as os from 'os';
+import * as path from 'path';
+import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, OutputChannel, RelativePattern, TextDocument, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CancellationToken, CloseAction, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ErrorAction, ErrorHandler, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, Message, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
-import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
-import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
-import * as requirements from './requirements';
-import { initialize as initializeRecommendation } from './recommendation';
-import { Commands } from './commands';
-import { ExtensionAPI, ClientStatus } from './extension.api';
-import { getJavaConfiguration, deleteDirectory, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, convertToGlob, getExclusionBlob, ensureExists } from './utils';
-import { onConfigurationChange, getJavaServerMode, ServerMode, ACTIVE_BUILD_TOOL_STATE, handleTextBlockClosing } from './settings';
-import { logger, initializeLogFile } from './log';
-import glob = require('glob');
-import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { registerClientProviders } from './providerDispatcher';
-import * as fileEventHandler from './fileEventHandler';
-import { StandardLanguageClient } from './standardLanguageClient';
 import { apiManager } from './apiManager';
-import { snippetCompletionProvider } from './snippetCompletionProvider';
+import { Commands } from './commands';
+import { ClientStatus, ExtensionAPI } from './extension.api';
+import * as fileEventHandler from './fileEventHandler';
+import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
+import { initializeLogFile, logger } from './log';
+import { cleanupLombokCache } from "./lombokSupport";
+import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
+import { registerClientProviders } from './providerDispatcher';
+import { initialize as initializeRecommendation } from './recommendation';
+import * as requirements from './requirements';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
-import { markdownPreviewProvider } from "./markdownPreviewProvider";
-import * as chokidar from 'chokidar';
-import { cleanupLombokCache } from "./lombokSupport";
+import { ACTIVE_BUILD_TOOL_STATE, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
+import { snippetCompletionProvider } from './snippetCompletionProvider';
+import { StandardLanguageClient } from './standardLanguageClient';
+import { SyntaxLanguageClient } from './syntaxLanguageClient';
+import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfiguration } from './utils';
+import glob = require('glob');
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -381,6 +381,10 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_LOGS, () => openLogs()));
 
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(context.extensionPath)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_FILE, async (uri: string) => {
+				const parsedUri = Uri.parse(uri);
+				await window.showTextDocument(parsedUri);
+			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, (force?: boolean) => cleanWorkspace(workspacePath, force)));
 

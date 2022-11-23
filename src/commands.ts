@@ -118,6 +118,12 @@ export namespace Commands {
      * Open Java formatter settings
      */
     export const OPEN_FORMATTER = 'java.open.formatter.settings';
+
+	/**
+	 * Open a file given the URI
+	 */
+	export const OPEN_FILE = 'java.open.file';
+
     /**
      * Clean the Java language server workspace
      */
