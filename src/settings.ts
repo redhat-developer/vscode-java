@@ -2,6 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as url from 'url';
 import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder, TextDocument, Position, SnippetString, TextLine } from 'vscode';
 import { Commands } from './commands';
 import { cleanWorkspaceFileName } from './extension';
@@ -80,6 +81,8 @@ export function onConfigurationChange(workspacePath: string, context: ExtensionC
 		}
 		// update old config
 		oldConfig = newConfig;
+		checkSettings('format.settings.url');
+		checkSettings('settings.url');
 	});
 }
 
@@ -343,4 +346,43 @@ export function handleTextBlockClosing(document: TextDocument, changes: readonly
 			activeTextEditor.insertSnippet(new SnippetString(text), position);
 		}
 	}
+}
+
+export function checkSettings(preferenceName) {
+	const preference: string = getJavaConfiguration().get(preferenceName);
+	let show = false;
+	if (isRemote(preference)) {
+		try {
+			const fileUrl = new url.URL(preference);
+			const protocol = fileUrl.protocol;
+			if (protocol === 'file:') {
+				show = !fs.existsSync(fileUrl);
+				if (!show) {
+					show = !preference.startsWith("file:///") && (preference.startsWith("file://") || !preference.startsWith("file:/"));
+				}
+			}
+		} catch (err) {
+			show = true;
+		}
+	} else if (preference !== null && !fs.existsSync(preference)) {
+		show = true;
+	}
+	if (show) {
+		const msg = `The 'java.${preferenceName}=${preference}' preference is not valid.`;
+		const action = 'Open settings';
+		const restartId = Commands.OPEN_JSON_SETTINGS;
+		window.showWarningMessage(msg, action).then((selection) => {
+			if (action === selection) {
+				commands.executeCommand(restartId, `java.${preferenceName}`);
+			}
+		});
+	}
+}
+
+export function isRemote(f) {
+	if (f !== null) {
+		const protocol = url.parse(f).protocol;
+		return protocol !== null && (protocol === 'file:' || protocol === 'http:' || protocol === 'https:');
+	}
+	return false;
 }
