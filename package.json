@@ -1157,6 +1157,11 @@
         "command": "_java.learnMoreAboutCleanUps",
         "title": "Learn more about Java Clean Ups",
         "category": "Java"
+      },
+      {
+        "command": "java.action.showExtendedOutline",
+        "title": "%java.action.showExtendedOutline%",
+        "category": "Java"
       }
     ],
     "keybindings": [

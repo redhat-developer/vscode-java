@@ -37,6 +37,7 @@ import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { checkLombokDependency } from "./lombokSupport";
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
+import { extendedOutlineTree } from "./outline/extendedOutlineTree";
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -185,7 +186,7 @@ export class StandardLanguageClient {
 						const options: string[] = [];
 						const info = notification.data as GradleCompatibilityInfo;
 						const highestJavaVersion = Number(info.highestJavaVersion);
-						let runtimes = await findRuntimes({checkJavac: true, withVersion: true, withTags: true});
+						let runtimes = await findRuntimes({ checkJavac: true, withVersion: true, withTags: true });
 						runtimes = runtimes.filter(runtime => {
 							return runtime.version.major <= highestJavaVersion;
 						});
@@ -543,6 +544,17 @@ export class StandardLanguageClient {
 				}
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.SHOW_EXTEND_OUTLINE, (location: any) => {
+				if (location instanceof Uri) {
+					extendedOutlineTree.open(location);
+				} else {
+					if (window.activeTextEditor?.document?.languageId !== "java") {
+						return;
+					}
+					extendedOutlineTree.open(window.activeTextEditor.document.uri);
+				}
+			}));
+
 			buildPath.registerCommands(context);
 			sourceAction.registerCommands(this.languageClient, context);
 			refactorAction.registerCommands(this.languageClient, context);
@@ -698,7 +710,7 @@ function setNullAnalysisStatus(status: FeatureStatus) {
 }
 
 function decodeBase64(text: string): string {
-    return Buffer.from(text, 'base64').toString('ascii');
+	return Buffer.from(text, 'base64').toString('ascii');
 }
 
 export function showNoLocationFound(message: string): void {
