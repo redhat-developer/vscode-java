@@ -1,5 +1,27 @@
 # Change Log
 
+## 1.13.0 (December 1st, 2022)
+ * enhancement - Support "Add all missing imports". See [#2753](https://github.com/redhat-developer/vscode-java/pull/2753).
+ * enhancement - Support Gradle annotation processing. See [#1039](https://github.com/redhat-developer/vscode-java/issues/1039).
+ * enhancement - Add an option to configure null analysis, and set to `interactive` by default. See [#2747](https://github.com/redhat-developer/vscode-java/pull/2747), [#2790](https://github.com/redhat-developer/vscode-java/pull/2790).
+ * enhancement - Add setting for clean ups to be applied when document is saved. See [#2144](https://github.com/redhat-developer/vscode-java/issues/2144), [#2803](https://github.com/redhat-developer/vscode-java/pull/2803), [#2813](https://github.com/redhat-developer/vscode-java/pull/2813).
+ * enhancement - Add contribution points for completion customization. See [JLS#2110](https://github.com/eclipse/eclipse.jdt.ls/pull/2110).
+ * enhancement - Allow the language server to be run without using `IApplication`. See [JLS#2311](https://github.com/eclipse/eclipse.jdt.ls/issues/2311).
+ * enhancement - Improve Lombok support and renaming fields when an accessor is present. See [#2805](https://github.com/redhat-developer/vscode-java/issues/2805).
+ * bug fix - Display the postfix completions at the bottom of the list. See [JLS#2343](https://github.com/eclipse/eclipse.jdt.ls/pull/2343).
+ * bug fix - Display a link for `{@link ...}` expression within javadoc. See [#2810](https://github.com/redhat-developer/vscode-java/issues/2810).
+ * bug fix - Do not reset existing project options when setting null analysis options. See [#2764](https://github.com/redhat-developer/vscode-java/issues/2764).
+ * bug fix - Code action response may contain `null` as one of the code actions. See [JLS#2327](https://github.com/eclipse/eclipse.jdt.ls/issues/2327).
+ * bug fix - Inlay hints should not show up next to Lombok annotations. See [JLS#2323](https://github.com/eclipse/eclipse.jdt.ls/issues/2323).
+ * bug fix - Ensure language server always terminates. See [JLS#2302](https://github.com/eclipse/eclipse.jdt.ls/issues/2302).
+ * bug fix - Prevent a deadlock during language server initialization. See [#2763](https://github.com/redhat-developer/vscode-java/issues/2763).
+ * bug fix - Always send `begin` work done progress before sending `end`. See [JLS#2258](https://github.com/eclipse/eclipse.jdt.ls/pull/2258).
+ * bug fix - Use existing Gradle project `.settings/` location if available. See [#2528](https://github.com/redhat-developer/vscode-java/issues/2528).
+ * bug fix - Avoid re-using the same job for the "Publish Diagnostics" job. See [JLS#2356](https://github.com/eclipse/eclipse.jdt.ls/pull/2356).
+ * build - Use Predicate for filter. See [JLS#2355](https://github.com/eclipse/eclipse.jdt.ls/pull/2355).
+ * build - Add pre-release and platform specific publishing for OpenVSX registry. See [#2587](https://github.com/redhat-developer/vscode-java/pull/2587).
+ * build - Fix issues reported by npm-audit. See [#2777](https://github.com/redhat-developer/vscode-java/pull/2777).
+
 ## 1.12.0 (October 27th, 2022)
  * performance - Improve project initialization. See [JLS#2252](https://github.com/eclipse/eclipse.jdt.ls/pull/2252).
  * performance - Re-use ExecutorService to avoid creating extra threads and resource leak. See [JLS#2041](https://github.com/eclipse/eclipse.jdt.ls/pull/2041).
