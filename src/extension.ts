@@ -28,6 +28,7 @@ import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfiguration } from './utils';
 import glob = require('glob');
+import { OutputInfoCollector } from './outputInfoCollector';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -118,46 +119,6 @@ function getHeapDumpFolderFromSettings(): string {
 	return results[1] || results[2] || results[3];
 }
 
-export class OutputInfoCollector implements OutputChannel {
-	private channel: OutputChannel = null;
-
-	constructor(public name: string) {
-		this.channel = window.createOutputChannel(this.name);
-	}
-
-	append(value: string): void {
-		logger.info(value);
-		this.channel.append(value);
-	}
-
-	appendLine(value: string): void {
-		logger.info(value);
-		this.channel.appendLine(value);
-	}
-
-	replace(value: string): void {
-		this.clear();
-		this.append(value);
-	}
-
-	clear(): void {
-		this.channel.clear();
-	}
-
-	show(preserveFocus?: boolean): void;
-	show(column?: ViewColumn, preserveFocus?: boolean): void;
-	show(column?: any, preserveFocus?: any) {
-		this.channel.show(column, preserveFocus);
-	}
-
-	hide(): void {
-		this.channel.hide();
-	}
-
-	dispose(): void {
-		this.channel.dispose();
-	}
-}
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	context.subscriptions.push(markdownPreviewProvider);
