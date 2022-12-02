@@ -5,10 +5,11 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, OutputChannel, RelativePattern, TextDocument, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
-import { CancellationToken, CloseAction, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ErrorAction, ErrorHandler, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, Message, RevealOutputChannelOn } from 'vscode-languageclient';
+import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
+import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands } from './commands';
 import { ClientStatus, ExtensionAPI } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
@@ -16,6 +17,7 @@ import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import { OutputInfoCollector } from './outputInfoCollector';
 import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
 import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
@@ -28,7 +30,6 @@ import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfiguration } from './utils';
 import glob = require('glob');
-import { OutputInfoCollector } from './outputInfoCollector';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -38,49 +39,6 @@ let storagePath: string;
 let clientLogFile: string;
 
 export const cleanWorkspaceFileName = '.cleanWorkspace';
-
-export class ClientErrorHandler implements ErrorHandler {
-	private restarts: number[];
-
-	constructor(private name: string) {
-		this.restarts = [];
-	}
-
-	public error(_error: Error, _message: Message, count: number): ErrorAction {
-		if (count && count <= 3) {
-			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
-			return ErrorAction.Continue;
-		}
-
-		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
-		return ErrorAction.Shutdown;
-	}
-
-	public closed(): CloseAction {
-		this.restarts.push(Date.now());
-		if (this.restarts.length < 5) {
-			logger.error(`The ${this.name} server crashed and will restart.`);
-			return CloseAction.Restart;
-		} else {
-			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
-			if (diff <= 3 * 60 * 1000) {
-				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
-				logger.error(message);
-				const action = "Show logs";
-				window.showErrorMessage(message, action).then(selection => {
-					if (selection === action) {
-						commands.executeCommand(Commands.OPEN_LOGS);
-					}
-				});
-				return CloseAction.DoNotRestart;
-			}
-
-			logger.error(`The ${this.name} server crashed and will restart.`);
-			this.restarts.shift();
-			return CloseAction.Restart;
-		}
-	}
-}
 
 /**
  * Shows a message about the server crashing due to an out of memory issue
