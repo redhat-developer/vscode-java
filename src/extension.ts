@@ -24,7 +24,7 @@ import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
-import { ACTIVE_BUILD_TOOL_STATE, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
+import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
@@ -37,8 +37,6 @@ const jdtEventEmitter = new EventEmitter<Uri>();
 const extensionName = 'Language Support for Java';
 let storagePath: string;
 let clientLogFile: string;
-
-export const cleanWorkspaceFileName = '.cleanWorkspace';
 
 /**
  * Shows a message about the server crashing due to an out of memory issue
