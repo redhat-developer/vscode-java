@@ -809,15 +809,6 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 	});
 }
 
-export function applyWorkspaceEdit(obj, languageClient): Thenable<boolean> {
-	const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
-	if (edit) {
-		return workspace.applyEdit(edit);
-	} else {
-		return Promise.resolve(true);
-	}
-}
-
 async function getTriggerFiles(): Promise<string[]> {
 	const openedJavaFiles = [];
 	const activeJavaFile = getJavaFilePathOfTextDocument(window.activeTextEditor && window.activeTextEditor.document);

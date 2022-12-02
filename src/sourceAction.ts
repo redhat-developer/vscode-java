@@ -4,9 +4,9 @@ import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable, worksp
 import { CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
-import { applyWorkspaceEdit } from './extension';
 import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
 OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams } from './protocol';
+import { applyWorkspaceEdit } from './standardLanguageClient';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
