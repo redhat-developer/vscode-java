@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, WorkspaceConfiguration, TextDocument, commands, Uri } from 'vscode';
+import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
 import { Commands } from './commands';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
@@ -173,4 +173,35 @@ function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], f
 	}).filter((inclusion) => {
 		return !exclusions.includes(inclusion);
 	});
+}
+
+
+export function getJavaConfig(javaHome: string) {
+	const origConfig = getJavaConfiguration();
+	const javaConfig = JSON.parse(JSON.stringify(origConfig));
+	javaConfig.home = javaHome;
+	// Since source & output path are project specific settings. To avoid pollute other project,
+	// we avoid reading the value from the global scope.
+	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
+	javaConfig.project.sourcePaths = origConfig.inspect<string[]>("project.sourcePaths").workspaceValue;
+
+	const editorConfig = workspace.getConfiguration('editor');
+	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
+	javaConfig.format.tabSize = editorConfig.get('tabSize');
+	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
+	switch (androidSupport) {
+		case "auto":
+			javaConfig.jdt.ls.androidSupport.enabled = version.includes("insider") ? true : false;
+			break;
+		case "on":
+			javaConfig.jdt.ls.androidSupport.enabled = true;
+			break;
+		case "off":
+			javaConfig.jdt.ls.androidSupport.enabled = false;
+			break;
+		default:
+			javaConfig.jdt.ls.androidSupport.enabled = false;
+			break;
+	}
+	return javaConfig;
 }

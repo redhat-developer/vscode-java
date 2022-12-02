@@ -5,13 +5,13 @@ import { DidChangeConfigurationNotification, LanguageClientOptions } from "vscod
 import { LanguageClient, ServerOptions, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import { ClientErrorHandler } from "./clientErrorHandler";
-import { getJavaConfig } from "./extension";
 import { ClientStatus, ExtensionAPI } from "./extension.api";
 import { logger } from "./log";
 import { OutputInfoCollector } from "./outputInfoCollector";
 import { StatusNotification } from "./protocol";
 import { ServerMode } from "./settings";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
+import { getJavaConfig } from "./utils";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 

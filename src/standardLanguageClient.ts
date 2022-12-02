@@ -4,7 +4,7 @@ import { ExtensionContext, window, workspace, commands, Uri, ProgressLocation, V
 import { Commands } from "./commands";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { prepareExecutable, awaitServerConnection } from "./javaServerStarter";
-import { getJavaConfig, applyWorkspaceEdit } from "./extension";
+import { applyWorkspaceEdit } from "./extension";
 import { LanguageClientOptions, Position as LSPosition, Location as LSLocation, MessageType, TextDocumentPositionParams, ConfigurationRequest, ConfigurationParams } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { CompileWorkspaceRequest, CompileWorkspaceStatus, SourceAttachmentRequest, SourceAttachmentResult, SourceAttachmentAttribute, FeatureStatus, StatusNotification, ProgressReportNotification, ActionableNotification, ExecuteClientCommandRequest, ServerNotification, EventNotification, EventType, LinkLocation, FindLinks, GradleCompatibilityInfo, UpgradeGradleWrapperInfo, BuildProjectRequest, BuildProjectParams } from "./protocol";
@@ -15,7 +15,7 @@ import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from
 import * as net from 'net';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { getAllJavaProjects, getJavaConfiguration } from "./utils";
+import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
 import { logger } from "./log";
 import * as buildPath from './buildpath';
 import * as sourceAction from './sourceAction';

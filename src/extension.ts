@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -28,7 +28,7 @@ import { ACTIVE_BUILD_TOOL_STATE, getJavaServerMode, handleTextBlockClosing, onC
 import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfiguration, hasBuildToolConflicts } from './utils';
+import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
 import glob = require('glob');
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
@@ -507,36 +507,6 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			}
 			return false;
 	}
-}
-
-export function getJavaConfig(javaHome: string) {
-	const origConfig = getJavaConfiguration();
-	const javaConfig = JSON.parse(JSON.stringify(origConfig));
-	javaConfig.home = javaHome;
-	// Since source & output path are project specific settings. To avoid pollute other project,
-	// we avoid reading the value from the global scope.
-	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
-	javaConfig.project.sourcePaths = origConfig.inspect<string[]>("project.sourcePaths").workspaceValue;
-
-	const editorConfig = workspace.getConfiguration('editor');
-	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
-	javaConfig.format.tabSize = editorConfig.get('tabSize');
-	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
-	switch (androidSupport) {
-		case "auto":
-			javaConfig.jdt.ls.androidSupport.enabled = version.includes("insider") ? true : false;
-			break;
-		case "on":
-			javaConfig.jdt.ls.androidSupport.enabled = true;
-			break;
-		case "off":
-			javaConfig.jdt.ls.androidSupport.enabled = false;
-			break;
-		default:
-			javaConfig.jdt.ls.androidSupport.enabled = false;
-			break;
-	}
-	return javaConfig;
 }
 
 export function deactivate(): Promise<void[]> {
