@@ -9,8 +9,7 @@ import { apiManager } from "./apiManager";
 import * as semver from "semver";
 import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
-import { getAllJavaProjects, getJavaConfiguration } from "./utils";
-import { hasBuildToolConflicts } from "./extension";
+import { getAllJavaProjects, getJavaConfiguration, hasBuildToolConflicts } from "./utils";
 import { LombokVersionItemFactory, getLombokVersion, isLombokImported } from "./lombokSupport";
 
 class RuntimeStatusBarProvider implements Disposable {
