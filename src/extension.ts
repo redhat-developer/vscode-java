@@ -5,10 +5,11 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, OutputChannel, RelativePattern, TextDocument, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
-import { CancellationToken, CloseAction, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ErrorAction, ErrorHandler, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, Message, RevealOutputChannelOn } from 'vscode-languageclient';
+import { CodeActionContext, CodeActionTriggerKind, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
+import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands } from './commands';
 import { ClientStatus, ExtensionAPI } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
@@ -16,17 +17,18 @@ import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
+import { OutputInfoCollector } from './outputInfoCollector';
 import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
 import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
-import { ACTIVE_BUILD_TOOL_STATE, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
+import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfiguration } from './utils';
+import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
 import glob = require('glob');
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
@@ -35,51 +37,6 @@ const jdtEventEmitter = new EventEmitter<Uri>();
 const extensionName = 'Language Support for Java';
 let storagePath: string;
 let clientLogFile: string;
-
-export const cleanWorkspaceFileName = '.cleanWorkspace';
-
-export class ClientErrorHandler implements ErrorHandler {
-	private restarts: number[];
-
-	constructor(private name: string) {
-		this.restarts = [];
-	}
-
-	public error(_error: Error, _message: Message, count: number): ErrorAction {
-		if (count && count <= 3) {
-			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
-			return ErrorAction.Continue;
-		}
-
-		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
-		return ErrorAction.Shutdown;
-	}
-
-	public closed(): CloseAction {
-		this.restarts.push(Date.now());
-		if (this.restarts.length < 5) {
-			logger.error(`The ${this.name} server crashed and will restart.`);
-			return CloseAction.Restart;
-		} else {
-			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
-			if (diff <= 3 * 60 * 1000) {
-				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
-				logger.error(message);
-				const action = "Show logs";
-				window.showErrorMessage(message, action).then(selection => {
-					if (selection === action) {
-						commands.executeCommand(Commands.OPEN_LOGS);
-					}
-				});
-				return CloseAction.DoNotRestart;
-			}
-
-			logger.error(`The ${this.name} server crashed and will restart.`);
-			this.restarts.shift();
-			return CloseAction.Restart;
-		}
-	}
-}
 
 /**
  * Shows a message about the server crashing due to an out of memory issue
@@ -118,46 +75,6 @@ function getHeapDumpFolderFromSettings(): string {
 	return results[1] || results[2] || results[3];
 }
 
-export class OutputInfoCollector implements OutputChannel {
-	private channel: OutputChannel = null;
-
-	constructor(public name: string) {
-		this.channel = window.createOutputChannel(this.name);
-	}
-
-	append(value: string): void {
-		logger.info(value);
-		this.channel.append(value);
-	}
-
-	appendLine(value: string): void {
-		logger.info(value);
-		this.channel.appendLine(value);
-	}
-
-	replace(value: string): void {
-		this.clear();
-		this.append(value);
-	}
-
-	clear(): void {
-		this.channel.clear();
-	}
-
-	show(preserveFocus?: boolean): void;
-	show(column?: ViewColumn, preserveFocus?: boolean): void;
-	show(column?: any, preserveFocus?: any) {
-		this.channel.show(column, preserveFocus);
-	}
-
-	hide(): void {
-		this.channel.hide();
-	}
-
-	dispose(): void {
-		this.channel.dispose();
-	}
-}
 
 export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	context.subscriptions.push(markdownPreviewProvider);
@@ -563,48 +480,6 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptio
 	return true;
 }
 
-export async function hasBuildToolConflicts(): Promise<boolean> {
-	const projectConfigurationUris: Uri[] = await getBuildFilesInWorkspace();
-	const projectConfigurationFsPaths: string[] = projectConfigurationUris.map((uri) => uri.fsPath);
-	const eclipseDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, [], ".project");
-	// ignore the folders that already has .project file (already imported before)
-	const gradleDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle");
-	const gradleDirectoriesKts = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle.kts");
-	gradleDirectories.concat(gradleDirectoriesKts);
-	const mavenDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, "pom.xml");
-	return gradleDirectories.some((gradleDir) => {
-		return mavenDirectories.includes(gradleDir);
-	});
-}
-
-async function getBuildFilesInWorkspace(): Promise<Uri[]> {
-	const buildFiles: Uri[] = [];
-	const inclusionFilePatterns: string[] = getBuildFilePatterns();
-	inclusionFilePatterns.push("**/.project");
-	const inclusionFolderPatterns: string[] = getInclusionPatternsFromNegatedExclusion();
-	// Since VS Code API does not support put negated exclusion pattern in findFiles(),
-	// here we first parse the negated exclusion to inclusion and do the search.
-	if (inclusionFilePatterns.length > 0 && inclusionFolderPatterns.length > 0) {
-		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionFilePatterns, inclusionFolderPatterns), null /* force not use default exclusion */));
-	}
-
-	const inclusionBlob: string = convertToGlob(inclusionFilePatterns);
-	const exclusionBlob: string = getExclusionBlob();
-	if (inclusionBlob) {
-		buildFiles.push(...await workspace.findFiles(inclusionBlob, exclusionBlob));
-	}
-
-	return buildFiles;
-}
-
-function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], fileName: string): string[] {
-	return inclusions.filter((fsPath) => fsPath.endsWith(fileName)).map((fsPath) => {
-		return path.dirname(fsPath);
-	}).filter((inclusion) => {
-		return !exclusions.includes(inclusion);
-	});
-}
-
 async function promptUserForStandardServer(config: WorkspaceConfiguration): Promise<boolean> {
 	const choice: string = await window.showInformationMessage("The workspace contains Java projects. Would you like to import them?", "Yes", "Always", "Later");
 	switch (choice) {
@@ -630,36 +505,6 @@ async function promptUserForStandardServer(config: WorkspaceConfiguration): Prom
 			}
 			return false;
 	}
-}
-
-export function getJavaConfig(javaHome: string) {
-	const origConfig = getJavaConfiguration();
-	const javaConfig = JSON.parse(JSON.stringify(origConfig));
-	javaConfig.home = javaHome;
-	// Since source & output path are project specific settings. To avoid pollute other project,
-	// we avoid reading the value from the global scope.
-	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
-	javaConfig.project.sourcePaths = origConfig.inspect<string[]>("project.sourcePaths").workspaceValue;
-
-	const editorConfig = workspace.getConfiguration('editor');
-	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
-	javaConfig.format.tabSize = editorConfig.get('tabSize');
-	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
-	switch (androidSupport) {
-		case "auto":
-			javaConfig.jdt.ls.androidSupport.enabled = version.includes("insider") ? true : false;
-			break;
-		case "on":
-			javaConfig.jdt.ls.androidSupport.enabled = true;
-			break;
-		case "off":
-			javaConfig.jdt.ls.androidSupport.enabled = false;
-			break;
-		default:
-			javaConfig.jdt.ls.androidSupport.enabled = false;
-			break;
-	}
-	return javaConfig;
 }
 
 export function deactivate(): Promise<void[]> {
@@ -962,15 +807,6 @@ async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relat
 			}
 		}
 	});
-}
-
-export function applyWorkspaceEdit(obj, languageClient): Thenable<boolean> {
-	const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(obj);
-	if (edit) {
-		return workspace.applyEdit(edit);
-	} else {
-		return Promise.resolve(true);
-	}
 }
 
 async function getTriggerFiles(): Promise<string[]> {

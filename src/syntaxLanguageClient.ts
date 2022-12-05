@@ -4,12 +4,14 @@ import * as net from "net";
 import { DidChangeConfigurationNotification, LanguageClientOptions } from "vscode-languageclient";
 import { LanguageClient, ServerOptions, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
-import { ClientErrorHandler, getJavaConfig, OutputInfoCollector } from "./extension";
+import { ClientErrorHandler } from "./clientErrorHandler";
 import { ClientStatus, ExtensionAPI } from "./extension.api";
 import { logger } from "./log";
+import { OutputInfoCollector } from "./outputInfoCollector";
 import { StatusNotification } from "./protocol";
 import { ServerMode } from "./settings";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
+import { getJavaConfig } from "./utils";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 

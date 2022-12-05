@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, WorkspaceConfiguration, TextDocument, commands, Uri } from 'vscode';
+import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
 import { Commands } from './commands';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
@@ -131,4 +131,77 @@ export async function getAllJavaProjects(excludeDefaultProject: boolean = true):
 		});
 	}
 	return projectUris;
+}
+
+export async function hasBuildToolConflicts(): Promise<boolean> {
+	const projectConfigurationUris: Uri[] = await getBuildFilesInWorkspace();
+	const projectConfigurationFsPaths: string[] = projectConfigurationUris.map((uri) => uri.fsPath);
+	const eclipseDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, [], ".project");
+	// ignore the folders that already has .project file (already imported before)
+	const gradleDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle");
+	const gradleDirectoriesKts = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle.kts");
+	gradleDirectories.concat(gradleDirectoriesKts);
+	const mavenDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, "pom.xml");
+	return gradleDirectories.some((gradleDir) => {
+		return mavenDirectories.includes(gradleDir);
+	});
+}
+
+async function getBuildFilesInWorkspace(): Promise<Uri[]> {
+	const buildFiles: Uri[] = [];
+	const inclusionFilePatterns: string[] = getBuildFilePatterns();
+	inclusionFilePatterns.push("**/.project");
+	const inclusionFolderPatterns: string[] = getInclusionPatternsFromNegatedExclusion();
+	// Since VS Code API does not support put negated exclusion pattern in findFiles(),
+	// here we first parse the negated exclusion to inclusion and do the search.
+	if (inclusionFilePatterns.length > 0 && inclusionFolderPatterns.length > 0) {
+		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionFilePatterns, inclusionFolderPatterns), null /* force not use default exclusion */));
+	}
+
+	const inclusionBlob: string = convertToGlob(inclusionFilePatterns);
+	const exclusionBlob: string = getExclusionBlob();
+	if (inclusionBlob) {
+		buildFiles.push(...await workspace.findFiles(inclusionBlob, exclusionBlob));
+	}
+
+	return buildFiles;
+}
+
+function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], fileName: string): string[] {
+	return inclusions.filter((fsPath) => fsPath.endsWith(fileName)).map((fsPath) => {
+		return path.dirname(fsPath);
+	}).filter((inclusion) => {
+		return !exclusions.includes(inclusion);
+	});
+}
+
+
+export function getJavaConfig(javaHome: string) {
+	const origConfig = getJavaConfiguration();
+	const javaConfig = JSON.parse(JSON.stringify(origConfig));
+	javaConfig.home = javaHome;
+	// Since source & output path are project specific settings. To avoid pollute other project,
+	// we avoid reading the value from the global scope.
+	javaConfig.project.outputPath = origConfig.inspect<string>("project.outputPath").workspaceValue;
+	javaConfig.project.sourcePaths = origConfig.inspect<string[]>("project.sourcePaths").workspaceValue;
+
+	const editorConfig = workspace.getConfiguration('editor');
+	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
+	javaConfig.format.tabSize = editorConfig.get('tabSize');
+	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
+	switch (androidSupport) {
+		case "auto":
+			javaConfig.jdt.ls.androidSupport.enabled = version.includes("insider") ? true : false;
+			break;
+		case "on":
+			javaConfig.jdt.ls.androidSupport.enabled = true;
+			break;
+		case "off":
+			javaConfig.jdt.ls.androidSupport.enabled = false;
+			break;
+		default:
+			javaConfig.jdt.ls.androidSupport.enabled = false;
+			break;
+	}
+	return javaConfig;
 }

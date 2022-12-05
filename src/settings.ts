@@ -2,12 +2,10 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { window, Uri, workspace, WorkspaceConfiguration, commands, ConfigurationTarget, env, ExtensionContext, TextEditor, Range, Disposable, WorkspaceFolder, TextDocument, Position, SnippetString, TextLine } from 'vscode';
+import { commands, ConfigurationTarget, env, ExtensionContext, Position, Range, SnippetString, TextDocument, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
-import { cleanWorkspaceFileName } from './extension';
+import { cleanupLombokCache } from './lombokSupport';
 import { ensureExists, getJavaConfiguration } from './utils';
-import { checkLombokDependency, cleanupLombokCache } from './lombokSupport';
-import { CodeLensResolveRequest } from 'vscode-languageclient';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -15,6 +13,8 @@ const IS_WORKSPACE_JLS_JDK_ALLOWED = "java.jdt.ls.java.home.isAllowed";
 export const IS_WORKSPACE_VMARGS_ALLOWED = "java.ls.isVmargsAllowed";
 const extensionName = 'Language Support for Java';
 export const ACTIVE_BUILD_TOOL_STATE = "java.activeBuildTool";
+
+export const cleanWorkspaceFileName = '.cleanWorkspace';
 
 const changeItem = {
 	global: 'Exclude globally',
