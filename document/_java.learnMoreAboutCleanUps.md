@@ -172,3 +172,105 @@ String message = getMessage();
 boolean result1 = "text".equals(message);
 boolean result2 = "text".equalsIgnoreCase(message);
 ```
+
+### `addFinalModifier`
+
+Use the `final` modifier for variable declarations wherever it is possible.
+
+For example:
+
+```java
+private int i= 0;
+public void foo(int j) {
+    int k, h;
+    h= 0;
+}
+```
+
+becomes:
+
+```java
+private final int i= 0;
+public void foo(final int j) {
+    final int k;
+    int h;
+    h= 0;
+}
+```
+
+### `instanceofPatternMatch`
+
+Use pattern matching for the `instanceof` operator wherever possible. It is only applicable for Java level 15 or higher.
+
+For example:
+
+```java
+if (object instanceof Integer) {
+    Integer i = (Integer) object;
+    return i.intValue();
+}
+```
+
+becomes:
+
+```java
+if (object instanceof Integer i) {
+    return i.intValue();
+}
+```
+
+
+### `lambdaExpression`
+
+Convert anonymous class declarations for functional interfaces to lambda expressions wherever possible. It is only applicable for Java level 8 or above.
+
+For example:
+
+```java
+IntConsumer c = new IntConsumer() {
+    @Override public void accept(int value) {
+        System.out.println(i);
+    }
+};
+```
+
+becomes:
+
+```java
+IntConsumer c = i -> {
+    System.out.println(i);
+};
+```
+
+### `switchExpression`
+
+Convert switch statements to switch expressions wherever possible. It is only applicable for Java level 14 or above.
+
+**Note** : _Switch statements that use control statements such as nested switch statements, if/else blocks, for/while loops are not considered as is the case for return/continue statements. All cases of the switch statement must either have a last assignment statement that sets the same variable/field as other cases, or else has a throw statement. Fall-through is allowed between cases but only if there are no other statements in between. The switch statement must have a default case unless the switch expression is an enum type and all possible enum values are represented in the cases._
+
+For example:
+
+```java
+int i;
+switch(j) {
+    case 1:
+        i = 3;
+        break;
+    case 2:
+        i = 4;
+        break;
+    default:
+        i = 0;
+        break;
+}
+```
+
+becomes:
+
+```java
+int i = switch(j) {
+    case 1 -> 3;
+    case 2 -> 4;
+    default -> 0;
+};
+```
