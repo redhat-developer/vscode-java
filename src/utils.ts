@@ -188,10 +188,11 @@ export function getJavaConfig(javaHome: string) {
 	const editorConfig = workspace.getConfiguration('editor');
 	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
 	javaConfig.format.tabSize = editorConfig.get('tabSize');
+	const isInsider: boolean = version.includes("insider");
 	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
 	switch (androidSupport) {
 		case "auto":
-			javaConfig.jdt.ls.androidSupport.enabled = version.includes("insider") ? true : false;
+			javaConfig.jdt.ls.androidSupport.enabled = isInsider ? true : false;
 			break;
 		case "on":
 			javaConfig.jdt.ls.androidSupport.enabled = true;
@@ -202,6 +203,11 @@ export function getJavaConfig(javaHome: string) {
 		default:
 			javaConfig.jdt.ls.androidSupport.enabled = false;
 			break;
+	}
+
+	const completionCaseMatching = javaConfig.completion.matchCase;
+	if (completionCaseMatching === "auto") {
+		javaConfig.completion.matchCase = isInsider ? "firstLetter" : "off";
 	}
 	return javaConfig;
 }

@@ -573,6 +573,22 @@
           "markdownDescription": "Enable/disable postfix completion support. `#editor.snippetSuggestions#` can be used to customize how postfix snippets are sorted.",
           "scope": "window"
         },
+        "java.completion.matchCase": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "firstLetter",
+            "off"
+          ],
+          "enumDescriptions": [
+            "Only match case for the first letter when using Visual Studio Code - Insiders.",
+            "Match case for the first letter when doing completion.",
+            "Do not match case when doing completion."
+          ],
+          "default": "auto",
+          "markdownDescription": "Specify whether to match case for code completion.",
+          "scope": "window"
+        },
         "java.foldingRange.enabled": {
           "type": "boolean",
           "default": true,
