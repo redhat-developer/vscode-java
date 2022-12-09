@@ -223,6 +223,7 @@ New in 1.14.0
   - Windows: First use `"$APPDATA\\.jdt\\index"`, or `"~\\.jdt\\index"` if it does not exist
   - macOS: `"~/Library/Caches/.jdt/index"`
   - Linux: First use `"$XDG_CACHE_HOME/.jdt/index"`, or `"~/.cache/.jdt/index"` if it does not exist
+* `java.refactoring.extract.interface.replace`: Specify whether to replace all the occurrences of the subtype with the new extracted interface. Defaults to `true`.
 
 Semantic Highlighting
 ===============

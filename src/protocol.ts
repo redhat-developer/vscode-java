@@ -447,3 +447,20 @@ export interface UpgradeGradleWrapperInfo {
 	message: string;
 	recommendedGradleVersion: string;
 }
+
+export interface Member {
+    name: string;
+    typeName: string;
+    parameters: string[];
+    handleIdentifier: string;
+}
+
+export interface CheckExtractInterfaceStatusResponse {
+    members: Member[];
+    subTypeName: string;
+    destinationResponse: MoveDestinationsResponse;
+}
+
+export namespace CheckExtractInterfaceStatusRequest {
+    export const type = new RequestType<CodeActionParams, CheckExtractInterfaceStatusResponse, void>('java/checkExtractInterfaceStatus');
+}

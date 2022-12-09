@@ -1056,6 +1056,11 @@
           "markdownDescription": "Specifies a common index location for all workspaces. See default values as follows:\n \nWindows: First use `\"$APPDATA\\\\.jdt\\\\index\"`, or `\"~\\\\.jdt\\\\index\"` if it does not exist\n \nmacOS: `\"~/Library/Caches/.jdt/index\"`\n \nLinux: First use `\"$XDG_CACHE_HOME/.jdt/index\"`, or `\"~/.cache/.jdt/index\"` if it does not exist",
           "default": "",
           "scope": "window"
+        },
+        "java.refactoring.extract.interface.replace": {
+          "type": "boolean",
+          "markdownDescription": "Specify whether to replace all the occurrences of the subtype with the new extracted interface.",
+          "default": true
         }
       }
     },
