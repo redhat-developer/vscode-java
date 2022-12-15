@@ -192,7 +192,7 @@ export function getJavaConfig(javaHome: string) {
 	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
 	switch (androidSupport) {
 		case "auto":
-			javaConfig.jdt.ls.androidSupport.enabled = isInsider ? true : false;
+			javaConfig.jdt.ls.androidSupport.enabled = isInsider;
 			break;
 		case "on":
 			javaConfig.jdt.ls.androidSupport.enabled = true;
