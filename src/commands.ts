@@ -315,4 +315,9 @@ export namespace Commands {
      * JDT.LS will call this command before set the server to ready state.
      */
     export const REFRESH_BUNDLES_COMMAND = "_java.reloadBundles.command";
+
+    /**
+     * Clean everything in the shared index directory.
+     */
+    export const CLEAN_SHARED_INDEXES = "java.clean.sharedIndexes";
 }

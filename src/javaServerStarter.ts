@@ -4,7 +4,7 @@ import * as glob from 'glob';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import { ExtensionContext, workspace } from 'vscode';
+import { ExtensionContext, version, workspace } from 'vscode';
 import { Executable, ExecutableOptions, StreamInfo } from 'vscode-languageclient/node';
 import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
@@ -131,7 +131,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 			params.push(`${HEAP_DUMP_LOCATION}${path.dirname(workspacePath)}`);
 		}
 
-		const sharedIndexLocation: string = resolveIndexCache(context);
+		const sharedIndexLocation: string = resolveIndexCache();
 		if (sharedIndexLocation) {
 			params.push(`-Djdt.core.sharedIndexLocation=${sharedIndexLocation}`);
 		}
@@ -170,24 +170,48 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	return params;
 }
 
-function resolveIndexCache(context: ExtensionContext) {
-	let sharedIndexLocation: string = getJavaConfiguration().get("sharedIndexes.location");
-	if (sharedIndexLocation === "$DEFAULT_CACHE") {
-		sharedIndexLocation = path.resolve(context.globalStoragePath, "index");
-	} else if (sharedIndexLocation && !path.isAbsolute(sharedIndexLocation)) {
-		logger.error(`Ignore the setting 'java.sharedIndexes.location' because its value '${sharedIndexLocation}' is not an absolute path.`);
-		sharedIndexLocation = "";
+function resolveIndexCache() {
+	let enabled: string = getJavaConfiguration().get("sharedIndexes.enabled");
+	if (enabled === "auto") {
+		enabled = version.includes("insider") ? "on" : "off";
 	}
 
-	if (sharedIndexLocation) {
-		ensureExists(sharedIndexLocation);
-		if (!fs.existsSync(sharedIndexLocation)) {
-			logger.error(`Ignore the setting 'java.sharedIndexes.location' because it points to an invalid directory '${sharedIndexLocation}'.`);
-			sharedIndexLocation = "";
+	if (enabled !== "on") {
+		return;
+	}
+
+	const location: string = getSharedIndexCache();
+	if (location) {
+		ensureExists(location);
+		if (!fs.existsSync(location)) {
+			logger.error(`Failed to create the shared index directory '${location}', fall back to local index.`);
+			return;
 		}
 	}
 
-	return sharedIndexLocation;
+	return location;
+}
+
+export function getSharedIndexCache(): string {
+	let location: string = getJavaConfiguration().get("sharedIndexes.location");
+	if (!location) {
+		switch (process.platform) {
+			case "win32":
+				location = path.join(os.homedir(), ".jdt", "index");
+				break;
+			case "darwin":
+				location = path.join(os.homedir(), "Library", "Caches", ".jdt", "index");
+				break;
+			case "linux":
+				location = path.join(os.homedir(), ".jdt", "index");
+				break;
+		}
+	} else {
+		// expand homedir
+		location = location.startsWith(`~${path.sep}`) ? path.join(os.homedir(), location.slice(2)) : location;
+	}
+
+	return location;
 }
 
 function resolveConfiguration(context, configDir) {
