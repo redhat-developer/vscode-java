@@ -89,14 +89,19 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 			}
 		};
 
-		const pasteResponse: PDocumentPasteEdit = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.HANDLE_PASTE_EVENT, JSON.stringify(pasteEventParams));
-
-		if (pasteResponse) {
-			return {
-				insertText: pasteResponse.insertText,
-				additionalEdit: pasteResponse.additionalEdit ? this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
-			} as VDocumentPasteEdit;
+		try {
+			const pasteResponse: PDocumentPasteEdit = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.HANDLE_PASTE_EVENT, JSON.stringify(pasteEventParams));
+			if (pasteResponse) {
+				return {
+					insertText: pasteResponse.insertText,
+					additionalEdit: pasteResponse.additionalEdit ? this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
+				} as VDocumentPasteEdit;
+			}
+		} catch (e) {
+			// Do nothing
 		}
+		// either the handler returns null or encounters problems, fall back to return undefined to let VS Code ignore this handler
+		return undefined;
 	}
 
 }
