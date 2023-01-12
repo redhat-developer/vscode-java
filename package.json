@@ -1053,7 +1053,7 @@
         },
         "java.sharedIndexes.location": {
           "type": "string",
-          "markdownDescription": "Specifies a common index location for all workspaces. See default values as follows:\n \nWindows: `~\\.jdt\\index`\n \nmacOS: `~/Library/Caches/.jdt/index`\n \nLinux: `~/.jdt/index`",
+          "markdownDescription": "Specifies a common index location for all workspaces. See default values as follows:\n \nWindows: First use `\"$APPDATA\\\\.jdt\\\\index\"`, or `\"~\\\\.jdt\\\\index\"` if it does not exist\n \nmacOS: `\"~/Library/Caches/.jdt/index\"`\n \nLinux: First use `\"$XDG_CACHE_HOME/.jdt/index\"`, or `\"~/.cache/.jdt/index\"` if it does not exist",
           "default": "",
           "scope": "window"
         }

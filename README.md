@@ -220,9 +220,9 @@ New in 1.14.0
   - on
   - off
 * `java.sharedIndexes.location`: Specifies a common index location for all workspaces. See default values as follows:  
-  - Windows: `"~\\.jdt\\index"`
+  - Windows: First use `"$APPDATA\\.jdt\\index"`, or `"~\\.jdt\\index"` if it does not exist
   - macOS: `"~/Library/Caches/.jdt/index"`
-  - Linux: `"~/.jdt/index"`
+  - Linux: First use `"$XDG_CACHE_HOME/.jdt/index"`, or `"~/.cache/.jdt/index"` if it does not exist
 
 Semantic Highlighting
 ===============

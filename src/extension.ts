@@ -304,7 +304,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, (force?: boolean) => cleanWorkspace(workspacePath, force)));
-			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_SHARED_INDEXES, () => cleanSharedIndexes()));
+			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_SHARED_INDEXES, () => cleanSharedIndexes(context)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.GET_WORKSPACE_PATH, () => workspacePath));
 
@@ -604,8 +604,8 @@ async function cleanWorkspace(workspacePath, force?: boolean) {
 	commands.executeCommand(Commands.RELOAD_WINDOW);
 }
 
-async function cleanSharedIndexes() {
-	const sharedIndexLocation: string = getSharedIndexCache();
+async function cleanSharedIndexes(context: ExtensionContext) {
+	const sharedIndexLocation: string = getSharedIndexCache(context);
 	if (sharedIndexLocation && fs.existsSync(sharedIndexLocation)) {
 		const doIt = 'Clean and Reload';
 		const ans = await window.showWarningMessage('The shared indexes might be in use by other workspaces, do you want to clear it? New indexes will be built after reloading.',

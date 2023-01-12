@@ -131,7 +131,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 			params.push(`${HEAP_DUMP_LOCATION}${path.dirname(workspacePath)}`);
 		}
 
-		const sharedIndexLocation: string = resolveIndexCache();
+		const sharedIndexLocation: string = resolveIndexCache(context);
 		if (sharedIndexLocation) {
 			params.push(`-Djdt.core.sharedIndexLocation=${sharedIndexLocation}`);
 		}
@@ -170,7 +170,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	return params;
 }
 
-function resolveIndexCache() {
+function resolveIndexCache(context: ExtensionContext) {
 	let enabled: string = getJavaConfiguration().get("sharedIndexes.enabled");
 	if (enabled === "auto") {
 		enabled = version.includes("insider") ? "on" : "off";
@@ -180,7 +180,7 @@ function resolveIndexCache() {
 		return;
 	}
 
-	const location: string = getSharedIndexCache();
+	const location: string = getSharedIndexCache(context);
 	if (location) {
 		ensureExists(location);
 		if (!fs.existsSync(location)) {
@@ -192,19 +192,24 @@ function resolveIndexCache() {
 	return location;
 }
 
-export function getSharedIndexCache(): string {
+export function getSharedIndexCache(context: ExtensionContext): string {
 	let location: string = getJavaConfiguration().get("sharedIndexes.location");
 	if (!location) {
 		switch (process.platform) {
 			case "win32":
-				location = path.join(os.homedir(), ".jdt", "index");
+				location = process.env.APPDATA ? path.join(process.env.APPDATA, ".jdt", "index")
+					: path.join(os.homedir(), ".jdt", "index");
 				break;
 			case "darwin":
 				location = path.join(os.homedir(), "Library", "Caches", ".jdt", "index");
 				break;
 			case "linux":
-				location = path.join(os.homedir(), ".jdt", "index");
+				location = process.env.XDG_CACHE_HOME ? path.join(process.env.XDG_CACHE_HOME, ".jdt", "index")
+					: path.join(os.homedir(), ".cache", ".jdt", "index");
 				break;
+			default:
+				const globalStoragePath = context.globalStorageUri?.fsPath; // .../Code/User/globalStorage/redhat.java
+				location = globalStoragePath ? path.join(globalStoragePath, "index") : undefined;
 		}
 	} else {
 		// expand homedir
