@@ -4,7 +4,7 @@ def installBuildRequirements(){
 	def nodeHome = tool 'nodejs-14.19.1'
 	env.PATH="${env.PATH}:${nodeHome}/bin"
 	sh "npm install -g typescript"
-	sh 'npm install -g "vsce"'
+	sh 'npm install -g --force "@vscode/vsce"'
 	sh 'npm install -g "ovsx"'
 }
 
