@@ -214,6 +214,9 @@ The following settings are supported:
 * `java.cleanup.actionsOnSave`: The list of clean ups to be run on the current document when it's saved. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
 * `java.import.gradle.annotationProcessing.enabled`: Enable/disable the annotation processing on Gradle projects and delegate to JDT APT. Only works for Gradle 5.2 or higher.
 
+New in 1.15.0
+* `java.import.maven.disableTestClasspathFlag` : Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects. Defaults to `false`.
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).

@@ -273,6 +273,12 @@
           "description": "Enable/disable the Maven offline mode.",
           "scope": "window"
         },
+        "java.import.maven.disableTestClasspathFlag": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects.",
+          "scope": "window"
+        },
         "java.import.gradle.enabled": {
           "type": "boolean",
           "default": true,
