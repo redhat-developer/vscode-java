@@ -13,7 +13,7 @@ import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands } from './commands';
 import { ClientStatus, ExtensionAPI } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
-import { HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
+import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
@@ -304,6 +304,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, (force?: boolean) => cleanWorkspace(workspacePath, force)));
+			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_SHARED_INDEXES, () => cleanSharedIndexes(context)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.GET_WORKSPACE_PATH, () => workspacePath));
 
@@ -601,6 +602,19 @@ async function cleanWorkspace(workspacePath, force?: boolean) {
 	const file = path.join(workspacePath, cleanWorkspaceFileName);
 	fs.closeSync(fs.openSync(file, 'w'));
 	commands.executeCommand(Commands.RELOAD_WINDOW);
+}
+
+async function cleanSharedIndexes(context: ExtensionContext) {
+	const sharedIndexLocation: string = getSharedIndexCache(context);
+	if (sharedIndexLocation && fs.existsSync(sharedIndexLocation)) {
+		const doIt = 'Clean and Reload';
+		const ans = await window.showWarningMessage('The shared indexes might be in use by other workspaces, do you want to clear it? New indexes will be built after reloading.',
+			doIt, "Cancel");
+		if (ans === doIt) {
+			deleteDirectory(sharedIndexLocation);
+			commands.executeCommand(Commands.RELOAD_WINDOW);
+		}
+	}
 }
 
 function openServerLogFile(workspacePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {

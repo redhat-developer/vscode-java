@@ -132,7 +132,8 @@ function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: Work
 		|| hasConfigKeyChanged('home', oldConfig, newConfig)
 		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
 		|| hasConfigKeyChanged('progressReports.enabled', oldConfig, newConfig)
-		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig);
+		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig)
+		|| hasConfigKeyChanged('sharedIndexes.location', oldConfig, newConfig);;
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {

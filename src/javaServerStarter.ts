@@ -4,7 +4,7 @@ import * as glob from 'glob';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
-import { ExtensionContext, workspace } from 'vscode';
+import { ExtensionContext, version, workspace } from 'vscode';
 import { Executable, ExecutableOptions, StreamInfo } from 'vscode-languageclient/node';
 import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
@@ -130,6 +130,11 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		if (vmargs.indexOf(HEAP_DUMP_LOCATION) < 0) {
 			params.push(`${HEAP_DUMP_LOCATION}${path.dirname(workspacePath)}`);
 		}
+
+		const sharedIndexLocation: string = resolveIndexCache(context);
+		if (sharedIndexLocation) {
+			params.push(`-Djdt.core.sharedIndexLocation=${sharedIndexLocation}`);
+		}
 	}
 
 	// "OpenJDK 64-Bit Server VM warning: Options -Xverify:none and -noverify
@@ -163,6 +168,55 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 	}
 	params.push('-data'); params.push(workspacePath);
 	return params;
+}
+
+function resolveIndexCache(context: ExtensionContext) {
+	let enabled: string = getJavaConfiguration().get("sharedIndexes.enabled");
+	if (enabled === "auto") {
+		enabled = version.includes("insider") ? "on" : "off";
+	}
+
+	if (enabled !== "on") {
+		return;
+	}
+
+	const location: string = getSharedIndexCache(context);
+	if (location) {
+		ensureExists(location);
+		if (!fs.existsSync(location)) {
+			logger.error(`Failed to create the shared index directory '${location}', fall back to local index.`);
+			return;
+		}
+	}
+
+	return location;
+}
+
+export function getSharedIndexCache(context: ExtensionContext): string {
+	let location: string = getJavaConfiguration().get("sharedIndexes.location");
+	if (!location) {
+		switch (process.platform) {
+			case "win32":
+				location = process.env.APPDATA ? path.join(process.env.APPDATA, ".jdt", "index")
+					: path.join(os.homedir(), ".jdt", "index");
+				break;
+			case "darwin":
+				location = path.join(os.homedir(), "Library", "Caches", ".jdt", "index");
+				break;
+			case "linux":
+				location = process.env.XDG_CACHE_HOME ? path.join(process.env.XDG_CACHE_HOME, ".jdt", "index")
+					: path.join(os.homedir(), ".cache", ".jdt", "index");
+				break;
+			default:
+				const globalStoragePath = context.globalStorageUri?.fsPath; // .../Code/User/globalStorage/redhat.java
+				location = globalStoragePath ? path.join(globalStoragePath, "index") : undefined;
+		}
+	} else {
+		// expand homedir
+		location = location.startsWith(`~${path.sep}`) ? path.join(os.homedir(), location.slice(2)) : location;
+	}
+
+	return location;
 }
 
 function resolveConfiguration(context, configDir) {

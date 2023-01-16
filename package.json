@@ -1039,6 +1039,23 @@
           },
           "default": [],
           "scope": "window"
+        },
+        "java.sharedIndexes.enabled": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "default": "auto",
+          "markdownDescription": "[Experimental] Specify whether to share indexes between different workspaces. When set to `auto`, shared indexes will be enabled in Visual Studio Code - Insiders.",
+          "scope": "window"
+        },
+        "java.sharedIndexes.location": {
+          "type": "string",
+          "markdownDescription": "Specifies a common index location for all workspaces. See default values as follows:\n \nWindows: First use `\"$APPDATA\\\\.jdt\\\\index\"`, or `\"~\\\\.jdt\\\\index\"` if it does not exist\n \nmacOS: `\"~/Library/Caches/.jdt/index\"`\n \nLinux: First use `\"$XDG_CACHE_HOME/.jdt/index\"`, or `\"~/.cache/.jdt/index\"` if it does not exist",
+          "default": "",
+          "scope": "window"
         }
       }
     },
@@ -1175,6 +1192,11 @@
       {
         "command": "_java.learnMoreAboutCleanUps",
         "title": "Learn more about Java Clean Ups",
+        "category": "Java"
+      },
+      {
+        "command": "java.clean.sharedIndexes",
+        "title": "%java.clean.sharedIndexes%",
         "category": "Java"
       }
     ],
