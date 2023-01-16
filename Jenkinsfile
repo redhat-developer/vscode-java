@@ -75,7 +75,7 @@ def publishExtensions() {
 
 	stage "publish generic version to VS Code Marketplace"
 	withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-		sh 'vsce publish -p ${TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64' + " ${env.publishPreReleaseFlag}"
+		sh 'vsce publish -p ${TOKEN}' + " ${env.publishPreReleaseFlag}"
 	}
 
 	stage "publish specific version to VS Code Marketplace"
@@ -88,7 +88,7 @@ def publishExtensions() {
 
 	stage "Publish generic version to Open-VSX Marketplace"
 	withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
-		sh 'ovsx publish -p ${OVSX_TOKEN} --target win32-ia32 win32-arm64 linux-armhf alpine-x64 alpine-arm64' + " ${env.publishPreReleaseFlag}"
+		sh 'ovsx publish -p ${OVSX_TOKEN}' + " ${env.publishPreReleaseFlag}"
 	}
 
 	stage "Publish specific version to Open-VSX Marketplace"
