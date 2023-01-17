@@ -1,5 +1,32 @@
 # Change Log
 
+## 1.14.0 (January 17th, 2023)
+ * enhancement - Support for shared indexes among workspaces. See [#2723](https://github.com/redhat-developer/vscode-java/issues/2723).
+ * enhancement - Support pasting content into a string literal. See [#1249](https://github.com/redhat-developer/vscode-java/issues/1249).
+ * enhancement - Resolve missing imports (if any) when pasting code. See [JLS#2320](https://github.com/eclipse/eclipse.jdt.ls/pull/2320).
+ * enhancement - Support matching case for code completion. See [#2834](https://github.com/redhat-developer/vscode-java/pull/2834).
+ * enhancement - Add code action to insert missing required attributes for an annotation. See [JLS#1860](https://github.com/eclipse/eclipse.jdt.ls/issues/1860).
+ * enhancement - Create cleanup actions for adding `final` modifier where possible, converting `switch` statement to `switch` expression, using pattern matching for `instanceof` checks, and converting anonymous functions to lambda expressions. See [#2827](https://github.com/redhat-developer/vscode-java/pull/2827).
+ * enhancement - Support quickfix for gradle jpms projects. See [JLS#2304](https://github.com/eclipse/eclipse.jdt.ls/pull/2304).
+ * enhancement - Add the Korean translation file. See [#2802](https://github.com/redhat-developer/vscode-java/pull/2802).
+ * bug fix - Fix incorrect type hierarchy on multi module Maven projects. See [#2871](https://github.com/redhat-developer/vscode-java/issues/2871).
+ * bug fix - Permit output folder to be the same as a source folder. See [#2786](https://github.com/redhat-developer/vscode-java/issues/2786).
+ * bug fix - Organize imports removes static imports under some conditions. See [#2861](https://github.com/redhat-developer/vscode-java/issues/2861).
+ * bug fix - Fix completion issue occuring when invocation spans multiple lines. See [JLS#2387](https://github.com/eclipse/eclipse.jdt.ls/issues/2387).
+ * bug fix - Fix scope calculation for "Surround with try/catch" refactoring. See [#2711](https://github.com/redhat-developer/vscode-java/issues/2711).
+ * bug fix - Fix NPE occuring when completion item is selected. See [JLS#2376](https://github.com/eclipse/eclipse.jdt.ls/issues/2376).
+ * bug fix - Log user friendly error if client does not support `_java.reloadBundles.command`. See [JLS#2370](https://github.com/eclipse/eclipse.jdt.ls/pull/2370).
+ * bug fix - Postfix completion should not be available when editing Javadoc. See [JLS#2367](https://github.com/eclipse/eclipse.jdt.ls/issues/2367).
+ * bug fix - Update m2e to latest version in order to ensure classpath resources persist. See [#2857](https://github.com/redhat-developer/vscode-java/issues/2857).
+ * build - Use `instanceof` pattern matching in code base. See [JLS#2357](https://github.com/eclipse/eclipse.jdt.ls/pull/2357).
+ * build - React to `vsce` renaming to `@vscode/vsce`. See [#2879](https://github.com/redhat-developer/vscode-java/pull/2879).
+ * build - Work around vsce refusal to publish extensions with proposed API. See [#2854](https://github.com/redhat-developer/vscode-java/pull/2854).
+ * build - Deploy the universal vsix to support all platforms without an embedded JRE. See [#2837](https://github.com/redhat-developer/vscode-java/issues/2837).
+ * build - Ensure npm public registry is used for the resolved field in `package-lock.json`. See [#2874](https://github.com/redhat-developer/vscode-java/issues/2874).
+ * build - Bump qs from 6.5.2 to 6.5.3 and decode-uri-component from 0.2.0 to 0.2.2. See [#2832](https://github.com/redhat-developer/vscode-java/pull/2832), [#2823](https://github.com/redhat-developer/vscode-java/pull/2823).
+ * build - Move utilities out of extension.ts. See [#2824](https://github.com/redhat-developer/vscode-java/pull/2824).
+ * documentation - Fix Build Status badge. See [#2847](https://github.com/redhat-developer/vscode-java/pull/2847).
+
 ## 1.13.0 (December 1st, 2022)
  * enhancement - Support "Add all missing imports". See [#2753](https://github.com/redhat-developer/vscode-java/pull/2753).
  * enhancement - Support Gradle annotation processing. See [#1039](https://github.com/redhat-developer/vscode-java/issues/1039).
