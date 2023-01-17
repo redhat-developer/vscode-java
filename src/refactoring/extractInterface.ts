@@ -35,7 +35,7 @@ export async function getExtractInterfaceArguments(languageClient: LanguageClien
                     };
                 });
                 const members = await vscode.window.showQuickPick(items, {
-                    title: "Extract Interface: Select members",
+                    title: "Extract Interface (1/3): Select members",
                     placeHolder: "Please select members to declare in the interface: ",
                     matchOnDescription: true,
                     ignoreFocusOut: true,
@@ -54,7 +54,7 @@ export async function getExtractInterfaceArguments(languageClient: LanguageClien
                 const specifyInterfaceNameDisposables = [];
                 const specifyInterfaceNamePromise = new Promise<string | boolean | undefined>((resolve, _reject) => {
                     const inputBox = vscode.window.createInputBox();
-                    inputBox.title = "Extract Interface: Specify interface name";
+                    inputBox.title = "Extract Interface (2/3): Specify interface name";
                     inputBox.placeholder = "Please specify the new interface name: ";
                     inputBox.ignoreFocusOut = true;
                     inputBox.value = interfaceName === undefined ? extractInterfaceResponse.subTypeName : interfaceName;
@@ -108,7 +108,7 @@ export async function getExtractInterfaceArguments(languageClient: LanguageClien
                 const selectPackagePromise = new Promise<SelectPackageQuickPickItem | boolean | undefined>((resolve, _reject) => {
                     const quickPick = vscode.window.createQuickPick<SelectPackageQuickPickItem>();
                     quickPick.items = packageNodeItems;
-                    quickPick.title = "Extract Interface: Specify package";
+                    quickPick.title = "Extract Interface (3/3): Specify package";
                     quickPick.placeholder = "Please select the target package for extracted interface.";
                     quickPick.ignoreFocusOut = true;
                     quickPick.buttons = [(vscode.QuickInputButtons.Back)];
