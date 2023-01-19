@@ -9,7 +9,10 @@
 	},
 	"ife": {
 		"description": "[if] [e]lse",
-		"prefix": "ife",
+		"prefix": [
+			"ife",
+			"if-else"
+		],
 		"body": [
 			"if (${1:condition})",
 			"\t${2:System.err.println()};",
@@ -19,7 +22,10 @@
 	},
 	"wh": {
 		"description": "[wh]ile",
-		"prefix": "wh",
+		"prefix": [
+			"wh",
+			"while"
+		],
 		"body": [
 			"while (${1:condition})",
 			"\t$0;"
@@ -36,7 +42,10 @@
 	},
 	"fo": {
 		"description": "[fo]r",
-		"prefix": "fo",
+		"prefix": [
+			"fo",
+			"for"
+		],
 		"body": [
 			"for (var ${1:variable} = ${2:0}; $1 ${3|<,<=,>,>=|} ${4:limit}; $1++)",
 			"\t$0;"
@@ -44,7 +53,10 @@
 	},
 	"foe": {
 		"description": "[fo]r[e]ach",
-		"prefix": "foe",
+		"prefix": [
+			"foe",
+			"for-each"
+		],
 		"body": [
 			"foreach (var ${1:variable} in ${2:iterable})",
 			"\t$0;"
@@ -52,7 +64,10 @@
 	},
 	"sw": {
 		"description": "[sw]itch",
-		"prefix": "sw",
+		"prefix": [
+			"sw",
+			"switch"
+		],
 		"body": [
 			"switch (${1:key}) {",
 			"\tcase ${2:value}:",
@@ -66,7 +81,10 @@
 	},
 	"me": {
 		"description": "[me]thod",
-		"prefix": "me",
+		"prefix": [
+			"me",
+			"method"
+		],
 		"body": [
 			"${1|public,protected,private|} ${2:methodName}(${2:parameters}) {",
 			"\t$0;",
@@ -75,7 +93,10 @@
 	},
 	"cl": {
 		"description": "[cl]ass",
-		"prefix": "cl",
+		"prefix": [
+			"cl",
+			"class"
+		],
 		"body": [
 			"public class ${1:Name} {",
 			"\t$0",
@@ -84,7 +105,10 @@
 	},
 	"re": {
 		"description": "[re]cord",
-		"prefix": "re",
+		"prefix": [
+			"re",
+			"record"
+		],
 		"body": [
 			"public record ${1:Name} {",
 			"\t$0",
@@ -93,7 +117,10 @@
 	},
 	"in": {
 		"description": "[in]terface",
-		"prefix": "in",
+		"prefix": [
+			"in",
+			"interface"
+		],
 		"body": [
 			"public interface ${1:Name} {",
 			"\t$0",
@@ -102,7 +129,10 @@
 	},
 	"tr": {
 		"description": "[tr]y",
-		"prefix": "tr",
+		"prefix": [
+			"tr",
+			"try"
+		],
 		"body": [
 			"try {",
 			"\t${1:System.err.println()};",
@@ -113,7 +143,10 @@
 	},
 	"trf": {
 		"description": "[tr]y [f]inally",
-		"prefix": "trf",
+		"prefix": [
+			"trf",
+			"try-finally"
+		],
 		"body": [
 			"try {",
 			"\t${1:System.err.println()};",
@@ -126,7 +159,10 @@
 	},
 	"ma": {
 		"description": "[ma]in",
-		"prefix": "ma",
+		"prefix": [
+			"ma",
+			"main"
+		],
 		"body": [
 			"public static void main(String[] args) {",
 			"\t$0",
