@@ -1040,7 +1040,8 @@
               "addFinalModifier",
               "instanceofPatternMatch",
               "lambdaExpression",
-              "switchExpression"
+              "switchExpression",
+              "tryWithResource"
             ]
           },
           "default": [],
