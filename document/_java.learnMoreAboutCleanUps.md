@@ -274,3 +274,27 @@ int i = switch(j) {
     default -> 0;
 };
 ```
+
+### `tryWithResource`
+
+Simplifies the finally block to use the `try-with-resource` statement.
+
+For example:
+
+```java
+final FileInputStream inputStream = new FileInputStream("out.txt");
+try {
+    System.out.println(inputStream.read());
+} finally {
+    inputStream.close();
+}
+```
+
+becomes:
+
+```java
+final FileInputStream inputStream = new FileInputStream("out.txt");
+try (inputStream) {
+    System.out.println(inputStream.read());
+}
+```
