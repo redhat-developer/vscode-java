@@ -52,7 +52,7 @@ export class HandlerImpl implements IHandler {
 			return;
 		}
 
-		const actions: Array<string> = Object.keys(UserChoice);
+		const actions: Array<string> = Object.values(UserChoice);
 		const answer = await vscode.window.showInformationMessage(message, ...actions);
 		if (answer === UserChoice.install) {
 			await installExtensionCmdHandler(extName, extName);
