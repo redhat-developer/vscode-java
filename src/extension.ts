@@ -76,7 +76,7 @@ function getHeapDumpFolderFromSettings(): string {
 }
 
 
-export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+export function activate(context: ExtensionContext): Promise<Promise<ExtensionAPI> | ExtensionAPI> {
 	context.subscriptions.push(markdownPreviewProvider);
 	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
@@ -108,7 +108,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 	serverStatusBarProvider.initialize();
 
-	return requirements.resolveRequirements(context).catch(error => {
+	return Promise.resolve(requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
 			if (error.label && error.label === selection && error.command) {
@@ -408,7 +408,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			}
 			context.subscriptions.push(workspace.onDidChangeTextDocument(event => handleTextBlockClosing(event.document, event.contentChanges)));
 		});
-	});
+	}));
 }
 
 async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
