@@ -404,6 +404,18 @@
           "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
           "scope": "window"
         },
+        "java.configuration.maven.defaultMojoExecutionAction": {
+          "type": "string",
+          "enum": [
+            "ignore",
+            "warn",
+            "error",
+            "execute"
+          ],
+          "default": "ignore",
+          "description": "Specifies default mojo execution action when no associated metadata can be detected.",
+          "scope": "window"
+        },
         "java.configuration.workspaceCacheLimit": {
           "type": [
             "null",
