@@ -243,12 +243,16 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			};
 
 			apiManager.initialize(requirements, serverMode);
+			resolve(apiManager.getApiInstance());
+			// the promise is resolved
+			// no need to pass `resolve` into any code past this point,
+			// since `resolve` is a no-op from now on
 
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
-					syntaxClient.initialize(requirements, clientOptions, resolve);
+					syntaxClient.initialize(requirements, clientOptions);
 				} else {
-					syntaxClient.initialize(requirements, clientOptions, resolve, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
+					syntaxClient.initialize(requirements, clientOptions, prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true));
 				}
 				syntaxClient.start();
 				serverStatusBarProvider.showLightWeightStatus();
@@ -347,7 +351,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				}
 
 				if (choice === "Yes") {
-					await startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+					await startStandardServer(context, requirements, clientOptions, workspacePath);
 				}
 			});
 
@@ -372,10 +376,8 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				const importOnStartup = config.get(importOnStartupSection);
 				if (importOnStartup === "disabled" ||
 					env.uiKind === UIKind.Web && env.appName.includes("Visual Studio Code")) {
-					syntaxClient.resolveApi(resolve);
 					requireStandardServer = false;
 				} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
-					syntaxClient.resolveApi(resolve);
 					requireStandardServer = await promptUserForStandardServer(config);
 				} else {
 					requireStandardServer = true;
@@ -383,7 +385,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			}
 
 			if (requireStandardServer) {
-				await startStandardServer(context, requirements, clientOptions, workspacePath, resolve);
+				await startStandardServer(context, requirements, clientOptions, workspacePath);
 			}
 
 			const onDidGrantWorkspaceTrust = (workspace as any).onDidGrantWorkspaceTrust;
@@ -411,7 +413,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	});
 }
 
-async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, resolve: (value?: ExtensionAPI | PromiseLike<ExtensionAPI>) => void) {
+async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string) {
 	if (standardClient.getClientStatus() !== ClientStatus.uninitialized) {
 		return;
 	}
@@ -426,7 +428,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		apiManager.getApiInstance().serverMode = ServerMode.hybrid;
 		apiManager.fireDidServerModeChange(ServerMode.hybrid);
 	}
-	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter, resolve);
+	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter);
 	standardClient.start();
 	serverStatusBarProvider.showStandardStatus();
 }

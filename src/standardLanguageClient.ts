@@ -11,7 +11,7 @@ import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
 import { javaRefactorKinds, RefactorDocumentProvider } from "./codeActionProvider";
 import { Commands } from "./commands";
-import { ClientStatus, ExtensionAPI } from "./extension.api";
+import { ClientStatus } from "./extension.api";
 import * as fileEventHandler from './fileEventHandler';
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { JavaInlayHintsProvider } from "./inlayHintsProvider";
@@ -56,7 +56,7 @@ export class StandardLanguageClient {
 	private languageClient: LanguageClient;
 	private status: ClientStatus = ClientStatus.uninitialized;
 
-	public async initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>, resolve: (value: ExtensionAPI) => void): Promise<void> {
+	public async initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>): Promise<void> {
 		if (this.status !== ClientStatus.uninitialized) {
 			return;
 		}
@@ -139,13 +139,11 @@ export class StandardLanguageClient {
 						serverStatus.updateServerStatus(ServerStatusKind.ready);
 						commands.executeCommand('setContext', 'javaLSReady', true);
 						apiManager.updateStatus(ClientStatus.started);
-						resolve(apiManager.getApiInstance());
 						break;
 					case 'Error':
 						this.status = ClientStatus.error;
 						serverStatus.updateServerStatus(ServerStatusKind.error);
 						apiManager.updateStatus(ClientStatus.error);
-						resolve(apiManager.getApiInstance());
 						break;
 					case 'ProjectStatus':
 						if (report.message === "WARNING") {
