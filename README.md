@@ -221,6 +221,7 @@ The following settings are supported:
   - Windows: First use `"$APPDATA\\.jdt\\index"`, or `"~\\.jdt\\index"` if it does not exist
   - macOS: `"~/Library/Caches/.jdt/index"`
   - Linux: First use `"$XDG_CACHE_HOME/.jdt/index"`, or `"~/.cache/.jdt/index"` if it does not exist
+* `java.refactoring.extract.interface.replace`: Specify whether to replace all the occurrences of the subtype with the new extracted interface. Defaults to `true`.
 
 New in 1.15.0
 * `java.import.maven.disableTestClasspathFlag` : Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects. Defaults to `false`.
