@@ -123,6 +123,7 @@ export class StandardLanguageClient {
 							});
 						}
 
+						registerPasteEventHandler(context, this.languageClient);
 						activationProgressNotification.hide();
 						if (!hasImported) {
 							showImportFinishNotification(context);
@@ -595,7 +596,6 @@ export class StandardLanguageClient {
 				context.subscriptions.push(languages.registerInlayHintsProvider(JAVA_SELECTOR, new JavaInlayHintsProvider(this.languageClient)));
 			}
 
-			registerPasteEventHandler(context, this.languageClient);
 		});
 	}
 
