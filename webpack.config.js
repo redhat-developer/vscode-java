@@ -3,6 +3,7 @@
 
 //@ts-check
 const ESLintWebpackPlugin = require('eslint-webpack-plugin');
+const webpack = require('webpack');
 const path = require('path');
 
 /**@type {import('webpack').Configuration}*/
@@ -51,4 +52,44 @@ const config = {
 		level: 'log',
 	},
 }
-module.exports = config;
+
+const configAssets = {
+	name: 'assets',
+	mode: 'none',
+	entry: {
+		changeSignature: './src/webview/changeSignature/index.tsx',
+	},
+	module: {
+		rules: [{
+			test: /\.ts(x?)$/,
+			exclude: /node_modules/,
+			use: 'ts-loader'
+		}, {
+			test: /\.(css)$/,
+			use: [{
+				loader: 'style-loader'
+			}, {
+				loader: 'css-loader'
+			}]
+		}, {
+			test: /\.(ttf)$/,
+			type: 'asset/inline',
+		}]
+	},
+	output: {
+		filename: '[name]/index.js',
+		path: path.resolve(__dirname, 'dist'),
+		publicPath: '/',
+		devtoolModuleFilenameTemplate: "../[resource-path]"
+	},
+	plugins: [
+		new webpack.ProvidePlugin({
+			process: 'process/browser',
+		}),
+	],
+	devtool: 'source-map',
+	resolve: {
+		extensions: ['.js', '.ts', '.tsx']
+	}
+}
+module.exports = [config, configAssets];

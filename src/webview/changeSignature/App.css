@@ -1,0 +1,107 @@
+@import "../../../node_modules/@vscode/codicons/dist/codicon.css";
+
+main {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	height: 100%;
+}
+
+main>* {
+	margin: 1rem 0;
+}
+
+.section {
+	padding: 0;
+	margin: 0;
+	width: 100%;
+}
+
+.section-columns {
+	display: flex;
+	width: 100%;
+	flex-flow: row wrap;
+	min-width: none;
+}
+
+.header-left {
+	flex-wrap: nowrap;
+	flex-direction: column;
+	display: flex;
+	padding: 1rem 1rem 1rem 0;
+	flex: 0 0 30%;
+	max-width: 30%;
+	box-sizing: border-box;
+}
+
+.header {
+	flex-wrap: nowrap;
+	flex-direction: column;
+	display: flex;
+	padding: 1rem;
+	flex: 0 0 30%;
+	max-width: 30%;
+	box-sizing: border-box;
+}
+
+.header-right {
+	flex-wrap: nowrap;
+	flex-direction: column;
+	display: flex;
+	padding: 1rem 0 1rem 1rem;
+	flex: 0 0 30%;
+	max-width: 30%;
+	box-sizing: border-box;
+}
+
+.vsc-button-left {
+	float: left;
+	margin: 1rem 1rem 1rem 0;
+}
+
+.bottom-buttons {
+	margin: 0;
+	display: block;
+	width: 90%;
+}
+
+.preview {
+	width: 90%;
+}
+
+.parameters-panel {
+	margin: 0;
+	width: 90%;
+}
+
+.parameters-view {
+	padding: 0;
+	flex-direction: column;
+	width: 100%;
+}
+
+.parameters-grid {
+	width: 100%;
+}
+
+.parameter-cell {
+	padding-left: 0;
+}
+
+.parameter-cell-button {
+	display: flex;
+	justify-content: right;
+}
+
+.table-buttons {
+	display: inline-flex;
+}
+
+.table-buttons-hide {
+	visibility: hidden;
+}
+
+.delegate {
+	margin: 0;
+}
