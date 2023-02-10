@@ -79,7 +79,7 @@ export class TypeHierarchyModel implements SymbolItemNavigation<TypeHierarchyIte
 	}
 
 	location(item: TypeHierarchyItem) {
-		return new vscode.Location(vscode.Uri.file(item.uri), item.range);
+		return new vscode.Location(vscode.Uri.parse(item.uri), item.range);
 	}
 
 	nearest(uri: vscode.Uri, _position: vscode.Position): TypeHierarchyItem | undefined {
