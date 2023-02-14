@@ -99,10 +99,10 @@ function createDocumentSymbolProvider(): DocumentSymbolProvider {
 			}
 
 			if ((<any>symbolResponse[0]).containerName) {
-				return await languageClient.protocol2CodeConverter.asSymbolInformations(<clientSymbolInformation[]>symbolResponse);
+				return languageClient.protocol2CodeConverter.asSymbolInformations(<clientSymbolInformation[]>symbolResponse);
 			}
 
-			return await languageClient.protocol2CodeConverter.asDocumentSymbols(<clientDocumentSymbol[]>symbolResponse);
+			return languageClient.protocol2CodeConverter.asDocumentSymbols(<clientDocumentSymbol[]>symbolResponse);
 		}
 	};
 }
