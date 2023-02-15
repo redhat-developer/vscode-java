@@ -1,5 +1,34 @@
 # Change Log
 
+## 1.15.0 (February 16th, 2023)
+ * performance - Skip generated methods when calculating document symbols. See [JLS#2446](https://github.com/eclipse/eclipse.jdt.ls/issues/2446).
+ * performance - Make the debounce adaptive for the publish diagnostic job. See [JLS#2443](https://github.com/eclipse/eclipse.jdt.ls/pull/2443).
+ * performance - Only perform context sensitive import rewrite when resolving completion items. See [JLS#2453](https://github.com/eclipse/eclipse.jdt.ls/pull/2453).
+ * performance - Extension activation should not depend on language server being started. See [#2900](https://github.com/redhat-developer/vscode-java/issues/2900).
+ * performance - Copy/paste within the same file should not trigger the paste handler for missing imports. See [JLS#2441](https://github.com/eclipse/eclipse.jdt.ls/issues/2441).
+ * enhancement - Support "extract interface" refactoring. See [#761](https://github.com/redhat-developer/vscode-java/issues/761).
+ * enhancement - Add "Convert String concatenation to Text Block" quick assist. See [JLS#2456](https://github.com/eclipse/eclipse.jdt.ls/pull/2456).
+ * enhancement - Add clean up for using `try-with-resource`. See [#2891](https://github.com/redhat-developer/vscode-java/pull/2891).
+ * enhancement - Enable formatting support in syntax server. See [#2926](https://github.com/redhat-developer/vscode-java/issues/2926).
+ * enhancement - Add option to configure behaviour when mojo execution metadata not available. See [#2889](https://github.com/redhat-developer/vscode-java/issues/2889).
+ * enhancement - Add option to permit usage of test resources of a Maven project as dependencies within the compile scope of other projects. See [#2569](https://github.com/redhat-developer/vscode-java/issues/2569).
+ * bug fix - Change default generated method stub to throw exception. See [JLS#2366](https://github.com/eclipse/eclipse.jdt.ls/pull/2366).
+ * bug fix - Prevent the paste handler for missing imports from generating overlapping text edits. See [JLS#2442](https://github.com/eclipse/eclipse.jdt.ls/issues/2442).
+ * bug fix - Reference search doesn't work for fields in JDK classes. See [JLS#2405](https://github.com/eclipse/eclipse.jdt.ls/issues/2405).
+ * bug fix - Paste event handling blocks pasting while project loading. See [#2924](https://github.com/redhat-developer/vscode-java/issues/2924).
+ * bug fix - Completion results should include filtered (excluded) types if they are also present in the import declarations. See [JLS#2467](https://github.com/eclipse/eclipse.jdt.ls/pull/2467).
+ * bug fix - Fix type hierarchy regression since VS Code 1.75.1. See [#2930](https://github.com/redhat-developer/vscode-java/pull/2930).
+ * bug fix - Re-publish diagnostics for null analysis configuration change when auto-build is disabled. See [JLS#2447](https://github.com/eclipse/eclipse.jdt.ls/pull/2447).
+ * bug fix - Dependency Analytics extension popup shoud respect user choice. See [#2892](https://github.com/redhat-developer/vscode-java/issues/2892).
+ * bug fix - Only do full build for a configuration change when auto-build is enabled. See [JLS#2437](https://github.com/eclipse/eclipse.jdt.ls/pull/2437).
+ * bug fix - The command to upgrade gradle should check for cancellation prior to updating metadata files. See [JLS#2444](https://github.com/eclipse/eclipse.jdt.ls/pull/2444).
+ * bug fix - Fix incorrect ordering of completion items that use a decorator. See [#2917](https://github.com/redhat-developer/vscode-java/issues/2917).
+ * bug fix - Reduce the amount of logging from `org.apache.http` bundles. See [JLS#2420](https://github.com/eclipse/eclipse.jdt.ls/pull/2420).
+ * build - Do not require `org.eclipse.xtend.lib`. See [JLS#2416](https://github.com/eclipse/eclipse.jdt.ls/pull/2416).
+ * build - Add Github action to detect potential duplicate issues. See [#2927](https://github.com/redhat-developer/vscode-java/pull/2927).
+ * build - Use commit SHA-1 instead of branch name for third-party actions. See [#2895](https://github.com/redhat-developer/vscode-java/pull/2895).
+ * documentation - Clarify the `README` quick start instructions. See [#2915](https://github.com/redhat-developer/vscode-java/pull/2915).
+
 ## 1.14.0 (January 17th, 2023)
  * enhancement - Support for shared indexes among workspaces. See [#2723](https://github.com/redhat-developer/vscode-java/issues/2723).
  * enhancement - Support pasting content into a string literal. See [#1249](https://github.com/redhat-developer/vscode-java/issues/1249).
