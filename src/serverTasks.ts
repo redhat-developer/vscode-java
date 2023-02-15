@@ -34,10 +34,7 @@ function organizeTasks() {
 	}
 
 	// make sure in-progress items are always at the end
-	newArray.sort((a, b) => {
-		const ai = a.complete ? 0 : 1, bi = a.complete ? 0 : 1;
-		return ai - bi;
-	});
+	newArray.sort((a, b) =>  Number(b.complete) - Number(a.complete));
 
 	tasks = newArray;
 }
