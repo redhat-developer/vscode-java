@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.15.0 (February 16th, 2023)
+## 1.15.0 (February 20th, 2023)
  * performance - Skip generated methods when calculating document symbols. See [JLS#2446](https://github.com/eclipse/eclipse.jdt.ls/issues/2446).
  * performance - Make the debounce adaptive for the publish diagnostic job. See [JLS#2443](https://github.com/eclipse/eclipse.jdt.ls/pull/2443).
  * performance - Only perform context sensitive import rewrite when resolving completion items. See [JLS#2453](https://github.com/eclipse/eclipse.jdt.ls/pull/2453).
@@ -16,6 +16,7 @@
  * bug fix - Prevent the paste handler for missing imports from generating overlapping text edits. See [JLS#2442](https://github.com/eclipse/eclipse.jdt.ls/issues/2442).
  * bug fix - Reference search doesn't work for fields in JDK classes. See [JLS#2405](https://github.com/eclipse/eclipse.jdt.ls/issues/2405).
  * bug fix - Paste event handling blocks pasting while project loading. See [#2924](https://github.com/redhat-developer/vscode-java/issues/2924).
+ * bug fix - Avoid generating boilerplate code repeatedly in new Java file. See [#2939](https://github.com/redhat-developer/vscode-java/issues/2939).
  * bug fix - Completion results should include filtered (excluded) types if they are also present in the import declarations. See [JLS#2467](https://github.com/eclipse/eclipse.jdt.ls/pull/2467).
  * bug fix - Fix type hierarchy regression since VS Code 1.75.1. See [#2930](https://github.com/redhat-developer/vscode-java/pull/2930).
  * bug fix - Re-publish diagnostics for null analysis configuration change when auto-build is disabled. See [JLS#2447](https://github.com/eclipse/eclipse.jdt.ls/pull/2447).
