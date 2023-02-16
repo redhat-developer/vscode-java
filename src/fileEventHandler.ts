@@ -56,67 +56,85 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
         }
     }
 
-    const formatNumber = (num => num > 9 ? String(num) : `0${num}`);
-    for (let i = 0; i < emptyFiles.length; i++) {
-        const typeName: string = resolveTypeName(textDocuments[i].fileName);
-        const isPackageInfo = typeName === 'package-info';
-        const isModuleInfo = typeName === 'module-info';
-        const date = new Date();
-        const context: any = {
-            fileName: path.basename(textDocuments[i].fileName),
-            packageName: "",
-            typeName: typeName,
-            user: userInfo().username,
-            date: date.toLocaleDateString(undefined, {month: "short", day: "2-digit", year: "numeric"}),
-            time: date.toLocaleTimeString(),
-            year: date.getFullYear(),
-            month: formatNumber(date.getMonth() + 1),
-            shortmonth: date.toLocaleDateString(undefined, {month: "short"}),
-            day: formatNumber(date.getDate()),
-            hour: formatNumber(date.getHours()),
-            minute: formatNumber(date.getMinutes()),
-        };
-
-        if (!isModuleInfo) {
-            context.packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
-        }
-
-        const snippets: string[] = [];
-        const fileHeader = getJavaConfiguration().get<string[]>("templates.fileHeader");
-        if (fileHeader && fileHeader.length) {
-            for (const template of fileHeader) {
-                snippets.push(stringInterpolate(template, context));
+    // See https://github.com/redhat-developer/vscode-java/issues/2939
+    // The client side listener should avoid inserting duplicated conents
+    // when the file creation event is triggered from a WorkspaceEdit.
+    // Given that the VS Code API doesn't provide a way to distinguish
+    // the event source, a workaround is to wait 100ms and let WorkspaceEdit
+    // to take effect first, then check if the workingcopy is filled with content.
+    const timeout = setTimeout(async() => {
+        const formatNumber = (num => num > 9 ? String(num) : `0${num}`);
+        for (let i = 0; i < emptyFiles.length; i++) {
+            if (textDocuments[i].getText()) {
+                continue;
             }
-        }
 
-        if (!isModuleInfo) {
-            if (context.packageName) {
-                snippets.push(`package ${context.packageName};`);
-                snippets.push("");
+            const typeName: string = resolveTypeName(textDocuments[i].fileName);
+            const isPackageInfo = typeName === 'package-info';
+            const isModuleInfo = typeName === 'module-info';
+            const date = new Date();
+            const context: any = {
+                fileName: path.basename(textDocuments[i].fileName),
+                packageName: "",
+                typeName: typeName,
+                user: userInfo().username,
+                date: date.toLocaleDateString(undefined, {month: "short", day: "2-digit", year: "numeric"}),
+                time: date.toLocaleTimeString(),
+                year: date.getFullYear(),
+                month: formatNumber(date.getMonth() + 1),
+                shortmonth: date.toLocaleDateString(undefined, {month: "short"}),
+                day: formatNumber(date.getDate()),
+                hour: formatNumber(date.getHours()),
+                minute: formatNumber(date.getMinutes()),
+            };
+
+            if (!isModuleInfo) {
+                context.packageName = resolvePackageName(sourcePaths, emptyFiles[i].fsPath);
             }
-        }
-        if (!isPackageInfo) {
-            const typeComment = getJavaConfiguration().get<string[]>("templates.typeComment");
-            if (typeComment && typeComment.length) {
-                for (const template of typeComment) {
+
+            const snippets: string[] = [];
+            const fileHeader = getJavaConfiguration().get<string[]>("templates.fileHeader");
+            if (fileHeader && fileHeader.length) {
+                for (const template of fileHeader) {
                     snippets.push(stringInterpolate(template, context));
                 }
             }
 
-            if (isModuleInfo) {
-                snippets.push(`module \${1:name} {`);
-            } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
-                snippets.push(`public \${1|class,interface,enum,abstract class,@interface|} ${typeName} {`);
-            } else {
-                snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|} {`);
+            if (!isModuleInfo) {
+                if (context.packageName) {
+                    snippets.push(`package ${context.packageName};`);
+                    snippets.push("");
+                }
             }
-            snippets.push("\t${0}");
-            snippets.push("}");
-            snippets.push("");
+            if (!isPackageInfo) {
+                const typeComment = getJavaConfiguration().get<string[]>("templates.typeComment");
+                if (typeComment && typeComment.length) {
+                    for (const template of typeComment) {
+                        snippets.push(stringInterpolate(template, context));
+                    }
+                }
+
+                if (isModuleInfo) {
+                    snippets.push(`module \${1:name} {`);
+                } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
+                    snippets.push(`public \${1|class,interface,enum,abstract class,@interface|} ${typeName} {`);
+                } else {
+                    snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|} {`);
+                }
+                snippets.push("\t${0}");
+                snippets.push("}");
+                snippets.push("");
+            }
+            const textEditor = await window.showTextDocument(textDocuments[i]);
+            if (textDocuments[i].getText()) {
+                continue;
+            }
+
+            textEditor.insertSnippet(new SnippetString(snippets.join("\n")));
         }
-        const textEditor = await window.showTextDocument(textDocuments[i]);
-        textEditor.insertSnippet(new SnippetString(snippets.join("\n")));
-    }
+
+        clearTimeout(timeout);
+    }, 100);
 }
 
 function getWillRenameHandler(client: LanguageClient) {
