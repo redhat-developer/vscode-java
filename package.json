@@ -1431,7 +1431,7 @@
     "htmlparser2": "6.0.1",
     "jdk-utils": "^0.4.4",
     "semver": "^7.3.5",
-    "vscode-languageclient": "8.0.2",
+    "vscode-languageclient": "8.1.0",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.10.0"
