@@ -205,6 +205,23 @@ export function getJavaConfig(javaHome: string) {
 			break;
 	}
 
+	const isAutoBuildDisabled = javaConfig.autobuild.enabled === false;
+	const renameReference = javaConfig.refactoring.rename.references;
+	switch (renameReference) {
+		case "auto":
+			javaConfig.refactoring.rename.references = isAutoBuildDisabled;
+			break;
+		case "on":
+			javaConfig.refactoring.rename.references = true;
+			break;
+		case "off":
+			javaConfig.refactoring.rename.references = false;
+			break;
+		default:
+			javaConfig.refactoring.rename.references = false;
+			break;
+	}
+
 	const completionCaseMatching = javaConfig.completion.matchCase;
 	if (completionCaseMatching === "auto") {
 		javaConfig.completion.matchCase = isInsider ? "firstLetter" : "off";

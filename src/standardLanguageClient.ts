@@ -4,8 +4,8 @@ import * as fse from 'fs-extra';
 import { findRuntimes } from "jdk-utils";
 import * as net from 'net';
 import * as path from 'path';
-import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
-import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit } from "vscode-languageclient";
+import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceEdit } from "vscode";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, Range as LSRange, RenameParams, RenameRequest, TextDocumentIdentifier, TextDocumentPositionParams, WorkspaceEdit as LSWorkspaceEdit } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -563,6 +563,21 @@ export class StandardLanguageClient {
 			upgradeGradle(projectUri, version);
 		}));
 
+		context.subscriptions.push(commands.registerCommand(Commands.RENAME_REFERENCES_COMMAND, async (fileUri: string, originalName: string, newName: string, range: LSRange) => {
+			const edit = new WorkspaceEdit();
+			edit.replace(Uri.parse(fileUri), this.languageClient.protocol2CodeConverter.asRange(range), originalName);
+			await workspace.applyEdit(edit);
+			await workspace.saveAll();
+			const params: RenameParams = {
+				newName: newName,
+				textDocument: TextDocumentIdentifier.create(fileUri),
+				position: LSPosition.create(range.start.line, range.start.character),
+			};
+			const result = await this.languageClient.sendRequest(RenameRequest.type, params);
+			await workspace.applyEdit(await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(result));
+			await workspace.saveAll();
+		}));
+
 		languages.registerCodeActionsProvider({
 			language: "xml",
 			scheme: "file",
@@ -713,7 +728,7 @@ export function showNoLocationFound(message: string): void {
 	);
 }
 
-export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageClient: LanguageClient): Promise<boolean> {
+export async function applyWorkspaceEdit(workspaceEdit: LSWorkspaceEdit, languageClient: LanguageClient): Promise<boolean> {
 	const codeEdit = await languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
 	if (codeEdit) {
 		return await workspace.applyEdit(codeEdit);
