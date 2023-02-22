@@ -147,7 +147,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-					settings: { java: getJavaConfig(requirements.java_home) },
+					settings: getJavaConfig(requirements.java_home),
 					extendedClientCapabilities: {
 						progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 						classFileContentsSupport: true,
@@ -177,9 +177,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					workspace: {
 						didChangeConfiguration: () => {
 							standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
-								settings: {
-									java: getJavaConfig(requirements.java_home),
-								}
+								settings: getJavaConfig(requirements.java_home)
 							});
 						}
 					},
