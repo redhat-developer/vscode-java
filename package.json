@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.15.0",
+  "version": "1.16.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -23,7 +23,7 @@
     "virtualWorkspaces": false
   },
   "engines": {
-    "vscode": "^1.67.0"
+    "vscode": "^1.74.0"
   },
   "repository": {
     "type": "git",
@@ -1400,7 +1400,7 @@
     "@types/node": "^8.10.51",
     "@types/semver": "^7.3.8",
     "@types/sinon": "^10.0.12",
-    "@types/vscode": "^1.67.0",
+    "@types/vscode": "^1.74.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
     "@vscode/test-electron": "^2.1.5",
