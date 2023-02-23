@@ -385,7 +385,7 @@ function registerGenerateDelegateMethodsCommand(languageClient: LanguageClient, 
 }
 
 async function revealWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageClient: LanguageClient): Promise<void> {
-    const codeWorkspaceEdit = languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
+    const codeWorkspaceEdit = await languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
     if (!codeWorkspaceEdit) {
         return;
     }

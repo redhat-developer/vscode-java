@@ -94,7 +94,7 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 			if (pasteResponse) {
 				return {
 					insertText: pasteResponse.insertText,
-					additionalEdit: pasteResponse.additionalEdit ? this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
+					additionalEdit: pasteResponse.additionalEdit ? await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
 				} as VDocumentPasteEdit;
 			}
 		} catch (e) {

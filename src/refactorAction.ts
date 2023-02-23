@@ -226,7 +226,7 @@ async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: R
     }
 
     if (refactorEdit.edit) {
-        const edit = languageClient.protocol2CodeConverter.asWorkspaceEdit(refactorEdit.edit);
+        const edit = await languageClient.protocol2CodeConverter.asWorkspaceEdit(refactorEdit.edit);
         if (edit) {
             await workspace.applyEdit(edit);
         }
