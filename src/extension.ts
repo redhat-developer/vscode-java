@@ -167,8 +167,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						resolveAdditionalTextEditsSupport: true,
 						advancedIntroduceParameterRefactoringSupport: true,
 						actionableRuntimeNotificationSupport: true,
-						// https://github.com/redhat-developer/vscode-java/pull/2377#issuecomment-1427268344
-						shouldLanguageServerExitOnShutdown: false,
 						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
 						extractInterfaceSupport: true,
 					},
