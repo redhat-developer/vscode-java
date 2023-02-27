@@ -14,7 +14,6 @@ import { Commands } from "./commands";
 import { ClientStatus } from "./extension.api";
 import * as fileEventHandler from './fileEventHandler';
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
-import { JavaInlayHintsProvider } from "./inlayHintsProvider";
 import { awaitServerConnection, prepareExecutable } from "./javaServerStarter";
 import { logger } from "./log";
 import { checkLombokDependency } from "./lombokSupport";
@@ -574,9 +573,6 @@ export class StandardLanguageClient {
 			pattern: "**/{gradle/wrapper/gradle-wrapper.properties,build.gradle,build.gradle.kts,settings.gradle,settings.gradle.kts}"
 		}, new GradleCodeActionProvider(), gradleCodeActionMetadata);
 
-		if (languages.registerInlayHintsProvider) {
-			context.subscriptions.push(languages.registerInlayHintsProvider(JAVA_SELECTOR, new JavaInlayHintsProvider(this.languageClient)));
-		}
 	}
 
 	private showGradleCompatibilityIssueNotification(message: string, options: string[], projectUri: string, gradleVersion: string, newJavaHome: string) {
