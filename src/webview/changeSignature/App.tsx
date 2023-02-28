@@ -2,7 +2,7 @@
 import { VSCodeButton, VSCodeTextField, VSCodeDropdown, VSCodeOption, VSCodeCheckbox, VSCodePanels, VSCodePanelTab, VSCodePanelView, VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow, VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
 import React from "react";
-import { vscode } from "../vscodeapiWrapper";
+import { vscode } from "../vscodeApiWrapper";
 
 interface State {
 	focusRow: number;
@@ -403,6 +403,11 @@ export class App extends React.Component<{}, State> {
 		);
 	};
 
+	/**
+	 * get the row number of the item id. The format is `${description}-${rowNumber}`.
+	 * @param id the item id
+	 * @returns the row number, or undefined if the id is not in the correct format
+	 */
 	private getSelectedRowNumber(id: string): number | undefined {
 		const idSplit: string[] = id.split("-");
 		if (idSplit.length !== 2) {

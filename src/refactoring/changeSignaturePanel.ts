@@ -55,6 +55,7 @@ export class ChangeSignaturePanel {
 					enableCommandUris: true,
 					enableScripts: true,
 					localResourceRoots: [Uri.joinPath(extensionUri, "dist")],
+					retainContextWhenHidden: true,
 				}
 			);
 			ChangeSignaturePanel.currentPanel = new ChangeSignaturePanel(panel, extensionUri);
