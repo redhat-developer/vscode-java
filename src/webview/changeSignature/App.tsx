@@ -313,10 +313,10 @@ export class App extends React.Component<{}, State> {
 							</VSCodeDropdown>
 						</div>
 						<div className="flex-grow header">
-							<VSCodeTextField readOnly={false} value={this.state.returnType} id={"returnType"} onChange={this.onChange}>Return type:</VSCodeTextField>
+							<VSCodeTextField value={this.state.returnType} id={"returnType"} onInput={this.onChange}>Return type:</VSCodeTextField>
 						</div>
 						<div className="flex-grow header-right">
-							<VSCodeTextField readOnly={false} value={this.state.methodName} id={"methodName"} onChange={this.onChange}>Method name:</VSCodeTextField>
+							<VSCodeTextField value={this.state.methodName} id={"methodName"} onInput={this.onChange}>Method name:</VSCodeTextField>
 						</div>
 					</div>
 				</div>
