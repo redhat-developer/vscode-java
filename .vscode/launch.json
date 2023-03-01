@@ -17,10 +17,8 @@
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"preLaunchTask": "npm: watch",
 			"rendererDebugOptions": {
-				"webRoot": "${workspaceFolder}/dist/changeSignature",
 				"urlFilter": "*redhat.java*",
 				"sourceMaps": true,
-				"pauseForSourceMap": true,
 			}
 		},
 		{
@@ -54,10 +52,8 @@
 			},
 			"preLaunchTask": "npm: watch",
 			"rendererDebugOptions": {
-				"webRoot": "${workspaceFolder}/dist/**",
 				"urlFilter": "*redhat.java*",
 				"sourceMaps": true,
-				"pauseForSourceMap": true,
 			}
 		},
 		{

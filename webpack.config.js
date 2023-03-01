@@ -77,7 +77,7 @@ const configAssets = {
 		}]
 	},
 	output: {
-		filename: '[name]/index.js',
+		filename: '[name].js',
 		path: path.resolve(__dirname, 'dist'),
 		publicPath: '/',
 		devtoolModuleFilenameTemplate: "../[resource-path]"

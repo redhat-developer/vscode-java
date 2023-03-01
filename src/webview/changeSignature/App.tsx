@@ -385,12 +385,12 @@ export class App extends React.Component<{}, State> {
 						<VSCodeButton className={"table-buttons-edit-ok"} disabled={false} appearance="primary" onClick={this.onClick} id={`confirmParameter-${row}`}>OK</VSCodeButton>
 						<VSCodeButton className={"table-buttons-edit-cancel"} disabled={false} appearance="secondary" onClick={this.onClick} id={`cancelParameter-${row}`}>Cancel</VSCodeButton>
 					</div> : row === this.state.focusRow ? <div className="table-buttons">
-						<VSCodeButton appearance="icon" disabled={row === 0}>
+						{row === 0 ? <></> : <VSCodeButton appearance="icon">
 							<span className={"codicon codicon-arrow-up"} title={"Up"} onClick={this.onClick} id={`upParameter-${row}`}></span>
-						</VSCodeButton>
-						<VSCodeButton appearance="icon" disabled={row === this.state.parameters.length - 1}>
+						</VSCodeButton>}
+						{row === this.state.parameters.length - 1 ? <></> : <VSCodeButton appearance="icon">
 							<span className={"codicon codicon-arrow-down"} title={"Down"} onClick={this.onClick} id={`downParameter-${row}`}></span>
-						</VSCodeButton>
+						</VSCodeButton>}
 						<VSCodeButton appearance="icon">
 							<span className={"codicon codicon-edit"} title={"Edit"} onClick={this.onClick} id={`editParameter-${row}`}></span>
 						</VSCodeButton>
@@ -406,7 +406,7 @@ export class App extends React.Component<{}, State> {
 	generateExceptionDataGridRow = (row: number) => {
 		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`}>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell-button ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionButton-${row}`} gridColumn={"4"}>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell-button ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
 				{row === this.state.editExceptionRow ?
 					<div className="table-buttons-edit">
 						<VSCodeButton className={"table-buttons-edit-ok"} disabled={false} appearance="primary" onClick={this.onClick} id={`confirmException-${row}`}>OK</VSCodeButton>
@@ -431,7 +431,7 @@ export class App extends React.Component<{}, State> {
 				<div className="section">
 					<div className="flex section-columns">
 						<div className="header-left">
-							<label className="vscode-text-field" htmlFor="access-modifier">Access modifier:</label>
+							<div className="text-title">Access modifier:</div>
 							<VSCodeDropdown className="vsc-dropdown" id={"access-modifier"} onChange={this.onChange} initialValue={this.state.accessType}>
 								<VSCodeOption id={"public"} key={"public"}>public</VSCodeOption>
 								<VSCodeOption id={"protected"} key={"protected"}>protected</VSCodeOption>
@@ -440,10 +440,12 @@ export class App extends React.Component<{}, State> {
 							</VSCodeDropdown>
 						</div>
 						<div className="flex-grow header">
-							<VSCodeTextField value={this.state.returnType} id={"returnType"} onInput={this.onChange}>Return type:</VSCodeTextField>
+							<div className="text-title">Return type:</div>
+							<VSCodeTextField value={this.state.returnType} id={"returnType"} onInput={this.onChange}></VSCodeTextField>
 						</div>
 						<div className="flex-grow header-right">
-							<VSCodeTextField value={this.state.methodName} id={"methodName"} onInput={this.onChange}>Method name:</VSCodeTextField>
+							<div className="text-title">Method name:</div>
+							<VSCodeTextField value={this.state.methodName} id={"methodName"} onInput={this.onChange}></VSCodeTextField>
 						</div>
 					</div>
 				</div>
@@ -452,7 +454,7 @@ export class App extends React.Component<{}, State> {
 					<VSCodePanelTab id="exceptionsTab">Exceptions</VSCodePanelTab>
 					<VSCodePanelView id="parametersView" className={"parameters-view"}>
 						<VSCodeDataGrid className={"parameters-grid"} onMouseLeave={this.onMouseLeave}>
-							<VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={"parameterHeader"}>
+							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={"parameterHeader"}>
 								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
 								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderName"} gridColumn={"2"}>Name</VSCodeDataGridCell>
 								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderDefault"} gridColumn={"3"}>Default value</VSCodeDataGridCell>
@@ -468,13 +470,13 @@ export class App extends React.Component<{}, State> {
 								})()
 							}
 						</VSCodeDataGrid>
-						<div className={"bottom-buttons"}>
+						<div className={"add-button"}>
 							<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"addParameter"}>Add</VSCodeButton>
 						</div>
 					</VSCodePanelView>
 					<VSCodePanelView id="exceptionsView" className={"parameters-view"}>
 						<VSCodeDataGrid className={"parameters-grid"} onMouseLeave={this.onMouseLeave}>
-							<VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionHeader`}>
+							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={`exceptionHeader`}>
 								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"exceptionHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
 								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"exceptionHeaderButton"} gridColumn={"2"}></VSCodeDataGridCell>
 							</VSCodeDataGridRow>
@@ -488,12 +490,13 @@ export class App extends React.Component<{}, State> {
 								})()
 							}
 						</VSCodeDataGrid>
-						<div className={"bottom-buttons"}>
+						<div className={"add-button"}>
 							<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"addException"}>Add</VSCodeButton>
 						</div>
 					</VSCodePanelView>
 				</VSCodePanels>
-				<VSCodeTextArea className={"preview"} value={this.getPreview()} readOnly={true}>Method signature:</VSCodeTextArea>
+				<div className="text-title-content">Method signature:</div>
+				<VSCodeTextArea className={"preview"} value={this.getPreview()} readOnly={true}></VSCodeTextArea>
 				<VSCodeCheckbox id="delegate" className={"delegate"} onClick={this.onClick}>Keep original method as delegate to changed method</VSCodeCheckbox>
 				<div className={"bottom-buttons"}>
 					<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"refactor"}>Refactor</VSCodeButton>

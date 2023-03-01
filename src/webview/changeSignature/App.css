@@ -25,6 +25,16 @@ main>* {
 	min-width: none;
 }
 
+.text-title {
+	margin: 0;
+	height: calc(var(--input-height) * 0.8px);
+}
+
+.text-title-content {
+	margin: 0.5rem 0 0 0;
+	height: calc(var(--input-height) * 0.8px);
+}
+
 .header-left {
 	flex-wrap: nowrap;
 	flex-direction: column;
@@ -57,22 +67,33 @@ main>* {
 
 .vsc-button-left {
 	float: left;
-	margin: 1rem 0.5rem 1rem 0;
+	margin: 0 0.5rem 0.5rem 0;
 }
 
 .vsc-button {
 	float: left;
-	margin: 1rem 0.5rem 1rem 0.5rem;
+	margin: 0 0.5rem 0.5rem 0.5rem;
+}
+
+.add-button {
+	margin: 0.5rem 0 0 0;
+	display: block;
+	width: 90%;
 }
 
 .bottom-buttons {
-	margin: 0;
+	margin: 0.5rem 0 0 0;
 	display: block;
 	width: 90%;
 }
 
 .preview {
+	margin: 0 0 0.5rem 0;
 	width: 90%;
+}
+
+.div.tablist {
+	padding-left: 0 !important;
 }
 
 .parameters-panel {
@@ -92,6 +113,11 @@ main>* {
 
 .parameter-cell {
 	padding-left: 0;
+}
+
+.parameter-cell-header {
+	padding-left: 0;
+	background-color: var(--vscode-keybindingTable-headerBackground);
 }
 
 .parameter-cell-edit {
@@ -124,5 +150,5 @@ main>* {
 }
 
 .delegate {
-	margin: 0;
+	margin: 0.5rem 0 0.5rem 0;
 }

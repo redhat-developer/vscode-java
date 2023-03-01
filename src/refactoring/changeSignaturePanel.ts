@@ -91,8 +91,7 @@ export class ChangeSignaturePanel {
 
 		const scriptUri = getUri(webview, extensionUri, [
 			"dist",
-			"changeSignature",
-			"index.js",
+			"changeSignature.js",
 		]);
 
 		const nonce = getNonce();
