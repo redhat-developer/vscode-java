@@ -29,7 +29,7 @@ main>* {
 	flex-wrap: nowrap;
 	flex-direction: column;
 	display: flex;
-	padding: 1rem 1rem 1rem 0;
+	padding: 0.5rem 0.5rem 0.5rem 0;
 	flex: 0 0 30%;
 	max-width: 30%;
 	box-sizing: border-box;
@@ -39,7 +39,7 @@ main>* {
 	flex-wrap: nowrap;
 	flex-direction: column;
 	display: flex;
-	padding: 1rem;
+	padding: 0.5rem;
 	flex: 0 0 30%;
 	max-width: 30%;
 	box-sizing: border-box;
@@ -49,7 +49,7 @@ main>* {
 	flex-wrap: nowrap;
 	flex-direction: column;
 	display: flex;
-	padding: 1rem 0 1rem 1rem;
+	padding: 0.5rem 0 0.5rem 0.5rem;
 	flex: 0 0 30%;
 	max-width: 30%;
 	box-sizing: border-box;
@@ -57,7 +57,12 @@ main>* {
 
 .vsc-button-left {
 	float: left;
-	margin: 1rem 1rem 1rem 0;
+	margin: 1rem 0.5rem 1rem 0;
+}
+
+.vsc-button {
+	float: left;
+	margin: 1rem 0.5rem 1rem 0.5rem;
 }
 
 .bottom-buttons {
@@ -89,7 +94,13 @@ main>* {
 	padding-left: 0;
 }
 
+.parameter-cell-edit {
+	background-color: var(--vscode-input-background);
+}
+
 .parameter-cell-button {
+	padding: 0;
+	border: 0;
 	display: flex;
 	justify-content: right;
 }
@@ -98,8 +109,18 @@ main>* {
 	display: inline-flex;
 }
 
-.table-buttons-hide {
-	visibility: hidden;
+.table-buttons-edit {
+	display: inline-flex;
+	background-color: var(--vscode-editor-background);
+}
+
+.table-buttons-edit-ok {
+	margin-left: 0.2rem;
+	margin-right: 0.2rem;
+}
+
+.table-buttons-edit-cancel {
+	margin: 0;
 }
 
 .delegate {

@@ -131,8 +131,9 @@ export class ChangeSignaturePanel {
 						});
 						break;
 					case "doRefactor":
-						await this.doRefactor(message.methodIdentifier, message.isDelegate, message.methodName, message.accessType, message.returnType, message.parameters, message.exceptions);
-						this.dispose();
+						if (await this.doRefactor(message.methodIdentifier, message.isDelegate, message.methodName, message.accessType, message.returnType, message.parameters, message.exceptions, message.preview)) {
+							this.dispose();
+						}
 						break;
 				}
 			},
@@ -141,7 +142,20 @@ export class ChangeSignaturePanel {
 		);
 	}
 
-	private async doRefactor(methodIdentifier: string, isDelegate: boolean, methodName: string, accessType: string, returnType: string, parameters: MethodParameter[], exceptions: MethodException[]) {
+	/**
+	 * refactor the method with the given parameters.
+	 *
+	 * @param methodIdentifier the handle identifier of the method to refactor.
+	 * @param isDelegate if true, the method will be refactored to a delegate method.
+	 * @param methodName the new name of the method.
+	 * @param accessType the new access type of the method.
+	 * @param returnType the new return type of the method.
+	 * @param parameters the new parameters of the method.
+	 * @param exceptions the new exceptions of the method.
+	 * @param preview if true, the refactoring will be previewed before applied.
+	 * @returns true if the refactoring is successful, false otherwise.
+	 */
+	private async doRefactor(methodIdentifier: string, isDelegate: boolean, methodName: string, accessType: string, returnType: string, parameters: MethodParameter[], exceptions: MethodException[], preview: boolean): Promise<boolean> {
 		const clientWorkspaceEdit: RefactorWorkspaceEdit = await this.languageClient.sendRequest(GetRefactorEditRequest.type, {
 			command: this.command,
 			context: this.params,
@@ -153,7 +167,6 @@ export class ChangeSignaturePanel {
 		}
 		if (clientWorkspaceEdit.edit) {
 			const codeEdit: WorkspaceEdit = await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(clientWorkspaceEdit.edit);
-
 			/**
 			* See the issue https://github.com/microsoft/vscode/issues/94650.
 			* The current vscode doesn't provide a way for the extension to pre-select all changes.
@@ -162,18 +175,20 @@ export class ChangeSignaturePanel {
 			* and then make all others text edits not need a confirm. This will ensure that
 			* the REFACTOR PREVIEW panel can be triggered and all valid changes pre-selected.
 			*/
-			const textEditEntries = codeEdit.entries();
-			if (textEditEntries && textEditEntries.length) {
-				const dummyNodeUri: Uri = textEditEntries[textEditEntries.length - 1][0];
-				codeEdit.insert(dummyNodeUri, new Position(0, 0), "", {
-					needsConfirmation: true,
-					label: "Dummy node used to enable preview"
-				});
+			if (preview) {
+				const textEditEntries = codeEdit.entries();
+				if (textEditEntries && textEditEntries.length) {
+					const dummyNodeUri: Uri = textEditEntries[textEditEntries.length - 1][0];
+					codeEdit.insert(dummyNodeUri, new Position(0, 0), "", {
+						needsConfirmation: true,
+						label: "Dummy node used to enable preview"
+					});
+				}
 			}
-
 			if (codeEdit) {
-				await workspace.applyEdit(codeEdit);
+				return workspace.applyEdit(codeEdit);
 			}
 		}
+		return false;
 	}
 }
