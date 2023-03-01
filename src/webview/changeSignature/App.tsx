@@ -360,10 +360,24 @@ export class App extends React.Component<{}, State> {
 	};
 
 	componentDidMount(): void {
+		this.setTextAreaCursorStyle();
 		window.addEventListener("message", this.handleMessage);
 		vscode.postMessage({
 			command: "webviewReady"
 		});
+	}
+
+	/**
+	 * Set the cursor style of the text area to text. Since the text area is
+	 * inside a shadow DOM, we need to add a style element to the shadow DOM.
+	 */
+	setTextAreaCursorStyle(): void {
+		const host = document.getElementById("textArea");
+		if (host?.shadowRoot) {
+			const style = document.createElement('style');
+			style.innerHTML = '.control { cursor: text !important; }';
+			host.shadowRoot.appendChild(style);
+		}
 	}
 
 	isDefaultValueEditable = (row: number) => {
@@ -496,7 +510,7 @@ export class App extends React.Component<{}, State> {
 					</VSCodePanelView>
 				</VSCodePanels>
 				<div className="text-title-content">Method signature:</div>
-				<VSCodeTextArea className={"preview"} value={this.getPreview()} readOnly={true}></VSCodeTextArea>
+				<VSCodeTextArea className={"preview"} value={this.getPreview()} readOnly={true} id={"textArea"}></VSCodeTextArea>
 				<VSCodeCheckbox id="delegate" className={"delegate"} onClick={this.onClick}>Keep original method as delegate to changed method</VSCodeCheckbox>
 				<div className={"bottom-buttons"}>
 					<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"refactor"}>Refactor</VSCodeButton>

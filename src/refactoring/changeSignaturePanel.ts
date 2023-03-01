@@ -1,3 +1,4 @@
+import * as path from "path";
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, workspace, WorkspaceEdit, Position } from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
 import { GetRefactorEditRequest, RefactorWorkspaceEdit } from "../protocol";
@@ -58,6 +59,7 @@ export class ChangeSignaturePanel {
 					retainContextWhenHidden: true,
 				}
 			);
+			panel.iconPath = Uri.file(path.join(extensionUri.fsPath, "icons", "icon128.png"));
 			ChangeSignaturePanel.currentPanel = new ChangeSignaturePanel(panel, extensionUri);
 			ChangeSignaturePanel.currentPanel.setMetadata(languageClient, command, params, formattingOptions, commandInfo);
 		}
