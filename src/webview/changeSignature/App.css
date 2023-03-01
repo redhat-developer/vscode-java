@@ -23,6 +23,7 @@ main>* {
 	width: 100%;
 	flex-flow: row wrap;
 	min-width: none;
+	padding-left: calc(var(--design-unit) * 1px);
 }
 
 .text-title {
@@ -31,6 +32,7 @@ main>* {
 }
 
 .text-title-content {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	margin: 0.5rem 0 0 0;
 	height: calc(var(--input-height) * 0.8px);
 }
@@ -82,18 +84,16 @@ main>* {
 }
 
 .bottom-buttons {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	margin: 0.5rem 0 0 0;
 	display: block;
 	width: 90%;
 }
 
 .preview {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	margin: 0 0 0.5rem 0;
 	width: 90%;
-}
-
-.div.tablist {
-	padding-left: 0 !important;
 }
 
 .parameters-panel {
@@ -102,7 +102,7 @@ main>* {
 }
 
 .parameters-view {
-	padding: 0;
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	flex-direction: column;
 	width: 100%;
 }
@@ -150,5 +150,6 @@ main>* {
 }
 
 .delegate {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	margin: 0.5rem 0 0.5rem 0;
 }

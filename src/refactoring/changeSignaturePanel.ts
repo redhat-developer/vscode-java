@@ -161,10 +161,7 @@ export class ChangeSignaturePanel {
 			options: this.formattingOptions,
 			commandArguments: [methodIdentifier, isDelegate, methodName, accessType, returnType, parameters, exceptions]
 		});
-		if (!clientWorkspaceEdit) {
-			return;
-		}
-		if (clientWorkspaceEdit.edit) {
+		if (clientWorkspaceEdit?.edit) {
 			const codeEdit: WorkspaceEdit = await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(clientWorkspaceEdit.edit);
 			/**
 			* See the issue https://github.com/microsoft/vscode/issues/94650.
