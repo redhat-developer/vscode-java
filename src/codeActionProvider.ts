@@ -32,7 +32,9 @@ export class RefactorDocumentProvider implements CodeActionProvider {
                 command: {
                     command: Commands.LEARN_MORE_ABOUT_REFACTORING,
                     title: 'Learn more about Java refactorings...',
-                    arguments: [kind]
+                    // comment out due to https://github.com/microsoft/vscode/issues/175737.
+                    // TODO: revert the change once the issue is fixed.
+                    // arguments: [kind]
                 }
             };
         }),
