@@ -1,5 +1,5 @@
 import * as path from "path";
-import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, workspace, WorkspaceEdit, Position } from "vscode";
+import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, workspace, WorkspaceEdit } from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
 import { GetRefactorEditRequest, RefactorWorkspaceEdit } from "../protocol";
 import { getNonce, getUri } from "../webview/utils";
@@ -46,7 +46,25 @@ export class ChangeSignaturePanel {
 
 	public static render(extensionUri: Uri, languageClient: LanguageClient, command: any, params: any, formattingOptions: any, commandInfo: any) {
 		if (ChangeSignaturePanel.currentPanel) {
-			ChangeSignaturePanel.currentPanel.panel.reveal(ViewColumn.Beside);
+			if (!commandInfo?.methodIdentifier) {
+				// the new method to do refactoring is not available, just reveal the current panel.
+				ChangeSignaturePanel.currentPanel.panel.reveal(ViewColumn.Beside);
+				return;
+			}
+			if (commandInfo.methodIdentifier === ChangeSignaturePanel.currentPanel.methodIdentifier) {
+				// the new method to do refactoring is the same as the old one, just reveal the current panel.
+				ChangeSignaturePanel.currentPanel.panel.reveal(ViewColumn.Beside);
+				return;
+			} else {
+				window.showInformationMessage(`Change Method Signature for '${ChangeSignaturePanel.currentPanel.methodName}' is in process. Would you like to reveal or abort it?`, "Reveal", "Abort").then(async (selection) => {
+					if (selection === "Reveal") {
+						ChangeSignaturePanel.currentPanel.panel.reveal(ViewColumn.Beside);
+					} else if (selection === "Abort") {
+						ChangeSignaturePanel.currentPanel.dispose();
+						ChangeSignaturePanel.render(extensionUri, languageClient, command, params, formattingOptions, commandInfo);
+					}
+				});
+			}
 		} else {
 			const panel = window.createWebviewPanel(
 				ChangeSignaturePanel.type,
@@ -161,28 +179,10 @@ export class ChangeSignaturePanel {
 			command: this.command,
 			context: this.params,
 			options: this.formattingOptions,
-			commandArguments: [methodIdentifier, isDelegate, methodName, accessType, returnType, parameters, exceptions]
+			commandArguments: [methodIdentifier, isDelegate, methodName, accessType, returnType, parameters, exceptions, preview]
 		});
 		if (clientWorkspaceEdit?.edit) {
 			const codeEdit: WorkspaceEdit = await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(clientWorkspaceEdit.edit);
-			/**
-			* See the issue https://github.com/microsoft/vscode/issues/94650.
-			* The current vscode doesn't provide a way for the extension to pre-select all changes.
-			*
-			* As a workaround, this extension would append a dummy text edit that needs a confirm,
-			* and then make all others text edits not need a confirm. This will ensure that
-			* the REFACTOR PREVIEW panel can be triggered and all valid changes pre-selected.
-			*/
-			if (preview) {
-				const textEditEntries = codeEdit.entries();
-				if (textEditEntries && textEditEntries.length) {
-					const dummyNodeUri: Uri = textEditEntries[textEditEntries.length - 1][0];
-					codeEdit.insert(dummyNodeUri, new Position(0, 0), "", {
-						needsConfirmation: true,
-						label: "Dummy node used to enable preview"
-					});
-				}
-			}
 			if (codeEdit) {
 				return workspace.applyEdit(codeEdit);
 			}

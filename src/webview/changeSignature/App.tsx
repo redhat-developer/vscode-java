@@ -4,10 +4,15 @@ import "./App.css";
 import React from "react";
 import { vscode } from "../vscodeApiWrapper";
 
-interface State {
+type State = UIState & Metadata;
+
+interface UIState {
 	focusRow: number;
 	editParameterRow: number;
 	editExceptionRow: number;
+}
+
+interface Metadata {
 	methodIdentifier: string | undefined;
 	isDelegate: boolean;
 	methodName: string | undefined;
@@ -30,6 +35,8 @@ interface MethodException {
 }
 
 export class App extends React.Component<{}, State> {
+
+	private initialMetadata: Metadata;
 
 	constructor(props: any) {
 		super(props);
@@ -111,6 +118,14 @@ export class App extends React.Component<{}, State> {
 			this.doRefactor(false);
 		} else if (id === "preview") {
 			this.doRefactor(true);
+		} else if (id === "reset") {
+			this.setState({
+				...this.initialMetadata,
+				focusRow: -1,
+				editParameterRow: -1,
+				editExceptionRow: -1,
+			});
+			this.forceUpdate();
 		} else if (id === "addParameter") {
 			const parameterNames = this.state.parameters.map(e => {
 				return e.name;
@@ -325,13 +340,17 @@ export class App extends React.Component<{}, State> {
 		const { data } = event;
 		const command = data.command as string;
 		if (command === "setInitialState") {
-			this.setState({
+			this.initialMetadata = {
 				methodIdentifier: data.methodIdentifier,
+				isDelegate: false,
 				accessType: data.accessType,
 				methodName: data.methodName,
 				returnType: data.returnType,
 				parameters: data.parameters,
 				exceptions: data.exceptions,
+			};
+			this.setState({
+				...this.initialMetadata
 			});
 			this.forceUpdate();
 		}
@@ -367,6 +386,19 @@ export class App extends React.Component<{}, State> {
 		});
 	}
 
+	isUnchanged = () => {
+		return this.state.isDelegate === this.initialMetadata?.isDelegate
+			&& this.state.accessType === this.initialMetadata?.accessType
+			&& this.state.methodName === this.initialMetadata?.methodName
+			&& this.state.returnType === this.initialMetadata?.returnType
+			&& this.isArrayEqual(this.state.parameters, this.initialMetadata?.parameters)
+			&& this.isArrayEqual(this.state.exceptions, this.initialMetadata?.exceptions);
+	};
+
+	isArrayEqual = (a: any[], b: any[]) => {
+		return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((e, i) => e === b[i]);
+	};
+
 	/**
 	 * Set the cursor style of the text area to text. Since the text area is
 	 * inside a shadow DOM, we need to add a style element to the shadow DOM.
@@ -393,7 +425,7 @@ export class App extends React.Component<{}, State> {
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterType-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.parameters[row].type}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterName-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"2"}>{this.state.parameters[row].name}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterDefault-${row}`} contentEditable={row === this.state.editParameterRow && this.isDefaultValueEditable(row) ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"3"}>{this.getDefaultValue(row)}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell-button ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterButton-${row}`} gridColumn={"4"}>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`parameterButton-${row}`} gridColumn={"4"}>
 				{row === this.state.editParameterRow ?
 					<div className="table-buttons-edit">
 						<VSCodeButton className={"table-buttons-edit-ok"} disabled={false} appearance="primary" onClick={this.onClick} id={`confirmParameter-${row}`}>OK</VSCodeButton>
@@ -420,7 +452,7 @@ export class App extends React.Component<{}, State> {
 	generateExceptionDataGridRow = (row: number) => {
 		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`}>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell-button ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
 				{row === this.state.editExceptionRow ?
 					<div className="table-buttons-edit">
 						<VSCodeButton className={"table-buttons-edit-ok"} disabled={false} appearance="primary" onClick={this.onClick} id={`confirmException-${row}`}>OK</VSCodeButton>
@@ -446,7 +478,7 @@ export class App extends React.Component<{}, State> {
 					<div className="flex section-columns">
 						<div className="header-left">
 							<div className="text-title">Access modifier:</div>
-							<VSCodeDropdown className="vsc-dropdown" id={"access-modifier"} onChange={this.onChange} initialValue={this.state.accessType}>
+							<VSCodeDropdown className="vsc-dropdown" id={"access-modifier"} onChange={this.onChange} value={this.state.accessType}>
 								<VSCodeOption id={"public"} key={"public"}>public</VSCodeOption>
 								<VSCodeOption id={"protected"} key={"protected"}>protected</VSCodeOption>
 								<VSCodeOption id={"package-private"} key={"packagePrivate"}>package-private</VSCodeOption>
@@ -467,12 +499,12 @@ export class App extends React.Component<{}, State> {
 					<VSCodePanelTab id="parametersTab">Parameters</VSCodePanelTab>
 					<VSCodePanelTab id="exceptionsTab">Exceptions</VSCodePanelTab>
 					<VSCodePanelView id="parametersView" className={"parameters-view"}>
-						<VSCodeDataGrid className={"parameters-grid"} onMouseLeave={this.onMouseLeave}>
+						<VSCodeDataGrid onMouseLeave={this.onMouseLeave}>
 							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={"parameterHeader"}>
-								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderName"} gridColumn={"2"}>Name</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderDefault"} gridColumn={"3"}>Default value</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"parameterHeaderButton"} gridColumn={"4"}></VSCodeDataGridCell>
+								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
+								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderName"} gridColumn={"2"}>Name</VSCodeDataGridCell>
+								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderDefault"} gridColumn={"3"}>Default value</VSCodeDataGridCell>
+								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderButton"} gridColumn={"4"}></VSCodeDataGridCell>
 							</VSCodeDataGridRow>
 							{
 								(() => {
@@ -489,10 +521,10 @@ export class App extends React.Component<{}, State> {
 						</div>
 					</VSCodePanelView>
 					<VSCodePanelView id="exceptionsView" className={"parameters-view"}>
-						<VSCodeDataGrid className={"parameters-grid"} onMouseLeave={this.onMouseLeave}>
+						<VSCodeDataGrid onMouseLeave={this.onMouseLeave}>
 							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={`exceptionHeader`}>
-								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"exceptionHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell"} cellType={"columnheader"} id={"exceptionHeaderButton"} gridColumn={"2"}></VSCodeDataGridCell>
+								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
+								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderButton"} gridColumn={"2"}></VSCodeDataGridCell>
 							</VSCodeDataGridRow>
 							{
 								(() => {
@@ -515,6 +547,7 @@ export class App extends React.Component<{}, State> {
 				<div className={"bottom-buttons"}>
 					<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"refactor"}>Refactor</VSCodeButton>
 					<VSCodeButton className={"vsc-button"} appearance="secondary" onClick={this.onClick} id={"preview"}>Preview</VSCodeButton>
+					<VSCodeButton className={"vsc-button"} appearance="secondary" disabled={this.isUnchanged()} onClick={this.onClick} id={"reset"}>Reset</VSCodeButton>
 				</div>
 			</main >
 		);

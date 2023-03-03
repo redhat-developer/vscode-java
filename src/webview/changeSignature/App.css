@@ -1,28 +1,18 @@
 @import "../../../node_modules/@vscode/codicons/dist/codicon.css";
 
 main {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: flex-start;
-	height: 100%;
-}
-
-main>* {
-	margin: 1rem 0;
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .section {
-	padding: 0;
-	margin: 0;
-	width: 100%;
+	margin-bottom: 0;
 }
 
 .section-columns {
 	display: flex;
 	width: 100%;
-	flex-flow: row wrap;
-	min-width: none;
 	padding-left: calc(var(--design-unit) * 1px);
 }
 
@@ -38,32 +28,26 @@ main>* {
 }
 
 .header-left {
-	flex-wrap: nowrap;
 	flex-direction: column;
 	display: flex;
 	padding: 0.5rem 0.5rem 0.5rem 0;
-	flex: 0 0 30%;
-	max-width: 30%;
+	flex: 0 0 33%;
 	box-sizing: border-box;
 }
 
 .header {
-	flex-wrap: nowrap;
 	flex-direction: column;
 	display: flex;
 	padding: 0.5rem;
-	flex: 0 0 30%;
-	max-width: 30%;
+	flex: 0 0 33%;
 	box-sizing: border-box;
 }
 
 .header-right {
-	flex-wrap: nowrap;
 	flex-direction: column;
 	display: flex;
 	padding: 0.5rem 0 0.5rem 0.5rem;
-	flex: 0 0 30%;
-	max-width: 30%;
+	flex: 0 0 33%;
 	box-sizing: border-box;
 }
 
@@ -79,48 +63,55 @@ main>* {
 
 .add-button {
 	margin: 0.5rem 0 0 0;
-	display: block;
-	width: 90%;
 }
 
 .bottom-buttons {
 	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	margin: 0.5rem 0 0 0;
-	display: block;
-	width: 90%;
 }
 
 .preview {
 	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	margin: 0 0 0.5rem 0;
-	width: 90%;
+	width: 99%;
 }
 
 .parameters-panel {
 	margin: 0;
-	width: 90%;
+	width: calc(99% + 4px);
 }
 
 .parameters-view {
 	padding: 0 0 0 calc(var(--design-unit) * 1px);
 	flex-direction: column;
-	width: 100%;
-}
-
-.parameters-grid {
-	width: 100%;
 }
 
 .parameter-cell {
 	padding-left: 0;
 }
 
-.parameter-cell-header {
+.parameter-cell-title {
 	padding-left: 0;
+}
+
+.parameter-cell-title:focus {
+	border: none;
+	background-color: inherit;
+}
+
+.parameter-cell-header {
 	background-color: var(--vscode-keybindingTable-headerBackground);
 }
 
 .parameter-cell-edit {
+	background-color: var(--vscode-input-background);
+}
+
+.parameter-cell-edit-button {
+	padding: 0;
+	border: 0;
+	display: flex;
+	justify-content: right;
 	background-color: var(--vscode-input-background);
 }
 
@@ -129,6 +120,10 @@ main>* {
 	border: 0;
 	display: flex;
 	justify-content: right;
+}
+
+.parameter-cell-button:focus {
+	background-color: inherit;
 }
 
 .table-buttons {
