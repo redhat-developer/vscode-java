@@ -79,9 +79,9 @@ export namespace Commands {
      */
     export const EXECUTE_WORKSPACE_COMMAND = 'java.execute.workspaceCommand';
 
-	/**
-	 * Execute Workspace build (compilation)
-	 */
+    /**
+     * Execute Workspace build (compilation)
+     */
     export const COMPILE_WORKSPACE = 'java.workspace.compile';
 
     /**
@@ -119,10 +119,10 @@ export namespace Commands {
      */
     export const OPEN_FORMATTER = 'java.open.formatter.settings';
 
-	/**
-	 * Open a file given the URI
-	 */
-	export const OPEN_FILE = 'java.open.file';
+    /**
+     * Open a file given the URI
+     */
+    export const OPEN_FILE = 'java.open.file';
 
     /**
      * Clean the Java language server workspace
@@ -130,7 +130,7 @@ export namespace Commands {
     export const CLEAN_WORKSPACE = 'java.clean.workspace';
     /**
      * Update the source attachment for the selected class file
-	 * client-side & server-side commands
+     * client-side & server-side commands
      */
     export const UPDATE_SOURCE_ATTACHMENT_CMD = 'java.project.updateSourceAttachment.command';
     export const UPDATE_SOURCE_ATTACHMENT = 'java.project.updateSourceAttachment';
@@ -140,25 +140,25 @@ export namespace Commands {
     export const RESOLVE_SOURCE_ATTACHMENT = 'java.project.resolveSourceAttachment';
     /**
      * Mark the folder as the source root of the closest project.
-	 * client-side & server-side commands
+     * client-side & server-side commands
      */
     export const ADD_TO_SOURCEPATH_CMD = 'java.project.addToSourcePath.command';
     export const ADD_TO_SOURCEPATH = 'java.project.addToSourcePath';
     /**
      * Unmark the folder as the source root of the project.
-	 * client-side & server-side commands
+     * client-side & server-side commands
      */
     export const REMOVE_FROM_SOURCEPATH_CMD = 'java.project.removeFromSourcePath.command';
     export const REMOVE_FROM_SOURCEPATH = 'java.project.removeFromSourcePath';
     /**
      * List all recognized source roots in the workspace.
-	 * client-side & server-side commands
+     * client-side & server-side commands
      */
     export const LIST_SOURCEPATHS_CMD = 'java.project.listSourcePaths.command';
     export const LIST_SOURCEPATHS = 'java.project.listSourcePaths';
     /**
      * Import new projects
-	 * client-side & server-side commands
+     * client-side & server-side commands
      */
     export const IMPORT_PROJECTS_CMD = 'java.project.import.command';
     export const IMPORT_PROJECTS = 'java.project.import';
@@ -170,7 +170,7 @@ export namespace Commands {
      * Generate hashCode() and equals().
      */
     export const HASHCODE_EQUALS_PROMPT = 'java.action.hashCodeEqualsPrompt';
-	/**
+    /**
      * Open settings.json
      */
     export const OPEN_JSON_SETTINGS = 'workbench.action.openSettingsJson';
@@ -182,10 +182,10 @@ export namespace Commands {
      * Organize imports silently.
      */
     export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
-	/**
-	 * Handle a paste event.
-	 */
-	export const HANDLE_PASTE_EVENT = "java.edit.handlePasteEvent";
+    /**
+     * Handle a paste event.
+     */
+    export const HANDLE_PASTE_EVENT = "java.edit.handlePasteEvent";
     /**
      * Custom paste action (triggers auto-import)
      */
@@ -320,4 +320,10 @@ export namespace Commands {
      * Clean everything in the shared index directory.
      */
     export const CLEAN_SHARED_INDEXES = "java.clean.sharedIndexes";
+
+    /**
+    * Get the uri of the decompiled class file.
+    */
+    export const GET_DECOMPILED_SOURCE = "java.decompile";
+
 }

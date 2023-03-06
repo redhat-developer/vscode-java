@@ -57,6 +57,18 @@
   ],
   "main": "./dist/extension",
   "contributes": {
+    "customEditors": [
+      {
+        "viewType": "decompiled.javaClass",
+        "displayName": "Decompiled Java Class File",
+        "selector": [
+          {
+            "scheme": "file",
+            "filenamePattern": "*.class"
+          }
+        ]
+      }
+    ],
     "javaBuildFilePatterns": [
       "^pom\\.xml$",
       ".*\\.gradle(\\.kts)?$"
