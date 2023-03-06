@@ -26,6 +26,7 @@ import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
+import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
@@ -191,7 +192,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 							range: client.code2ProtocolConverter.asRange(range),
 							context: await client.code2ProtocolConverter.asCodeActionContext(context)
 						};
-						const showAt  = getJavaConfiguration().get<string>("quickfix.showAt");
+						const showAt = getJavaConfiguration().get<string>("quickfix.showAt");
 						if (showAt === 'line' && range.start.line === range.end.line && range.start.character === range.end.character) {
 							const textLine = document.lineAt(params.range.start.line);
 							if (textLine !== null) {
@@ -362,6 +363,9 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			context.subscriptions.push(serverStatusBarProvider);
 			context.subscriptions.push(runtimeStatusBarProvider);
 
+			const classEditorProviderRegistration = window.registerCustomEditorProvider(JavaClassEditorProvider.viewType, new JavaClassEditorProvider(context));
+			context.subscriptions.push(classEditorProviderRegistration);
+
 			registerClientProviders(context, { contentProviderEvent: jdtEventEmitter.event });
 
 			apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
@@ -448,7 +452,7 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 	const inclusionPatterns: string[] = getBuildFilePatterns();
 	const inclusionPatternsFromNegatedExclusion: string[] = getInclusionPatternsFromNegatedExclusion();
 	if (inclusionPatterns.length > 0 && inclusionPatternsFromNegatedExclusion.length > 0 &&
-			(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /* maxResults */)).length > 0) {
+		(await workspace.findFiles(convertToGlob(inclusionPatterns, inclusionPatternsFromNegatedExclusion), null, 1 /* maxResults */)).length > 0) {
 		return true;
 	}
 
@@ -485,7 +489,7 @@ async function ensureNoBuildToolConflicts(context: ExtensionContext, clientOptio
 			clientOptions.initializationOptions.settings.java.import.maven.enabled = false;
 			context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, "gradle");
 		} else {
-			throw new Error (`Unknown build tool: ${activeBuildTool}`); // unreachable
+			throw new Error(`Unknown build tool: ${activeBuildTool}`); // unreachable
 		}
 	}
 
@@ -699,7 +703,7 @@ function openLogFile(logFile, openingFailureWarning: string, column: ViewColumn 
 			if (!doc) {
 				return false;
 			}
-			return window.showTextDocument(doc, {viewColumn: column, preview: false})
+			return window.showTextDocument(doc, { viewColumn: column, preview: false })
 				.then(editor => !!editor);
 		}, () => false)
 		.then(didOpen => {
@@ -937,7 +941,7 @@ async function cleanJavaWorkspaceStorage() {
 				}
 			}
 		});
-    }
+	}
 }
 
 function registerOutOfMemoryDetection(storagePath: string) {

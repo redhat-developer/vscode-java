@@ -1,0 +1,34 @@
+/* https://css-tricks.com/overriding-default-button-styles/ */
+
+button {
+    display: inline-block;
+    border: none;
+    padding: 12px 16px;
+    margin: 0;
+    text-decoration: none;
+    background: var(--vscode-button-background);
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+button:hover,
+button:focus {
+    background: var(--vscode-button-hoverBackground);
+}
+button:focus {
+    outline: 1px solid var(--vscode-button-hoverBackground);
+    /* outline-offset: -4px; */
+}
+
+.center {
+	text-align: center;
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}

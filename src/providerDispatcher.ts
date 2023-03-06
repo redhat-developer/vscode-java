@@ -28,10 +28,13 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 	const jdtProvider = createJDTContentProvider(options);
 	context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', jdtProvider));
 
+	const classProvider = createClassContentProvider(options);
+	context.subscriptions.push(workspace.registerTextDocumentContentProvider('class', classProvider));
+
 	overwriteWorkspaceSymbolProvider(context);
 
 	return {
-		handles: [hoverProvider, symbolProvider, jdtProvider]
+		handles: [hoverProvider, symbolProvider, jdtProvider, classProvider]
 	};
 }
 
@@ -81,6 +84,27 @@ function createJDTContentProvider(options: ProviderOptions): TextDocumentContent
 	};
 }
 
+function createClassContentProvider(options: ProviderOptions): TextDocumentContentProvider {
+	return <TextDocumentContentProvider>{
+		onDidChange: options.contentProviderEvent,
+		provideTextDocumentContent: async (uri: Uri, token: CancellationToken): Promise<string> => {
+			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+
+			if (!languageClient) {
+				return '';
+			}
+			const originalUri = uri.toString().replace(/^class/, "file");
+			const decompiledContent: string = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_DECOMPILED_SOURCE, originalUri);
+			if (!decompiledContent) {
+				console.log(`Error while getting decompiled source : ${originalUri}`);
+				return "Error while getting decompiled source.";
+			} else {
+				return decompiledContent;
+			}
+		}
+	};
+}
+
 function createDocumentSymbolProvider(): DocumentSymbolProvider {
 	return <DocumentSymbolProvider>{
 		provideDocumentSymbols: async (document: TextDocument, token: CancellationToken): Promise<SymbolInformation[] | DocumentSymbol[]> => {
@@ -109,7 +133,7 @@ function createDocumentSymbolProvider(): DocumentSymbolProvider {
 
 const START_OF_DOCUMENT = new Range(new Position(0, 0), new Position(0, 0));
 
-function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: WorkspaceSymbolProvider): WorkspaceSymbolProvider  {
+function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: WorkspaceSymbolProvider): WorkspaceSymbolProvider {
 	return {
 		provideWorkspaceSymbols: async (query: string, token: CancellationToken) => {
 			// This is a workaround until vscode add support for qualified symbol search which is tracked by
@@ -159,9 +183,9 @@ function createWorkspaceSymbolProvider(existingWorkspaceSymbolProvider: Workspac
 }
 
 function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
-	const disposable =  apiManager.getApiInstance().onDidServerModeChange( async (mode) => {
+	const disposable = apiManager.getApiInstance().onDidServerModeChange(async (mode) => {
 		if (mode === ServerMode.standard) {
-			const feature =  (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
+			const feature = (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
 			const providers = feature.getProviders();
 			if (providers && providers.length > 0) {
 				feature.dispose();
@@ -186,7 +210,7 @@ const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\
  * @returns the hover with all jdt:// links replaced with a command:// link that opens the jdt URI
  */
 function fixJdtSchemeHoverLinks(hover: Hover): Hover {
-	const newContents: (MarkedString|MarkdownString)[] = [];
+	const newContents: (MarkedString | MarkdownString)[] = [];
 	for (const content of hover.contents) {
 		if (content instanceof MarkdownString) {
 			const newContent: string = (<MarkdownString>content).value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
