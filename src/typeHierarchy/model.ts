@@ -15,19 +15,25 @@ export class TypeHierarchyTreeInput implements SymbolTreeInput<TypeHierarchyItem
 
 	constructor(readonly location: vscode.Location, readonly direction: TypeHierarchyDirection, readonly token: CancellationToken, item: TypeHierarchyItem) {
 		this.baseItem = item;
+		const isMethodHierarchy: boolean =  item.data["method"] !== undefined;
+		let methodName: string;
+		if (isMethodHierarchy) {
+			methodName = item.data["method_name"];
+		}
 		switch (direction) {
 			case TypeHierarchyDirection.both:
-				this.title = "Class Hierarchy";
+				this.title = isMethodHierarchy ? `Method Hierarchy for ${methodName}` : "Class Hierarchy";
 				break;
 			case TypeHierarchyDirection.parents:
-				this.title = "Supertype Hierarchy";
+				this.title = isMethodHierarchy ? `Supertype (Method) Hierarchy for ${methodName}` : "Supertype Hierarchy";
 				break;
 			case TypeHierarchyDirection.children:
-				this.title = "Subtype Hierarchy";
+				this.title = isMethodHierarchy ? `Subtype (Method) Hierarchy for ${methodName}` : "Subtype Hierarchy";
 				break;
 			default:
 				return;
 		}
+
 	}
 
 	async resolve(): Promise<SymbolTreeModel<TypeHierarchyItem>> {
@@ -127,7 +133,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 			]
 		} : undefined;
 		// workaround: set a specific id to refresh the collapsible state for treeItems, see: https://github.com/microsoft/vscode/issues/114614#issuecomment-763428052
-		treeItem.id = `${element.data}${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
+		treeItem.id = `${element.data["element"]}${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
 		if (element.expand) {
 			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
 		} else if (this.model.getDirection() === TypeHierarchyDirection.children || this.model.getDirection() === TypeHierarchyDirection.both) {
