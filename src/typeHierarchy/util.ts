@@ -110,7 +110,7 @@ export async function getRootItem(client: LanguageClient, typeHierarchyItem: Typ
 		return typeHierarchyItem;
 	} else {
 		for (const parent of typeHierarchyItem.parents) {
-			if (parent.kind === SymbolKind.Class) {
+			if (parent.kind === SymbolKind.Class || parent.kind === SymbolKind.Null) {
 				parent.children = [typeHierarchyItem];
 				parent.expand = true;
 				return getRootItem(client, parent, token);
