@@ -88,6 +88,7 @@ main {
 
 .parameter-cell {
 	padding-left: 0;
+	pointer-events: none;
 }
 
 .parameter-cell-title {
@@ -95,8 +96,9 @@ main {
 }
 
 .parameter-cell-title:focus {
-	border: none;
+	border-color: var(--vscode-keybindingTable-headerBackground);
 	background-color: inherit;
+	color: inherit;
 }
 
 .parameter-cell-header {

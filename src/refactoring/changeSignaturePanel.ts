@@ -2,7 +2,7 @@ import * as path from "path";
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, workspace, WorkspaceEdit } from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
 import { GetRefactorEditRequest, RefactorWorkspaceEdit } from "../protocol";
-import { getNonce, getUri } from "../webview/utils";
+import { getNonce, getUri } from "../webviewUtils";
 
 interface MethodParameter {
 	type: string;
@@ -26,7 +26,7 @@ export class ChangeSignaturePanel {
 	// method matadata
 	private methodIdentifier: string | undefined;
 	private methodName: string | undefined;
-	private accessType: string | undefined;
+	private modifier: string | undefined;
 	private returnType: string | undefined;
 	private parameters: MethodParameter[] | undefined;
 	private exceptions: MethodException[] | undefined;
@@ -90,7 +90,7 @@ export class ChangeSignaturePanel {
 		this.formattingOptions = formattingOptions;
 		this.methodIdentifier = commandInfo.methodIdentifier;
 		this.methodName = commandInfo.methodName as string;
-		this.accessType = commandInfo.accessType as string;
+		this.modifier = commandInfo.modifier as string;
 		this.returnType = commandInfo.returnType as string;
 		this.parameters = commandInfo.parameters as MethodParameter[];
 		this.exceptions = commandInfo.exceptions as MethodException[];
@@ -143,7 +143,7 @@ export class ChangeSignaturePanel {
 							command: "setInitialState",
 							methodIdentifier: this.methodIdentifier,
 							methodName: this.methodName,
-							accessType: this.accessType,
+							modifier: this.modifier,
 							returnType: this.returnType,
 							parameters: this.parameters,
 							exceptions: this.exceptions

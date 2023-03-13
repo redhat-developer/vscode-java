@@ -2,7 +2,7 @@ import { Disposable, WebviewPanel, window, ViewColumn, commands, Uri, Webview, E
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Commands } from "./commands";
-import { getNonce } from "./webview/utils";
+import { getNonce } from "./webviewUtils";
 
 class MarkdownPreviewProvider implements Disposable {
     private panel: WebviewPanel | undefined;

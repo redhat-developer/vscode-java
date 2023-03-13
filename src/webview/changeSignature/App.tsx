@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/prefer-for-of */
 import { VSCodeButton, VSCodeTextField, VSCodeDropdown, VSCodeOption, VSCodeCheckbox, VSCodePanels, VSCodePanelTab, VSCodePanelView, VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow, VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
 import React from "react";
 import { vscode } from "../vscodeApiWrapper";
+import { cloneArray } from "../utils";
 
 type State = UIState & Metadata;
 
@@ -37,6 +39,10 @@ interface MethodException {
 export class App extends React.Component<{}, State> {
 
 	private initialMetadata: Metadata;
+	private static TOOLTIP_RETURN_TYPE: string = "The method return type, can be either name or full qualified name of the type.";
+	private static TOOLTIP_PARAMETER_TYPE: string = "The parameter type, can be either name or full qualified name of the type.";
+	private static TOOLTIP_PARAMETER_DEFAULT: string = "The parameter default value, used when replacing the occurrences for an added parameter.";
+	private static TOOLTIP_EXCEPTION_TYPE: string = "The exception type, can be either name or full qualified name of the type.";
 
 	constructor(props: any) {
 		super(props);
@@ -60,7 +66,7 @@ export class App extends React.Component<{}, State> {
 			command: "doRefactor",
 			methodIdentifier: this.state.methodIdentifier,
 			isDelegate: this.state.isDelegate,
-			accessType: this.state.accessType,
+			accessType: this.getModifierString(this.state.accessType),
 			methodName: this.state.methodName,
 			returnType: this.state.returnType,
 			parameters: this.state.parameters,
@@ -106,7 +112,11 @@ export class App extends React.Component<{}, State> {
 			}
 			exceptions = exceptions.substring(0, exceptions.length - 2);
 		}
-		return `${this.state.accessType} ${this.state.returnType} ${this.state.methodName}(${parameters})${exceptions}`;
+		let accessTypeString = this.getModifierString(this.state.accessType);
+		if (accessTypeString?.length) {
+			accessTypeString += " ";
+		}
+		return `${accessTypeString}${this.state.returnType} ${this.state.methodName}(${parameters})${exceptions}`;
 	};
 
 	onClick = (event: any) => {
@@ -343,14 +353,20 @@ export class App extends React.Component<{}, State> {
 			this.initialMetadata = {
 				methodIdentifier: data.methodIdentifier,
 				isDelegate: false,
-				accessType: data.accessType,
+				accessType: this.getAccessTypeString(data.modifier),
 				methodName: data.methodName,
 				returnType: data.returnType,
 				parameters: data.parameters,
 				exceptions: data.exceptions,
 			};
 			this.setState({
-				...this.initialMetadata
+				methodIdentifier: this.initialMetadata.methodIdentifier,
+				isDelegate: this.initialMetadata.isDelegate,
+				accessType: this.initialMetadata.accessType,
+				methodName: this.initialMetadata.methodName,
+				returnType: this.initialMetadata.returnType,
+				parameters: cloneArray(this.initialMetadata.parameters),
+				exceptions: cloneArray(this.initialMetadata.exceptions),
 			});
 			this.forceUpdate();
 		}
@@ -396,7 +412,14 @@ export class App extends React.Component<{}, State> {
 	};
 
 	isArrayEqual = (a: any[], b: any[]) => {
-		return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((e, i) => e === b[i]);
+		return Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((e, i) => this.objectsEqual(e, b[i]));
+	};
+
+	objectsEqual = (o1, o2) => {
+		return typeof o1 === 'object' && Object.keys(o1).length > 0
+			? Object.keys(o1).length === Object.keys(o2).length
+			&& Object.keys(o1).every(p => this.objectsEqual(o1[p], o2[p]))
+			: o1 === o2;
 	};
 
 	/**
@@ -421,7 +444,7 @@ export class App extends React.Component<{}, State> {
 	};
 
 	generateParameterDataGridRow = (row: number) => {
-		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`parameterRow-${row}`}>
+		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`parameterRow-${row}`} key={`parameterRow-${row}`}>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterType-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.parameters[row].type}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterName-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"2"}>{this.state.parameters[row].name}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterDefault-${row}`} contentEditable={row === this.state.editParameterRow && this.isDefaultValueEditable(row) ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"3"}>{this.getDefaultValue(row)}</VSCodeDataGridCell>
@@ -450,7 +473,7 @@ export class App extends React.Component<{}, State> {
 	};
 
 	generateExceptionDataGridRow = (row: number) => {
-		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`}>
+		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`} key={`exceptionRow-${row}`}>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
 				{row === this.state.editExceptionRow ?
@@ -479,15 +502,15 @@ export class App extends React.Component<{}, State> {
 						<div className="header-left">
 							<div className="text-title">Access modifier:</div>
 							<VSCodeDropdown className="vsc-dropdown" id={"access-modifier"} onChange={this.onChange} value={this.state.accessType}>
-								<VSCodeOption id={"public"} key={"public"}>public</VSCodeOption>
-								<VSCodeOption id={"protected"} key={"protected"}>protected</VSCodeOption>
-								<VSCodeOption id={"package-private"} key={"packagePrivate"}>package-private</VSCodeOption>
-								<VSCodeOption id={"private"} key={"private"}>private</VSCodeOption>
+								<VSCodeOption>public</VSCodeOption>
+								<VSCodeOption>protected</VSCodeOption>
+								<VSCodeOption>package-private</VSCodeOption>
+								<VSCodeOption>private</VSCodeOption>
 							</VSCodeDropdown>
 						</div>
 						<div className="flex-grow header">
 							<div className="text-title">Return type:</div>
-							<VSCodeTextField value={this.state.returnType} id={"returnType"} onInput={this.onChange}></VSCodeTextField>
+							<VSCodeTextField title={App.TOOLTIP_RETURN_TYPE} value={this.state.returnType} id={"returnType"} onInput={this.onChange}></VSCodeTextField>
 						</div>
 						<div className="flex-grow header-right">
 							<div className="text-title">Method name:</div>
@@ -501,9 +524,9 @@ export class App extends React.Component<{}, State> {
 					<VSCodePanelView id="parametersView" className={"parameters-view"}>
 						<VSCodeDataGrid onMouseLeave={this.onMouseLeave}>
 							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={"parameterHeader"}>
-								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
+								<VSCodeDataGridCell title={App.TOOLTIP_PARAMETER_TYPE} className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
 								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderName"} gridColumn={"2"}>Name</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderDefault"} gridColumn={"3"}>Default value</VSCodeDataGridCell>
+								<VSCodeDataGridCell title={App.TOOLTIP_PARAMETER_DEFAULT} className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderDefault"} gridColumn={"3"}>Default value</VSCodeDataGridCell>
 								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderButton"} gridColumn={"4"}></VSCodeDataGridCell>
 							</VSCodeDataGridRow>
 							{
@@ -523,7 +546,7 @@ export class App extends React.Component<{}, State> {
 					<VSCodePanelView id="exceptionsView" className={"parameters-view"}>
 						<VSCodeDataGrid onMouseLeave={this.onMouseLeave}>
 							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={`exceptionHeader`}>
-								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
+								<VSCodeDataGridCell title={App.TOOLTIP_EXCEPTION_TYPE} className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
 								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderButton"} gridColumn={"2"}></VSCodeDataGridCell>
 							</VSCodeDataGridRow>
 							{
@@ -565,4 +588,19 @@ export class App extends React.Component<{}, State> {
 		}
 		return Number(idSplit[1]);
 	}
+
+	private getModifierString(accessType: string): string {
+		if (accessType === "package-private") {
+			return "";
+		}
+		return accessType;
+	}
+
+	private getAccessTypeString(visibility: string): string {
+		if (visibility === "") {
+			return "package-private";
+		}
+		return visibility;
+	}
+
 }
