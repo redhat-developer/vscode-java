@@ -53,7 +53,7 @@ export class TracingLanguageClient extends LanguageClient {
 	}
 
 	private sendRequest0(method: any, ...args) {
-		if (!args) {
+		if (!args || !args.length) {
 			return super.sendRequest(method);
 		}
 
