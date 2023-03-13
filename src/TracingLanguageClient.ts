@@ -79,7 +79,7 @@ export class TracingLanguageClient extends LanguageClient {
 		}
 
 		if (requestType === "workspace/executeCommand") {
-			if (args && args[0]?.command) {
+			if (args?.[0]?.command) {
 				requestType = `workspace/executeCommand/${args[0].command}`;
 			}
 		}

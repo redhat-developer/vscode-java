@@ -83,9 +83,9 @@ export interface TraceEvent {
 	 */
 	duration: number;
 	/**
-	 * Error message that occurs while processing a request.
+	 * Error that occurs while processing a request.
 	 */
-	error?: string;
+	error?: any;
 }
 
 export const extensionApiVersion = '0.8';
