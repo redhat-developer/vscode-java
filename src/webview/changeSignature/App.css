@@ -106,6 +106,7 @@ main {
 }
 
 .parameter-cell-edit {
+	padding-left: 0;
 	background-color: var(--vscode-input-background);
 }
 

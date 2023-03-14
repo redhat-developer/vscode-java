@@ -445,9 +445,9 @@ export class App extends React.Component<{}, State> {
 
 	generateParameterDataGridRow = (row: number) => {
 		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`parameterRow-${row}`} key={`parameterRow-${row}`}>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterType-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.parameters[row].type}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterName-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"2"}>{this.state.parameters[row].name}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editParameterRow ? "parameter-cell-edit" : ""}`} id={`parameterDefault-${row}`} contentEditable={row === this.state.editParameterRow && this.isDefaultValueEditable(row) ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"3"}>{this.getDefaultValue(row)}</VSCodeDataGridCell>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterType-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.parameters[row].type}</VSCodeDataGridCell>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterName-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"2"}>{this.state.parameters[row].name}</VSCodeDataGridCell>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterDefault-${row}`} contentEditable={row === this.state.editParameterRow && this.isDefaultValueEditable(row) ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"3"}>{this.getDefaultValue(row)}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`parameterButton-${row}`} gridColumn={"4"}>
 				{row === this.state.editParameterRow ?
 					<div className="table-buttons-edit">
@@ -474,7 +474,7 @@ export class App extends React.Component<{}, State> {
 
 	generateExceptionDataGridRow = (row: number) => {
 		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`} key={`exceptionRow-${row}`}>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`parameter-cell ${row === this.state.editExceptionRow ? "parameter-cell-edit" : ""}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
+			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
 				{row === this.state.editExceptionRow ?
 					<div className="table-buttons-edit">
