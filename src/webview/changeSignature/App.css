@@ -129,6 +129,10 @@ main {
 	background-color: inherit;
 }
 
+.parameter-cell-button:active {
+	background-color: inherit;
+}
+
 .table-buttons {
 	display: inline-flex;
 }

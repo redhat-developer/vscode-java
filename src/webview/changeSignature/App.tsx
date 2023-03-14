@@ -4,7 +4,7 @@ import { VSCodeButton, VSCodeTextField, VSCodeDropdown, VSCodeOption, VSCodeChec
 import "./App.css";
 import React from "react";
 import { vscode } from "../vscodeApiWrapper";
-import { cloneArray } from "../utils";
+import _ from "lodash";
 
 type State = UIState & Metadata;
 
@@ -130,7 +130,13 @@ export class App extends React.Component<{}, State> {
 			this.doRefactor(true);
 		} else if (id === "reset") {
 			this.setState({
-				...this.initialMetadata,
+				methodIdentifier: this.initialMetadata.methodIdentifier,
+				isDelegate: this.initialMetadata.isDelegate,
+				accessType: this.initialMetadata.accessType,
+				methodName: this.initialMetadata.methodName,
+				returnType: this.initialMetadata.returnType,
+				parameters: _.cloneDeep(this.initialMetadata.parameters),
+				exceptions: _.cloneDeep(this.initialMetadata.exceptions),
 				focusRow: -1,
 				editParameterRow: -1,
 				editExceptionRow: -1,
@@ -365,8 +371,8 @@ export class App extends React.Component<{}, State> {
 				accessType: this.initialMetadata.accessType,
 				methodName: this.initialMetadata.methodName,
 				returnType: this.initialMetadata.returnType,
-				parameters: cloneArray(this.initialMetadata.parameters),
-				exceptions: cloneArray(this.initialMetadata.exceptions),
+				parameters: _.cloneDeep(this.initialMetadata.parameters),
+				exceptions: _.cloneDeep(this.initialMetadata.exceptions),
 			});
 			this.forceUpdate();
 		}
@@ -566,7 +572,7 @@ export class App extends React.Component<{}, State> {
 				</VSCodePanels>
 				<div className="text-title-content">Method signature:</div>
 				<VSCodeTextArea className={"preview"} value={this.getPreview()} readOnly={true} id={"textArea"}></VSCodeTextArea>
-				<VSCodeCheckbox id="delegate" className={"delegate"} onClick={this.onClick}>Keep original method as delegate to changed method</VSCodeCheckbox>
+				<VSCodeCheckbox id="delegate" className={"delegate"} onClick={this.onClick} checked={this.state.isDelegate}>Keep original method as delegate to changed method</VSCodeCheckbox>
 				<div className={"bottom-buttons"}>
 					<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"refactor"}>Refactor</VSCodeButton>
 					<VSCodeButton className={"vsc-button"} appearance="secondary" onClick={this.onClick} id={"preview"}>Preview</VSCodeButton>
