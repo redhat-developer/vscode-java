@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.16.0 (March 16th, 2023)
+ * performance - Allow language server to declare availability sooner by postponing autobuild. See [JLS#2527](https://github.com/eclipse/eclipse.jdt.ls/pull/2527).
+ * performance - Save operations need not run in workspace runnable when project is not unmanaged. See [JLS#2449](https://github.com/eclipse/eclipse.jdt.ls/pull/2449).
+ * enhancement - Implement method hierarchy through existing type hierarchy logic. See [#2991](https://github.com/redhat-developer/vscode-java/pull/2991).
+ * enhancement - Declare support for inlay hints through the language server specification. See [#2965](https://github.com/redhat-developer/vscode-java/pull/2965), [JLS#2365](https://github.com/eclipse/eclipse.jdt.ls/issues/2365).
+ * enhancement - Update types filter according to import declarations. See [#2943](https://github.com/redhat-developer/vscode-java/issues/2943).
+ * enhancement - Update to vscode-languageclient 8.1.0, LSP4J 0.20.0 (LSP 3.17.0). See [#2474](https://github.com/redhat-developer/vscode-java/issues/2474), [JLS#2348](https://github.com/eclipse/eclipse.jdt.ls/issues/2348).
+ * bug fix - Fix regression in extension startup for web-based editors. See [#2968](https://github.com/redhat-developer/vscode-java/issues/2968).
+ * bug fix - No completion on generic anonymous class instance objects. See [JLS#2505](https://github.com/eclipse/eclipse.jdt.ls/issues/2505).
+ * bug fix - Null Analysis does not work for Eclipse/Invisible projects. See [#2956](https://github.com/redhat-developer/vscode-java/issues/2956).
+ * bug fix - Unnecessary error marker for record constructor that uses varargs. See [#2640](https://github.com/redhat-developer/vscode-java/issues/2640).
+ * bug fix - Temporary fix to ensure refactoring document is displayed. See [#2975](https://github.com/redhat-developer/vscode-java/pull/2975).
+ * bug fix - In progress items should always be at the bottom in the server tasks view. See [#2627](https://github.com/redhat-developer/vscode-java/issues/2627).
+ * bug fix - Fix NPE in `textDocument/documentHighlight` requests. See [#2952](https://github.com/redhat-developer/vscode-java/issues/2952).
+ * bug fix - Update VS Code engine to 1.74.0. See [#2950](https://github.com/redhat-developer/vscode-java/issues/2950).
+ * build - Bump webpack from 5.34.0 to 5.76.0. See [#2999](https://github.com/redhat-developer/vscode-java/pull/2999).
+ * other - Add API to track LSP performance at the language client. See [#2996](https://github.com/redhat-developer/vscode-java/pull/2996).
+
 ## 1.15.0 (February 20th, 2023)
  * performance - Skip generated methods when calculating document symbols. See [JLS#2446](https://github.com/eclipse/eclipse.jdt.ls/issues/2446).
  * performance - Make the debounce adaptive for the publish diagnostic job. See [JLS#2443](https://github.com/eclipse/eclipse.jdt.ls/pull/2443).
@@ -20,7 +38,7 @@
  * bug fix - Completion results should include filtered (excluded) types if they are also present in the import declarations. See [JLS#2467](https://github.com/eclipse/eclipse.jdt.ls/pull/2467).
  * bug fix - Fix type hierarchy regression since VS Code 1.75.1. See [#2930](https://github.com/redhat-developer/vscode-java/pull/2930).
  * bug fix - Re-publish diagnostics for null analysis configuration change when auto-build is disabled. See [JLS#2447](https://github.com/eclipse/eclipse.jdt.ls/pull/2447).
- * bug fix - Dependency Analytics extension popup shoud respect user choice. See [#2892](https://github.com/redhat-developer/vscode-java/issues/2892).
+ * bug fix - Dependency Analytics extension popup should respect user choice. See [#2892](https://github.com/redhat-developer/vscode-java/issues/2892).
  * bug fix - Only do full build for a configuration change when auto-build is enabled. See [JLS#2437](https://github.com/eclipse/eclipse.jdt.ls/pull/2437).
  * bug fix - The command to upgrade gradle should check for cancellation prior to updating metadata files. See [JLS#2444](https://github.com/eclipse/eclipse.jdt.ls/pull/2444).
  * bug fix - Fix incorrect ordering of completion items that use a decorator. See [#2917](https://github.com/redhat-developer/vscode-java/issues/2917).
@@ -42,9 +60,9 @@
  * bug fix - Fix incorrect type hierarchy on multi module Maven projects. See [#2871](https://github.com/redhat-developer/vscode-java/issues/2871).
  * bug fix - Permit output folder to be the same as a source folder. See [#2786](https://github.com/redhat-developer/vscode-java/issues/2786).
  * bug fix - Organize imports removes static imports under some conditions. See [#2861](https://github.com/redhat-developer/vscode-java/issues/2861).
- * bug fix - Fix completion issue occuring when invocation spans multiple lines. See [JLS#2387](https://github.com/eclipse/eclipse.jdt.ls/issues/2387).
+ * bug fix - Fix completion issue occurring when invocation spans multiple lines. See [JLS#2387](https://github.com/eclipse/eclipse.jdt.ls/issues/2387).
  * bug fix - Fix scope calculation for "Surround with try/catch" refactoring. See [#2711](https://github.com/redhat-developer/vscode-java/issues/2711).
- * bug fix - Fix NPE occuring when completion item is selected. See [JLS#2376](https://github.com/eclipse/eclipse.jdt.ls/issues/2376).
+ * bug fix - Fix NPE occurring when completion item is selected. See [JLS#2376](https://github.com/eclipse/eclipse.jdt.ls/issues/2376).
  * bug fix - Log user friendly error if client does not support `_java.reloadBundles.command`. See [JLS#2370](https://github.com/eclipse/eclipse.jdt.ls/pull/2370).
  * bug fix - Postfix completion should not be available when editing Javadoc. See [JLS#2367](https://github.com/eclipse/eclipse.jdt.ls/issues/2367).
  * bug fix - Update m2e to latest version in order to ensure classpath resources persist. See [#2857](https://github.com/redhat-developer/vscode-java/issues/2857).
