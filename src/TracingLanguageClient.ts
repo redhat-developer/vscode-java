@@ -1,3 +1,4 @@
+import { performance } from "perf_hooks";
 import { Event, EventEmitter } from "vscode";
 import { CancellationToken, LanguageClient, LanguageClientOptions, ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, ServerOptions } from "vscode-languageclient/node";
 import { TraceEvent } from "./extension.api";
@@ -15,7 +16,7 @@ export class TracingLanguageClient extends LanguageClient {
 	start(): Promise<void> {
 		const isFirstTimeStart: boolean = !this.isStarted;
 		this.isStarted = true;
-		const startAt: number = Date.now();
+		const startAt: number = performance.now();
 		return super.start().then(value => {
 			if (isFirstTimeStart) {
 				this.fireTraceEvent("initialize", startAt);
@@ -41,7 +42,7 @@ export class TracingLanguageClient extends LanguageClient {
 	sendRequest<R>(method: string, token?: CancellationToken): Promise<R>;
 	sendRequest<R>(method: string, param: any, token?: CancellationToken): Promise<R>;
 	sendRequest(method: any, ...args) {
-		const startAt: number = Date.now();
+		const startAt: number = performance.now();
 		const requestType: string = this.getRequestType(method, ...args);
 		return this.sendRequest0(method, ...args).then(value => {
 			this.fireTraceEvent(requestType, startAt);
@@ -88,7 +89,7 @@ export class TracingLanguageClient extends LanguageClient {
 	}
 
 	private fireTraceEvent(type: string, startAt: number, reason?: any): void {
-		const duration: number = Date.now() - startAt;
+		const duration: number = performance.now() - startAt;
 		requestEventEmitter.fire({
 			type,
 			duration,
