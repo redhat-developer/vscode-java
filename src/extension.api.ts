@@ -73,7 +73,22 @@ export enum ClientStatus {
 	stopping = "Stopping",
 }
 
-export const extensionApiVersion = '0.7';
+export interface TraceEvent {
+	/**
+	 * Request type.
+	 */
+	type: string;
+	/**
+	 * Time (in milliseconds) taken to process a request.
+	 */
+	duration: number;
+	/**
+	 * Error that occurs while processing a request.
+	 */
+	error?: any;
+}
+
+export const extensionApiVersion = '0.8';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -118,4 +133,11 @@ export interface ExtensionAPI {
 	 * @since extension version 1.7.0
 	 */
 	readonly serverReady: () => Promise<boolean>;
+
+	/**
+	 * An event that's fired when a request has been responded.
+	 * @since API version 0.8
+	 * @since extension version 1.16.0
+	 */
+	readonly onDidRequestEnd: Event<TraceEvent>;
 }

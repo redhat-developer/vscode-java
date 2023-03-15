@@ -33,6 +33,7 @@ import { excludeProjectSettingsFiles, ServerMode, setGradleWrapperChecksum } fro
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import * as sourceAction from './sourceAction';
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
+import { TracingLanguageClient } from './TracingLanguageClient';
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
@@ -103,7 +104,7 @@ export class StandardLanguageClient {
 		}
 
 		// Create the language client and start the client.
-		this.languageClient = new LanguageClient('java', extensionName, serverOptions, clientOptions);
+		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions);
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
