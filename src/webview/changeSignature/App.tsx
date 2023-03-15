@@ -39,10 +39,10 @@ interface MethodException {
 export class App extends React.Component<{}, State> {
 
 	private initialMetadata: Metadata;
-	private static TOOLTIP_RETURN_TYPE: string = "The method return type, can be either name or full qualified name of the type.";
-	private static TOOLTIP_PARAMETER_TYPE: string = "The parameter type, can be either name or full qualified name of the type.";
+	private static TOOLTIP_RETURN_TYPE: string = "The method return type, can be either name or fully qualified name of the type.";
+	private static TOOLTIP_PARAMETER_TYPE: string = "The parameter type, can be either name or fully qualified name of the type.";
 	private static TOOLTIP_PARAMETER_DEFAULT: string = "The parameter default value, used when replacing the occurrences for an added parameter.";
-	private static TOOLTIP_EXCEPTION_TYPE: string = "The exception type, can be either name or full qualified name of the type.";
+	private static TOOLTIP_EXCEPTION_TYPE: string = "The exception type, can be either name or fully qualified name of the type.";
 
 	constructor(props: any) {
 		super(props);
@@ -83,17 +83,14 @@ export class App extends React.Component<{}, State> {
 			this.setState({
 				accessType: event.target.value
 			});
-			this.forceUpdate();
 		} else if (id === "returnType") {
 			this.setState({
 				returnType: event.target.value
 			});
-			this.forceUpdate();
 		} else if (id === "methodName") {
 			this.setState({
 				methodName: event.target.value
 			});
-			this.forceUpdate();
 		}
 		return;
 	};
@@ -141,7 +138,6 @@ export class App extends React.Component<{}, State> {
 				editParameterRow: -1,
 				editExceptionRow: -1,
 			});
-			this.forceUpdate();
 		} else if (id === "addParameter") {
 			const parameterNames = this.state.parameters.map(e => {
 				return e.name;
@@ -160,7 +156,6 @@ export class App extends React.Component<{}, State> {
 					originalIndex: -1
 				}]
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("removeParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -171,7 +166,6 @@ export class App extends React.Component<{}, State> {
 					return i !== selectedRowNumber;
 				})
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("editParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -182,7 +176,6 @@ export class App extends React.Component<{}, State> {
 				editExceptionRow: -1,
 				focusRow: -1,
 			});
-			this.forceUpdate();
 			const elementToSelect = document.getElementById(`parameterType-${selectedRowNumber}`);
 			if (elementToSelect) {
 				elementToSelect.focus();
@@ -197,7 +190,6 @@ export class App extends React.Component<{}, State> {
 				editExceptionRow: selectedRowNumber,
 				focusRow: -1,
 			});
-			this.forceUpdate();
 			const elementToSelect = document.getElementById(`exceptionType-${selectedRowNumber}`);
 			if (elementToSelect) {
 				elementToSelect.focus();
@@ -214,7 +206,6 @@ export class App extends React.Component<{}, State> {
 			this.setState({
 				parameters: currentParameters
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("downParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -227,7 +218,6 @@ export class App extends React.Component<{}, State> {
 			this.setState({
 				parameters: currentParameters
 			});
-			this.forceUpdate();
 		} else if (id === "addException") {
 			const exceptionNames = this.state.exceptions.map(e => {
 				return e.type;
@@ -244,7 +234,6 @@ export class App extends React.Component<{}, State> {
 					typeHandleIdentifier: undefined,
 				}]
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("removeException")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -255,12 +244,10 @@ export class App extends React.Component<{}, State> {
 					return i !== selectedRowNumber;
 				})
 			});
-			this.forceUpdate();
 		} else if (id === "delegate") {
 			this.setState({
 				isDelegate: event.target.checked
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("confirmParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -288,7 +275,6 @@ export class App extends React.Component<{}, State> {
 				editExceptionRow: -1,
 				focusRow: -1
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("cancelParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -313,7 +299,6 @@ export class App extends React.Component<{}, State> {
 				editExceptionRow: -1,
 				focusRow: -1
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("confirmException")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -333,7 +318,6 @@ export class App extends React.Component<{}, State> {
 				editExceptionRow: -1,
 				focusRow: -1
 			});
-			this.forceUpdate();
 		} else if (id.startsWith("cancelException")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -348,7 +332,6 @@ export class App extends React.Component<{}, State> {
 				editExceptionRow: -1,
 				focusRow: -1
 			});
-			this.forceUpdate();
 		}
 	};
 
@@ -374,7 +357,6 @@ export class App extends React.Component<{}, State> {
 				parameters: _.cloneDeep(this.initialMetadata.parameters),
 				exceptions: _.cloneDeep(this.initialMetadata.exceptions),
 			});
-			this.forceUpdate();
 		}
 	};
 
