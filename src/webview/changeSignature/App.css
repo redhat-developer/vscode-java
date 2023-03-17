@@ -1,0 +1,157 @@
+@import "../../../node_modules/@vscode/codicons/dist/codicon.css";
+
+main {
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.section {
+	margin-bottom: 0;
+}
+
+.section-columns {
+	display: flex;
+	width: 100%;
+	padding-left: calc(var(--design-unit) * 1px);
+}
+
+.text-title {
+	margin: 0;
+	height: calc(var(--input-height) * 0.8px);
+}
+
+.text-title-content {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	margin: 0.5rem 0 0 0;
+	height: calc(var(--input-height) * 0.8px);
+}
+
+.header-left {
+	flex-direction: column;
+	display: flex;
+	padding: 0.5rem 0.5rem 0.5rem 0;
+	flex: 0 0 33%;
+	box-sizing: border-box;
+}
+
+.header {
+	flex-direction: column;
+	display: flex;
+	padding: 0.5rem;
+	flex: 0 0 33%;
+	box-sizing: border-box;
+}
+
+.header-right {
+	flex-direction: column;
+	display: flex;
+	padding: 0.5rem 0 0.5rem 0.5rem;
+	flex: 0 0 33%;
+	box-sizing: border-box;
+}
+
+.vsc-button-left {
+	float: left;
+	margin: 0 0.5rem 0.5rem 0;
+}
+
+.vsc-button {
+	float: left;
+	margin: 0 0.5rem 0.5rem 0.5rem;
+}
+
+.add-button {
+	margin: 0.5rem 0 0 0;
+}
+
+.bottom-buttons {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	margin: 0.5rem 0 0 0;
+}
+
+.preview {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	margin: 0 0 0.5rem 0;
+	width: 99%;
+}
+
+.parameters-panel {
+	margin: 0;
+	width: calc(99% + 4px);
+}
+
+.parameters-view {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	flex-direction: column;
+}
+
+.parameter-cell {
+	padding-left: 0;
+	pointer-events: none;
+}
+
+.parameter-cell-title {
+	padding-left: 0;
+}
+
+.parameter-cell-title:focus {
+	border-color: var(--vscode-keybindingTable-headerBackground);
+	background-color: inherit;
+	color: inherit;
+}
+
+.parameter-cell-header {
+	background-color: var(--vscode-keybindingTable-headerBackground);
+}
+
+.parameter-cell-edit {
+	padding-left: 0;
+	background-color: var(--vscode-input-background);
+}
+
+.parameter-cell-edit-button {
+	padding: 0;
+	border: 0;
+	display: flex;
+	justify-content: right;
+	background-color: var(--vscode-input-background);
+}
+
+.parameter-cell-button {
+	padding: 0;
+	border: 0;
+	display: flex;
+	justify-content: right;
+}
+
+.parameter-cell-button:focus {
+	background-color: inherit;
+}
+
+.parameter-cell-button:active {
+	background-color: inherit;
+}
+
+.table-buttons {
+	display: inline-flex;
+}
+
+.table-buttons-edit {
+	display: inline-flex;
+	background-color: var(--vscode-editor-background);
+}
+
+.table-buttons-edit-ok {
+	margin-left: 0.2rem;
+	margin-right: 0.2rem;
+}
+
+.table-buttons-edit-cancel {
+	margin: 0;
+}
+
+.delegate {
+	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	margin: 0.5rem 0 0.5rem 0;
+}

@@ -7,6 +7,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
+			"debugWebviews": true,
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"env": {
 				"DEBUG_VSCODE_JAVA":"true"
@@ -14,7 +15,11 @@
 			"stopOnEntry": false,
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: watch",
+			"rendererDebugOptions": {
+				"urlFilter": "*redhat.java*",
+				"sourceMaps": true,
+			}
 		},
 		{
 			"name": "Launch Extension - Remote Server",
@@ -36,6 +41,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
+			"debugWebviews": true,
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"stopOnEntry": false,
 			"sourceMaps": true,
@@ -44,7 +50,11 @@
 				"JDTLS_CLIENT_PORT": "5036",
 				"DEBUG_VSCODE_JAVA":"true"
 			},
-			"preLaunchTask": "npm: watch"
+			"preLaunchTask": "npm: watch",
+			"rendererDebugOptions": {
+				"urlFilter": "*redhat.java*",
+				"sourceMaps": true,
+			}
 		},
 		{
 			"name": "Launch Extension - SyntaxLS Client",

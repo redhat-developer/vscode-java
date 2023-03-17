@@ -18,7 +18,9 @@
   - [Inline constant](#inline-constant)
   - [Inline local variable](#inline-local-variable)
   - [Inline method](#inline-method)
-- [Introduce Parameter](#introduce-parameter)
+- Method signature
+  - [Introduce Parameter](#introduce-parameter)
+  - [Change method signature](#change-method-signature)
 - Invert boolean
   - [Invert conditions](#invert-conditions)
   - [Invert local variable](#invert-local-variable)
@@ -468,6 +470,41 @@ public void addUser(String name) {
   fUsers.add(name);
 }
 ```
+
+---
+
+## Change Method Signature
+Changes the method visibility, return type, name, and updates the parameters and exceptions. The above changes can be applied through the call hierarchy of the method.
+
+### Example
+Let's change signature for the method `public void setAddress(String address)`.
+
+#### Before
+
+```java
+public void setAddress(String address) {
+  this.address = address;
+}
+
+public void setAddr() {
+  this.setAddress("Addr");
+}
+```
+
+#### Refactor configuration
+
+![change_signature](./refactoring_change_signature.png)
+#### After
+```java
+public void setAddress1(Object newParam, String address) {
+  this.address = address;
+}
+
+public void setAddr() {
+  this.setAddress1(null, "Addr");
+}
+```
+---
 
 ## Invert conditions
 Inverts the boolean expression in the conditions.

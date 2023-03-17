@@ -2,6 +2,7 @@ import { Disposable, WebviewPanel, window, ViewColumn, commands, Uri, Webview, E
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { Commands } from "./commands";
+import { getNonce } from "./webviewUtils";
 
 class MarkdownPreviewProvider implements Disposable {
     private panel: WebviewPanel | undefined;
@@ -42,7 +43,7 @@ class MarkdownPreviewProvider implements Disposable {
     }
 
     protected async getHtmlContent(webview: Webview, markdownFilePath: string, section: string, context: ExtensionContext): Promise<string> {
-        const nonce: string = this.getNonce();
+        const nonce: string = getNonce();
         const styles: string = this.getStyles(webview, context);
         let body: string | undefined = this.documentCache.get(markdownFilePath);
         if (!body) {
@@ -92,15 +93,6 @@ class MarkdownPreviewProvider implements Disposable {
             Uri.file(path.join(context.extensionPath, 'webview-resources', 'document.css')),
         ];
         return styles.map((styleUri: Uri) => `<link rel="stylesheet" type="text/css" href="${webview.asWebviewUri(styleUri).toString()}">`).join('\n');
-    }
-
-    private getNonce(): string {
-        let text = "";
-        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-        return text;
     }
 }
 

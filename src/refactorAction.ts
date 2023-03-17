@@ -7,6 +7,7 @@ import { FormattingOptions, WorkspaceEdit, RenameFile, DeleteFile, TextDocumentE
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from './commands';
 import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest } from './protocol';
+import { ChangeSignaturePanel } from './refactoring/changeSignaturePanel';
 import { getExtractInterfaceArguments, revealExtractedInterface } from './refactoring/extractInterface';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
@@ -40,6 +41,7 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             || command === 'extractMethod'
             || command === 'extractField'
             || command === 'extractInterface'
+            || command === 'changeSignature'
             || command === 'assignField'
             || command === 'convertVariableToField'
             || command === 'invertVariable'
@@ -109,6 +111,9 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                     return;
                 }
                 commandArguments.push(...args);
+            } else if (command === 'changeSignature') {
+                ChangeSignaturePanel.render(context.extensionUri, languageClient, command, params, formattingOptions, commandInfo);
+                return;
             }
 
             const result: RefactorWorkspaceEdit = await languageClient.sendRequest(GetRefactorEditRequest.type, {
