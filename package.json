@@ -616,6 +616,12 @@
           "markdownDescription": "Enable/disable postfix completion support. `#editor.snippetSuggestions#` can be used to customize how postfix snippets are sorted.",
           "scope": "window"
         },
+        "java.completion.chain.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Enable/disable chain completion support. Chain completions are only available when completions are invoked by the completions shortcut",
+          "scope": "window"
+        },
         "java.completion.matchCase": {
           "type": "string",
           "enum": [
