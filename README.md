@@ -175,10 +175,10 @@ The following settings are supported:
   > For backward compatibility, this setting also accepts boolean value, where `true` has the same meaning as `notification` and `false` has the same meaning as `off`.
 * `java.project.outputPath`: A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.
 * `java.project.referencedLibraries`: Configure glob patterns for referencing local libraries to a Java project.
-* `java.completion.maxResults`: Maximum number of completion results (not including snippets). `0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit..
+* `java.completion.maxResults`: Maximum number of completion results (not including snippets). `0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit.
 * `java.configuration.runtimes`: Map Java Execution Environments to local JDKs.
 * `java.server.launchMode`:
-  - `Standard`: Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc...
+  - `Standard`: Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc.
   - `LightWeight`: Starts a syntax server with lower start-up cost. Only provides syntax features such as outline, navigation, javadoc, syntax errors. The lightweight mode won't load thirdparty extensions, such as java test runner, java debugger, etc.
   - `Hybrid`: Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready. And the syntax server will be shutdown automatically after the standard server is fully ready.
 
@@ -233,6 +233,9 @@ The following settings are supported:
 * `java.configuration.maven.defaultMojoExecutionAction` : Specifies default mojo execution action when no associated metadata can be detected. Defaults to `ignore`.
 * `java.completion.lazyResolveTextEdit.enabled`: [Experimental] Enable/disable lazily resolving text edits for code completion. Defaults to `true`.
 * `java.edit.validateAllOpenBuffersOnChanges`: Specifies whether to recheck all open Java files for diagnostics when editing a Java file. Defaults to `false`.
+
+New in 1.20.0
+* `java.completion.chain.enabled`: Enable/disable chain completion support. Defaults to `false`.
 
 Semantic Highlighting
 ===============
