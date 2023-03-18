@@ -1,6 +1,6 @@
 'use strict';
 
-import * as expandHomeDir from 'expand-home-dir';
+const expandHomeDir = require('expand-home-dir');
 import * as fse from 'fs-extra';
 import { findRuntimes, getRuntime, getSources, IJavaRuntime, JAVAC_FILENAME, JAVA_FILENAME } from 'jdk-utils';
 import * as path from 'path';
