@@ -1,0 +1,17 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"lib": [
+			"DOM"
+		],
+		"module": "ES6",
+		/* Enabled for React */
+		"jsx": "react-jsx",
+		"esModuleInterop": true,
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true,
+	},
+	"include": [
+		"src/webview"
+	]
+}

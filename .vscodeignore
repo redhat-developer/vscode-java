@@ -8,6 +8,8 @@ images/**
 .gitignore
 .github/**
 tsconfig.json
+tsconfig.webview.json
+tsconfig.base.json
 vsc-extension-quickstart.md
 undefined/**
 CONTRIBUTING.md
