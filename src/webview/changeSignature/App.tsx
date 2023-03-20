@@ -519,7 +519,7 @@ export class App extends React.Component<{}, State> {
 							</VSCodeDataGridRow>
 							{
 								(() => {
-									const options = [];
+									const options: JSX.Element[] = [];
 									for (let row = 0; row < this.state.parameters.length; row++) {
 										options.push(this.generateParameterDataGridRow(row));
 									}
@@ -539,7 +539,7 @@ export class App extends React.Component<{}, State> {
 							</VSCodeDataGridRow>
 							{
 								(() => {
-									const options = [];
+									const options: JSX.Element[] = [];
 									for (let row = 0; row < this.state.exceptions.length; row++) {
 										options.push(this.generateExceptionDataGridRow(row));
 									}
@@ -577,8 +577,8 @@ export class App extends React.Component<{}, State> {
 		return Number(idSplit[1]);
 	}
 
-	private getModifierString(accessType: string): string {
-		if (accessType === "package-private") {
+	private getModifierString(accessType: string | undefined): string {
+		if (!accessType || accessType === "package-private") {
 			return "";
 		}
 		return accessType;

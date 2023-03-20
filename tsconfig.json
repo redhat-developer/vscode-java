@@ -1,28 +1,15 @@
 {
+	"extends": "./tsconfig.base.json",
 	"compilerOptions": {
-		"target": "es6",
 		"lib": [
-			"es6",
-			"DOM"
+			"es6"
 		],
 		"module": "commonjs",
-		"moduleResolution": "node",
-		"outDir": "out",
-		"sourceMap": true,
-		"plugins": [
-			{
-				"name": "eslint"
-			}
-		],
-		/* Enabled for React */
-		"jsx": "react-jsx",
-		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
-		"skipLibCheck": true,
 	},
 	"exclude": [
 		"node_modules",
 		"server",
-		".vscode-test"
+		".vscode-test",
+		"src/webview"
 	]
 }

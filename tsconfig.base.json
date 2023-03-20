@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"target": "es6",
+		"moduleResolution": "node",
+		"outDir": "out",
+		"sourceMap": true,
+		"plugins": [
+			{
+				"name": "eslint"
+			}
+		],
+	}
+}

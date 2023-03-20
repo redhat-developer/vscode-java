@@ -6,7 +6,10 @@
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"ecmaVersion": "latest",
-		"project": "tsconfig.json"
+		"project": [
+			"tsconfig.webview.json",
+			"tsconfig.json"
+		]
 	},
 	"plugins": [
 		"@typescript-eslint"
@@ -61,7 +64,9 @@
 		"no-var": "error",
 		"prefer-arrow-callback": [
 			"error",
-			{ "allowNamedFunctions": true }
+			{
+				"allowNamedFunctions": true
+			}
 		],
 		"prefer-const": "error",
 		"prefer-template": "error",

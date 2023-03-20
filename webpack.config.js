@@ -63,7 +63,10 @@ const configAssets = {
 		rules: [{
 			test: /\.ts(x?)$/,
 			exclude: /node_modules/,
-			use: 'ts-loader'
+			loader: 'ts-loader',
+			options: {
+				configFile: 'tsconfig.webview.json'
+			}
 		}, {
 			test: /\.(css)$/,
 			use: [{
