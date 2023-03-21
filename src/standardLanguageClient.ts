@@ -559,7 +559,7 @@ export class StandardLanguageClient {
 			}
 		}));
 
-		context.subscriptions.push(commands.registerCommand(Commands.UPGRADE_GRADLE_WRAPPER, (projectUri: string, version?: string) => {
+		context.subscriptions.push(commands.registerCommand(Commands.UPGRADE_GRADLE_WRAPPER_CMD, (projectUri: string, version?: string) => {
 			upgradeGradle(projectUri, version);
 		}));
 
