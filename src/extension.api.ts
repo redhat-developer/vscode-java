@@ -86,6 +86,10 @@ export interface TraceEvent {
 	 * Error that occurs while processing a request.
 	 */
 	error?: any;
+	/**
+	 * The number of results returned by a response.
+	 */
+	resultLength?: number | undefined;
 }
 
 export const extensionApiVersion = '0.8';

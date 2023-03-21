@@ -19,12 +19,12 @@ export class TracingLanguageClient extends LanguageClient {
 		const startAt: number = performance.now();
 		return super.start().then(value => {
 			if (isFirstTimeStart) {
-				this.fireTraceEvent("initialize", startAt);
+				this.fireTraceEvent("initialize", startAt, undefined);
 			}
 			return value;
 		}, reason => {
 			if (isFirstTimeStart) {
-				this.fireTraceEvent("initialize", startAt, reason);
+				this.fireTraceEvent("initialize", startAt, undefined, reason);
 			}
 			throw reason;
 		});
@@ -45,10 +45,10 @@ export class TracingLanguageClient extends LanguageClient {
 		const startAt: number = performance.now();
 		const requestType: string = this.getRequestType(method, ...args);
 		return this.sendRequest0(method, ...args).then(value => {
-			this.fireTraceEvent(requestType, startAt);
+			this.fireTraceEvent(requestType, startAt, this.getResultLength(value));
 			return value;
 		}, reason => {
-			this.fireTraceEvent(requestType, startAt, reason);
+			this.fireTraceEvent(requestType, startAt, undefined, reason);
 			throw reason;
 		});
 	}
@@ -88,12 +88,21 @@ export class TracingLanguageClient extends LanguageClient {
 		return requestType;
 	}
 
-	private fireTraceEvent(type: string, startAt: number, reason?: any): void {
+	private fireTraceEvent(type: string, startAt: number, resultLength: number | undefined, reason?: any): void {
 		const duration: number = performance.now() - startAt;
 		requestEventEmitter.fire({
 			type,
 			duration,
 			error: reason,
+			resultLength,
 		});
+	}
+
+	private getResultLength(value: any): number | undefined {
+		if (!value) {
+			return 0;
+		}
+
+		return value?.length ?? value?.items?.length;
 	}
 }
