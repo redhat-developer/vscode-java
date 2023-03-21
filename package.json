@@ -63,8 +63,7 @@
         "displayName": "Decompiled Java Class File",
         "selector": [
           {
-            "scheme": "file",
-            "filenamePattern": "*.class"
+            "filenamePattern": "file:/**/*.class"
           }
         ]
       }
