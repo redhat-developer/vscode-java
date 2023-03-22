@@ -8,14 +8,14 @@
 		],
 		"description": "Public static main method"
 	},
-	"Public constructor": {
+	"Constructor": {
 		"prefix": "ctor",
 		"body": [
-			"public ${1:${TM_FILENAME_BASE}}($2) {",
-			"\t${3:super();}$0",
+			"${1|public,protected,private|} ${2:${TM_FILENAME_BASE}}($3) {",
+			"\t${4:super();}$0",
 			"}"
 		],
-		"description": "Public constructor"
+		"description": "Constructor"
 	},
 	"trycatch": {
 		"prefix": "try_catch",
