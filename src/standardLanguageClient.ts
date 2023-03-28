@@ -128,8 +128,12 @@ export class StandardLanguageClient {
 							await onExtensionChange(extensions.all);
 						});
 					}
-
-					registerPasteEventHandler(context, this.languageClient);
+					try {
+						registerPasteEventHandler(context, this.languageClient);
+					} catch (error) {
+						// clients may not have properly configured documentPaste
+						logger.error(error);
+					}
 					activationProgressNotification.hide();
 					if (!hasImported) {
 						showImportFinishNotification(context);
