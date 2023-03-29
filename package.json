@@ -1091,6 +1091,17 @@
           "type": "boolean",
           "markdownDescription": "Specify whether to replace all the occurrences of the subtype with the new extracted interface.",
           "default": true
+        },
+        "java.refactoring.rename.references": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "on",
+            "off"
+          ],
+          "default": "auto",
+          "markdownDescription": "Specify whether to provide diagnostic and quick fix to rename all the references when a symbol name is manually changed without using rename refactoring. When set to `auto`, the diagnostic and quick fix will be provided if `java.autobuild.enabled` is set to `false`",
+          "scope": "window"
         }
       }
     },

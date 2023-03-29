@@ -219,6 +219,10 @@ export namespace Commands {
      */
     export const RENAME_COMMAND = 'java.action.rename';
     /**
+     * Rename references Command.
+     */
+    export const RENAME_REFERENCES_COMMAND = 'java.action.renameReferences';
+    /**
      * Navigate To Super Method Command.
      */
     export const NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND = 'java.action.navigateToSuperImplementation';

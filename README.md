@@ -218,13 +218,16 @@ The following settings are supported:
   - auto
   - on
   - off
-* `java.sharedIndexes.location`: Specifies a common index location for all workspaces. See default values as follows:  
+* `java.sharedIndexes.location`: Specifies a common index location for all workspaces. See default values as follows:
   - Windows: First use `"$APPDATA\\.jdt\\index"`, or `"~\\.jdt\\index"` if it does not exist
   - macOS: `"~/Library/Caches/.jdt/index"`
   - Linux: First use `"$XDG_CACHE_HOME/.jdt/index"`, or `"~/.cache/.jdt/index"` if it does not exist
 * `java.refactoring.extract.interface.replace`: Specify whether to replace all the occurrences of the subtype with the new extracted interface. Defaults to `true`.
 * `java.import.maven.disableTestClasspathFlag` : Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects. Defaults to `false`.
 * `java.configuration.maven.defaultMojoExecutionAction` : Specifies default mojo execution action when no associated metadata can be detected. Defaults to `ignore`.
+
+New in 1.16.0
+* `java.refactoring.rename.references`: Specify whether to provide diagnostic and quick fix to rename all the references when a symbol name is manually changed without using rename refactoring. When set to `auto`, the diagnostic and quick fix will be provided if `java.autobuild.enabled` is set to `false`.
 
 Semantic Highlighting
 ===============
