@@ -41,7 +41,7 @@ export class GradleCodeActionProvider implements CodeActionProvider<CodeAction> 
 					const projectUri = Uri.file(projectPath).toString();
 					const upgradeWrapperCommand: Command = {
 						title: UPGRADE_GRADLE_WRAPPER_TITLE,
-						command: Commands.UPGRADE_GRADLE_WRAPPER,
+						command: Commands.UPGRADE_GRADLE_WRAPPER_CMD,
 						arguments: [projectUri]
 					};
 					const codeAction = new CodeAction(UPGRADE_GRADLE_WRAPPER_TITLE, CodeActionKind.QuickFix.append("gradle"));

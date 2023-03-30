@@ -173,6 +173,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						actionableRuntimeNotificationSupport: true,
 						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
 						extractInterfaceSupport: true,
+						advancedUpgradeGradleSupport: true,
 					},
 					triggerFiles,
 				},
