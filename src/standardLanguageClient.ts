@@ -5,7 +5,7 @@ import { findRuntimes } from "jdk-utils";
 import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
-import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit } from "vscode-languageclient";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, FeatureState } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -108,6 +108,7 @@ export class StandardLanguageClient {
 		// Create the language client and start the client.
 		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions);
 
+		this.languageClient.registerFeature(new ResolveSupportFeature());
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
 
@@ -636,6 +637,22 @@ export class StandardLanguageClient {
 
 	public getClientStatus(): ClientStatus {
 		return this.status;
+	}
+}
+
+export class ResolveSupportFeature implements StaticFeature {
+    fillClientCapabilities(capabilities): void {
+        // https://github.com/eclipse/eclipse.jdt.ls/pull/2453#issuecomment-1429022121
+		const properties: string[] = capabilities.textDocument.completion.completionItem.resolveSupport.properties;
+		properties.push('textEdit');
+		properties.push('sortText');
+		properties.push('filterText');
+		properties.push('insertText');
+    }
+    initialize(): void {}
+	dispose(): void {}
+	getState(): FeatureState {
+		return null;
 	}
 }
 

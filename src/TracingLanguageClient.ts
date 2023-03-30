@@ -1,6 +1,6 @@
 import { performance } from "perf_hooks";
 import { Event, EventEmitter } from "vscode";
-import { CancellationToken, LanguageClient, LanguageClientOptions, ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, ServerOptions } from "vscode-languageclient/node";
+import { CancellationToken, InitializeParams, LanguageClient, LanguageClientOptions, ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, ServerOptions } from "vscode-languageclient/node";
 import { TraceEvent } from "./extension.api";
 
 const requestEventEmitter = new EventEmitter<TraceEvent>();
