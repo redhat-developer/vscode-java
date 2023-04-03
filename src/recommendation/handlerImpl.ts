@@ -4,6 +4,7 @@
 
 import * as vscode from "vscode";
 import { IHandler } from "./handler";
+import { Telemetry } from "../telemetry";
 
 const KEY_RECOMMENDATION_USER_CHOICE_MAP = "recommendationUserChoice";
 
@@ -54,6 +55,10 @@ export class HandlerImpl implements IHandler {
 
 		const actions: Array<string> = Object.values(UserChoice);
 		const answer = await vscode.window.showInformationMessage(message, ...actions);
+		await Telemetry.sendTelemetry('recommendation', {
+			recommendation: extName,
+			choice:answer?.toLowerCase()
+		});
 		if (answer === UserChoice.install) {
 			await installExtensionCmdHandler(extName, extName);
 		}
