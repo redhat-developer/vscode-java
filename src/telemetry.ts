@@ -38,15 +38,19 @@ export namespace Telemetry {
 		if (!telemetryManager) {
 			throw new Error("The telemetry service for vscode-java has not been started yet");
 		}
+		const javaSettings = getJavaSettingsForTelemetry(workspace.getConfiguration());
+
+		let properties: any;
 		if (eventName === STARTUP_EVT) {
 			serverInitializedReceived = true;
+			properties= { ...data, ...javaSettings };
+		} else {
+			properties= { ...data};
 		}
-
-		const javaSettings = getNonDefaultJavaSettings(workspace.getConfiguration());
 
 		return telemetryManager.send({
 			name: eventName,
-			properties: { ...data, ...javaSettings }
+			properties
 		});
 	}
 
@@ -56,7 +60,7 @@ export namespace Telemetry {
 		}
 	}
 
-	function getNonDefaultJavaSettings(config: WorkspaceConfiguration) {
+	function getJavaSettingsForTelemetry(config: WorkspaceConfiguration) {
 		// settings whose values we can record
 		const SETTINGS_BASIC = [
 			"java.quickfix.showAt", "java.symbols.includeSourceMethodDeclarations",
