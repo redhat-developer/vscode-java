@@ -26,3 +26,7 @@ Jenkinsfile
 .eslintignore
 webpack.config.js
 .DS_Store
+.github/**
+.gitignore
+.tool-versions
+.sdkmanrc
