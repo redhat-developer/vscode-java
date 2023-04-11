@@ -32,6 +32,7 @@ import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
 import glob = require('glob');
 import { Telemetry } from './telemetry';
+import { getMessage } from './errorUtils';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -291,13 +292,16 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 
 			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
 			if (cleanWorkspaceExists) {
+				const data = {};
 				try {
 					cleanupLombokCache(context);
 					deleteDirectory(workspacePath);
 					deleteDirectory(syntaxServerWorkspacePath);
 				} catch (error) {
+					data['error'] = getMessage(error);
 					window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
 				}
+				await Telemetry.sendTelemetry(Commands.CLEAN_WORKSPACE, data);
 			}
 
 			// Register commands here to make it available even when the language client fails
