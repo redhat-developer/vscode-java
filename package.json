@@ -648,10 +648,12 @@
             {
               "type": "string",
               "enum": [
-                "eclipse"
+                "eclipse",
+                "google"
               ],
               "enumDescriptions": [
-                "Use the eclipse formatter."
+                "Use the eclipse formatter.",
+                "Use the google-java-format formatter."
               ],
               "markdownDescription": "Specifies the formatter style."
             },
@@ -664,10 +666,12 @@
                 "style": {
                   "type": "string",
                   "enum": [
-                    "eclipse"
+                    "eclipse",
+                    "google"
                   ],
                   "enumDescriptions": [
-                    "Use the eclipse formatter."
+                    "Use the eclipse formatter.",
+                    "Use the google-java-format formatter."
                   ],
                   "markdownDescription": "Specifies the formatter style."
                 },

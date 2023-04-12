@@ -82,6 +82,19 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 				'java.base/java.util=ALL-UNNAMED',
 				'--add-opens',
 				'java.base/java.lang=ALL-UNNAMED',
+				// See https://github.com/google/google-java-format#as-a-library
+				'--add-opens',
+				'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+				'--add-opens',
+				'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+				'--add-opens',
+				'jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+				'--add-opens',
+				'jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+				'--add-opens',
+				'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+				'--add-opens',
+				'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
 				// See https://github.com/redhat-developer/vscode-java/issues/2264
 				// It requires the internal API sun.nio.fs.WindowsFileAttributes.isDirectoryLink() to check if a Windows directory is symlink.
 				'--add-opens',
