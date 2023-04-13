@@ -1,5 +1,31 @@
 # Change Log
 
+## 1.17.0 (April 13th, 2023)
+ * performance - Support resolving dependencies in parallel for Maven projects. See [#3030](https://github.com/redhat-developer/vscode-java/pull/3030).
+ * performance - Cache and re-use type bindings for a completion invocation. See [JLS#2535](https://github.com/eclipse/eclipse.jdt.ls/pull/2535).
+ * performance - Avoid retrieving AST root during diagnostic publishing. See [JLS#2574](https://github.com/eclipse/eclipse.jdt.ls/pull/2574).
+ * performance - Implement `itemDefaults` for completion responses. See [JLS#2475](https://github.com/eclipse/eclipse.jdt.ls/issues/2475).
+ * enhancement - Add support for decompiling class files. See [#2679](https://github.com/redhat-developer/vscode-java/issues/2679), [#3012](https://github.com/redhat-developer/vscode-java/issues/3012).
+ * enhancement - Add "Change signature" refactoring. See [#2104](https://github.com/redhat-developer/vscode-java/issues/2104).
+ * enhancement - Implement `labelDetails` for completion items. See [JLS#2476](https://github.com/eclipse/eclipse.jdt.ls/issues/2476).
+ * enhancement - `sysout` postfix completion should be applicable to any variable. See [JLS#2559](https://github.com/eclipse/eclipse.jdt.ls/pull/2559).
+ * enhancement - Add support for telemetry notifications. See [#2289](https://github.com/redhat-developer/vscode-java/issues/2289), [#3042](https://github.com/redhat-developer/vscode-java/pull/3042), [#3058](https://github.com/redhat-developer/vscode-java/pull/3058).
+ * enhancement - Trace API should give indicator of response success status. See [#3010](https://github.com/redhat-developer/vscode-java/pull/3010).
+ * bug fix - Single double quote should be matched appropriately. See [#3037](https://github.com/redhat-developer/vscode-java/issues/3037).
+ * bug fix - Lombok ignores `lombok.config`. See [#2887](https://github.com/redhat-developer/vscode-java/issues/2887).
+ * bug fix - Increase relevance of "Create enum". See [#2940](https://github.com/redhat-developer/vscode-java/issues/2940).
+ * bug fix - Recover when `documentPaste` API is not properly registered. See [#3028](https://github.com/redhat-developer/vscode-java/pull/3028).
+ * bug fix - Ensure we do not return duplicate search results for workspace symbols. See [JLS#2547](https://github.com/eclipse/eclipse.jdt.ls/pull/2547).
+ * bug fix - Code action to generate accessor outside of identifier no longer available. See [JLS#2533](https://github.com/eclipse/eclipse.jdt.ls/issues/2533).
+ * bug fix - Support importing multi-Maven projects with the same `artifactId`. See [JLS#2017](https://github.com/eclipse/eclipse.jdt.ls/issues/2017).
+ * bug fix - Do not show `Generate Constructors` quick assist for static fields. See [JLS#2142](https://github.com/eclipse/eclipse.jdt.ls/issues/2142).
+ * bug fix - Delegate commands should respect cancellation events from the client. See [JLS#2415](https://github.com/eclipse/eclipse.jdt.ls/issues/2415).
+ * bug fix - Ensure `java.project.upgradeGradle` client/server commands do not clash. See [#3001](https://github.com/redhat-developer/vscode-java/issues/3001).
+ * bug fix - Fix "commands test" when run locally. See [#3027](https://github.com/redhat-developer/vscode-java/pull/3027).
+ * build - Exclude `.github/` and `.gitignore` from packaging. See [#3057](https://github.com/redhat-developer/vscode-java/pull/3057).
+ * build - Add separate tsconfig for webview. See [#3009](https://github.com/redhat-developer/vscode-java/pull/3009).
+ * debt - Support the refactoring document correctly. See [#2974](https://github.com/redhat-developer/vscode-java/issues/2974).
+
 ## 1.16.0 (March 16th, 2023)
  * performance - Allow language server to declare availability sooner by postponing autobuild. See [JLS#2527](https://github.com/eclipse/eclipse.jdt.ls/pull/2527).
  * performance - Save operations need not run in workspace runnable when project is not unmanaged. See [JLS#2449](https://github.com/eclipse/eclipse.jdt.ls/pull/2449).
