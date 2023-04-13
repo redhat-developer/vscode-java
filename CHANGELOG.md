@@ -12,7 +12,6 @@
  * enhancement - Add support for telemetry notifications. See [#2289](https://github.com/redhat-developer/vscode-java/issues/2289), [#3042](https://github.com/redhat-developer/vscode-java/pull/3042), [#3058](https://github.com/redhat-developer/vscode-java/pull/3058).
  * enhancement - Trace API should give indicator of response success status. See [#3010](https://github.com/redhat-developer/vscode-java/pull/3010).
  * bug fix - Single double quote should be matched appropriately. See [#3037](https://github.com/redhat-developer/vscode-java/issues/3037).
- * bug fix - Lombok ignores `lombok.config`. See [#2887](https://github.com/redhat-developer/vscode-java/issues/2887).
  * bug fix - Increase relevance of "Create enum". See [#2940](https://github.com/redhat-developer/vscode-java/issues/2940).
  * bug fix - Recover when `documentPaste` API is not properly registered. See [#3028](https://github.com/redhat-developer/vscode-java/pull/3028).
  * bug fix - Ensure we do not return duplicate search results for workspace symbols. See [JLS#2547](https://github.com/eclipse/eclipse.jdt.ls/pull/2547).
