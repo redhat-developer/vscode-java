@@ -186,7 +186,7 @@
     "snippets": [
       {
         "language": "java",
-        "path": "./snippets/java.json"
+        "path": "./snippets/snippets.json"
       }
     ],
     "jsonValidation": [

@@ -1,0 +1,182 @@
+{
+	"if": {
+		"description": "[if]",
+		"prefix": "if",
+		"body": [
+			"if (${1:condition})",
+			"\t$0;"
+		]
+	},
+	"ife": {
+		"description": "[if] [e]lse",
+		"prefix": [
+			"ife",
+			"if-else"
+		],
+		"body": [
+			"if (${1:condition})",
+			"\t${2:System.err.println()};",
+			"else",
+			"\t$0"
+		]
+	},
+	"wh": {
+		"description": "[wh]ile",
+		"prefix": [
+			"wh",
+			"while"
+		],
+		"body": [
+			"while (${1:condition})",
+			"\t$0;"
+		]
+	},
+	"do": {
+		"description": "[do]",
+		"prefix": "do",
+		"body": [
+			"do {",
+			"\t$0;",
+			"} while (${1:condition})"
+		]
+	},
+	"fo": {
+		"description": "[fo]r",
+		"prefix": [
+			"fo",
+			"for"
+		],
+		"body": [
+			"for (var ${1:variable} = ${2:0}; $1 ${3|<,<=,>,>=|} ${4:limit}; $1++)",
+			"\t$0;"
+		]
+	},
+	"foe": {
+		"description": "[fo]r[e]ach",
+		"prefix": [
+			"foe",
+			"for-each"
+		],
+		"body": [
+			"foreach (var ${1:variable} in ${2:iterable})",
+			"\t$0;"
+		]
+	},
+	"sw": {
+		"description": "[sw]itch",
+		"prefix": [
+			"sw",
+			"switch"
+		],
+		"body": [
+			"switch (${1:key}) {",
+			"\tcase ${2:value}:",
+			"\t\t$0",
+			"\t\tbreak;",
+			"",
+			"\tdefault:",
+			"\t\tbreak;",
+			"}"
+		]
+	},
+	"me": {
+		"description": "[me]thod",
+		"prefix": [
+			"me",
+			"method"
+		],
+		"body": [
+			"${1|public,protected,private|} ${2:methodName}(${2:parameters}) {",
+			"\t$0;",
+			"}"
+		]
+	},
+	"cl": {
+		"description": "[cl]ass",
+		"prefix": [
+			"cl",
+			"class"
+		],
+		"body": [
+			"public class ${1:Name} {",
+			"\t$0",
+			"}"
+		]
+	},
+	"re": {
+		"description": "[re]cord",
+		"prefix": [
+			"re",
+			"record"
+		],
+		"body": [
+			"public record ${1:Name} {",
+			"\t$0",
+			"}"
+		]
+	},
+	"in": {
+		"description": "[in]terface",
+		"prefix": [
+			"in",
+			"interface"
+		],
+		"body": [
+			"public interface ${1:Name} {",
+			"\t$0",
+			"}"
+		]
+	},
+	"tr": {
+		"description": "[tr]y",
+		"prefix": [
+			"tr",
+			"try"
+		],
+		"body": [
+			"try {",
+			"\t${1:System.err.println()};",
+			"} catch (${2:Exception} e) {",
+			"\t$0;",
+			"}"
+		]
+	},
+	"trf": {
+		"description": "[tr]y [f]inally",
+		"prefix": [
+			"trf",
+			"try-finally"
+		],
+		"body": [
+			"try {",
+			"\t${1:System.err.println()};",
+			"} catch (${2:Exception} e) {",
+			"\t${3:System.err.println()};",
+			"} finally {",
+			"\t$0;",
+			"}"
+		]
+	},
+	"ma": {
+		"description": "[ma]in",
+		"prefix": [
+			"ma",
+			"main"
+		],
+		"body": [
+			"public static void main(String[] args) {",
+			"\t$0",
+			"}"
+		]
+	},
+	"out/err": {
+		"description": "[out]/[err]",
+		"prefix": [
+			"out",
+			"err"
+		],
+		"body": [
+			"System.${1|out,err|}.println($0);"
+		]
+	}
+}
