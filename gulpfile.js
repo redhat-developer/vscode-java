@@ -122,13 +122,24 @@ gulp.task('download_lombok', async function (done) {
 	}
 
 	await new Promise(function (resolve, reject) {
-		const lombokVersion = '1.18.24';
-		// The latest lombok version can be found on the website https://projectlombok.org/downloads
-		const lombokUrl = `https://projectlombok.org/downloads/lombok-${lombokVersion}.jar`;
-		download(lombokUrl)
+		// Adopt lombok-1.18.27 edge release for the issue https://github.com/redhat-developer/vscode-java/issues/2887
+		download("https://projectlombok.org/lombok-edge.jar")
 			.pipe(gulp.dest('./lombok/'))
 			.on("error", reject)
-			.on('end', resolve);
+			.on('end', () => {
+				fse.renameSync("./lombok/lombok-edge.jar", "./lombok/lombok-1.18.27.jar");
+				resolve();
+			});
+
+		// TODO: Switch to stable version once lombok 1.18.28 is released.
+
+		// const lombokVersion = '1.18.24';
+		// // The latest lombok version can be found on the website https://projectlombok.org/downloads
+		// const lombokUrl = `https://projectlombok.org/downloads/lombok-${lombokVersion}.jar`;
+		// download(lombokUrl)
+		// 	.pipe(gulp.dest('./lombok/'))
+		// 	.on("error", reject)
+		// 	.on('end', resolve);
 	});
 	done();
 });
