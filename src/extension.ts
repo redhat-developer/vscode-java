@@ -169,7 +169,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						clientHoverProvider: true,
 						clientDocumentSymbolProvider: true,
 						gradleChecksumWrapperPromptSupport: true,
-						resolveAdditionalTextEditsSupport: true,
 						advancedIntroduceParameterRefactoringSupport: true,
 						actionableRuntimeNotificationSupport: true,
 						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
