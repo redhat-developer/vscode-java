@@ -617,6 +617,12 @@
           "markdownDescription": "Specify whether to match case for code completion.",
           "scope": "window"
         },
+        "java.completion.lazyResolveTextEdit.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Experimental] Enable/disable lazily resolving text edits for code completion.",
+          "scope": "window"
+        },
         "java.foldingRange.enabled": {
           "type": "boolean",
           "default": true,
