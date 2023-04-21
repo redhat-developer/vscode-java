@@ -95,7 +95,15 @@ class ServerTaskTerminal implements Pseudoterminal {
 			return;
 		}
 
-		this.onDidWriteEvent.fire(`${report.id.slice(0, 8)} ${report.task}: ${report.status} [${report.workDone}/${report.totalWork}]\r\n`);
+		let taskMsg = `${report.id.slice(0, 8)} ${report.task}`;
+		if (report.status) {
+			taskMsg += `: ${report.status}`;
+		}
+		if (report.totalWork && report.workDone >= 0) {
+			taskMsg += ` [${report.workDone}/${report.totalWork}]`;
+		}
+
+		this.onDidWriteEvent.fire(`${taskMsg}\r\n`);
 	}
 
 	open(initialDimensions: TerminalDimensions): void {
