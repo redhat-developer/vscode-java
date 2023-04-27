@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.18.0 (April 27th, 2023)
+ * performance - Completion handling should not be done in asynchronous thread pool. See [JLS#2605](https://github.com/eclipse/eclipse.jdt.ls/pull/2605).
+ * performance - Support lazily resolving postfix completion items. See [#3072](https://github.com/redhat-developer/vscode-java/pull/3072), [JLS#2616](https://github.com/eclipse/eclipse.jdt.ls/issues/2616), [JLS#2584](https://github.com/eclipse/eclipse.jdt.ls/issues/2584).
+ * performance - Place the URI of a document into the completion response store. See [#2614](https://github.com/eclipse/eclipse.jdt.ls/pull/2614).
+ * enhancement - Provide Java 20 support. See [#3023](https://github.com/redhat-developer/vscode-java/issues/3023).
+ * enhancement - Add `syserr` postfix completion. See [JLS#2620](https://github.com/eclipse/eclipse.jdt.ls/pull/2620).
+ * bug fix - Ensure meaningful information is displayed by the progress reporter. See [#3082](https://github.com/redhat-developer/vscode-java/pull/3082).
+ * bug fix - Respect settings in the `lombok.config` file. See [#2887](https://github.com/redhat-developer/vscode-java/issues/2887).
+ * bug fix - `NullPointerException` in `signatureHelp/codeAction/inlayHint` when AST is not generated. See [JLS#2608](https://github.com/eclipse/eclipse.jdt.ls/issues/2608).
+ * bug fix - `StringIndexOutOfBoundsException` on `textDocument/signatureHelp` when triggered from end of document. See [JLS#2606](https://github.com/eclipse/eclipse.jdt.ls/issues/2606).
+ * bug fix - Some logged information should only be shown in debug mode. See [JLS#2603](https://github.com/eclipse/eclipse.jdt.ls/issues/2603).
+
 ## 1.17.0 (April 13th, 2023)
  * performance - Support resolving dependencies in parallel for Maven projects. See [#3030](https://github.com/redhat-developer/vscode-java/pull/3030).
  * performance - Cache and re-use type bindings for a completion invocation. See [JLS#2535](https://github.com/eclipse/eclipse.jdt.ls/pull/2535).
