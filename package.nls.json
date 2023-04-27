@@ -17,11 +17,9 @@
 	"java.project.listSourcePaths": "List All Java Source Paths",
 	"java.show.server.task.status": "Show Build Job Status",
 	"java.action.navigateToSuperImplementation": "Go to Super Implementation",
-	"java.action.showTypeHierarchy": "Show Type Hierarchy",
 	"java.action.showClassHierarchy": "Show Class Hierarchy",
 	"java.action.showSupertypeHierarchy": "Show Supertype Hierarchy",
 	"java.action.showSubtypeHierarchy": "Show Subtype Hierarchy",
-	"java.action.changeBaseType": "Base on this Type",
 	"java.project.createModuleInfo.command": "Create module-info.java",
 	"java.clean.sharedIndexes": "Clean Shared Indexes"
 }

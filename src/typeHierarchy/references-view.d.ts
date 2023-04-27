@@ -27,6 +27,13 @@ export interface SymbolTree {
 	 * @param input A symbol tree input object
 	 */
 	setInput(input: SymbolTreeInput<unknown>): void;
+
+	/**
+	 * Get the contents of the references viewlet.
+	 *
+	 * @returns The current symbol tree input object
+	 */
+	getInput(): SymbolTreeInput<unknown> | undefined;
 }
 
 /**
@@ -100,6 +107,11 @@ export interface SymbolTreeModel<T> {
 	highlights?: SymbolItemEditorHighlights<T>;
 
 	/**
+	 * Optional support for drag and drop.
+	 */
+	dnd?: SymbolItemDragAndDrop<T>;
+
+	/**
 	 * Optional dispose function which is invoked when this model is
 	 * needed anymore
 	 */
@@ -136,4 +148,9 @@ export interface SymbolItemEditorHighlights<T> {
 	 * Given an item and an uri return an array of ranges to highlight.
 	 */
 	getEditorHighlights(item: T, uri: vscode.Uri): vscode.Range[] | undefined;
+}
+
+export interface SymbolItemDragAndDrop<T> {
+
+	getDragUri(item: T): vscode.Uri | undefined;
 }

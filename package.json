@@ -1206,34 +1206,27 @@
         "category": "Java"
       },
       {
-        "command": "java.action.showTypeHierarchy",
-        "title": "%java.action.showTypeHierarchy%",
-        "category": "Java"
-      },
-      {
         "command": "java.action.showClassHierarchy",
         "title": "%java.action.showClassHierarchy%",
         "icon": "$(type-hierarchy)",
-        "enablement": "typeHierarchyDirection != both && typeHierarchySymbolKind != 10",
+        "category": "Java"
+      },
+      {
+        "command": "java.action.showClassHierarchyFromReferenceView",
+        "title": "%java.action.showClassHierarchy%",
+        "icon": "$(type-hierarchy)",
         "category": "Java"
       },
       {
         "command": "java.action.showSupertypeHierarchy",
         "title": "%java.action.showSupertypeHierarchy%",
         "icon": "$(type-hierarchy-super)",
-        "enablement": "typeHierarchyDirection != parents",
         "category": "Java"
       },
       {
         "command": "java.action.showSubtypeHierarchy",
         "title": "%java.action.showSubtypeHierarchy%",
         "icon": "$(type-hierarchy-sub)",
-        "enablement": "typeHierarchyDirection != children",
-        "category": "Java"
-      },
-      {
-        "command": "java.action.changeBaseType",
-        "title": "%java.action.changeBaseType%",
         "category": "Java"
       },
       {
@@ -1304,7 +1297,7 @@
           "group": "navigation@90"
         },
         {
-          "command": "java.action.showTypeHierarchy",
+          "command": "java.action.showClassHierarchy",
           "when": "javaLSReady && editorTextFocus && editorLangId == java",
           "group": "0_navigation@3"
         }
@@ -1343,12 +1336,12 @@
           "when": "javaLSReady"
         },
         {
-          "command": "java.action.showTypeHierarchy",
-          "when": "javaLSReady && editorIsOpen"
+          "command": "java.action.showClassHierarchy",
+          "when": "javaLSReady && editorIsOpen && reference-list.source != typeHierarchy"
         },
         {
-          "command": "java.action.showClassHierarchy",
-          "when": "false"
+          "command": "java.action.showClassHierarchyFromReferenceView",
+          "when": "javaLSReady && editorIsOpen && reference-list.source == typeHierarchy"
         },
         {
           "command": "java.action.showSubtypeHierarchy",
@@ -1356,10 +1349,6 @@
         },
         {
           "command": "java.action.showSupertypeHierarchy",
-          "when": "false"
-        },
-        {
-          "command": "java.action.changeBaseType",
           "when": "false"
         },
         {
@@ -1385,9 +1374,9 @@
       ],
       "view/title": [
         {
-          "command": "java.action.showClassHierarchy",
+          "command": "java.action.showClassHierarchyFromReferenceView",
           "group": "navigation@-1",
-          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && typeHierarchySymbolKind != 10"
+          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == typeHierarchy"
         },
         {
           "command": "java.action.showSupertypeHierarchy",
@@ -1402,9 +1391,24 @@
       ],
       "view/item/context": [
         {
-          "command": "java.action.changeBaseType",
+          "command": "java.action.showClassHierarchy",
           "group": "1",
-          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
+          "when": "view == references-view.tree && viewItem == java-type-item"
+        },
+        {
+          "command": "java.action.showClassHierarchyFromReferenceView",
+          "group": "1",
+          "when": "view == references-view.tree && viewItem == type-item"
+        },
+        {
+          "command": "java.action.showSupertypeHierarchy",
+          "group": "1",
+          "when": "view == references-view.tree && viewItem == java-type-item"
+        },
+        {
+          "command": "java.action.showSubtypeHierarchy",
+          "group": "1",
+          "when": "view == references-view.tree && viewItem == java-type-item"
         }
       ]
     }
