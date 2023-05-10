@@ -33,6 +33,7 @@ import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, get
 import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
+import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -101,11 +102,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	clientLogFile = path.join(storagePath, 'client.log');
 	initializeLogFile(clientLogFile);
 
-	Telemetry.startTelemetry(context);
+	const telemetryService: Promise<TelemetryService> = Telemetry.startTelemetry(context);
 
 	enableJavadocSymbols();
 
-	initializeRecommendation(context);
+	initializeRecommendation(context, telemetryService);
 
 	registerOutOfMemoryDetection(storagePath);
 
