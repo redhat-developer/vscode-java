@@ -17,14 +17,15 @@ export namespace Telemetry {
 	 * @returns when the telemetry service has been started
 	 * @throws Error if the telemetry service has already been started
 	 */
-	export async function startTelemetry(context: ExtensionContext): Promise<void> {
+	export async function startTelemetry(context: ExtensionContext): Promise<TelemetryService> {
 		if (!!telemetryManager) {
 			throw new Error("The telemetry service for vscode-java has already been started");
 		}
 		const redhatService = await getRedHatService(context);
-		telemetryManager = await redhatService.getTelemetryService();
+		const telemService = await redhatService.getTelemetryService();
+		telemetryManager = telemService;
 		setTimeout(sendEmptyStartUp, 60000); // assume LS may not have initialized
-		return;
+		return telemService;
 	}
 
 	/**
