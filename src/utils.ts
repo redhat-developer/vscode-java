@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
+import { workspace, WorkspaceConfiguration, commands, Uri, version, extensions } from 'vscode';
 import { Commands } from './commands';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
@@ -211,5 +211,29 @@ export function getJavaConfig(javaHome: string) {
 	}
 
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
+	/* eslint no-underscore-dangle: 0 */
+	javaConfig._contribution_ = Object.fromEntries(collectContributedSettings());
 	return javaConfig;
+}
+
+function collectContributedSettings(): Map<string, any> {
+	const result: Map<string, any> = new Map<string, any>();
+	for (const extension of extensions.all) {
+		const contributesSection = extension.packageJSON['contributes'];
+		if (!contributesSection) {
+			continue;
+		}
+		const javaSettings = contributesSection['javaSettings'];
+		if (!Array.isArray(javaSettings) || !javaSettings.length) {
+			continue;
+		}
+
+		for (const settingName of javaSettings) {
+			const value = workspace.getConfiguration().get(settingName);
+			if (value !== undefined) {
+				result.set(settingName, value);
+			}
+		}
+	}
+	return result;
 }

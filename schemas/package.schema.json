@@ -21,6 +21,14 @@
 						"type": "string",
 						"description": "Regular expressions for specifying build file"
 					}
+				},
+				"javaSettings": {
+					"type": "array",
+					"markdownDescription": "Settings that are contributed by other extensions and need to be used by the Java language server",
+					"items": {
+						"type": "string",
+						"description": "The fully qualified setting name"
+					}
 				}
 			}
 		}
