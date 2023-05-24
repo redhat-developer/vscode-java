@@ -1101,6 +1101,12 @@
             "usesOnlineServices",
             "telemetry"
           ]
+        },
+        "java.edit.validateAllOpenBuffersOnChanges": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
+          "scope": "window"
         }
       }
     },

@@ -174,7 +174,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
 						extractInterfaceSupport: true,
 						advancedUpgradeGradleSupport: true,
-						validateAllOpenBuffersOnDidChange: false,
 					},
 					triggerFiles,
 				},
