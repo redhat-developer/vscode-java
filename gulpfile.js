@@ -13,6 +13,7 @@ const server_dir = '../eclipse.jdt.ls';
 const originalTestFolder = path.join(__dirname, 'test', 'resources', 'projects', 'maven', 'salut');
 const tempTestFolder = path.join(__dirname, 'test-temp');
 const testSettings = path.join(tempTestFolder, '.vscode', 'settings.json');
+const JDT_LS_SNAPSHOT_URL = "http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz"
 //...
 
 gulp.task('clean_jre', function (done) {
@@ -145,19 +146,23 @@ gulp.task('download_lombok', async function (done) {
 });
 
 gulp.task('download_server', function (done) {
-	fse.removeSync('./server');
-	download("http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz")
-		.pipe(decompress())
-		.pipe(gulp.dest('./server'));
+	download_server_fn();
 	done();
 });
 
 gulp.task('build_server', function (done) {
-	fse.removeSync('./server');
-	cp.execSync(mvnw() + ' -Pserver-distro clean package -Declipse.jdt.ls.skipGradleChecksums', { cwd: server_dir, stdio: [0, 1, 2] });
-	gulp.src(server_dir + '/org.eclipse.jdt.ls.product/distro/*.tar.gz')
-		.pipe(decompress())
-		.pipe(gulp.dest('./server'));
+	build_server_fn();
+	done();
+});
+
+gulp.task('build_or_download', function (done) {
+	if (!fse.existsSync(server_dir)) {
+		console.log('NOTE: eclipse.jdt.ls is not found as a sibling directory, downloading the latest snapshot of the Eclipse JDT Language Server...');
+		download_server_fn();
+	}
+	else {
+		build_server_fn();
+	}
 	done();
 });
 
@@ -243,4 +248,19 @@ function prependZero(num) {
 		throw "Unexpected value to prepend with zero";
 	}
 	return `${num < 10 ? "0" : ""}${num}`;
+}
+
+function download_server_fn(){
+	fse.removeSync('./server');
+	download(JDT_LS_SNAPSHOT_URL)
+		.pipe(decompress())
+		.pipe(gulp.dest('./server'));
+}
+
+function build_server_fn(){
+	fse.removeSync('./server');
+	cp.execSync(mvnw() + ' -Pserver-distro clean package -Declipse.jdt.ls.skipGradleChecksums', { cwd: server_dir, stdio: [0, 1, 2] });
+	gulp.src(server_dir + '/org.eclipse.jdt.ls.product/distro/*.tar.gz')
+		.pipe(decompress())
+		.pipe(gulp.dest('./server'));
 }
