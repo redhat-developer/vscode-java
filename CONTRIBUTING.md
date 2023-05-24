@@ -81,8 +81,11 @@ This assumes that you are starting on the `vscode-java` directory
 
 	```bash
 	$ cd ./vscode-java
-	$ npm run build-server
+	$ npm run build
 	```
+If the eclipse.jdt.ls directory is not found as a sibling directory (see the desired hierarchy in the previous step), a snapshot of the language server will be downloaded instead.
+
+To build the server using only the local eclipse.jdt.ls repository, use `npm run build-server`.
 
 **\*Optional:**
 You can run faster server builds during development by calling `npm run fast-build-server` script instead, this will build server binaries that are required by your host OS only. You can also use `npm run watch-server` which will build and place them on the extension for Java changes. These commands run Maven in offline mode, so you might need to run `build-server` at least once, to fetch all the dependencies.
