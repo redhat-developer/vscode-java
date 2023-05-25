@@ -39,6 +39,7 @@ import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils";
 import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
+import { registerDocumentValidationListener } from './diagnostic';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -146,6 +147,7 @@ export class StandardLanguageClient {
 					});
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
+					registerDocumentValidationListener(context, this.languageClient);
 					break;
 				case 'Started':
 					this.status = ClientStatus.started;

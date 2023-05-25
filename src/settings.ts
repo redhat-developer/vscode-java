@@ -274,6 +274,10 @@ export function getJavaServerMode(): ServerMode {
 		|| ServerMode.hybrid;
 }
 
+export function validateAllOpenBuffersOnChanges(): boolean {
+	return workspace.getConfiguration().get('java.edit.validateAllOpenBuffersOnChanges');
+}
+
 export function setGradleWrapperChecksum(wrapper: string, sha256?: string) {
 	const opened = gradleWrapperPromptDialogs.filter(v => (v === sha256));
 	if (opened !== null && opened.length > 0) {

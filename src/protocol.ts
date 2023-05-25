@@ -464,3 +464,11 @@ export interface CheckExtractInterfaceStatusResponse {
 export namespace CheckExtractInterfaceStatusRequest {
     export const type = new RequestType<CodeActionParams, CheckExtractInterfaceStatusResponse, void>('java/checkExtractInterfaceStatus');
 }
+
+export interface ValidateDocumentParams {
+    textDocument: TextDocumentIdentifier;
+}
+
+export namespace ValidateDocumentNotification {
+	export const type = new NotificationType<ValidateDocumentParams>('java/validateDocument');
+}
