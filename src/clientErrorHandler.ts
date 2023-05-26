@@ -1,4 +1,5 @@
 import { window, commands } from "vscode";
+import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { ErrorHandler, Message, ErrorAction, CloseAction, ErrorHandlerResult, CloseHandlerResult } from "vscode-languageclient";
 import { Commands } from "./commands";
 import { logger } from "./log";
@@ -36,6 +37,7 @@ export class ClientErrorHandler implements ErrorHandler {
 			if (diff <= 3 * 60 * 1000) {
 				const message = `The ${this.name} server crashed 5 times in the last 3 minutes. The server will not be restarted.`;
 				logger.error(message);
+				serverStatusBarProvider.setError();
 				const action = "Show logs";
 				window.showErrorMessage(message, action).then(selection => {
 					if (selection === action) {
