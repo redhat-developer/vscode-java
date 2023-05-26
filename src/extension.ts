@@ -242,7 +242,11 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				errorHandler: new ClientErrorHandler(extensionName),
 				initializationFailedHandler: error => {
 					logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
-					return true;
+					if (error.toString().includes('Connection') && error.toString().includes('disposed')) {
+						return false;
+					} else {
+						return true;
+					}
 				},
 				outputChannel: requireStandardServer ? new OutputInfoCollector(extensionName) : undefined,
 				outputChannelName: extensionName
@@ -966,6 +970,7 @@ function registerOutOfMemoryDetection(storagePath: string) {
 			fse.remove(path);
 		}
 		showOOMMessage();
+		serverStatusBarProvider.setError();
 	});
 }
 
