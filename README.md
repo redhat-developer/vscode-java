@@ -226,7 +226,7 @@ The following settings are supported:
 * `java.refactoring.extract.interface.replace`: Specify whether to replace all the occurrences of the subtype with the new extracted interface. Defaults to `true`.
 * `java.import.maven.disableTestClasspathFlag` : Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects. Defaults to `false`.
 * `java.configuration.maven.defaultMojoExecutionAction` : Specifies default mojo execution action when no associated metadata can be detected. Defaults to `ignore`.
-* `java.completion.lazyResolveTextEdit.enabled`: [Experimental] Enable/disable lazily resolving text edits for code completion. Defaults to `true`.
+* `java.completion.lazyResolveTextEdit.enabled`: [Experimental] Enable/disable lazily resolving text edits for code completion. Defaults to `false`.
 
 New in 1.19.0
 * `java.edit.validateAllOpenBuffersOnChanges`: Specifies whether to recheck all open Java files for diagnostics when editing a Java file. Defaults to `false`.
