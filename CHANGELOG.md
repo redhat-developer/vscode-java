@@ -9,6 +9,7 @@
  * performance - Remove some unnecessary completion item data fields. See [JLS#2638](https://github.com/eclipse/eclipse.jdt.ls/issues/2638).
  * performance - Remove `COMPLETION_EXECUTION_TIME` from the completion item response. See [JLS#2621](https://github.com/eclipse/eclipse.jdt.ls/issues/2621).
  * performance - Use separate thread to handle `didChangeWatchedFiles` events. See [JLS#2643](https://github.com/eclipse/eclipse.jdt.ls/pull/2643).
+ * performance - Add option to lazily resolve the text edits. See [JLS#1864](https://github.com/eclipse/eclipse.jdt.ls/issues/1864).
  * enhancement - Add command to restart Java language server. See [#2586](https://github.com/redhat-developer/vscode-java/pull/2586).
  * enhancement - Add support for proper array completions. See [JLS#2609](https://github.com/eclipse/eclipse.jdt.ls/issues/2609).
  * enhancement - Completion items should support `InsertTextMode`. See [JLS#2577](https://github.com/eclipse/eclipse.jdt.ls/issues/2577).
@@ -19,7 +20,6 @@
  * bug fix - Prevent sending shutdown job progress report. See [JLS#2622](https://github.com/eclipse/eclipse.jdt.ls/pull/2622).
  * bug fix - On Windows, `os.execvp` does not load the executable into current process. See [JLS#2615](https://github.com/eclipse/eclipse.jdt.ls/issues/2615).
  * bug fix - Code completion for constructor is broken with `java.completion.matchCase` enabled. See [#3118](https://github.com/redhat-developer/vscode-java/issues/3118).
- * bug fix - Turn off text edit lazy resolving. See [#3114](https://github.com/redhat-developer/vscode-java/pull/3114).
  * build - Gracefully recover from failure to detect the language server project in sibling directory. See [#3107](https://github.com/redhat-developer/vscode-java/issues/3107).
  * dependencies - Update to lombok 1.18.28. See [#3117](https://github.com/redhat-developer/vscode-java/pull/3117).
 
