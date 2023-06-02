@@ -15,13 +15,15 @@ export class ClientErrorHandler implements ErrorHandler {
 		if (count && count <= 3) {
 			logger.error(`${this.name} server encountered error: ${_message}, ${_error && _error.toString()}`);
 			return {
-				action: ErrorAction.Continue
+				action: ErrorAction.Continue,
+				handled: true
 			};
 		}
 
 		logger.error(`${this.name} server encountered error and will shut down: ${_message}, ${_error && _error.toString()}`);
 		return {
-			action: ErrorAction.Shutdown
+			action: ErrorAction.Shutdown,
+			handled: true
 		};
 	}
 
@@ -30,7 +32,8 @@ export class ClientErrorHandler implements ErrorHandler {
 		if (this.restarts.length < 5) {
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			return {
-				action: CloseAction.Restart
+				action: CloseAction.Restart,
+				handled: true
 			};
 		} else {
 			const diff = this.restarts[this.restarts.length - 1] - this.restarts[0];
@@ -45,14 +48,16 @@ export class ClientErrorHandler implements ErrorHandler {
 					}
 				});
 				return {
-					action: CloseAction.DoNotRestart
+					action: CloseAction.DoNotRestart,
+					handled: true
 				};
 			}
 
 			logger.error(`The ${this.name} server crashed and will restart.`);
 			this.restarts.shift();
 			return {
-				action: CloseAction.Restart
+				action: CloseAction.Restart,
+				handled: true
 			};
 		}
 	}
