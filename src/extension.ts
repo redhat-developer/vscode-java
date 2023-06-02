@@ -90,7 +90,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	}));
 
 	storagePath = context.storagePath;
-	context.subscriptions.push(commands.registerCommand(Commands.MEATDATA_FILES_GENERATION, async () => {
+	context.subscriptions.push(commands.registerCommand(Commands.METADATA_FILES_GENERATION, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.metadataFilesGeneration.md`)), 'Metadata Files Generation', "", context);
 	}));
 	context.subscriptions.push(commands.registerCommand(Commands.LEARN_MORE_ABOUT_CLEAN_UPS, async () => {
