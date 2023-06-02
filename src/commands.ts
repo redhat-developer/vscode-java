@@ -287,7 +287,7 @@ export namespace Commands {
 
     export const NOT_COVERED_EXECUTION = '_java.notCoveredExecution';
 
-    export const MEATDATA_FILES_GENERATION = '_java.metadataFilesGeneration';
+    export const METADATA_FILES_GENERATION = '_java.metadataFilesGeneration';
 
     export const RUNTIME_VALIDATION_OPEN = 'java.runtimeValidation.open';
 
