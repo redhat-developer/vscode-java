@@ -21,7 +21,7 @@
 		"prefix": "try_catch",
 		"body": [
 			"try {",
-			"\t$1",
+			"\t${TM_SELECTED_TEXT:$1}",
 			"} catch (${2:Exception} ${3:e}) {",
 			"\t$0// TODO: handle exception",
 			"}"
