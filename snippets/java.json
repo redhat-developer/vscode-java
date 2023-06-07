@@ -38,50 +38,14 @@
 			"}"
 		]
 	},
-	"private_method": {
-		"prefix": "private_method",
+	"method": {
+		"prefix": "method",
 		"body": [
-			"private ${1:void} ${2:name}($3) {",
+			"${1|public,protected,private|}${2| , static |}${3:void} ${4:name}($5) {",
 			"\t$0",
 			"}"
 		],
-		"description": "private method"
-	},
-	"Public method": {
-		"prefix": "public_method",
-		"body": [
-			"public ${1:void} ${2:name}(${3}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "public method"
-	},
-	"Private static method": {
-		"prefix": "private_static_method",
-		"body": [
-			"private static ${1:Type} ${2:name}(${3}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "private static method"
-	},
-	"Public static method": {
-		"prefix": "public_static_method",
-		"body": [
-			"public static ${1:void} ${2:name}(${3}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "public static method"
-	},
-	"Protected Method": {
-		"prefix": "protected_method",
-		"body": [
-			"protected ${1:void} ${2:name}(${3}) {",
-			"\t$0",
-			"}"
-		],
-		"description": "Protected method"
+		"description": "Method"
 	},
 	"Switch Statement": {
 		"prefix": "switch",
@@ -105,11 +69,11 @@
 		],
 		"description": "Create new Object"
 	},
-	"Private field": {
-		"prefix": "prf",
+	"Field": {
+		"prefix": "field",
 		"body": [
-			"private ${1:String} ${2:name};"
+			"${1|public,protected,private|} ${2:String} ${3:name};"
 		],
-		"description": "Private field"
+		"description": "Field"
 	}
 }
