@@ -205,9 +205,8 @@ export function getJavaConfig(javaHome: string) {
 			break;
 	}
 
-	const completionCaseMatching = javaConfig.completion.matchCase;
-	if (completionCaseMatching === "auto") {
-		javaConfig.completion.matchCase = isInsider ? "firstLetter" : "off";
+	if (javaConfig.completion.matchCase === "auto") {
+		javaConfig.completion.matchCase = "firstLetter";
 	}
 
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
