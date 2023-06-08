@@ -205,6 +205,11 @@ export function getJavaConfig(javaHome: string) {
 			break;
 	}
 
+	const completionCaseMatching = javaConfig.completion.matchCase;
+	if (completionCaseMatching === "auto") {
+		javaConfig.completion.matchCase = isInsider ? "firstLetter" : "off";
+	}
+
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
 	return javaConfig;
 }
