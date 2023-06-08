@@ -548,9 +548,24 @@
           "scope": "window"
         },
         "java.completion.guessMethodArguments": {
-          "type": "boolean",
-          "default": true,
-          "description": "When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.",
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "enum": [
+            "auto",
+            "off",
+            "insertParameterNames",
+            "insertBestGuessedArguments"
+          ],
+          "enumDescriptions": [
+            "Use 'off' only when using Visual Studio Code - Insiders, other platform will defaults to 'insertBestGuessedArguments'.",
+            "Method arguments will not be inserted during completion.",
+            "The parameter names will be inserted during completion.",
+            "The best guessed arguments will be inserted during completion according to the code context."
+          ],
+          "default": "auto",
+          "description": "Specify how the arguments will be filled during completion.",
           "scope": "window"
         },
         "java.completion.favoriteStaticMembers": {
