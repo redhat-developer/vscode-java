@@ -1449,8 +1449,8 @@
     "fast-build-server": "./node_modules/.bin/gulp dev_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
     "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
-    "repo:check": "node ./scripts/repo-check.js package-lock.json",
-    "repo:fix": "node ./scripts/repo-check.js --fix package-lock.json"
+    "repo:check": "./node_modules/.bin/gulp repo_check",
+    "repo:fix": "./node_modules/.bin/gulp repo_fix"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.0.0",

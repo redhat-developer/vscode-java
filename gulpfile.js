@@ -14,6 +14,10 @@ const originalTestFolder = path.join(__dirname, 'test', 'resources', 'projects',
 const tempTestFolder = path.join(__dirname, 'test-temp');
 const testSettings = path.join(tempTestFolder, '.vscode', 'settings.json');
 const JDT_LS_SNAPSHOT_URL = "http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz"
+const INTERNAL_RH_REPOSITORY_RE = new RegExp(
+	String.raw`"resolved":\s*"https://repository.engineering.redhat.com/nexus/repository/`,
+	"g"
+);
 //...
 
 gulp.task('clean_jre', function (done) {
@@ -213,6 +217,32 @@ gulp.task('prepare_pre_release', function (done) {
 		version: `${major}.${minor}.${patch}`,
 	});
 	fse.writeFileSync("./package.json", JSON.stringify(insiderPackageJson, null, 2));
+	done();
+});
+
+gulp.task('repo_check', function (done) {
+	const data = fse.readFileSync("./package-lock.json", { encoding: "utf-8" });
+
+	if (INTERNAL_RH_REPOSITORY_RE.test(data)) {
+		done(new Error("Found references to repository.engineering.redhat.com in the file package-lock.json. Please fix it with 'npm run repo:fix'"));
+	} else {
+		done();
+	}
+});
+
+gulp.task('repo_fix', function (done) {
+	const data = fse.readFileSync("./package-lock.json", { encoding: "utf-8" });
+	const newData = data.replace(INTERNAL_RH_REPOSITORY_RE, `"resolved": "https://`);
+
+	if (data !== newData) {
+		fse.writeFileSync("./package-lock.json", newData, {
+			encoding: "utf-8",
+		});
+		console.log(`successfully fixed package-lock.json`);
+	} else {
+		console.log("nothing to fix");
+	}
+
 	done();
 });
 
