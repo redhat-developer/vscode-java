@@ -155,7 +155,7 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		params.push('-noverify');
 	}
 
-	const serverHome: string = path.resolve(__dirname, '../server');
+	const serverHome: string = process.env.JDT_LS_PATH || path.resolve(__dirname, '../server');
 	const launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: serverHome });
 	if (launchersFound.length) {
 		params.push('-jar'); params.push(path.resolve(serverHome, launchersFound[0]));
@@ -171,12 +171,12 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		configDir = isSyntaxServer ? 'config_ss_linux' : 'config_linux';
 	}
 	params.push('-configuration');
+	params.push(startedFromSources() || process.env.JDT_LS_PATH !== undefined ?
+		path.resolve(serverHome, configDir) : resolveConfiguration(context, configDir));
 	if (startedFromSources()) { // Dev Mode: keep the config.ini in the installation location
 		console.log(`Starting jdt.ls ${isSyntaxServer?'(syntax)' : '(standard)'} from vscode-java sources`);
-		params.push(path.resolve(__dirname, '../server', configDir));
-	} else {
-		params.push(resolveConfiguration(context, configDir));
 	}
+
 	params.push('-data'); params.push(workspacePath);
 	return params;
 }
