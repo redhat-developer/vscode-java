@@ -176,6 +176,16 @@ While developing the language server and the extension, you don't need to deploy
 - You can modify `launch.json` to use a different port:
     - Modify `JDTLS_CLIENT_PORT` to specify the port VS Code should connect to.
 
+## C-3) Set location to a local copy of JDT-LS
+
+This approach is mainly targeting developers of JDT-LS who want to test their changes in VSCode without having to rebuild vscode-java and to deal with the npm and vsix toolchains.
+
+- Make sure a recent snapshot of vscode-java is installed in your VSCode instance (as of vscode-java 1.20.0)
+- (Optionally) clear the workspace state: `$ rm -r $HOME/.config/Code/User/workspaceStorage/0123456789abcdef01234567890abcdef/redhat.java/jdt_ws`
+- Start VSCode with the `JDT_LS_PATH` environment variable set to the local copy of JDT-LS you want to try: `$ JDT_LS_PATH=$HOME/git/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository code`
+
+Most other options such as `DEBUG_VSCODE_JAVA` are still usable with this approach.
+
 ## Sideloading
 
 You can create a binary that you can sideload to your VS Code installation.
