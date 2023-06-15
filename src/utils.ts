@@ -209,6 +209,11 @@ export function getJavaConfig(javaHome: string) {
 		javaConfig.completion.matchCase = "firstLetter";
 	}
 
+	const guessMethodArguments = javaConfig.completion.guessMethodArguments;
+	if (guessMethodArguments === "auto") {
+		javaConfig.completion.guessMethodArguments = isInsider ? "off" : "insertBestGuessedArguments";
+	}
+
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
 	return javaConfig;
 }

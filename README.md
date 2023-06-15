@@ -141,7 +141,11 @@ The following settings are supported:
 * `java.autobuild.enabled` : Enable/disable the 'auto build'.
 * `java.maxConcurrentBuilds`: Set max simultaneous project builds.
 * `java.completion.enabled` : Enable/disable code completion support.
-* `java.completion.guessMethodArguments` : When set to true, method arguments are guessed when a method is selected from as list of code assist proposals.
+* `java.completion.guessMethodArguments` : Specify how the arguments will be filled during completion. Defaults to `auto`.
+  - `auto`: Use `off` only when using Visual Studio Code - Insiders, other platform will defaults to `insertBestGuessedArguments`.
+  - `off`: Method arguments will not be inserted during completion.
+  - `insertParameterNames`: The parameter names will be inserted during completion.
+  - `insertBestGuessedArguments`: The best guessed arguments will be inserted during completion according to the code context.
 * `java.completion.filteredTypes`: Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
 * `java.completion.importOrder` : Defines the sorting order of import statements.
