@@ -1082,6 +1082,7 @@
               "invertEquals",
               "addFinalModifier",
               "instanceofPatternMatch",
+              "lambdaExpressionFromAnonymousClass",
               "lambdaExpression",
               "switchExpression",
               "tryWithResource"
