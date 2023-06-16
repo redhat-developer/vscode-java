@@ -220,7 +220,7 @@ if (object instanceof Integer i) {
 ```
 
 
-### `lambdaExpression`
+### `lambdaExpressionFromAnonymousClass`
 
 Convert anonymous class declarations for functional interfaces to lambda expressions wherever possible. It is only applicable for Java level 8 or above.
 
@@ -298,3 +298,49 @@ try (inputStream) {
     System.out.println(inputStream.read());
 }
 ```
+
+### `lambdaExpression`
+
+Cleans up lambda expression wherever possible in the following ways:
+
+1. Removes unnecessary parentheses.
+
+    For example:
+
+    ```java
+    (someString) -> someString.trim().toLowerCase();
+    ```
+
+    becomes:
+
+    ```java
+    someString -> someString.trim().toLowerCase();
+    ```
+
+2. Converts lambda expression blocks to a single statement when possible.
+
+    For example:
+
+    ```java
+    someString -> {return someString.trim().toLowerCase();};
+    ```
+
+    becomes:
+
+    ```java
+    someString -> someString.trim().toLowerCase();
+    ```
+
+3. Converts lambda expression to method reference.
+
+    For example:
+
+    ```java
+    () -> new ArrayList<>();
+    ```
+
+    becomes:
+
+    ```java
+    ArrayList::new;
+    ```
