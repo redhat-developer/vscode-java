@@ -335,4 +335,15 @@ export namespace Commands {
     */
     export const GET_DECOMPILED_SOURCE = "java.decompile";
 
+    /**
+    * Smart semicolon detection.
+    */
+    export const SMARTSEMICOLON_DETECTION = "java.action.smartSemicolonDetection";
+    export const SMARTSEMICOLON_DETECTION_CMD = "java.action.smartSemicolonDetection.command";
+
+    /**
+    * Smart semicolon detection backspace.
+    */
+    export const SMARTSEMICOLON_DETECTION_UNDO = "java.edit.smartSemiColonDetectionUndo";
+
 }

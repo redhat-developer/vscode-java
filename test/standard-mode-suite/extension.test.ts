@@ -109,6 +109,8 @@ suite('Java Language Extension - Standard', () => {
 				Commands.UPGRADE_GRADLE_WRAPPER,
 				Commands.UPDATE_SOURCE_ATTACHMENT,
 				Commands.UPDATE_SOURCE_ATTACHMENT_CMD,
+				Commands.SMARTSEMICOLON_DETECTION_CMD,
+				Commands.SMARTSEMICOLON_DETECTION_UNDO,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
