@@ -37,7 +37,11 @@ export class SyntaxLanguageClient {
 			errorHandler: new ClientErrorHandler(extensionName),
 			initializationFailedHandler: error => {
 				logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
-				return true;
+				if (error.toString().includes('Connection') && error.toString().includes('disposed')) {
+					return false;
+				} else {
+					return true;
+				}
 			},
 			outputChannel: new OutputInfoCollector(extensionName),
 			outputChannelName: extensionName

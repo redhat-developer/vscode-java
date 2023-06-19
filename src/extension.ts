@@ -34,6 +34,7 @@ import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
+import { activationProgressNotification } from "./serverTaskPresenter";
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -971,6 +972,7 @@ function registerOutOfMemoryDetection(storagePath: string) {
 		}
 		showOOMMessage();
 		serverStatusBarProvider.setError();
+		activationProgressNotification.hide();
 	});
 }
 
