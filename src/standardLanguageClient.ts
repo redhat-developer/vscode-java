@@ -299,6 +299,8 @@ export class StandardLanguageClient {
 			if (e.name === Telemetry.SERVER_INITIALIZED_EVT) {
 				return Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, e.properties);
 			}
+
+			apiManager.fireTraceEvent(e);
 		});
 
 		context.subscriptions.push(commands.registerCommand(GRADLE_CHECKSUM, (wrapper: string, sha256: string) => {

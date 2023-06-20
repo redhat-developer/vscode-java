@@ -92,7 +92,7 @@ export interface TraceEvent {
 	resultLength?: number | undefined;
 }
 
-export const extensionApiVersion = '0.8';
+export const extensionApiVersion = '0.9';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -144,4 +144,12 @@ export interface ExtensionAPI {
 	 * @since extension version 1.16.0
 	 */
 	readonly onDidRequestEnd: Event<TraceEvent>;
+
+	/**
+	 * Allow 3rd party trace handler to track the language client & server error events.
+	 *
+	 * @since API version 0.9
+	 * @since extension version 1.20.0
+	 */
+	readonly trackEvent: Event<any>;
 }
