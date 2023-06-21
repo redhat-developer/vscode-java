@@ -11,7 +11,7 @@ import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
 import { javaRefactorKinds, RefactorDocumentProvider } from "./codeActionProvider";
 import { Commands } from "./commands";
-import { ClientStatus } from "./extension.api";
+import { ClientStatus, TraceEvent } from "./extension.api";
 import * as fileEventHandler from './fileEventHandler';
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { awaitServerConnection, prepareExecutable, DEBUG } from "./javaServerStarter";
@@ -148,6 +148,7 @@ export class StandardLanguageClient {
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
 					registerDocumentValidationListener(context, this.languageClient);
+					registerCodeCompletionTelemetryListener(context, this.languageClient);
 					break;
 				case 'Started':
 					this.status = ClientStatus.started;
@@ -734,4 +735,24 @@ export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageC
 	} else {
 		return Promise.resolve(true);
 	}
+}
+
+export function registerCodeCompletionTelemetryListener(context: ExtensionContext, languageClient: LanguageClient) {
+	const javaExt = extensions.getExtension("redhat.java");
+	javaExt.exports?.onDidRequestEnd((traceEvent: any) => {
+		if (traceEvent.type === "textDocument/completion") {
+			// See https://github.com/redhat-developer/vscode-java/pull/3010
+			// to exclude the invalid completion requests.
+			if (!traceEvent.resultLength && traceEvent.type === "textDocument/completion") {
+				return;
+			}
+			const event: TraceEvent = traceEvent as TraceEvent;
+			const props = {
+				ms: Math.round(event.duration * 100) / 100,
+				resultLength: event.resultLength || 0,
+				error: event.error === undefined? false : true,
+			};
+			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
+		}
+	}); 
 }
