@@ -5,7 +5,7 @@ import { findRuntimes } from "jdk-utils";
 import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
-import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit } from "vscode-languageclient";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, CompletionRequest } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -148,7 +148,7 @@ export class StandardLanguageClient {
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
 					registerDocumentValidationListener(context, this.languageClient);
-					registerCodeCompletionTelemetryListener(context, this.languageClient);
+					registerCodeCompletionTelemetryListener();
 					break;
 				case 'Started':
 					this.status = ClientStatus.started;
@@ -737,22 +737,20 @@ export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageC
 	}
 }
 
-export function registerCodeCompletionTelemetryListener(context: ExtensionContext, languageClient: LanguageClient) {
-	const javaExt = extensions.getExtension("redhat.java");
-	javaExt.exports?.onDidRequestEnd((traceEvent: any) => {
-		if (traceEvent.type === "textDocument/completion") {
-			// See https://github.com/redhat-developer/vscode-java/pull/3010
-			// to exclude the invalid completion requests.
-			if (!traceEvent.resultLength && traceEvent.type === "textDocument/completion") {
+export function registerCodeCompletionTelemetryListener() {
+	apiManager.getApiInstance().onDidRequestEnd((traceEvent: any) => {
+		if (traceEvent.type === CompletionRequest.method) {
+			// Exclude the invalid completion requests.
+			if (!traceEvent.resultLength) {
 				return;
 			}
 			const event: TraceEvent = traceEvent as TraceEvent;
 			const props = {
-				ms: Math.round(event.duration * 100) / 100,
+				duration: Math.round(event.duration * 100) / 100,
 				resultLength: event.resultLength || 0,
-				error: event.error === undefined? false : true,
+				error: !!event.error,
 			};
 			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
 		}
-	}); 
+	});
 }
