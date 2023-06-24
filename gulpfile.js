@@ -14,8 +14,8 @@ const originalTestFolder = path.join(__dirname, 'test', 'resources', 'projects',
 const tempTestFolder = path.join(__dirname, 'test-temp');
 const testSettings = path.join(tempTestFolder, '.vscode', 'settings.json');
 const JDT_LS_SNAPSHOT_URL = "http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz"
-const INTERNAL_RH_REPOSITORY_RE = new RegExp(
-	String.raw`"resolved":\s*"https://repository.engineering.redhat.com/nexus/repository/`,
+const NON_NPM_REPOSITORY_RE = new RegExp(
+	String.raw`"resolved":\s*"https://.+/registry.npmjs.org/`,
 	"g"
 );
 //...
@@ -223,7 +223,7 @@ gulp.task('prepare_pre_release', function (done) {
 gulp.task('repo_check', function (done) {
 	const data = fse.readFileSync("./package-lock.json", { encoding: "utf-8" });
 
-	if (INTERNAL_RH_REPOSITORY_RE.test(data)) {
+	if (NON_NPM_REPOSITORY_RE.test(data)) {
 		done(new Error("Found references to repository.engineering.redhat.com in the file package-lock.json. Please fix it with 'npm run repo:fix'"));
 	} else {
 		done();
@@ -232,7 +232,7 @@ gulp.task('repo_check', function (done) {
 
 gulp.task('repo_fix', function (done) {
 	const data = fse.readFileSync("./package-lock.json", { encoding: "utf-8" });
-	const newData = data.replace(INTERNAL_RH_REPOSITORY_RE, `"resolved": "https://`);
+	const newData = data.replace(NON_NPM_REPOSITORY_RE, `"resolved": "https://registry.npmjs.org/`);
 
 	if (data !== newData) {
 		fse.writeFileSync("./package-lock.json", newData, {
