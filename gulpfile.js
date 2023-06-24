@@ -224,7 +224,7 @@ gulp.task('repo_check', function (done) {
 	const data = fse.readFileSync("./package-lock.json", { encoding: "utf-8" });
 
 	if (NON_NPM_REPOSITORY_RE.test(data)) {
-		done(new Error("Found references to repository.engineering.redhat.com in the file package-lock.json. Please fix it with 'npm run repo:fix'"));
+		done(new Error("Found references to the internal registry in the file package-lock.json. Please fix it with 'npm run repo:fix'"));
 	} else {
 		done();
 	}
