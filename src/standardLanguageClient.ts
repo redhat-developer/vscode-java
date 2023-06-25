@@ -296,6 +296,7 @@ export class StandardLanguageClient {
 		});
 
 		this.languageClient.onTelemetry(async (e: TelemetryEvent) => {
+			apiManager.fireTraceEvent(e);
 			if (e.name === Telemetry.SERVER_INITIALIZED_EVT) {
 				return Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, e.properties);
 			}
