@@ -1507,7 +1507,7 @@
     "jdk-utils": "^0.4.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "semver": "^7.3.5",
+    "semver": "^7.5.2",
     "vscode-languageclient": "8.1.0",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
