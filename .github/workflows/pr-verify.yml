@@ -24,6 +24,7 @@ jobs:
       - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
       - run: mkdir server && tar -xvzf jdt-language-server-latest.tar.gz -C ./server && rm jdt-language-server-latest.tar.gz
       - run: npm install
+      - run: npm run repo:check
       - run: npm run compile
       - run: npm run vscode:prepublish
       - run: vsce package
