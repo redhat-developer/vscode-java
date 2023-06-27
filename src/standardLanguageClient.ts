@@ -159,6 +159,12 @@ export class StandardLanguageClient {
 					this.status = ClientStatus.error;
 					serverStatus.updateServerStatus(ServerStatusKind.error);
 					apiManager.updateStatus(ClientStatus.error);
+					apiManager.fireTraceEvent({
+						name: "java.ls.error.serviceError",
+						properties: {
+							message: report.message,
+						},
+					});
 					break;
 				case 'ProjectStatus':
 					if (report.message === "WARNING") {
@@ -250,6 +256,12 @@ export class StandardLanguageClient {
 					break;
 				case MessageType.Error:
 					show = window.showErrorMessage;
+					apiManager.fireTraceEvent({
+						name: "java.ls.error.notification",
+						properties: {
+							message: notification.message,
+						},
+					});
 					break;
 			}
 			if (!show) {

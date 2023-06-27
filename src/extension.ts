@@ -139,6 +139,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			const isDebugModeByClientPort = !!process.env['SYNTAXLS_CLIENT_PORT'] || !!process.env['JDTLS_CLIENT_PORT'];
 			const requireSyntaxServer = (serverMode !== ServerMode.standard) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
 			let requireStandardServer = (serverMode !== ServerMode.lightWeight) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
+			let initFailureReported: boolean = false;
 
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
@@ -244,6 +245,15 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				initializationFailedHandler: error => {
 					logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
 					if (error.toString().includes('Connection') && error.toString().includes('disposed')) {
+						if (!initFailureReported) {
+							apiManager.fireTraceEvent({
+								name: "java.client.error.initialization",
+								properties: {
+									message: error && error.toString(),
+								},
+							});
+						}
+						initFailureReported = true;
 						return false;
 					} else {
 						return true;
