@@ -1,5 +1,29 @@
 # Change Log
 
+## 1.20.0 (June 29th, 2023)
+ * performance - Set the default value of `java.completion.matchCase` to `firstLetter`. See [#3142](https://github.com/redhat-developer/vscode-java/pull/3142).
+ * enhancement - Support for "Go to Declaration". See [JLS#2684](https://github.com/eclipse/eclipse.jdt.ls/issues/2684).
+ * enhancement - Improve method argument guessing functionality. See [#2903](https://github.com/redhat-developer/vscode-java/issues/2903).
+ * enhancement - Add code action to clean up & simplify lambda expressions. See [#3158](https://github.com/redhat-developer/vscode-java/pull/3158).
+ * enhancement - Use FernFlower as the default decompiler. See [JLS#2704](https://github.com/eclipse/eclipse.jdt.ls/pull/2704).
+ * enhancement - Attempt automatic JVM detection on startup. See [JLS#2731](https://github.com/eclipse/eclipse.jdt.ls/pull/2731).
+ * enhancement - Support for chain completions. See [#3008](https://github.com/redhat-developer/vscode-java/pull/3008).
+ * enhancement - Make reasonable guess for method name when applying "Extract Method" refactoring. See [#2011](https://github.com/redhat-developer/vscode-java/issues/2011).
+ * enhancement - Add postfix completion for `sysouf`, `sysoutv`, `format`, `par`, `not`,`assert` & `optional` . See [JLS#2691](https://github.com/eclipse/eclipse.jdt.ls/pull/2691), [JLS#2697](https://github.com/eclipse/eclipse.jdt.ls/pull/2697).
+ * enhancement - Use choice syntax as placeholder for constructor/method/field snippets. See [#3018](https://github.com/redhat-developer/vscode-java/pull/3018), [#3140](https://github.com/redhat-developer/vscode-java/pull/3140).
+ * enhancement - The `try-catch` snippet should support being applied to a selection. See [#3103](https://github.com/redhat-developer/vscode-java/issues/3103).
+ * enhancement - Track errors, exceptions, and project import success rate on server side for reliability analysis. See [#3162](https://github.com/redhat-developer/vscode-java/pull/3162), [JLS#2726](https://github.com/eclipse/eclipse.jdt.ls/pull/2726).
+ * bug fix - Display package name in document symbols outline for class files. See [#3074](https://github.com/redhat-developer/vscode-java/issues/3074).
+ * bug fix - Signature help should display the selected completion item. See [#3127](https://github.com/redhat-developer/vscode-java/issues/3127).
+ * bug fix - Gracefully handle language server failures/crashes. See [#2036](https://github.com/redhat-developer/vscode-java/issues/2036), [#3131](https://github.com/redhat-developer/vscode-java/issues/3131).
+ * bug fix - No completions on field initializer with `@Default` and `@Builder` Lombok annotations. See [JLS#2669](https://github.com/eclipse/eclipse.jdt.ls/issues/2669).
+ * bug fix - `IllegalArgumentException` within a try-catch block. See [#3138](https://github.com/redhat-developer/vscode-java/issues/3138).
+ * bug fix - Fix `pId` mismatch in completions. See [JLS#2681](https://github.com/eclipse/eclipse.jdt.ls/pull/2681).
+ * bug fix - Typo in constant `METADATA_FILES_GENERATION`. See [#3133](https://github.com/redhat-developer/vscode-java/pull/3133).
+ * build - Add enviornment variable to reference an external build of JDT-LS. See [#3151](https://github.com/redhat-developer/vscode-java/issues/3151).
+ * build - Check for non-standard NPM registry in `package-lock.json` as a step in CI. See [#2876](https://github.com/redhat-developer/vscode-java/issues/2876).
+ * build - Bump `semver` from 7.3.5 to 7.5.2. See [#3168](https://github.com/redhat-developer/vscode-java/pull/3168).
+
 ## 1.19.0 (June 1st, 2023)
  * performance - No need to run the reconcile operation in a workspace job. See [JLS#2660](https://github.com/eclipse/eclipse.jdt.ls/pull/2660).
  * performance - Avoid blocking the pipeline while handling `refreshLocal` during document lifecycle events. See [JLS#2659](https://github.com/eclipse/eclipse.jdt.ls/pull/2659).
