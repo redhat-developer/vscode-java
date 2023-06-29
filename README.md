@@ -216,6 +216,7 @@ The following settings are supported:
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 * `java.completion.postfix.enabled`: Enable/disable postfix completion support. Defaults to `true`.
+* `java.completion.chain.enabled`: Enable/disable chain completion support. Defaults to `false`.
 * `java.completion.matchCase`: Specify whether to match case for code completion. Defaults to `firstLetter`.
 * `java.compile.nullAnalysis.mode`: Specify how to enable the annotation-based null analysis. Supported values are `disabled` (disable the null analysis), `interactive` (asks when null annotation types are detected), `automatic` (automatically enable null analysis when null annotation types are detected). Defaults to `interactive`.
 * `java.cleanup.actionsOnSave`: The list of clean ups to be run on the current document when it's saved. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
@@ -233,9 +234,6 @@ The following settings are supported:
 * `java.configuration.maven.defaultMojoExecutionAction` : Specifies default mojo execution action when no associated metadata can be detected. Defaults to `ignore`.
 * `java.completion.lazyResolveTextEdit.enabled`: [Experimental] Enable/disable lazily resolving text edits for code completion. Defaults to `true`.
 * `java.edit.validateAllOpenBuffersOnChanges`: Specifies whether to recheck all open Java files for diagnostics when editing a Java file. Defaults to `false`.
-
-New in 1.20.0
-* `java.completion.chain.enabled`: Enable/disable chain completion support. Defaults to `false`.
 
 Semantic Highlighting
 ===============
