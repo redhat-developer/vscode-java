@@ -11,7 +11,7 @@
 	"java.project.build": "프로젝트 다시 빌드",
 	"java.open.formatter.settings": "Java Formatter 설정 열기",
 	"java.clean.workspace": "Java Language Server 작업 영역 정리",
-	"java.project.updateSourceAttachment": "Attach Source",
+	"java.project.updateSourceAttachment": "Attach Source...",
 	"java.project.addToSourcePath": "Java Source 경로에 폴더 추가",
 	"java.project.removeFromSourcePath": "Java Source 경로에서 폴더 제거",
 	"java.project.listSourcePaths": "모든 Java Source 경로를 나열",
