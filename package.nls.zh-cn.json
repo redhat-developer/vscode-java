@@ -11,7 +11,7 @@
 	"java.project.build": "重新构建项目",
 	"java.open.formatter.settings": "打开 Java 格式设置",
 	"java.clean.workspace": "清理 Java 语言服务器工作区",
-	"java.project.updateSourceAttachment": "附加源代码",
+	"java.project.updateSourceAttachment": "附加源代码...",
 	"java.project.addToSourcePath": "将文件夹加入 Java 源代码路径",
 	"java.project.removeFromSourcePath": "将文件夹从 Java 源代码路径中删除",
 	"java.project.listSourcePaths": "列出所有 Java 源代码路径",
