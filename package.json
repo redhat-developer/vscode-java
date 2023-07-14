@@ -178,6 +178,11 @@
     ],
     "grammars": [
       {
+        "language": "java",
+        "scopeName": "source.java",
+        "path": "./language-support/java/java.tmLanguage.json"
+      },
+      {
         "language": "java-properties",
         "scopeName": "source.java-properties",
         "path": "./language-support/properties/JavaProperties.tmLanguage.json"
