@@ -1657,6 +1657,9 @@
 				{
 					"match": "[a-zA-Z$_][\\.a-zA-Z0-9$_]*",
 					"name": "storage.type.java"
+				},
+				{
+					"include": "#comments"
 				}
 			]
 		},
