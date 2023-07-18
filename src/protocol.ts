@@ -59,7 +59,8 @@ export enum EventType {
     classpathUpdated = 100,
     projectsImported = 200,
     incompatibleGradleJdkIssue = 300,
-	upgradeGradleWrapper = 400,
+    upgradeGradleWrapper = 400,
+    sourceInvalidated = 500,
 }
 
 export enum CompileWorkspaceStatus {
@@ -76,25 +77,25 @@ export enum AccessorKind {
 }
 
 export interface StatusReport {
-	message: string;
-	type: string;
+    message: string;
+    type: string;
 }
 
 export interface ProgressReport {
-	id: string;
-	task: string;
-	subTask: string;
-	status: string;
-	workDone: number;
-	totalWork: number;
-	complete: boolean;
+    id: string;
+    task: string;
+    subTask: string;
+    status: string;
+    workDone: number;
+    totalWork: number;
+    complete: boolean;
 }
 
 export interface ActionableMessage {
-	severity: MessageType;
-	message: string;
-	data?: any;
-	commands?: Command[];
+    severity: MessageType;
+    message: string;
+    data?: any;
+    commands?: Command[];
 }
 
 export interface EventNotification {
@@ -103,11 +104,11 @@ export interface EventNotification {
 }
 
 export namespace StatusNotification {
-	export const type = new NotificationType<StatusReport>('language/status');
+    export const type = new NotificationType<StatusReport>('language/status');
 }
 
 export namespace ProgressReportNotification {
-	export const type = new NotificationType<ProgressReport>('language/progressReport');
+    export const type = new NotificationType<ProgressReport>('language/progressReport');
 }
 
 export namespace ClassFileContentsRequest {
@@ -179,8 +180,8 @@ export interface OverridableMethod {
 }
 
 export interface OverridableMethodsResponse {
-	type: string;
-	methods: OverridableMethod[];
+    type: string;
+    methods: OverridableMethod[];
 }
 
 export namespace ListOverridableMethodsRequest {
@@ -443,9 +444,9 @@ export interface GradleCompatibilityInfo {
 }
 
 export interface UpgradeGradleWrapperInfo {
-	projectUri: string;
-	message: string;
-	recommendedGradleVersion: string;
+    projectUri: string;
+    message: string;
+    recommendedGradleVersion: string;
 }
 
 export interface Member {
@@ -470,5 +471,14 @@ export interface ValidateDocumentParams {
 }
 
 export namespace ValidateDocumentNotification {
-	export const type = new NotificationType<ValidateDocumentParams>('java/validateDocument');
+    export const type = new NotificationType<ValidateDocumentParams>('java/validateDocument');
+}
+
+export interface SourceInvalidatedEvent {
+    /**
+     * The package fragment roots that get new source attachments.
+     * The key is its root path, the value means if its source is
+     * automatically downloaded.
+     */
+    affectedRootPaths: { [key: string]: boolean };
 }

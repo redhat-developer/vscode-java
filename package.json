@@ -1139,6 +1139,22 @@
           "default": false,
           "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
           "scope": "window"
+        },
+        "java.editor.reloadChangedSources": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "auto",
+            "manual"
+          ],
+          "enumDescriptions": [
+            "Ask to reload the sources of the open class files",
+            "Automatically reload the sources of the open class files",
+            "Manually reload the sources of the open class files"
+          ],
+          "default": "ask",
+          "markdownDescription": "Specifies whether to reload the sources of the open class files when their source jar files are changed.",
+          "scope": "window"
         }
       }
     },

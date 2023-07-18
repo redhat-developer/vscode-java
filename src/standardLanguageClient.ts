@@ -22,7 +22,7 @@ import * as pasteAction from './pasteAction';
 import { registerPasteEventHandler } from './pasteEventHandler';
 import { collectBuildFilePattern, onExtensionChange } from "./plugin";
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
-import { ActionableNotification, BuildProjectParams, BuildProjectRequest, CompileWorkspaceRequest, CompileWorkspaceStatus, EventNotification, EventType, ExecuteClientCommandRequest, FeatureStatus, FindLinks, GradleCompatibilityInfo, LinkLocation, ProgressReportNotification, ServerNotification, SourceAttachmentAttribute, SourceAttachmentRequest, SourceAttachmentResult, StatusNotification, UpgradeGradleWrapperInfo } from "./protocol";
+import { ActionableNotification, BuildProjectParams, BuildProjectRequest, CompileWorkspaceRequest, CompileWorkspaceStatus, EventNotification, EventType, ExecuteClientCommandRequest, FeatureStatus, FindLinks, GradleCompatibilityInfo, LinkLocation, ProgressReportNotification, ServerNotification, SourceAttachmentAttribute, SourceAttachmentRequest, SourceAttachmentResult, SourceInvalidatedEvent, StatusNotification, UpgradeGradleWrapperInfo } from "./protocol";
 import * as refactorAction from './refactorAction';
 import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from "./requirements";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
@@ -237,6 +237,23 @@ export class StandardLanguageClient {
 						});
 					}
 					break;
+				case EventType.sourceInvalidated:
+					const result = notification.data as SourceInvalidatedEvent;
+					const triggeredByUser: string[] = [];
+					const triggeredByAutoDownloadedSource: string[] = [];
+					Object.entries(result.affectedRootPaths || {})?.forEach(([key, value]) => {
+						if (value) {
+							triggeredByAutoDownloadedSource.push(key);
+						} else {
+							triggeredByUser.push(key);
+						}
+					});
+					if (triggeredByUser?.length) {
+						this.handleSourceInvalidatedEvent(triggeredByUser, false, jdtEventEmitter);
+					}
+					if (triggeredByAutoDownloadedSource?.length) {
+						this.handleSourceInvalidatedEvent(triggeredByAutoDownloadedSource, true, jdtEventEmitter);
+					}
 				default:
 					break;
 			}
@@ -651,6 +668,59 @@ export class StandardLanguageClient {
 
 	public getClientStatus(): ClientStatus {
 		return this.status;
+	}
+
+	private async handleSourceInvalidatedEvent(jars: string[], isAutoDownloadSource: boolean, jdtContentProviderEventEmitter: EventEmitter<Uri>): Promise<void> {
+		const changedJarNames: Set<string> = new Set();
+		for (const jar of jars) {
+			const path = jar.split(/\/|\\/);
+			if (path?.length) {
+				changedJarNames.add(path[path.length - 1]);
+			}
+		}
+
+		const affectedDocumentUris: Uri[] = [];
+		const affectedDocumentNames: string[] = [];
+		workspace.textDocuments.forEach(document => {
+			// Here is a sample jdt uri for classfile:
+			// jdt://contents/rt.jar/java.lang/System.class?...
+			if (document.uri.scheme === "jdt") {
+				const paths = document.uri.path?.split(/\/|\\/);
+				if (paths?.[1] && changedJarNames.has(paths[1])) {
+					affectedDocumentNames.push(paths[paths.length - 1]);
+					affectedDocumentUris.push(document.uri);
+				}
+			}
+		});
+		if (affectedDocumentUris.length) {
+			if (isAutoDownloadSource) {
+				const reloadSources = workspace.getConfiguration().get("java.editor.reloadChangedSources");
+				if (reloadSources === "manual") {
+					return;
+				}
+
+				if (reloadSources === "ask") {
+					const choice = await window.showWarningMessage(`The following class(es): ${affectedDocumentNames.map(name => `'${name}'`).join(", ")} ` +
+						"have new source jar available on the local Maven repository. Do you want to reload them?", "Yes", "Always", "No");
+					if (choice === "Always") {
+						workspace.getConfiguration().update("java.editor.reloadChangedSources", "auto", ConfigurationTarget.Global);
+					} else if (choice !== "Yes") {
+						return;
+					}
+				}
+				affectedDocumentUris.forEach(classFileUri => {
+					jdtContentProviderEventEmitter.fire(classFileUri);
+				});
+			} else {
+				affectedDocumentUris.forEach(classFileUri => {
+					jdtContentProviderEventEmitter.fire(classFileUri);
+				});
+			}
+		}
+		apiManager.fireSourceInvalidatedEvent({
+			affectedRootPaths: jars,
+			hasAffectedEditors: !!affectedDocumentUris.length,
+		});
 	}
 }
 
