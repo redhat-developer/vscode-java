@@ -719,7 +719,7 @@ export class StandardLanguageClient {
 		}
 		apiManager.fireSourceInvalidatedEvent({
 			affectedRootPaths: jars,
-			hasAffectedEditors: !!affectedDocumentUris.length,
+			affectedEditorDocuments: affectedDocumentUris,
 		});
 	}
 }

@@ -98,9 +98,9 @@ export interface SourceInvalidatedEvent {
 	 */
 	affectedRootPaths: string[];
 	/**
-	 * whether the new source attachments affect the class files opened in the editors.
+	 * The opened editors with updated source.
 	 */
-	hasAffectedEditors?: boolean;
+	affectedEditorDocuments?: Uri[];
 }
 
 export const extensionApiVersion = '0.10';
