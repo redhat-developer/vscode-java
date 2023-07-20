@@ -338,12 +338,12 @@ export namespace Commands {
     /**
     * Smart semicolon detection.
     */
-    export const SMARTSEMICOLON_DETECTION = "java.action.smartSemicolonDetection";
-    export const SMARTSEMICOLON_DETECTION_CMD = "java.action.smartSemicolonDetection.command";
+    export const SMARTSEMICOLON_DETECTION = "java.edit.smartSemicolonDetection";
+    export const SMARTSEMICOLON_DETECTION_CMD = "java.edit.smartSemicolonDetection.command";
 
     /**
     * Smart semicolon detection backspace.
     */
-    export const SMARTSEMICOLON_DETECTION_UNDO = "java.edit.smartSemiColonDetectionUndo";
+    export const SMARTSEMICOLON_DETECTION_UNDO = "java.edit.smartSemicolonDetectionUndo";
 
 }

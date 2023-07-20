@@ -234,13 +234,13 @@ The following settings are supported:
 * `java.configuration.maven.defaultMojoExecutionAction` : Specifies default mojo execution action when no associated metadata can be detected. Defaults to `ignore`.
 * `java.completion.lazyResolveTextEdit.enabled`: [Experimental] Enable/disable lazily resolving text edits for code completion. Defaults to `true`.
 * `java.edit.validateAllOpenBuffersOnChanges`: Specifies whether to recheck all open Java files for diagnostics when editing a Java file. Defaults to `false`.
-* `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 
 New in 1.21.0
 * `java.editor.reloadChangedSources`: Specifies whether to reload the sources of the open class files when their source jar files are changed. Defaults to `ask`.
   - `ask`: Ask to reload the sources of the open class files
   - `auto`: Automatically reload the sources of the open class files
   - `manual`: Manually reload the sources of the open class files
+* `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 
 Semantic Highlighting
 ===============

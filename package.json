@@ -1310,13 +1310,13 @@
         "category": "Java"
       },
       {
-        "command": "java.action.smartSemicolonDetection.command",
-        "title": "%java.action.smartSemicolonDetection%",
+        "command": "java.edit.smartSemicolonDetection.command",
+        "title": "%java.edit.smartSemicolonDetection%",
         "category": "Java"
       },
       {
-        "command": "java.edit.smartSemiColonDetectionUndo",
-        "title": "%java.edit.smartSemiColonDetectionUndo%",
+        "command": "java.edit.smartSemicolonDetectionUndo",
+        "title": "%java.edit.smartSemicolonDetectionUndo%",
         "category": "Java"
       }
     ],
@@ -1337,12 +1337,12 @@
         "when": "javaLSReady && editorLangId == java"
       },
       {
-        "command": "java.action.smartSemicolonDetection.command",
+        "command": "java.edit.smartSemicolonDetection.command",
         "key": ";",
         "when": "editorFocus && javaLSReady && editorLangId == java"
       },
       {
-        "command": "java.edit.smartSemiColonDetectionUndo",
+        "command": "java.edit.smartSemicolonDetectionUndo",
         "key": "backspace",
         "when": "editorFocus && javaLSReady && editorLangId == java"
       }

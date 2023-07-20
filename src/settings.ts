@@ -7,6 +7,7 @@ import { Commands } from './commands';
 import { cleanupLombokCache } from './lombokSupport';
 import { ensureExists, getJavaConfiguration } from './utils';
 import { apiManager } from './apiManager';
+import { setSmartSemiColonDetectionState } from './smartSemicolonDetection';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -28,9 +29,6 @@ export const ORGANIZE_IMPORTS_ON_PASTE = 'actionsOnPaste.organizeImports'; // ja
 
 let oldConfig: WorkspaceConfiguration = getJavaConfiguration();
 const gradleWrapperPromptDialogs = [];
-
-let oldPosition: Position = null;
-let newPosition: Position = null;
 
 export function onConfigurationChange(workspacePath: string, context: ExtensionContext) {
 	return workspace.onDidChangeConfiguration(params => {
@@ -334,8 +332,7 @@ export function handleTextBlockClosing(document: TextDocument, changes: readonly
 	}
 	if (lastChange.text !== '"""";') {
 		if (lastChange.text !== ';') {
-			oldPosition = null;
-			newPosition = null;
+			setSmartSemiColonDetectionState(null, null);
 		}
 		return;
 	}
@@ -358,68 +355,4 @@ export function handleTextBlockClosing(document: TextDocument, changes: readonly
 	}
 }
 
-let serverReady = false;
-
-export function registerSmartSemicolonDetection(context: ExtensionContext) {
-	apiManager.getApiInstance().serverReady().then(() => {
-		serverReady = true;
-	});
-	context.subscriptions.push(commands.registerCommand(Commands.SMARTSEMICOLON_DETECTION_CMD, async () => {
-		if (!isSemichar() && window.activeTextEditor.document.fileName.endsWith(".java")) {
-			const params: SmartDetectionParams = {
-				uri: window.activeTextEditor.document.uri.toString(),
-				position: window.activeTextEditor!.selection.active,
-			};
-			const response: SmartDetectionParams = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.SMARTSEMICOLON_DETECTION, JSON.stringify(params));
-			if (response !== null) {
-				window.activeTextEditor!.edit(editBuilder => {
-					oldPosition = window.activeTextEditor!.selection.active;
-					editBuilder.insert(response.position, ";");
-					window.activeTextEditor.selections = [new Selection(response.position, response.position)];
-					newPosition = window.activeTextEditor!.selection.active;
-				});
-				return;
-			}
-		}
-		window.activeTextEditor!.edit(editBuilder => {
-			editBuilder.insert(window.activeTextEditor!.selection.active, ";");
-		});
-		newPosition = null;
-		oldPosition = null;
-	}));
-	context.subscriptions.push(commands.registerCommand(Commands.SMARTSEMICOLON_DETECTION_UNDO, async () => {
-		if (isSemichar()) {
-			window.activeTextEditor!.edit(editBuilder => {
-				editBuilder.insert(oldPosition, ";");
-				const delRange = new Range(newPosition, new Position(newPosition.line, newPosition.character + 1));
-				editBuilder.delete(delRange);
-				window.activeTextEditor.selections = [new Selection(oldPosition, oldPosition)];
-				oldPosition = null;
-				newPosition = null;
-			});
-			return;
-		}
-		window.activeTextEditor!.edit(() => {
-			commands.executeCommand("deleteLeft");
-		});
-		oldPosition = null;
-		newPosition = null;
-	}));
-}
-
-interface SmartDetectionParams {
-	uri: String;
-	position: Position;
-}
-
-function isSemichar() {
-	const enabled = getJavaConfiguration().get<boolean>("edit.smartSemicolonDetection");
-	const isSemichar = serverReady && window.activeTextEditor.selections.length === 1 && enabled && oldPosition !== null && newPosition !== null;
-	if (isSemichar) {
-		const active = window.activeTextEditor!.selection.active;
-		const prev = new Position(active.line, active.character === 0 ? 0 : active.character - 1);
-		return newPosition.isEqual(prev);
-	}
-	return isSemichar;
-}
 
