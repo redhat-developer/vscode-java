@@ -708,14 +708,10 @@ export class StandardLanguageClient {
 						return;
 					}
 				}
-				affectedDocumentUris.forEach(classFileUri => {
-					jdtContentProviderEventEmitter.fire(classFileUri);
-				});
-			} else {
-				affectedDocumentUris.forEach(classFileUri => {
-					jdtContentProviderEventEmitter.fire(classFileUri);
-				});
 			}
+			affectedDocumentUris.forEach(classFileUri => {
+				jdtContentProviderEventEmitter.fire(classFileUri);
+			});
 		}
 		apiManager.fireSourceInvalidatedEvent({
 			affectedRootPaths: jars,
