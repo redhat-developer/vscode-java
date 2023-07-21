@@ -1,6 +1,6 @@
 'use strict';
 
-import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, extensionApiVersion, ClientStatus } from "./extension.api";
+import { ExtensionAPI, ClasspathQueryOptions, ClasspathResult, extensionApiVersion, ClientStatus, SourceInvalidatedEvent } from "./extension.api";
 import { RequirementsData } from "./requirements";
 import { GetDocumentSymbolsCommand, getDocumentSymbolsProvider } from "./documentSymbols";
 import { GoToDefinitionCommand, goToDefinitionProvider } from "./goToDefinition";
@@ -18,6 +18,7 @@ class ApiManager {
     private onDidServerModeChangeEmitter: Emitter<ServerMode> = new Emitter<ServerMode>();
     private onDidProjectsImportEmitter: Emitter<Uri[]> = new Emitter<Uri[]>();
     private traceEventEmitter: Emitter<any> = new Emitter<any>();
+    private sourceInvalidatedEventEmitter: Emitter<SourceInvalidatedEvent> = new Emitter<SourceInvalidatedEvent>();
     private serverReadyPromiseResolve: (result: boolean) => void;
 
     public initialize(requirements: RequirementsData, serverMode: ServerMode): void {
@@ -65,6 +66,7 @@ class ApiManager {
             serverReady,
             onDidRequestEnd,
             trackEvent: traceEvent,
+            onDidSourceInvalidate: this.sourceInvalidatedEventEmitter.event,
         };
     }
 
@@ -90,6 +92,10 @@ class ApiManager {
 
     public fireTraceEvent(event: any): void {
         this.traceEventEmitter.fire(event);
+    }
+
+    public fireSourceInvalidatedEvent(event: SourceInvalidatedEvent): void {
+        this.sourceInvalidatedEventEmitter.fire(event);
     }
 
     public updateServerMode(mode: ServerMode): void {

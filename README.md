@@ -235,6 +235,12 @@ The following settings are supported:
 * `java.completion.lazyResolveTextEdit.enabled`: [Experimental] Enable/disable lazily resolving text edits for code completion. Defaults to `true`.
 * `java.edit.validateAllOpenBuffersOnChanges`: Specifies whether to recheck all open Java files for diagnostics when editing a Java file. Defaults to `false`.
 
+New in 1.21.0
+* `java.editor.reloadChangedSources`: Specifies whether to reload the sources of the open class files when their source jar files are changed. Defaults to `ask`.
+  - `ask`: Ask to reload the sources of the open class files
+  - `auto`: Automatically reload the sources of the open class files
+  - `manual`: Manually reload the sources of the open class files
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).

@@ -92,7 +92,18 @@ export interface TraceEvent {
 	resultLength?: number | undefined;
 }
 
-export const extensionApiVersion = '0.9';
+export interface SourceInvalidatedEvent {
+	/**
+	 * The paths of the jar files that are linked to new source attachments.
+	 */
+	affectedRootPaths: string[];
+	/**
+	 * The opened editors with updated source.
+	 */
+	affectedEditorDocuments?: Uri[];
+}
+
+export const extensionApiVersion = '0.10';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -152,4 +163,14 @@ export interface ExtensionAPI {
 	 * @since extension version 1.20.0
 	 */
 	readonly trackEvent: Event<any>;
+
+	/**
+	 * An event that occurs when the package fragment roots have updated source attachments.
+	 * The client should refresh the new source if it has previously requested the source
+	 * from them.
+	 *
+	 * @since API version 0.10
+	 * @since extension version 1.21.0
+	 */
+	readonly onDidSourceInvalidate: Event<SourceInvalidatedEvent>;
 }
