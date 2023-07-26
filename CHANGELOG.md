@@ -1,5 +1,26 @@
 # Change Log
 
+## 1.21.0 (July 27th, 2023)
+ * performance - Check completion proposal is compatible or not. See [JLS#2733](https://github.com/eclipse/eclipse.jdt.ls/pull/2733).
+ * enhancement - Add support for smart semicolon insertion. See [#703](https://github.com/redhat-developer/vscode-java/issues/703).
+ * enhancement - Add code actions for Join/Split variable. See [JLS#2732](https://github.com/eclipse/eclipse.jdt.ls/pull/2732).
+ * enhancement - Support outline view for decompiled source. See [JLS#2742](https://github.com/eclipse/eclipse.jdt.ls/pull/2742).
+ * enhancement - Reload the cached classfile sources when their source attachment is updated. See [#3207](https://github.com/redhat-developer/vscode-java/pull/3207).
+ * enhancement - Log error when Gradle and JDK versions are mismatched. See [JLS#2749](https://github.com/eclipse/eclipse.jdt.ls/pull/2749).
+ * bug fix - Fix parameter and exception changes in method signature refactoring. See [#3098](https://github.com/redhat-developer/vscode-java/issues/3098).
+ * bug fix - Fix missing completion items for fully qualified name completion. See [#3173](https://github.com/redhat-developer/vscode-java/issues/3173).
+ * bug fix - Support Java text block highlight. See [#2896](https://github.com/redhat-developer/vscode-java/issues/2896).
+ * bug fix - Fix incorrect syntax highlight for comment following a `throws` clause. See [#3039](https://github.com/redhat-developer/vscode-java/issues/3039).
+ * bug fix - Fix incorrect syntax highlight for `new` keyword on inner class creation. See [#1195](https://github.com/redhat-developer/vscode-java/issues/1195).
+ * bug fix - Fix incorrect semantic highlighting due to out-of-date AST in use. See [JLS#2709](https://github.com/eclipse/eclipse.jdt.ls/pull/2709).
+ * bug fix - Prevent caching outdated AST in `CoreASTProvider`. See [JLS#2714](https://github.com/eclipse/eclipse.jdt.ls/pull/2714).
+ * bug fix - Call Hierarchy resolves wrong element under certain conditions. See [JLS#2771](https://github.com/eclipse/eclipse.jdt.ls/issues/2771).
+ * bug fix - `NullPointerException` during code completion of a `var` reference. See [#2758](https://github.com/redhat-developer/vscode-java/issues/2758).
+ * bug fix - Do not delete the Java project nature removing a nested `.classpath` resource file. See [JLS#2750](https://github.com/eclipse/eclipse.jdt.ls/pull/2750).
+ * bug fix - Unable to acquire the state change lock for the module 'buildship'. See [#3184](https://github.com/redhat-developer/vscode-java/issues/3184).
+ * bug fix - Rename 'Attach Source' menu to 'Attach Source…'. See [#3202](https://github.com/redhat-developer/vscode-java/pull/3202).
+ * dependencies - Bump word-wrap from 1.2.3 to 1.2.4. See [#3211](https://github.com/redhat-developer/vscode-java/pull/3211).
+
 ## 1.20.0 (June 29th, 2023)
  * performance - Set the default value of `java.completion.matchCase` to `firstLetter`. See [#3142](https://github.com/redhat-developer/vscode-java/pull/3142).
  * enhancement - Support for "Go to Declaration". See [JLS#2684](https://github.com/eclipse/eclipse.jdt.ls/issues/2684).
