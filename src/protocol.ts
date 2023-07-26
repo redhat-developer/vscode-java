@@ -82,13 +82,15 @@ export interface StatusReport {
 }
 
 export interface ProgressReport {
-    id: string;
-    task: string;
-    subTask: string;
-    status: string;
-    workDone: number;
-    totalWork: number;
+    token: string;
+    value: any;
     complete: boolean;
+}
+
+export enum ProgressKind {
+    begin = "begin",
+    report = "report",
+    end = "end"
 }
 
 export interface ActionableMessage {
@@ -107,8 +109,9 @@ export namespace StatusNotification {
     export const type = new NotificationType<StatusReport>('language/status');
 }
 
-export namespace ProgressReportNotification {
-    export const type = new NotificationType<ProgressReport>('language/progressReport');
+// See https://github.com/microsoft/vscode-languageserver-node/blob/release/client/8.1.0/jsonrpc/src/common/connection.ts#L53-L55
+export namespace ProgressNotification {
+	export const type = new NotificationType<ProgressReport>('$/progress');
 }
 
 export namespace ClassFileContentsRequest {

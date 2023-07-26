@@ -1,5 +1,5 @@
-import { EventEmitter, Progress } from "vscode";
-import { ProgressReport } from "./protocol";
+import { EventEmitter } from "vscode";
+import { ProgressReport, ProgressKind } from "./protocol";
 
 const findIndex = require("lodash.findindex");
 
@@ -56,7 +56,7 @@ function recycleTasks(tasks: ProgressReport[], length: number) {
 }
 
 function applyReport(report: ProgressReport) {
-	const index = findIndex(tasks, task => task.id === report.id);
+	const index = findIndex(tasks, task => task.token === report.token);
 	if (index === -1) {
 		tasks.push(report);
 	} else {

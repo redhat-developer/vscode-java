@@ -1,7 +1,7 @@
-import { tasks, Task, TaskScope, Pseudoterminal, CustomExecution, TaskExecution, TaskRevealKind, TaskPanelKind, EventEmitter, Event, TerminalDimensions, window, ProgressLocation, Progress, workspace } from "vscode";
+import { tasks, Task, TaskScope, Pseudoterminal, CustomExecution, TaskExecution, TaskRevealKind, TaskPanelKind, EventEmitter, Event, TerminalDimensions, window, Progress, ProgressLocation, workspace } from "vscode";
 import { serverTasks } from "./serverTasks";
 import { Disposable } from "vscode-languageclient";
-import { ProgressReport } from "./protocol";
+import { ProgressReport, ProgressKind } from "./protocol";
 import { Commands } from "./commands";
 import { getJavaConfiguration } from "./utils";
 
@@ -91,17 +91,11 @@ class ServerTaskTerminal implements Pseudoterminal {
 
 	private printTask(report: ProgressReport) {
 		if (report.complete) {
-			this.onDidWriteEvent.fire(`${report.id.slice(0, 8)} ${report.task} [Done]\r\n`);
+			this.onDidWriteEvent.fire(`${report.token.slice(0, 8)} ${report.value.message} [Done]\r\n`);
 			return;
 		}
 
-		let taskMsg = `${report.id.slice(0, 8)} ${report.task}`;
-		if (report.status) {
-			taskMsg += `: ${report.status}`;
-		}
-		if (report.totalWork && report.workDone >= 0) {
-			taskMsg += ` [${report.workDone}/${report.totalWork}]`;
-		}
+		const taskMsg = `${report.token.slice(0, 8)} ${report.value.message}`;
 
 		this.onDidWriteEvent.fire(`${taskMsg}\r\n`);
 	}
@@ -141,19 +135,16 @@ export class ActivationProgressNotification {
 		} else if (!showBuildStatusEnabled) {
 			return;
 		}
-		const isProgressReportEnabled: boolean = getJavaConfiguration().get("progressReports.enabled");
-		const title = isProgressReportEnabled ? "Opening Java Projects" : "Opening Java Projects...";
+		const title = "Opening Java Projects";
 		window.withProgress({
 			location: ProgressLocation.Notification,
 			title,
 			cancellable: false,
 		}, (progress: Progress<{ message?: string; increment?: number }>) => {
 			return new Promise<void>((resolve) => {
-				if (isProgressReportEnabled) {
-					progress.report({
-						message: `[check details](command:${Commands.SHOW_SERVER_TASK_STATUS})`
-					});
-				}
+				progress.report({
+					message: `[check details](command:${Commands.SHOW_SERVER_TASK_STATUS})`
+				});
 				this.onHide(() => {
 					for (const disposable of this.disposables) {
 						disposable.dispose();
