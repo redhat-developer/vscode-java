@@ -157,7 +157,6 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
 					settings: { java: getJavaConfig(requirements.java_home) },
 					extendedClientCapabilities: {
-						progressReportProvider: getJavaConfiguration().get('progressReports.enabled'),
 						classFileContentsSupport: true,
 						overrideMethodsPromptSupport: true,
 						hashCodeEqualsPromptSupport: true,

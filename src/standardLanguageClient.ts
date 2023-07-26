@@ -22,7 +22,7 @@ import * as pasteAction from './pasteAction';
 import { registerPasteEventHandler } from './pasteEventHandler';
 import { collectBuildFilePattern, onExtensionChange } from "./plugin";
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
-import { ActionableNotification, BuildProjectParams, BuildProjectRequest, CompileWorkspaceRequest, CompileWorkspaceStatus, EventNotification, EventType, ExecuteClientCommandRequest, FeatureStatus, FindLinks, GradleCompatibilityInfo, LinkLocation, ProgressReportNotification, ServerNotification, SourceAttachmentAttribute, SourceAttachmentRequest, SourceAttachmentResult, SourceInvalidatedEvent, StatusNotification, UpgradeGradleWrapperInfo } from "./protocol";
+import { ActionableNotification, BuildProjectParams, BuildProjectRequest, CompileWorkspaceRequest, CompileWorkspaceStatus, EventNotification, EventType, ExecuteClientCommandRequest, FeatureStatus, FindLinks, GradleCompatibilityInfo, LinkLocation, ProgressKind, ProgressNotification, ServerNotification, SourceAttachmentAttribute, SourceAttachmentRequest, SourceAttachmentResult, SourceInvalidatedEvent, StatusNotification, UpgradeGradleWrapperInfo } from "./protocol";
 import * as refactorAction from './refactorAction';
 import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from "./requirements";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
@@ -191,7 +191,8 @@ export class StandardLanguageClient {
 			}
 		});
 
-		this.languageClient.onNotification(ProgressReportNotification.type, (progress) => {
+		this.languageClient.onNotification(ProgressNotification.type, (progress) => {
+			progress.complete = progress.value.kind === ProgressKind.end;
 			serverTasks.updateServerTask(progress);
 		});
 

@@ -2,6 +2,7 @@
 
 import { EventEmitter } from "vscode";
 import { serverTasks } from "./serverTasks";
+import { ProgressKind } from "./protocol";
 
 export enum ServerStatusKind {
 	ready = "Ready",
@@ -31,7 +32,7 @@ export namespace serverStatus {
 
 	export function initialize() {
 		serverTasks.onDidUpdateServerTask(tasks => {
-			isBusy = tasks.some(task => !task.complete);
+			isBusy = tasks.some(task => !(task.complete));
 			fireEvent();
 		});
 	}

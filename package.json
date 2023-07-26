@@ -653,12 +653,6 @@
           "description": "Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.",
           "scope": "window"
         },
-        "java.progressReports.enabled": {
-          "type": "boolean",
-          "description": "[Experimental] Enable/disable progress reports from background processes on the server.",
-          "default": true,
-          "scope": "window"
-        },
         "java.format.settings.url": {
           "type": "string",
           "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",

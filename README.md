@@ -149,7 +149,6 @@ The following settings are supported:
 * `java.completion.filteredTypes`: Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.
 * `java.completion.favoriteStaticMembers` : Defines a list of static members or types with static members.
 * `java.completion.importOrder` : Defines the sorting order of import statements.
-* `java.progressReports.enabled` : [Experimental] Enable/disable progress reports from background processes on the server.
 * `java.format.enabled` : Enable/disable the default Java formatter.
 * `java.format.settings.url` : Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).
 * `java.format.settings.profile` : Optional formatter profile name from the Eclipse formatter settings.
