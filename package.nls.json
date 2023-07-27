@@ -24,5 +24,7 @@
 	"java.action.changeBaseType": "Base on this Type",
 	"java.project.createModuleInfo.command": "Create module-info.java",
 	"java.clean.sharedIndexes": "Clean Shared Indexes",
-	"java.server.restart": "Restart Java Language Server"
+	"java.server.restart": "Restart Java Language Server",
+	"java.edit.smartSemicolonDetection": "Java Smart Semicolon Detection",
+	"java.edit.smartSemicolonDetectionUndo": "Java Smart Semicolon Detection Undo"
 }
