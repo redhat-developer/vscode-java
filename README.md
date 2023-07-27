@@ -240,7 +240,6 @@ New in 1.21.0
   - `ask`: Ask to reload the sources of the open class files
   - `auto`: Automatically reload the sources of the open class files
   - `manual`: Manually reload the sources of the open class files
-* `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 
 Semantic Highlighting
 ===============

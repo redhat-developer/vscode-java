@@ -2,12 +2,10 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { commands, ConfigurationTarget, env, ExtensionContext, Position, Range, Selection, SnippetString, TextDocument, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
+import { commands, ConfigurationTarget, env, ExtensionContext, Position, Range, SnippetString, TextDocument, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
 import { cleanupLombokCache } from './lombokSupport';
 import { ensureExists, getJavaConfiguration } from './utils';
-import { apiManager } from './apiManager';
-import { setSmartSemiColonDetectionState } from './smartSemicolonDetection';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -331,9 +329,6 @@ export function handleTextBlockClosing(document: TextDocument, changes: readonly
 		return;
 	}
 	if (lastChange.text !== '"""";') {
-		if (lastChange.text !== ';') {
-			setSmartSemiColonDetectionState(null, null);
-		}
 		return;
 	}
 	const selection = activeTextEditor.selection.active;
@@ -354,5 +349,3 @@ export function handleTextBlockClosing(document: TextDocument, changes: readonly
 		}
 	}
 }
-
-

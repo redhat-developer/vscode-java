@@ -1140,12 +1140,6 @@
           "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
           "scope": "window"
         },
-        "java.edit.smartSemicolonDetection.enabled": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Defines the `smart semicolon` detection. Defaults to `false`.",
-          "scope": "window"
-        },
         "java.editor.reloadChangedSources": {
           "type": "string",
           "enum": [
@@ -1308,16 +1302,6 @@
         "command": "java.server.restart",
         "title": "%java.server.restart%",
         "category": "Java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetection.command",
-        "title": "%java.edit.smartSemicolonDetection%",
-        "category": "Java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetectionUndo",
-        "title": "%java.edit.smartSemicolonDetectionUndo%",
-        "category": "Java"
       }
     ],
     "keybindings": [
@@ -1335,16 +1319,6 @@
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v",
         "when": "javaLSReady && editorLangId == java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetection.command",
-        "key": ";",
-        "when": "editorFocus && javaLSReady && editorLangId == java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetectionUndo",
-        "key": "backspace",
-        "when": "editorFocus && javaLSReady && editorLangId == java"
       }
     ],
     "menus": {
