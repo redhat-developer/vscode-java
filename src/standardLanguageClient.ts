@@ -738,17 +738,16 @@ export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageC
 }
 
 export function registerCodeCompletionTelemetryListener() {
-	apiManager.getApiInstance().onDidRequestEnd((traceEvent: any) => {
+	apiManager.getApiInstance().onDidRequestEnd((traceEvent: TraceEvent) => {
 		if (traceEvent.type === CompletionRequest.method) {
 			// Exclude the invalid completion requests.
 			if (!traceEvent.resultLength) {
 				return;
 			}
-			const event: TraceEvent = traceEvent as TraceEvent;
 			const props = {
-				duration: Math.round(event.duration * 100) / 100,
-				resultLength: event.resultLength || 0,
-				error: !!event.error,
+				duration: Math.round(traceEvent.duration * 100) / 100,
+				resultLength: traceEvent.resultLength || 0,
+				error: !!traceEvent.error,
 			};
 			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
 		}
