@@ -2,7 +2,6 @@
 
 ## 1.21.0 (July 27th, 2023)
  * performance - Check completion proposal is compatible or not. See [JLS#2733](https://github.com/eclipse/eclipse.jdt.ls/pull/2733).
- * enhancement - Add support for smart semicolon insertion. See [#703](https://github.com/redhat-developer/vscode-java/issues/703).
  * enhancement - Add code actions for Join/Split variable. See [JLS#2732](https://github.com/eclipse/eclipse.jdt.ls/pull/2732).
  * enhancement - Support outline view for decompiled source. See [JLS#2742](https://github.com/eclipse/eclipse.jdt.ls/pull/2742).
  * enhancement - Reload the cached classfile sources when their source attachment is updated. See [#3207](https://github.com/redhat-developer/vscode-java/pull/3207).

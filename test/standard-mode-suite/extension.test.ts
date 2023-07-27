@@ -42,7 +42,6 @@ suite('Java Language Extension - Standard', () => {
 		return vscode.commands.getCommands(true).then((commands) =>
 		{
 			const JAVA_COMMANDS = [
-				Commands.ADD_TO_SOURCEPATH,
 				Commands.ADD_TO_SOURCEPATH_CMD,
 				Commands.APPLY_REFACTORING_COMMAND,
 				Commands.APPLY_WORKSPACE_EDIT,
@@ -54,7 +53,6 @@ suite('Java Language Extension - Standard', () => {
 				Commands.CLIPBOARD_ONPASTE,
 				Commands.COMPILE_WORKSPACE,
 				Commands.CONFIGURATION_UPDATE,
-				Commands.CREATE_MODULE_INFO,
 				Commands.CREATE_MODULE_INFO_COMMAND,
 				Commands.EXECUTE_WORKSPACE_COMMAND,
 				Commands.GENERATE_ACCESSORS_PROMPT,
@@ -104,20 +102,13 @@ suite('Java Language Extension - Standard', () => {
 				Commands.SHOW_SERVER_TASK_STATUS,
 				Commands.SWITCH_SERVER_MODE,
 				"java.edit.stringFormatting",
-				"java.completion.onDidSelect",
-				"java.decompile",
-				"java.protobuf.generateSources",
 				Commands.SHOW_TYPE_HIERARCHY,
 				Commands.SHOW_SUBTYPE_HIERARCHY,
 				Commands.SHOW_SUPERTYPE_HIERARCHY,
 				Commands.SHOW_CLASS_HIERARCHY,
 				Commands.UPGRADE_GRADLE_WRAPPER,
-				Commands.UPGRADE_GRADLE_WRAPPER_CMD,
 				Commands.UPDATE_SOURCE_ATTACHMENT,
 				Commands.UPDATE_SOURCE_ATTACHMENT_CMD,
-				Commands.SMARTSEMICOLON_DETECTION_CMD,
-				Commands.SMARTSEMICOLON_DETECTION_UNDO,
-				Commands.RESOLVE_SOURCE_ATTACHMENT,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
