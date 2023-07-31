@@ -7,6 +7,7 @@ import { ExtensionContext, workspace, WorkspaceConfiguration } from "vscode";
 export namespace Telemetry {
 
 	export const STARTUP_EVT = "startup";
+	export const COMPLETION_EVENT = "textCompletion";
 	export const SERVER_INITIALIZED_EVT = "java.workspace.initialized";
 	let telemetryManager: TelemetryService = null;
 	let serverInitializedReceived = false;

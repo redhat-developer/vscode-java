@@ -5,13 +5,13 @@ import { findRuntimes } from "jdk-utils";
 import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
-import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit } from "vscode-languageclient";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, CompletionRequest } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
 import { javaRefactorKinds, RefactorDocumentProvider } from "./codeActionProvider";
 import { Commands } from "./commands";
-import { ClientStatus } from "./extension.api";
+import { ClientStatus, TraceEvent } from "./extension.api";
 import * as fileEventHandler from './fileEventHandler';
 import { gradleCodeActionMetadata, GradleCodeActionProvider } from "./gradle/gradleCodeActionProvider";
 import { awaitServerConnection, prepareExecutable, DEBUG } from "./javaServerStarter";
@@ -154,6 +154,7 @@ export class StandardLanguageClient {
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
 					registerDocumentValidationListener(context, this.languageClient);
+					registerCodeCompletionTelemetryListener();
 					break;
 				case 'Started':
 					this.status = ClientStatus.started;
@@ -819,4 +820,21 @@ export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageC
 	} else {
 		return Promise.resolve(true);
 	}
+}
+
+export function registerCodeCompletionTelemetryListener() {
+	apiManager.getApiInstance().onDidRequestEnd((traceEvent: TraceEvent) => {
+		if (traceEvent.type === CompletionRequest.method) {
+			// Exclude the invalid completion requests.
+			if (!traceEvent.resultLength) {
+				return;
+			}
+			const props = {
+				duration: Math.round(traceEvent.duration * 100) / 100,
+				resultLength: traceEvent.resultLength || 0,
+				error: !!traceEvent.error,
+			};
+			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
+		}
+	});
 }
