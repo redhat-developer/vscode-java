@@ -188,12 +188,6 @@
         "path": "./language-support/properties/JavaProperties.tmLanguage.json"
       }
     ],
-    "snippets": [
-      {
-        "language": "java",
-        "path": "./snippets/java.json"
-      }
-    ],
     "jsonValidation": [
       {
         "fileMatch": "package.json",
