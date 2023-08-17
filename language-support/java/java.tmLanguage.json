@@ -305,7 +305,7 @@
 			]
 		},
 		"class": {
-			"begin": "(?=\\w?[\\w\\s-]*\\b(?:class|(?<!@)interface|enum))",
+			"begin": "(?=\\w?[\\w\\s-]*\\b(?:class|(?<!@)interface|enum)\\s+[\\w$]+)",
 			"end": "}",
 			"endCaptures": {
 				"0": {
@@ -334,26 +334,6 @@
 					},
 					"match": "(class|(?<!@)interface|enum)\\s+([\\w$]+)",
 					"name": "meta.class.identifier.java"
-				},
-				{
-					"begin": "(class|(?<!@)interface|enum)\\s+",
-					"beginCaptures": {
-						"1": {
-							"name": "storage.modifier.java"
-						}
-					},
-					"end": "([\\w$]+\\s+)",
-					"endCaptures": {
-						"1": {
-							"name": "entity.name.type.class.java"
-						}
-					},
-					"name": "meta.class.identifier.java",
-					"patterns": [
-						{
-							"include": "#comments"
-						}
-					]
 				},
 				{
 					"begin": "extends",
