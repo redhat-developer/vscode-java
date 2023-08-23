@@ -117,6 +117,9 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 	} else {
 		vmargs = '';
 	}
+	if (vmargs.indexOf('-DDetectVMInstallationsJob.disabled=') < 0) {
+		params.push('-DDetectVMInstallationsJob.disabled=true');
+	}
 	const encodingKey = '-Dfile.encoding=';
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
