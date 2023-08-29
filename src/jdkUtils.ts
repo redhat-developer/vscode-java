@@ -1,8 +1,20 @@
 'use strict';
 
 import { IJavaRuntime, findRuntimes, getSources } from 'jdk-utils';
+import { ExtensionContext, Uri, workspace } from 'vscode';
 
 let cachedJdks: IJavaRuntime[];
+let cachedJreNames: string[];
+
+export async function loadSupportedJreNames(context: ExtensionContext): Promise<void> {
+	const buffer = await workspace.fs.readFile(Uri.file(context.asAbsolutePath("package.json")));
+	const packageJson = JSON.parse(buffer.toString());
+	cachedJreNames = packageJson?.contributes?.configuration?.properties?.["java.configuration.runtimes"]?.items?.properties?.name?.enum;
+}
+
+export function getSupportedJreNames(): string[] {
+	return cachedJreNames;
+}
 
 export async function listJdks(force?: boolean): Promise<IJavaRuntime[]> {
 	if (force || !cachedJdks) {

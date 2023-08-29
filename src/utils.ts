@@ -5,7 +5,7 @@ import * as path from 'path';
 import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
 import { Commands } from './commands';
 import { IJavaRuntime } from 'jdk-utils';
-import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
+import { getSupportedJreNames, listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
@@ -228,6 +228,7 @@ async function addAutoDetectedJdks(configuredJREs: any[]): Promise<any[]> {
 	sortJdksByVersion(autoDetectedJREs);
 	sortJdksBySource(autoDetectedJREs);
 	const addedJreNames: Set<string> = new Set<string>();
+	const supportedJreNames: string[] = getSupportedJreNames();
 	for (const jre of configuredJREs) {
 		if (jre.name) {
 			addedJreNames.add(jre.name);
@@ -246,7 +247,7 @@ async function addAutoDetectedJdks(configuredJREs: any[]): Promise<any[]> {
 			jreName = `JavaSE-1.${majorVersion}`;
 		}
 
-		if (addedJreNames.has(jreName)) {
+		if (addedJreNames.has(jreName) || !supportedJreNames?.includes(jreName)) {
 			continue;
 		}
 
