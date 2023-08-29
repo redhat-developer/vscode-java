@@ -1535,11 +1535,11 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
+    "@redhat-developer/vscode-extension-proposals": "0.0.21",
+    "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
     "@vscode/codicons": "^0.0.32",
     "@vscode/webview-ui-toolkit": "1.2.2",
     "chokidar": "^3.5.3",
-    "@redhat-developer/vscode-redhat-telemetry": "^0.6.1",
-    "@redhat-developer/vscode-extension-proposals": "0.0.21",
     "expand-home-dir": "^0.0.3",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
