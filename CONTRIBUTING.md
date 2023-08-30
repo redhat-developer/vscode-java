@@ -166,7 +166,7 @@ While developing the language server and the extension, you don't need to deploy
 - In the debug console of VSCode you can see if the connection was successful.
 - When the server is running breakpoints can be reached and hot code replace can be used to make fixes without restarting the server.
 - You can modify `launch.json` to use a different port:
-    - Modify `SERVER_PORT` to specify the port the JDT LS server should connect to.
+    - Modify `JDTLS_SERVER_PORT` to specify the port the JDT LS server should connect to.
 
 ## C-2) The language server opens the connection first, and waits the extension to connect to it.
 - Start the language server via `jdt.ls.socket-stream` launch configuration in VS Code or Eclipse

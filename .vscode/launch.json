@@ -32,7 +32,7 @@
 			"sourceMaps": true,
 			"outFiles": [ "${workspaceRoot}/dist/**/*.js" ],
 			"env": {
-				"SERVER_PORT": "3333",
+				"JDTLS_SERVER_PORT": "3333",
 				"DEBUG_VSCODE_JAVA":"true",
 				"VSCODE_REDHAT_TELEMETRY_DEBUG":"true"
 			},
