@@ -1552,7 +1552,7 @@
     "vscode-languageclient": "8.1.0",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^3.10.0"
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "segmentWriteKey": "Y7Y5Xk8dKEhVZHTmAkFZkqgdN4d7c4lt",
   "segmentWriteKeyDebug": "BflPll7uuKOCm3y0g7JpfXLVBVFBivDE"
