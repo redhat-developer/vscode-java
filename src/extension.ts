@@ -64,8 +64,16 @@ async function showOOMMessage(): Promise<void> {
 	}
 }
 
+function getMaxMemFromConfiguration(includeUnit?: boolean): string | undefined {
+	const jvmArgs: string = getJavaConfiguration().get('jdt.ls.vmargs');
+	const results = includeUnit ? MAX_HEAP_SIZE_EXTRACTOR_WITH_UNIT.exec(jvmArgs)
+		: MAX_HEAP_SIZE_EXTRACTOR.exec(jvmArgs);
+	return results && results[0] ? results[1] : undefined;
+}
+
 const HEAP_DUMP_FOLDER_EXTRACTOR = new RegExp(`${HEAP_DUMP_LOCATION}(?:'([^']+)'|"([^"]+)"|([^\\s]+))`);
 const MAX_HEAP_SIZE_EXTRACTOR = new RegExp(`-Xmx([0-9]+)[kKmMgG]`);
+const MAX_HEAP_SIZE_EXTRACTOR_WITH_UNIT = new RegExp(`-Xmx([0-9]+[kKmMgG])`);
 
 /**
  * Returns the heap dump folder defined in the user's preferences, or undefined if the user does not set the heap dump folder
@@ -980,6 +988,12 @@ function registerOutOfMemoryDetection(storagePath: string) {
 		if (heapDumpFolder === storagePath) {
 			fse.remove(path);
 		}
+		apiManager.fireTraceEvent({
+			name: "java.process.outofmemory",
+			properties: {
+				maxMem: getMaxMemFromConfiguration(true),
+			}
+		});
 		showOOMMessage();
 		serverStatusBarProvider.setError();
 		activationProgressNotification.hide();
