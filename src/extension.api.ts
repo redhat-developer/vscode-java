@@ -90,6 +90,10 @@ export interface TraceEvent {
 	 * The number of results returned by a response.
 	 */
 	resultLength?: number | undefined;
+	/**
+	 * Additional data properties, such as the completion trigger context.
+	 */
+	data?: any;
 }
 
 export interface SourceInvalidatedEvent {
@@ -103,7 +107,7 @@ export interface SourceInvalidatedEvent {
 	affectedEditorDocuments?: Uri[];
 }
 
-export const extensionApiVersion = '0.10';
+export const extensionApiVersion = '0.11';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
