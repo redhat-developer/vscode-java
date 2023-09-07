@@ -31,24 +31,6 @@ export function registerSmartSemicolonDetection(context: ExtensionContext) {
 		newPosition = null;
 		oldPosition = null;
 	}));
-	context.subscriptions.push(commands.registerCommand(Commands.SMARTSEMICOLON_DETECTION_UNDO, async () => {
-		if (didSmartSemicolonInsertion() && enabled()) {
-			window.activeTextEditor!.edit(editBuilder => {
-				editBuilder.insert(oldPosition, ";");
-				const delRange = new Range(newPosition, new Position(newPosition.line, newPosition.character + 1));
-				editBuilder.delete(delRange);
-				window.activeTextEditor.selections = [new Selection(oldPosition, oldPosition)];
-				oldPosition = null;
-				newPosition = null;
-			});
-			return;
-		}
-		window.activeTextEditor!.edit(() => {
-			commands.executeCommand("deleteLeft");
-		});
-		oldPosition = null;
-		newPosition = null;
-	}));
 }
 
 interface SmartDetectionParams {
