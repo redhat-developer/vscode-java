@@ -106,7 +106,7 @@ export class StandardLanguageClient {
 		}
 
 		// Create the language client and start the client.
-		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
+		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, false, DEBUG);
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);

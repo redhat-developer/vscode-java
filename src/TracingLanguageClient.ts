@@ -11,7 +11,7 @@ export const onDidRequestEnd: Event<TraceEvent> = requestEndEventEmitter.event;
 export class TracingLanguageClient extends LanguageClient {
 	private isStarted: boolean = false;
 
-	constructor(id: string, name: string, serverOptions: ServerOptions, clientOptions: LanguageClientOptions, forceDebug?: boolean) {
+	constructor(id: string, name: string, serverOptions: ServerOptions, clientOptions: LanguageClientOptions, readonly isSyntaxServer: boolean, forceDebug?: boolean) {
 		super(id, name, serverOptions, clientOptions, forceDebug);
 	}
 
@@ -118,6 +118,7 @@ export class TracingLanguageClient extends LanguageClient {
 			duration,
 			resultLength,
 			data,
+			fromSyntaxServer: !!this.isSyntaxServer,
 		});
 	}
 
@@ -128,6 +129,7 @@ export class TracingLanguageClient extends LanguageClient {
 			duration,
 			error,
 			data,
+			fromSyntaxServer: !!this.isSyntaxServer,
 		});
 	}
 

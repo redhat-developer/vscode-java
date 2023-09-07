@@ -94,6 +94,10 @@ export interface TraceEvent {
 	 * Additional data properties, such as the completion trigger context.
 	 */
 	data?: any;
+	/**
+	 * Whether the request is from the syntax server.
+	 */
+	fromSyntaxServer?: boolean;
 }
 
 export interface SourceInvalidatedEvent {
