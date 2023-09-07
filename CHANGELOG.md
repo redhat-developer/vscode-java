@@ -1,5 +1,31 @@
 # Change Log
 
+## 1.22.0 (September 12th, 2023)
+ * performance - Stale code actions should be cancellable and paste actions should have higher priority. See [#3199](https://github.com/redhat-developer/vscode-java/issues/3199).
+ * enhancement - Add support for smart semicolon insertion. See [#703](https://github.com/redhat-developer/vscode-java/issues/703).
+ * enhancement - Introduce new snippet templates with appropriate context. See [#2867](https://github.com/redhat-developer/vscode-java/issues/2867).
+ * enhancement - Improve JDK detection on the local machine, and ensure they are registered. See [#3251](https://github.com/redhat-developer/vscode-java/pull/3251).
+ * enhancement - Add folding range for multiple single-line comments. See [#860](https://github.com/redhat-developer/vscode-java/issues/860).
+ * enhancement - Use a more appropriate completion item image for annotation attributes and records. See [JLS#2796](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2796).
+ * enhancement - Select suitable JDK to launch Gradle. See [JLS#2812](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2812).
+ * enhancement - end-to-end performance tracking for code completion requests. See [#3165](https://github.com/redhat-developer/vscode-java/pull/3165).
+ * enhancement - Track the case of language server `OutOfMemory`. See [#3273](https://github.com/redhat-developer/vscode-java/pull/3273).
+ * enhancement - Record the trigger context of completion request. See [#3272](https://github.com/redhat-developer/vscode-java/pull/3272).
+ * bug fix - Call hierarchy should always report the end of its progress. See [JLS#2827](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2827).
+ * bug fix - Fix multiline semantic highlighting for `class`, `interface` & `record` declarations. See [#1444](https://github.com/redhat-developer/vscode-java/issues/1444), [JLS#2807](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2807).
+ * bug fix - The type declaration snippets should generate file headers. See [JLS#2813](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2813).
+ * bug fix - Fix folding ranges for nested switch statements. See [#2751](https://github.com/redhat-developer/vscode-java/issues/2751).
+ * bug fix - Fix "java.lang.VerifyError: Operand stack overflow". See [#3232](https://github.com/redhat-developer/vscode-java/issues/3232).
+ * bug fix - Commands needing language server should not be activated before the service is ready . See [#3281](https://github.com/redhat-developer/vscode-java/pull/3281).
+ * bug fix - Record methods are not recognized under certain conditions. See [#3233](https://github.com/redhat-developer/vscode-java/issues/3233).
+ * bug fix - Fix compiler arguments parsing failure in Gradle build support. See [JLS#2781](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2781).
+ * bug fix - Filter out excessive logging of classfile parsing from m2e in "debug mode". See [JLS#2785](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2785).
+ * bug fix - Don't escape unicode characters when pasting string literals. See [#3181](https://github.com/redhat-developer/vscode-java/issues/3181).
+ * bug fix - Enable by default syntactic null analysis for fields. See [#3255](https://github.com/redhat-developer/vscode-java/issues/3255).
+ * bug fix - Rename `SERVER_PORT` environment variable to `JDTLS_SERVER_PORT`. See [#3256](https://github.com/redhat-developer/vscode-java/issues/3256), [#2507](https://github.com/redhat-developer/vscode-java/issues/2507).
+ * dependencies - Update semver to latest version where possible. See [#3264](https://github.com/redhat-developer/vscode-java/pull/3264).
+ * dependencies - Update vscode-redhat-telemetry to 0.7.0. See [#3262](https://github.com/redhat-developer/vscode-java/pull/3262).
+
 ## 1.21.0 (July 27th, 2023)
  * performance - Check completion proposal is compatible or not. See [JLS#2733](https://github.com/eclipse/eclipse.jdt.ls/pull/2733).
  * enhancement - Add code actions for Join/Split variable. See [JLS#2732](https://github.com/eclipse/eclipse.jdt.ls/pull/2732).
