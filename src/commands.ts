@@ -341,9 +341,4 @@ export namespace Commands {
     export const SMARTSEMICOLON_DETECTION = "java.edit.smartSemicolonDetection";
     export const SMARTSEMICOLON_DETECTION_CMD = "java.edit.smartSemicolonDetection.command";
 
-    /**
-    * Smart semicolon detection backspace.
-    */
-    export const SMARTSEMICOLON_DETECTION_UNDO = "java.edit.smartSemicolonDetectionUndo";
-
 }

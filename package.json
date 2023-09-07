@@ -1301,11 +1301,6 @@
         "command": "java.edit.smartSemicolonDetection.command",
         "title": "%java.edit.smartSemicolonDetection%",
         "category": "Java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetectionUndo",
-        "title": "%java.edit.smartSemicolonDetectionUndo%",
-        "category": "Java"
       }
     ],
     "keybindings": [
@@ -1327,11 +1322,6 @@
       {
         "command": "java.edit.smartSemicolonDetection.command",
         "key": ";",
-        "when": "editorTextFocus && !editorReadonly && javaLSReady && editorLangId == java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetectionUndo",
-        "key": "backspace",
         "when": "editorTextFocus && !editorReadonly && javaLSReady && editorLangId == java"
       }
     ],
