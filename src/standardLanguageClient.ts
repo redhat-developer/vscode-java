@@ -154,11 +154,11 @@ export class StandardLanguageClient {
 					snippetCompletionProvider.dispose();
 					registerDocumentValidationListener(context, this.languageClient);
 					registerCodeCompletionTelemetryListener();
+					commands.executeCommand('setContext', 'javaLSReady', true);
 					break;
 				case 'Started':
 					this.status = ClientStatus.started;
 					serverStatus.updateServerStatus(ServerStatusKind.ready);
-					commands.executeCommand('setContext', 'javaLSReady', true);
 					apiManager.updateStatus(ClientStatus.started);
 					break;
 				case 'Error':
