@@ -95,7 +95,7 @@ export interface TraceEvent {
 	 */
 	data?: any;
 	/**
-	 * Whether the request is from the syntax server.
+	 * Whether the response is from the syntax server.
 	 */
 	fromSyntaxServer?: boolean;
 }

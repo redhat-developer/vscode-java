@@ -106,7 +106,7 @@ export class StandardLanguageClient {
 		}
 
 		// Create the language client and start the client.
-		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, false, DEBUG);
+		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
@@ -827,6 +827,7 @@ export function registerCodeCompletionTelemetryListener() {
 				duration: Math.round(traceEvent.duration * 100) / 100,
 				resultLength: traceEvent.resultLength || 0,
 				error: !!traceEvent.error,
+				fromSyntaxServer: !!traceEvent.fromSyntaxServer,
 			};
 			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
 		}

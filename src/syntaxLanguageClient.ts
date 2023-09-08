@@ -61,7 +61,7 @@ export class SyntaxLanguageClient {
 		}
 
 		if (serverOptions) {
-			this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, newClientOptions, true, DEBUG);
+			this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, newClientOptions, DEBUG);
 		}
 
 		this.status = ClientStatus.initialized;
