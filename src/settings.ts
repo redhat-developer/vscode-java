@@ -134,7 +134,8 @@ function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: Work
 		|| hasConfigKeyChanged('home', oldConfig, newConfig)
 		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
 		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig)
-		|| hasConfigKeyChanged('sharedIndexes.location', oldConfig, newConfig);;
+		|| hasConfigKeyChanged('sharedIndexes.location', oldConfig, newConfig)
+		|| hasConfigKeyChanged('transport', oldConfig, newConfig);
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {
