@@ -5,7 +5,7 @@ import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
 import { ExtensionContext, version, workspace } from 'vscode';
-import { Executable, ExecutableOptions, StreamInfo } from 'vscode-languageclient/node';
+import { Executable, ExecutableOptions, StreamInfo, TransportKind } from 'vscode-languageclient/node';
 import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 import { RequirementsData } from './requirements';
@@ -48,6 +48,21 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	executable.options = options;
 	executable.command = path.resolve(`${requirements.tooling_jre}/bin/java`);
 	executable.args = prepareParams(requirements, workspacePath, context, isSyntaxServer);
+	const transportKind = getJavaConfiguration().get('transport');
+	switch (transportKind) {
+		case 'pipe':
+			executable.transport = TransportKind.pipe;
+			break;
+		case 'stdio':
+			executable.transport = TransportKind.stdio;
+			break;
+		default:
+			const isInsider: boolean = version.includes("insider");
+			const javaExtVersion = context.extension.packageJSON?.version;
+			const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(javaExtVersion);
+			executable.transport = (isInsider || isPreReleaseVersion) ? TransportKind.pipe : TransportKind.stdio;
+			break;
+	}
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
 }
