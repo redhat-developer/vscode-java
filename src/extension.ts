@@ -35,7 +35,6 @@ import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import { activationProgressNotification } from "./serverTaskPresenter";
-import { loadSupportedJreNames } from './jdkUtils';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -90,8 +89,7 @@ function getHeapDumpFolderFromSettings(): string {
 }
 
 
-export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
-	await loadSupportedJreNames(context);
+export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	context.subscriptions.push(markdownPreviewProvider);
 	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
