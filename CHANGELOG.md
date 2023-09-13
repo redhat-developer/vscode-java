@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.22.1 (September 14th, 2023)
+ * bug fix - Removed some improvements to JDK detection as they were causing issues on MacOS. See [#3287](https://github.com/redhat-developer/vscode-java/issues/3287).
+ * bug fix - Log errors from project importer. See [JLS#2843](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2843).
+
 ## 1.22.0 (September 12th, 2023)
  * performance - Stale code actions should be cancellable and paste actions should have higher priority. See [#3199](https://github.com/redhat-developer/vscode-java/issues/3199).
  * enhancement - Add support for smart semicolon insertion. See [#703](https://github.com/redhat-developer/vscode-java/issues/703).
