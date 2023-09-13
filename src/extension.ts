@@ -163,7 +163,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-					settings: { java: await getJavaConfig(requirements.java_home) },
+					settings: { java: getJavaConfig(requirements.java_home) },
 					extendedClientCapabilities: {
 						classFileContentsSupport: true,
 						overrideMethodsPromptSupport: true,
@@ -192,7 +192,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 						didChangeConfiguration: async () => {
 							await standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
-									java: await getJavaConfig(requirements.java_home),
+									java: getJavaConfig(requirements.java_home),
 								}
 							});
 						}
@@ -275,7 +275,7 @@ export function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 			// the promise is resolved
 			// no need to pass `resolve` into any code past this point,
 			// since `resolve` is a no-op from now on
-			const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, context, true);
+			const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, getJavaConfig(requirements.java_home), context, true);
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions);

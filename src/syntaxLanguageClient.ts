@@ -28,7 +28,7 @@ export class SyntaxLanguageClient {
 					didChangeConfiguration: async () => {
 						await this.languageClient.sendNotification(DidChangeConfigurationNotification.type, {
 							settings: {
-								java: await getJavaConfig(requirements.java_home),
+								java: getJavaConfig(requirements.java_home),
 							}
 						});
 					}
