@@ -2,13 +2,12 @@
 
 import * as expandHomeDir from 'expand-home-dir';
 import * as fse from 'fs-extra';
-import { getRuntime, getSources, JAVAC_FILENAME, JAVA_FILENAME } from 'jdk-utils';
+import { findRuntimes, getRuntime, getSources, IJavaRuntime, JAVAC_FILENAME, JAVA_FILENAME } from 'jdk-utils';
 import * as path from 'path';
 import { env, ExtensionContext, Uri, window, workspace } from 'vscode';
 import { Commands } from './commands';
 import { logger } from './log';
 import { checkJavaPreferences } from './settings';
-import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 
 const REQUIRED_JDK_VERSION = 17;
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -71,7 +70,7 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         }
 
         // search valid JDKs from env.JAVA_HOME, env.PATH, SDKMAN, jEnv, jabba, Common directories
-        const javaRuntimes = await listJdks();
+        const javaRuntimes = await findRuntimes({ checkJavac: true, withVersion: true, withTags: true });
         if (!toolingJre) { // universal version
             // as latest version as possible.
             sortJdksByVersion(javaRuntimes);
@@ -158,6 +157,27 @@ async function findDefaultRuntimeFromSettings(): Promise<string | undefined> {
     }
 
     return undefined;
+}
+
+export function sortJdksBySource(jdks: IJavaRuntime[]) {
+    const rankedJdks = jdks as Array<IJavaRuntime & { rank: number }>;
+    const sources = ["JDK_HOME", "JAVA_HOME", "PATH"];
+    for (const [index, source] of sources.entries()) {
+        for (const jdk of rankedJdks) {
+            if (jdk.rank === undefined && getSources(jdk).includes(source)) {
+                jdk.rank = index;
+            }
+        }
+    }
+    rankedJdks.filter(jdk => jdk.rank === undefined).forEach(jdk => jdk.rank = sources.length);
+    rankedJdks.sort((a, b) => a.rank - b.rank);
+}
+
+/**
+ * Sort by major version in descend order.
+ */
+export function sortJdksByVersion(jdks: IJavaRuntime[]) {
+    jdks.sort((a, b) => (b.version?.major ?? 0) - (a.version?.major ?? 0));
 }
 
 export function parseMajorVersion(version: string): number {
