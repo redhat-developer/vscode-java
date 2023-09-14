@@ -1,7 +1,7 @@
 # Change Log
 
 ## 1.22.1 (September 14th, 2023)
- * bug fix - Removed some improvements to JDK detection as they were causing issues on MacOS. See [#3287](https://github.com/redhat-developer/vscode-java/issues/3287).
+ * bug fix - Removed some improvements to JDK detection as they were causing issues on MacOS. See [#3287](https://github.com/redhat-developer/vscode-java/issues/3287). If you still see JDK class errors after upgrading to 1.22.1, please open **Command Palette** and run "**Java: Clean Java Language Server Workspace**".
  * bug fix - Log errors from project importer. See [JLS#2843](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2843).
  * bug fix - Disable `;` key binding when smart semicolon detection is disabled. See [#3290](https://github.com/redhat-developer/vscode-java/issues/3290).
 
