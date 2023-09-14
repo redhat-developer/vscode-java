@@ -1322,7 +1322,7 @@
       {
         "command": "java.edit.smartSemicolonDetection.command",
         "key": ";",
-        "when": "editorTextFocus && !editorReadonly && javaLSReady && editorLangId == java"
+        "when": "config.java.edit.smartSemicolonDetection.enabled && editorTextFocus && !editorReadonly && javaLSReady && editorLangId == java"
       }
     ],
     "menus": {
