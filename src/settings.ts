@@ -7,7 +7,7 @@ import { Commands } from './commands';
 import { cleanupLombokCache } from './lombokSupport';
 import { ensureExists, getJavaConfiguration } from './utils';
 import { apiManager } from './apiManager';
-import { setSmartSemiColonDetectionState } from './smartSemicolonDetection';
+import { isActive, setActive, smartSemicolonDetection } from './smartSemicolonDetection';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -319,22 +319,33 @@ function unregisterGradleWrapperPromptDialog(sha256: string) {
 	}
 }
 
-export function handleTextBlockClosing(document: TextDocument, changes: readonly import("vscode").TextDocumentContentChangeEvent[]): any {
+let serverReady = false;
+
+export function handleTextDocumentChanges(document: TextDocument, changes: readonly import("vscode").TextDocumentContentChangeEvent[]): any {
+	if (!serverReady) {
+		apiManager.getApiInstance().serverReady().then(() => {
+			serverReady = true;
+		});
+	}
 	const activeTextEditor = window.activeTextEditor;
 	const activeDocument = activeTextEditor && activeTextEditor.document;
 	if (document !== activeDocument || changes.length === 0 || document.languageId !== 'java') {
+		setActive(false);
 		return;
 	}
 	const lastChange = changes[changes.length - 1];
 	if (lastChange.text === null || lastChange.text.length <= 0) {
+		setActive(false);
 		return;
 	}
 	if (lastChange.text !== '"""";') {
-		if (lastChange.text !== ';') {
-			setSmartSemiColonDetectionState(null, null);
+		if (lastChange.text === ';' && serverReady && !isActive()) {
+			smartSemicolonDetection();
 		}
+		setActive(false);
 		return;
 	}
+	setActive(false);
 	const selection = activeTextEditor.selection.active;
 	if (selection !== null) {
 		const start = new Position(selection.line, selection.character - 2);

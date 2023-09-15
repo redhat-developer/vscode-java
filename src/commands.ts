@@ -339,6 +339,5 @@ export namespace Commands {
     * Smart semicolon detection.
     */
     export const SMARTSEMICOLON_DETECTION = "java.edit.smartSemicolonDetection";
-    export const SMARTSEMICOLON_DETECTION_CMD = "java.edit.smartSemicolonDetection.command";
 
 }

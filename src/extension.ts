@@ -24,7 +24,7 @@ import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
-import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextBlockClosing, onConfigurationChange, ServerMode } from './settings';
+import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
@@ -452,7 +452,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					}
 				}));
 			}
-			context.subscriptions.push(workspace.onDidChangeTextDocument(event => handleTextBlockClosing(event.document, event.contentChanges)));
+			context.subscriptions.push(workspace.onDidChangeTextDocument(event => handleTextDocumentChanges(event.document, event.contentChanges)));
 		});
 	});
 }

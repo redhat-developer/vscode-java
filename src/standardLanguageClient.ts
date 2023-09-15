@@ -38,7 +38,6 @@ import { getAllJavaProjects, getJavaConfig, getJavaConfiguration } from "./utils
 import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
 import { registerDocumentValidationListener } from './diagnostic';
-import { registerSmartSemicolonDetection } from './smartSemicolonDetection';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 
 const extensionName = 'Language Support for Java';
@@ -135,11 +134,6 @@ export class StandardLanguageClient {
 						registerPasteEventHandler(context, this.languageClient);
 					} catch (error) {
 						// clients may not have properly configured documentPaste
-						logger.error(error);
-					}
-					try {
-						registerSmartSemicolonDetection(context);
-					} catch (error) {
 						logger.error(error);
 					}
 					activationProgressNotification.hide();

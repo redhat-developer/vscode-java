@@ -116,7 +116,6 @@ suite('Java Language Extension - Standard', () => {
 				Commands.UPDATE_SOURCE_ATTACHMENT,
 				Commands.UPDATE_SOURCE_ATTACHMENT_CMD,
 				Commands.SMARTSEMICOLON_DETECTION,
-				Commands.SMARTSEMICOLON_DETECTION_CMD,
 				Commands.RESOLVE_SOURCE_ATTACHMENT,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
