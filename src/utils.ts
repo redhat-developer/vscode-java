@@ -4,6 +4,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
 import { Commands } from './commands';
+import { IJavaRuntime } from 'jdk-utils';
+import { getSupportedJreNames, listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
@@ -176,7 +178,7 @@ function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], f
 }
 
 
-export function getJavaConfig(javaHome: string) {
+export async function getJavaConfig(javaHome: string) {
 	const origConfig = getJavaConfiguration();
 	const javaConfig = JSON.parse(JSON.stringify(origConfig));
 	javaConfig.home = javaHome;
@@ -215,5 +217,47 @@ export function getJavaConfig(javaHome: string) {
 	}
 
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
+	const userConfiguredJREs: any[] = javaConfig.configuration.runtimes;
+	javaConfig.configuration.runtimes = await addAutoDetectedJdks(userConfiguredJREs);
 	return javaConfig;
+}
+
+async function addAutoDetectedJdks(configuredJREs: any[]): Promise<any[]> {
+	// search valid JDKs from env.JAVA_HOME, env.PATH, SDKMAN, jEnv, jabba, Common directories
+	const autoDetectedJREs: IJavaRuntime[] = await listJdks();
+	sortJdksByVersion(autoDetectedJREs);
+	sortJdksBySource(autoDetectedJREs);
+	const addedJreNames: Set<string> = new Set<string>();
+	const supportedJreNames: string[] = getSupportedJreNames();
+	for (const jre of configuredJREs) {
+		if (jre.name) {
+			addedJreNames.add(jre.name);
+		}
+	}
+	for (const jre of autoDetectedJREs) {
+		const majorVersion: number = jre.version?.major ?? 0;
+		if (!majorVersion) {
+			continue;
+		}
+
+		let jreName: string = `JavaSE-${majorVersion}`;
+		if (majorVersion <= 5) {
+			jreName = `J2SE-1.${majorVersion}`;
+		} else if (majorVersion <= 8) {
+			jreName = `JavaSE-1.${majorVersion}`;
+		}
+
+		if (addedJreNames.has(jreName) || !supportedJreNames?.includes(jreName)) {
+			continue;
+		}
+
+		configuredJREs.push({
+			name: jreName,
+			path: jre.homedir,
+		});
+
+		addedJreNames.add(jreName);
+	}
+
+	return configuredJREs;
 }

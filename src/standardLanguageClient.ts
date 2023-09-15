@@ -1,7 +1,5 @@
 'use strict';
 
-import * as fse from 'fs-extra';
-import { findRuntimes } from "jdk-utils";
 import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
@@ -24,7 +22,7 @@ import { collectBuildFilePattern, onExtensionChange } from "./plugin";
 import { pomCodeActionMetadata, PomCodeActionProvider } from "./pom/pomCodeActionProvider";
 import { ActionableNotification, BuildProjectParams, BuildProjectRequest, CompileWorkspaceRequest, CompileWorkspaceStatus, EventNotification, EventType, ExecuteClientCommandRequest, FeatureStatus, FindLinks, GradleCompatibilityInfo, LinkLocation, ProgressKind, ProgressNotification, ServerNotification, SourceAttachmentAttribute, SourceAttachmentRequest, SourceAttachmentResult, SourceInvalidatedEvent, StatusNotification, UpgradeGradleWrapperInfo } from "./protocol";
 import * as refactorAction from './refactorAction';
-import { getJdkUrl, RequirementsData, sortJdksBySource, sortJdksByVersion } from "./requirements";
+import { getJdkUrl, RequirementsData } from "./requirements";
 import { serverStatus, ServerStatusKind } from "./serverStatus";
 import { serverStatusBarProvider } from "./serverStatusBarProvider";
 import { activationProgressNotification, serverTaskPresenter } from "./serverTaskPresenter";
@@ -41,6 +39,7 @@ import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
 import { registerDocumentValidationListener } from './diagnostic';
 import { registerSmartSemicolonDetection } from './smartSemicolonDetection';
+import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -91,7 +90,7 @@ export class StandardLanguageClient {
 		if (!port) {
 			const lsPort = process.env['JDTLS_CLIENT_PORT'];
 			if (!lsPort) {
-				serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfig(requirements.java_home), context, false);
+				serverOptions = prepareExecutable(requirements, workspacePath, context, false);
 			} else {
 				serverOptions = () => {
 					const socket = net.connect(lsPort);
@@ -217,7 +216,7 @@ export class StandardLanguageClient {
 					const options: string[] = [];
 					const info = notification.data as GradleCompatibilityInfo;
 					const highestJavaVersion = Number(info.highestJavaVersion);
-					let runtimes = await findRuntimes({ checkJavac: true, withVersion: true, withTags: true });
+					let runtimes = await listJdks(true);
 					runtimes = runtimes.filter(runtime => {
 						return runtime.version.major <= highestJavaVersion;
 					});

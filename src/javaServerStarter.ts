@@ -34,7 +34,7 @@ export const HEAP_DUMP = '-XX:+HeapDumpOnOutOfMemoryError';
 const DEPENDENCY_COLLECTOR_IMPL= '-Daether.dependencyCollector.impl=';
 const DEPENDENCY_COLLECTOR_IMPL_BF= 'bf';
 
-export function prepareExecutable(requirements: RequirementsData, workspacePath, javaConfig, context: ExtensionContext, isSyntaxServer: boolean): Executable {
+export function prepareExecutable(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
 	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
@@ -47,7 +47,7 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	}
 	executable.options = options;
 	executable.command = path.resolve(`${requirements.tooling_jre}/bin/java`);
-	executable.args = prepareParams(requirements, javaConfig, workspacePath, context, isSyntaxServer);
+	executable.args = prepareParams(requirements, workspacePath, context, isSyntaxServer);
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
 	return executable;
 }
@@ -68,7 +68,7 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 	});
 }
 
-function prepareParams(requirements: RequirementsData, javaConfiguration, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): string[] {
+function prepareParams(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): string[] {
 	const params: string[] = [];
 	if (DEBUG) {
 		const port = isSyntaxServer ? 1045 : 1044;
@@ -116,6 +116,9 @@ function prepareParams(requirements: RequirementsData, javaConfiguration, worksp
 		vmargs = String(vmargsCheck);
 	} else {
 		vmargs = '';
+	}
+	if (vmargs.indexOf('-DDetectVMInstallationsJob.disabled=') < 0) {
+		params.push('-DDetectVMInstallationsJob.disabled=true');
 	}
 	const encodingKey = '-Dfile.encoding=';
 	if (vmargs.indexOf(encodingKey) < 0) {
