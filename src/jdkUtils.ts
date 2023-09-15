@@ -1,6 +1,8 @@
 'use strict';
 
+import { existsSync } from 'fs';
 import { IJavaRuntime, findRuntimes, getSources } from 'jdk-utils';
+import { join } from 'path';
 import { ExtensionContext, Uri, workspace } from 'vscode';
 
 let cachedJdks: IJavaRuntime[];
@@ -18,7 +20,13 @@ export function getSupportedJreNames(): string[] {
 
 export async function listJdks(force?: boolean): Promise<IJavaRuntime[]> {
 	if (force || !cachedJdks) {
-		cachedJdks = await findRuntimes({ checkJavac: true, withVersion: true, withTags: true });
+		cachedJdks = await findRuntimes({ checkJavac: true, withVersion: true, withTags: true })
+						.then(jdks => jdks.filter(jdk => {
+							// Validate if it's a real Java Home.
+							return existsSync(join(jdk.homedir, "lib", "rt.jar"))
+								|| existsSync(join(jdk.homedir, "jre", "lib", "rt.jar")) // Java 8
+								|| existsSync(join(jdk.homedir, "lib", "jrt-fs.jar")); // Java 9+
+						}));
 	}
 
 	return [].concat(cachedJdks);
