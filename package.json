@@ -1301,11 +1301,6 @@
         "command": "java.server.restart",
         "title": "%java.server.restart%",
         "category": "Java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetection.command",
-        "title": "%java.edit.smartSemicolonDetection%",
-        "category": "Java"
       }
     ],
     "keybindings": [
@@ -1323,11 +1318,6 @@
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v",
         "when": "javaLSReady && editorLangId == java"
-      },
-      {
-        "command": "java.edit.smartSemicolonDetection.command",
-        "key": ";",
-        "when": "config.java.edit.smartSemicolonDetection.enabled && editorTextFocus && !editorReadonly && javaLSReady && editorLangId == java"
       }
     ],
     "menus": {
