@@ -833,6 +833,11 @@
           "default": [],
           "scope": "machine-overridable"
         },
+        "java.configuration.detectJdksAtStart": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `#java.configuration.runtimes#`, the extension will use that version first."
+        },
         "java.server.launchMode": {
           "type": "string",
           "enum": [

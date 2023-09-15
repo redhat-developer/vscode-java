@@ -177,6 +177,7 @@ function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], f
 	});
 }
 
+const detectJdksAtStart: boolean = getJavaConfiguration().get<boolean>('configuration.detectJdksAtStart');
 
 export async function getJavaConfig(javaHome: string) {
 	const origConfig = getJavaConfiguration();
@@ -217,8 +218,10 @@ export async function getJavaConfig(javaHome: string) {
 	}
 
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
-	const userConfiguredJREs: any[] = javaConfig.configuration.runtimes;
-	javaConfig.configuration.runtimes = await addAutoDetectedJdks(userConfiguredJREs);
+	if (detectJdksAtStart) {
+		const userConfiguredJREs: any[] = javaConfig.configuration.runtimes;
+		javaConfig.configuration.runtimes = await addAutoDetectedJdks(userConfiguredJREs);
+	}
 	return javaConfig;
 }
 
