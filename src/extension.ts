@@ -328,9 +328,9 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			}
 
 			// Register commands here to make it available even when the language client fails
-			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(workspacePath, column)));
-			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDOUT_LOG, (column: ViewColumn) => openRollingServerLogFile(workspacePath, '.out-jdt.ls', column)));
-			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDERR_LOG, (column: ViewColumn) => openRollingServerLogFile(workspacePath, '.error-jdt.ls', column)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(storagePath, column)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDOUT_LOG, (column: ViewColumn) => openRollingServerLogFile(storagePath, '.out-jdt.ls', column)));
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDERR_LOG, (column: ViewColumn) => openRollingServerLogFile(storagePath, '.error-jdt.ls', column)));
 
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_CLIENT_LOG, (column: ViewColumn) => openClientLogFile(clientLogFile, column)));
 
@@ -667,13 +667,19 @@ async function cleanSharedIndexes(context: ExtensionContext) {
 	}
 }
 
-function openServerLogFile(workspacePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
+function openServerLogFile(storagePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
+	const workspacePath = getWorkspacePath(storagePath);
 	const serverLogFile = path.join(workspacePath, '.metadata', '.log');
 	return openLogFile(serverLogFile, 'Could not open Java Language Server log file', column);
 }
 
-function openRollingServerLogFile(workspacePath, filename, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
+function getWorkspacePath(storagePath: any) {
+	return path.join(storagePath, apiManager.getApiInstance().serverMode === ServerMode.lightWeight ? 'ss_ws' : 'jdt_ws');
+}
+
+function openRollingServerLogFile(storagePath, filename, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
 	return new Promise((resolve) => {
+		const workspacePath = getWorkspacePath(storagePath);
 		const dirname = path.join(workspacePath, '.metadata');
 
 		// find out the newest one
