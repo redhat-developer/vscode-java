@@ -44,14 +44,18 @@ export class TracingLanguageClient extends LanguageClient {
 	sendRequest(method: any, ...args) {
 		const startAt: number = performance.now();
 		const requestType: string = this.getRequestType(method, ...args);
-		let data: any;
-		if (args?.[0]?.context?.triggerKind) {
+		let data: any = undefined;
+		if (args?.[0]?.context?.triggerKind !== undefined) {
 			data = {
 				triggerKind: args[0].context.triggerKind,
 				triggerCharacter: args[0].context.triggerCharacter,
 			};
 		}
-		return this.sendRequest0(method, ...args).then(value => {
+		return this.sendRequest0(method, ...args).then((value: any) => {
+			if (data && value?.itemDefaults?.data?.completionKinds) {
+				// Include the completionKinds from the completion response.
+				data.completionKinds = value.itemDefaults.data.completionKinds;
+			}
 			this.fireSuccessTraceEvent(requestType, startAt, this.getResultLength(value), data);
 			return value;
 		}, reason => {
