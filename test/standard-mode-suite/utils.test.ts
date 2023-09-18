@@ -3,6 +3,8 @@
 import * as assert from 'assert';
 import { getJavaConfiguration, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, getExclusionBlob, convertToGlob } from '../../src/utils';
 import { WorkspaceConfiguration } from 'vscode';
+import { listJdks } from '../../src/jdkUtils';
+import { platform } from 'os';
 
 let exclusion: string[];
 let isMavenImporterEnabled: boolean;
@@ -115,6 +117,16 @@ suite('Utils Test', () => {
 	test('convertToGlob() - has base patterns', async function () {
 		const result: string = convertToGlob(["**/pom.xml"], ["**/node_modules/test/**"]);
 		assert.equal(result, "{**/node_modules/test/**/**/pom.xml}");
+	});
+
+	test('listJdks() - no /usr as Java home on macOS', async function () {
+		// Skip this test if it's not macOS.
+		if (platform() !== "darwin") {
+			this.skip();
+		}
+
+		const jdks = await listJdks();
+		assert.ok(jdks.every(jdk => jdk.homedir !== "/usr"));
 	});
 
 	teardown(async function() {
