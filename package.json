@@ -806,7 +806,8 @@
                   "JavaSE-17",
                   "JavaSE-18",
                   "JavaSE-19",
-                  "JavaSE-20"
+                  "JavaSE-20",
+                  "JavaSE-21"
                 ],
                 "description": "Java Execution Environment name. Must be unique."
               },
