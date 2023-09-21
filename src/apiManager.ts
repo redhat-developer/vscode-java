@@ -9,7 +9,7 @@ import { Commands } from "./commands";
 import { Emitter } from "vscode-languageclient";
 import { ServerMode } from "./settings";
 import { registerHoverCommand } from "./hoverAction";
-import { onDidRequestEnd } from "./TracingLanguageClient";
+import { onDidRequestEnd, onWillRequestStart } from "./TracingLanguageClient";
 
 class ApiManager {
 
@@ -64,6 +64,7 @@ class ApiManager {
             onDidServerModeChange,
             onDidProjectsImport,
             serverReady,
+            onWillRequestStart,
             onDidRequestEnd,
             trackEvent: traceEvent,
             onDidSourceInvalidate: this.sourceInvalidatedEventEmitter.event,
