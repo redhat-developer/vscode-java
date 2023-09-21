@@ -81,7 +81,7 @@ export interface TraceEvent {
 	/**
 	 * Time (in milliseconds) taken to process a request.
 	 */
-	duration: number;
+	duration?: number;
 	/**
 	 * Error that occurs while processing a request.
 	 */
@@ -107,7 +107,7 @@ export interface SourceInvalidatedEvent {
 	affectedEditorDocuments?: Uri[];
 }
 
-export const extensionApiVersion = '0.11';
+export const extensionApiVersion = '0.12';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -152,6 +152,13 @@ export interface ExtensionAPI {
 	 * @since extension version 1.7.0
 	 */
 	readonly serverReady: () => Promise<boolean>;
+
+	/**
+	 * An event that's fired when a request is about to send to language server.
+	 * @since API version 0.12
+	 * @since extension version 1.23.0
+	 */
+	readonly onWillRequestStart: Event<TraceEvent>;
 
 	/**
 	 * An event that's fired when a request has been responded.

@@ -3,8 +3,10 @@ import { Event, EventEmitter } from "vscode";
 import { CancellationToken, LanguageClient, LanguageClientOptions, ProtocolRequestType, ProtocolRequestType0, RequestType, RequestType0, ServerOptions } from "vscode-languageclient/node";
 import { TraceEvent } from "./extension.api";
 
-const requestEventEmitter = new EventEmitter<TraceEvent>();
-export const onDidRequestEnd: Event<TraceEvent> = requestEventEmitter.event;
+const requestStartEventEmitter = new EventEmitter<TraceEvent>();
+const requestEndEventEmitter = new EventEmitter<TraceEvent>();
+export const onWillRequestStart: Event<TraceEvent> = requestStartEventEmitter.event;
+export const onDidRequestEnd: Event<TraceEvent> = requestEndEventEmitter.event;
 
 export class TracingLanguageClient extends LanguageClient {
 	private isStarted: boolean = false;
@@ -17,6 +19,9 @@ export class TracingLanguageClient extends LanguageClient {
 		const isFirstTimeStart: boolean = !this.isStarted;
 		this.isStarted = true;
 		const startAt: number = performance.now();
+		if (isFirstTimeStart) {
+			this.fireRequestStartTraceEvent("initialize");
+		}
 		return super.start().then(value => {
 			if (isFirstTimeStart) {
 				this.fireSuccessTraceEvent("initialize", startAt, undefined);
@@ -51,6 +56,7 @@ export class TracingLanguageClient extends LanguageClient {
 				triggerCharacter: args[0].context.triggerCharacter,
 			};
 		}
+		this.fireRequestStartTraceEvent(requestType);
 		return this.sendRequest0(method, ...args).then((value: any) => {
 			if (data && value?.itemDefaults?.data?.completionKinds) {
 				// Include the completionKinds from the completion response.
@@ -99,9 +105,15 @@ export class TracingLanguageClient extends LanguageClient {
 		return requestType;
 	}
 
+	private fireRequestStartTraceEvent(type: string): void {
+		requestStartEventEmitter.fire({
+			type,
+		});
+	}
+
 	private fireSuccessTraceEvent(type: string, startAt: number, resultLength: number | undefined, data?: any): void {
 		const duration: number = performance.now() - startAt;
-		requestEventEmitter.fire({
+		requestEndEventEmitter.fire({
 			type,
 			duration,
 			resultLength,
@@ -111,7 +123,7 @@ export class TracingLanguageClient extends LanguageClient {
 
 	private fireFailureTraceEvent(type: string, startAt: number, error: any, data?: any): void {
 		const duration: number = performance.now() - startAt;
-		requestEventEmitter.fire({
+		requestEndEventEmitter.fire({
 			type,
 			duration,
 			error,
