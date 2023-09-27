@@ -1,5 +1,20 @@
 # Change Log
 
+## 1.23.0 (September 28th, 2023)
+ * enhancement - Improve JDK detection on the local machine, and ensure they are registered. See [#3301](https://github.com/redhat-developer/vscode-java/pull/3301).
+ * enhancement - Update current method snippet and add `static_method` snippet for interface. See [#1697](https://github.com/redhat-developer/vscode-java/issues/1697).
+ * enhancement - Improve the constructor snippet for additional classes in a file. See [#725](https://github.com/redhat-developer/vscode-java/issues/725).
+ * enhancement - Store the completion kinds requested by completion operation. See [JLS#2857](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2857).
+ * enhancement - Update to Lombok 1.18.30. See [#3321](https://github.com/redhat-developer/vscode-java/pull/3321).
+ * enhancement - Add API `onWillRequestStart` to track request send event. See [#3316](https://github.com/redhat-developer/vscode-java/pull/3316).
+ * enhancement - Report whether the project has Kotlin Gradle files. See [JLS#2859](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2859).
+ * enhancement - Track the completion kinds of completion request. See [#3307](https://github.com/redhat-developer/vscode-java/pull/3307).
+ * bug fix - Fix `EmptyStackException` in `textDocument/foldingRange`. See [JLS#2865](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2865).
+ * bug fix - Fix renaming of attribute with `@Singular` annotation. See [#3203](https://github.com/redhat-developer/vscode-java/issues/3203).
+ * bug fix - `Open Java Language Server Log File` should open the correct server (standard/syntax) log. See [#3309](https://github.com/redhat-developer/vscode-java/issues/3309).
+ * bug fix - Fix `URI` with query parameter. See [#3305](https://github.com/redhat-developer/vscode-java/issues/3305).
+ * bug fix - Fix an error thrown during "Initialize workspace". See [JLS#2842](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2842).
+
 ## 1.22.1 (September 14th, 2023)
  * bug fix - Removed some improvements to JDK detection as they were causing issues on MacOS. See [#3287](https://github.com/redhat-developer/vscode-java/issues/3287). If you still see JDK class errors after upgrading to 1.22.1, please open **Command Palette** and run "**Java: Clean Java Language Server Workspace**".
  * bug fix - Log errors from project importer. See [JLS#2843](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2843).
