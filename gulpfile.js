@@ -127,7 +127,7 @@ gulp.task('download_lombok', async function (done) {
 	}
 
 	await new Promise(function (resolve, reject) {
-		const lombokVersion = '1.18.28';
+		const lombokVersion = '1.18.30';
 		// The latest lombok version can be found on the website https://projectlombok.org/downloads
 		const lombokUrl = `https://projectlombok.org/downloads/lombok-${lombokVersion}.jar`;
 		download(lombokUrl)
