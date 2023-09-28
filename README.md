@@ -238,8 +238,6 @@ The following settings are supported:
   - `auto`: Automatically reload the sources of the open class files
   - `manual`: Manually reload the sources of the open class files
 * `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
-
-New in 1.23.0
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
 
 Semantic Highlighting
