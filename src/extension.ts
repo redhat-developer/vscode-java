@@ -6,12 +6,12 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, ProgressLocation, Position, Selection, Range } from 'vscode';
-import { CancellationToken, CodeActionParams, CodeActionRequest, Command, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
+import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
 import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands } from './commands';
-import { ClientStatus, ExtensionAPI } from './extension.api';
+import { ClientStatus, ExtensionAPI, TraceEvent } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
 import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
 import { initializeLogFile, logger } from './log';
@@ -273,6 +273,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			};
 
 			apiManager.initialize(requirements, serverMode);
+			registerCodeCompletionTelemetryListener();
 			resolve(apiManager.getApiInstance());
 			// the promise is resolved
 			// no need to pass `resolve` into any code past this point,
@@ -981,6 +982,24 @@ async function cleanJavaWorkspaceStorage() {
 			}
 		});
 	}
+}
+
+export function registerCodeCompletionTelemetryListener() {
+	apiManager.getApiInstance().onDidRequestEnd((traceEvent: TraceEvent) => {
+		if (traceEvent.type === CompletionRequest.method) {
+			// Exclude the invalid completion requests.
+			if (!traceEvent.resultLength) {
+				return;
+			}
+			const props = {
+				duration: Math.round(traceEvent.duration * 100) / 100,
+				resultLength: traceEvent.resultLength || 0,
+				error: !!traceEvent.error,
+				fromSyntaxServer: !!traceEvent.fromSyntaxServer,
+			};
+			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
+		}
+	});
 }
 
 function registerOutOfMemoryDetection(storagePath: string) {
