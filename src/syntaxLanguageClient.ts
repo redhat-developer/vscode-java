@@ -14,6 +14,7 @@ import { ServerMode } from "./settings";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import { getJavaConfig } from "./utils";
 import { DEBUG } from "./javaServerStarter";
+import { TracingLanguageClient } from "./TracingLanguageClient";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 
@@ -60,7 +61,7 @@ export class SyntaxLanguageClient {
 		}
 
 		if (serverOptions) {
-			this.languageClient = new LanguageClient('java', extensionName, serverOptions, newClientOptions, DEBUG);
+			this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, newClientOptions, DEBUG);
 		}
 
 		this.status = ClientStatus.initialized;

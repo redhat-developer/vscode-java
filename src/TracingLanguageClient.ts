@@ -10,9 +10,11 @@ export const onDidRequestEnd: Event<TraceEvent> = requestEndEventEmitter.event;
 
 export class TracingLanguageClient extends LanguageClient {
 	private isStarted: boolean = false;
+	private isSyntaxServer: boolean = false;
 
 	constructor(id: string, name: string, serverOptions: ServerOptions, clientOptions: LanguageClientOptions, forceDebug?: boolean) {
 		super(id, name, serverOptions, clientOptions, forceDebug);
+		this.isSyntaxServer = name?.includes("Syntax Server");
 	}
 
 	start(): Promise<void> {
@@ -118,6 +120,7 @@ export class TracingLanguageClient extends LanguageClient {
 			duration,
 			resultLength,
 			data,
+			fromSyntaxServer: !!this.isSyntaxServer,
 		});
 	}
 
@@ -128,6 +131,7 @@ export class TracingLanguageClient extends LanguageClient {
 			duration,
 			error,
 			data,
+			fromSyntaxServer: !!this.isSyntaxServer,
 		});
 	}
 
