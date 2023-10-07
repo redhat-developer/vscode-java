@@ -110,6 +110,7 @@ export class TracingLanguageClient extends LanguageClient {
 	private fireRequestStartTraceEvent(type: string): void {
 		requestStartEventEmitter.fire({
 			type,
+			fromSyntaxServer: !!this.isSyntaxServer,
 		});
 	}
 
