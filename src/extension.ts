@@ -186,6 +186,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						onCompletionItemSelectedCommand: "editor.action.triggerParameterHints",
 						extractInterfaceSupport: true,
 						advancedUpgradeGradleSupport: true,
+						executeClientCommandSupport: true,
 					},
 					triggerFiles,
 				},
