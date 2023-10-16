@@ -39,6 +39,7 @@ import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
 import { registerDocumentValidationListener } from './diagnostic';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
+import { ClientCodeActionProvider } from './clientCodeActionProvider';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -618,6 +619,10 @@ export class StandardLanguageClient {
 			pattern: "**/{gradle/wrapper/gradle-wrapper.properties,build.gradle,build.gradle.kts,settings.gradle,settings.gradle.kts}"
 		}, new GradleCodeActionProvider(), gradleCodeActionMetadata);
 
+		languages.registerCodeActionsProvider({
+			scheme: 'file',
+			language: 'java'
+		}, new ClientCodeActionProvider(context));
 	}
 
 	private showGradleCompatibilityIssueNotification(message: string, options: string[], projectUri: string, gradleVersion: string, newJavaHome: string) {
