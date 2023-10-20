@@ -918,7 +918,10 @@ async function getTriggerFiles(): Promise<string[]> {
 			}
 		}
 
-		const javaFilesUnderRoot: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "*.java"), undefined, 1);
+		// Paths set by 'java.import.exclusions' will be ignored when searching trigger files.
+		const exclusionGlob = getExclusionBlob();
+
+		const javaFilesUnderRoot: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "*.java"), exclusionGlob, 1);
 		for (const javaFile of javaFilesUnderRoot) {
 			if (isPrefix(rootPath, javaFile.fsPath)) {
 				openedJavaFiles.push(javaFile.toString());
@@ -926,7 +929,7 @@ async function getTriggerFiles(): Promise<string[]> {
 			}
 		}
 
-		const javaFilesInCommonPlaces: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "{src, test}/**/*.java"), undefined, 1);
+		const javaFilesInCommonPlaces: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "{src, test}/**/*.java"), exclusionGlob, 1);
 		for (const javaFile of javaFilesInCommonPlaces) {
 			if (isPrefix(rootPath, javaFile.fsPath)) {
 				openedJavaFiles.push(javaFile.toString());
