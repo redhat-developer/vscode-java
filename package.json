@@ -913,11 +913,15 @@
         },
         "java.project.resourceFilters": {
           "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^(?!\\*).*"
+          },
           "default": [
             "node_modules",
             "\\.git"
           ],
-          "description": "Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, [\"node_modules\",\"\\.git\"] will exclude all files and folders named 'node_modules' or '.git'. Pattern expressions must be compatible with `java.util.regex.Pattern`. Defaults to [\"node_modules\",\"\\.git\"].",
+          "markdownDescription": "Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, [\"node_modules\",\"\\.git\"] will exclude all files and folders named `node_modules` or `.git`. Pattern expressions must be compatible with `java.util.regex.Pattern`. Defaults to [\"node_modules\",\"\\.git\"].",
           "scope": "window"
         },
         "java.templates.fileHeader": {
