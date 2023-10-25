@@ -1,13 +1,13 @@
 {
 	"sysout": {
-		"prefix": ["sysout", "sout"],
+		"prefix": ["sysout", "sout", "System.out.println()"],
 		"body": [
 			"System.out.println($0);"
 		],
 		"description": "Print to standard out"
 	},
 	"syserr": {
-		"prefix": ["syserr", "serr"],
+		"prefix": ["syserr", "serr", "System.err.println()"],
 		"body": [
 			"System.err.println($0);"
 		],
