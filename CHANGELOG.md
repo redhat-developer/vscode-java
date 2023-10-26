@@ -1,5 +1,28 @@
 # Change Log
 
+## 1.24.0 (October 26th, 2023)
+ * performance - Exclude certain folders (eg. `node_modules/`) from "trigger" file search on activation. [#3348](https://github.com/redhat-developer/vscode-java/pull/3348).
+ * enhancement - Move snippet suggestions above matching keywords in completion list. See [#2584](https://github.com/redhat-developer/vscode-java/issues/2584).
+ * enhancement - Add new alias `public static void main(String[] args)` for public main method. See [#2105](https://github.com/redhat-developer/vscode-java/issues/2105).
+ * enhancement - Add aliases for `sysout`/`syserr` snippets that will see more usage. See [#3041](https://github.com/redhat-developer/vscode-java/issues/3041).
+ * enhancement - Add "Surround with try/catch" code action. See [JLS#2727](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2727).
+ * enhancement - Automatically add the existing static imports in code as favorite static members. See [JLS#2903](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2903).
+ * enhancement - Provide quick fix to "Configure static import...". See [#3339](https://github.com/redhat-developer/vscode-java/pull/3339).
+ * enhancement - Support named pipes for client/server communication. See [#3282](https://github.com/redhat-developer/vscode-java/issues/3282).
+ * enhancement - Track the LSP request data from syntax server. See [#3278](https://github.com/redhat-developer/vscode-java/pull/3278).
+ * bug fix - Re-implement smart semicolon detection through text document change API. See [#3290](https://github.com/redhat-developer/vscode-java/issues/3290).
+ * bug fix - Completion returns no results for method declarations when `matchCase` set to `FIRSTLETTER`. See [#3214](https://github.com/redhat-developer/vscode-java/issues/3214), [#3186](https://github.com/redhat-developer/vscode-java/issues/3186).
+ * bug fix - Allow filtering methods by parameter names, and order by number of parameters. See [JLS#2907](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2907), [#3206](https://github.com/redhat-developer/vscode-java/issues/3206).
+ * bug fix - Reconcile AST node to provide accurate type definition snippets. See [#2250](https://github.com/redhat-developer/vscode-java/issues/2250).
+ * bug fix - `BasicFileDetector` should handle inaccessible directories gracefully during project import. See [#1156](https://github.com/redhat-developer/vscode-java/issues/1156), [#3137](https://github.com/redhat-developer/vscode-java/issues/3137).
+ * bug fix - Ensure line delimiter exists after the file header template. See [JLS#2906](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2906).
+ * bug fix - `o.e.core.internal.resources.ResourceException`: Invalid project description. See [JLS#2845](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2845).
+ * bug fix - Error when parsing resource filter. See [#3345](https://github.com/redhat-developer/vscode-java/pull/3345).
+ * bug fix - NPE in `SemanticTokensHandler`. See [JLS#2876](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2876).
+ * bug fix - NPE in cleanup action handler. See [JLS#2879](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2879).
+ * bug fix - `UnsupportedOperationException` at `org.eclipse.lsp4j.services.LanguageServer.setTrace()`. See [JLS#2891](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2891).
+ * dependencies - Bump postcss from 8.4.21 to 8.4.31. See [#3335](https://github.com/redhat-developer/vscode-java/pull/3335).
+
 ## 1.23.0 (September 28th, 2023)
  * enhancement - Improve JDK detection on the local machine, and ensure they are registered. See [#3301](https://github.com/redhat-developer/vscode-java/pull/3301).
  * enhancement - Update current method snippet and add `static_method` snippet for interface. See [#1697](https://github.com/redhat-developer/vscode-java/issues/1697).
