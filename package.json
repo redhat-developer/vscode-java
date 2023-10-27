@@ -72,6 +72,16 @@
       "^pom\\.xml$",
       ".*\\.gradle(\\.kts)?$"
     ],
+    "javaBuildTools": [
+      {
+        "displayName": "Maven",
+        "fileSearchPattern": "**/pom.xml"
+      },
+      {
+        "displayName": "Gradle",
+        "fileSearchPattern": "**/{build,settings}.gradle*"
+      }
+    ],
     "semanticTokenTypes": [
       {
         "id": "annotation",
@@ -395,6 +405,20 @@
           "type": "boolean",
           "markdownDescription": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Click [HERE](command:_java.metadataFilesGeneration) to learn how to change the setting to make it take effect.",
           "default": false,
+          "scope": "window"
+        },
+        "java.import.projectSelection": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "automatic"
+          ],
+          "enumDescriptions": [
+            "Manually select the build configuration files.",
+            "Let extension automatically scan and select the build configuration files."
+          ],
+          "default": "automatic",
+          "markdownDescription": "[Experimental] Specifies how to select build configuration files to import. \nNote: Currently, `Gradle` projects cannot be partially imported.",
           "scope": "window"
         },
         "java.project.importOnFirstTimeStartup": {

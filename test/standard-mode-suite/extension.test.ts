@@ -54,6 +54,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.CLIPBOARD_ONPASTE,
 				Commands.COMPILE_WORKSPACE,
 				Commands.CONFIGURATION_UPDATE,
+				"java.action.configureFavoriteStaticMembers",
 				Commands.CREATE_MODULE_INFO,
 				Commands.CREATE_MODULE_INFO_COMMAND,
 				Commands.EXECUTE_WORKSPACE_COMMAND,

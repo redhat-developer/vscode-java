@@ -22,7 +22,7 @@ export namespace StatusCommands {
 	export const switchToStandardCommand = {
 		title: "Load Projects",
 		command: Commands.SWITCH_SERVER_MODE,
-		arguments: ["Standard", true],
+		arguments: ['Standard', true],
 		tooltip: "LightWeight mode only provides limited features, please load projects to get full feature set"
 	};
 
@@ -37,6 +37,13 @@ export namespace StatusCommands {
 		command: "workbench.action.openSettings",
 		arguments: ["java.configuration.runtimes"],
 		tooltip: "Configure Java Runtime"
+	};
+
+	export const startStandardServerCommand = {
+		title: "Load Projects",
+		command: Commands.SWITCH_SERVER_MODE,
+		arguments: ['Standard', true],
+		tooltip: "Load Projects"
 	};
 }
 
@@ -55,6 +62,13 @@ export namespace ServerStatusItemFactory {
 		item.text = StatusIcon.lightWeight;
 		item.detail = "Lightweight Mode";
 		item.command = StatusCommands.switchToStandardCommand;
+	}
+
+	export function showNotImportedStatus(item: any): void {
+		item.severity = vscode.LanguageStatusSeverity?.Warning;
+		item.text = StatusIcon.notImported;
+		item.detail = "No projects are Imported";
+		item.command = StatusCommands.startStandardServerCommand;
 	}
 
 	export function showStandardStatus(item: any): void {

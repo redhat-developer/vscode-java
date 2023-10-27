@@ -1,7 +1,7 @@
 'use strict';
 
 import * as assert from 'assert';
-import { getJavaConfiguration, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, getExclusionBlob, convertToGlob } from '../../src/utils';
+import { getJavaConfiguration, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, getExclusionGlob, convertToGlob } from '../../src/utils';
 import { WorkspaceConfiguration } from 'vscode';
 import { listJdks } from '../../src/jdkUtils';
 import { platform } from 'os';
@@ -77,7 +77,7 @@ suite('Utils Test', () => {
 		assert.deepEqual(result, ["**/node_modules/test/**"]);
 	});
 
-	test('getExclusionBlob() - no negated exclusions', async function () {
+	test('getExclusionGlob() - no negated exclusions', async function () {
 		await config.update(IMPORT_EXCLUSION, [
 			"**/node_modules/**",
 			"**/.metadata/**",
@@ -85,12 +85,12 @@ suite('Utils Test', () => {
 			"**/META-INF/maven/**"
 		]);
 
-		const result: string = getExclusionBlob();
+		const result: string = getExclusionGlob();
 
 		assert.equal(result, "{**/node_modules/**,**/.metadata/**,**/archetype-resources/**,**/META-INF/maven/**}");
 	});
 
-	test('getExclusionBlob() - has negated exclusions', async function () {
+	test('getExclusionGlob() - has negated exclusions', async function () {
 		await config.update(IMPORT_EXCLUSION, [
 			"**/node_modules/**",
 			"!**/node_modules/test/**",
@@ -99,7 +99,7 @@ suite('Utils Test', () => {
 			"**/META-INF/maven/**"
 		]);
 
-		const result: string = getExclusionBlob();
+		const result: string = getExclusionGlob();
 
 		assert.equal(result, "{**/node_modules/**,**/.metadata/**,**/archetype-resources/**,**/META-INF/maven/**}");
 	});

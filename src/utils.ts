@@ -110,7 +110,11 @@ export function convertToGlob(filePatterns: string[], basePatterns?: string[]): 
 	return parseToStringGlob(patterns);
 }
 
-export function getExclusionBlob(): string {
+/**
+ * Merge the values of setting 'java.import.exclusions' into one glob pattern.
+ * @param additionalExclusions Additional exclusions to be merged into the glob pattern.
+ */
+export function getExclusionGlob(additionalExclusions?: string[]): string {
 	const config = getJavaConfiguration();
 	const exclusions: string[] = config.get<string[]>("import.exclusions", []);
 	const patterns: string[] = [];
@@ -120,6 +124,9 @@ export function getExclusionBlob(): string {
 		}
 
 		patterns.push(exclusion);
+	}
+	if (additionalExclusions) {
+		patterns.push(...additionalExclusions);
 	}
 	return parseToStringGlob(patterns);
 }
@@ -173,10 +180,10 @@ async function getBuildFilesInWorkspace(): Promise<Uri[]> {
 		buildFiles.push(...await workspace.findFiles(convertToGlob(inclusionFilePatterns, inclusionFolderPatterns), null /* force not use default exclusion */));
 	}
 
-	const inclusionBlob: string = convertToGlob(inclusionFilePatterns);
-	const exclusionBlob: string = getExclusionBlob();
-	if (inclusionBlob) {
-		buildFiles.push(...await workspace.findFiles(inclusionBlob, exclusionBlob));
+	const inclusionGlob: string = convertToGlob(inclusionFilePatterns);
+	const exclusionGlob: string = getExclusionGlob();
+	if (inclusionGlob) {
+		buildFiles.push(...await workspace.findFiles(inclusionGlob, exclusionGlob));
 	}
 
 	return buildFiles;
