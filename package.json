@@ -1487,6 +1487,11 @@
         "command": "java.server.restart",
         "title": "%java.server.restart%",
         "category": "Java"
+      },
+      {
+        "command": "java.action.filesExplorerPasteAction",
+        "title": "%java.action.filesExplorerPasteAction%",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -1504,6 +1509,12 @@
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v",
         "when": "javaLSReady && editorLangId == java"
+      },
+      {
+        "command": "java.action.filesExplorerPasteAction",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "explorerViewletFocus && config.editor.pasteAs.enabled"
       }
     ],
     "menus": {
@@ -1622,6 +1633,10 @@
         {
           "command": "java.server.restart",
           "when": "javaLSReady"
+        },
+        {
+          "command": "java.action.filesExplorerPasteAction",
+          "when": "false"
         }
       ],
       "view/title": [

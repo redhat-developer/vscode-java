@@ -37,6 +37,7 @@ import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib'
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
+import { pasteFile } from './pasteAction';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -93,6 +94,14 @@ function getHeapDumpFolderFromSettings(): string {
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	await loadSupportedJreNames(context);
+	context.subscriptions.push(commands.registerCommand(Commands.FILESEXPLORER_ONPASTE, async () => {
+		const originalClipboard = await env.clipboard.readText();
+		// Hack in order to get path to selected folder if applicable (see https://github.com/microsoft/vscode/issues/3553#issuecomment-1098562676)
+		await commands.executeCommand('copyFilePath');
+		const folder = await env.clipboard.readText();
+		await env.clipboard.writeText(originalClipboard);
+		pasteFile(folder);
+	}));
 	context.subscriptions.push(markdownPreviewProvider);
 	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
@@ -650,7 +659,7 @@ function enableJavadocSymbols() {
 	});
 }
 
-function getTempWorkspace() {
+export function getTempWorkspace() {
 	return path.resolve(os.tmpdir(), `vscodesws_${makeRandomHexString(5)}`);
 }
 

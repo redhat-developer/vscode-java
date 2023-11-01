@@ -22,5 +22,6 @@
 	"java.action.showSupertypeHierarchy": "顯示父類別階層結構",
 	"java.action.showSubtypeHierarchy": "顯示子類別階層結構",
 	"java.action.changeBaseType": "以此型別為基礎",
-	"java.project.createModuleInfo.command": "創建 module-info.java"
+	"java.project.createModuleInfo.command": "創建 module-info.java",
+	"java.action.filesExplorerPasteAction": "將剪貼簿文字貼到文件中"
 }

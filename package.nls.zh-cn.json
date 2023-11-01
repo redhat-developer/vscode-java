@@ -23,5 +23,6 @@
 	"java.action.showSubtypeHierarchy": "显示子类层次结构",
 	"java.action.changeBaseType": "基于此类型",
 	"java.project.createModuleInfo.command": "创建 module-info.java",
-	"java.clean.sharedIndexes": "清理共享的索引文件"
+	"java.clean.sharedIndexes": "清理共享的索引文件",
+	"java.action.filesExplorerPasteAction": "将剪贴板文本粘贴到文件中"
 }
