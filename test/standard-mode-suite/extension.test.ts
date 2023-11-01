@@ -118,6 +118,8 @@ suite('Java Language Extension - Standard', () => {
 				Commands.UPDATE_SOURCE_ATTACHMENT_CMD,
 				Commands.SMARTSEMICOLON_DETECTION,
 				Commands.RESOLVE_SOURCE_ATTACHMENT,
+				Commands.FILESEXPLORER_ONPASTE,
+				Commands.RESOLVE_PASTED_TEXT,
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
