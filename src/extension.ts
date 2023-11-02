@@ -29,7 +29,7 @@ import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
+import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
 import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
@@ -110,7 +110,12 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
 	}
+	const workspacePath = path.resolve(`${storagePath}/jdt_ws`);
 	clientLogFile = path.join(storagePath, 'client.log');
+	const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
+	if (cleanWorkspaceExists) {
+		deleteClientLog(storagePath);
+	}
 	initializeLogFile(clientLogFile);
 
 	const telemetryService: Promise<TelemetryService> = Telemetry.startTelemetry(context);
@@ -137,7 +142,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	}).then(async (requirements) => {
 		const triggerFiles = await getTriggerFiles();
 		return new Promise<ExtensionAPI>(async (resolve) => {
-			const workspacePath = path.resolve(`${storagePath}/jdt_ws`);
 			const syntaxServerWorkspacePath = path.resolve(`${storagePath}/ss_ws`);
 
 			let serverMode = getJavaServerMode();
@@ -254,7 +258,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				errorHandler: new ClientErrorHandler(extensionName),
 				initializationFailedHandler: error => {
 					logger.error(`Failed to initialize ${extensionName} due to ${error && error.toString()}`);
-					if (error.toString().includes('Connection') && error.toString().includes('disposed')) {
+					if ((error.toString().includes('Connection')  && error.toString().includes('disposed')) || error.toString().includes('Internal error')) {
 						if (!initFailureReported) {
 							apiManager.fireTraceEvent({
 								name: "java.client.error.initialization",
@@ -315,7 +319,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 			}));
 
-			const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
 			if (cleanWorkspaceExists) {
 				const data = {};
 				try {
@@ -1049,3 +1052,5 @@ function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
 		}
 	}));
 }
+
+
