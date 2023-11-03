@@ -1488,7 +1488,7 @@
     "@types/glob": "5.0.30",
     "@types/lodash.findindex": "^4.6.6",
     "@types/mocha": "^5.2.5",
-    "@types/node": "^16.11.7",
+    "@types/node": "^18.17.1",
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
     "@types/vscode-webview": "^1.57.0",
