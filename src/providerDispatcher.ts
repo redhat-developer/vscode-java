@@ -188,7 +188,7 @@ function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
 			const feature = (await getActiveLanguageClient()).getFeature(WorkspaceSymbolRequest.method);
 			const providers = feature.getProviders();
 			if (providers && providers.length > 0) {
-				feature.dispose();
+				feature.clear();
 				const workspaceSymbolProvider = createWorkspaceSymbolProvider(providers[0]);
 				context.subscriptions.push(languages.registerWorkspaceSymbolProvider(workspaceSymbolProvider));
 				disposable.dispose();

@@ -1533,10 +1533,13 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "semver": "^7.5.2",
-    "vscode-languageclient": "8.1.0",
+    "vscode-languageclient": "8.2.0-next.3",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.7.1"
+  },
+  "overrides": {
+    "vscode-languageserver-protocol": "3.17.6-next.1"
   },
   "segmentWriteKey": "Y7Y5Xk8dKEhVZHTmAkFZkqgdN4d7c4lt",
   "segmentWriteKeyDebug": "BflPll7uuKOCm3y0g7JpfXLVBVFBivDE"
