@@ -34,7 +34,7 @@ The following will be a start to finish guide to get the entire language server 
 
 1. Install the required software:
    * latest [Visual Studio Code](https://code.visualstudio.com/)
-   * [Node.js](https://nodejs.org/) v4.0.0 or higher
+   * [Node.js](https://nodejs.org/) v18.17.1 (with npm 9.6.7) or higher
 2. Fork and clone [this repository](https://github.com/redhat-developer/vscode-java)
 
   	Keep in mind the final directories will look like:
