@@ -35,6 +35,19 @@ export function deleteDirectory(dir) {
 	}
 }
 
+export function deleteClientLog(dir) {
+	if (fs.existsSync(dir)) {
+		fs.readdirSync(dir).forEach((child) => {
+			if (child.startsWith('client.log') || child.endsWith('audit.json')) {
+				const entry = path.join(dir, child);
+				if (!fs.lstatSync(entry).isDirectory()) {
+					fs.unlinkSync(entry);
+				}
+			}
+		});
+	}
+}
+
 export function getTimestamp(file) {
 	if (!fs.existsSync(file)) {
 		return -1;
