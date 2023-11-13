@@ -352,6 +352,20 @@
       "title": "Project Import/Update",
       "order": 20,
       "properties": {
+        "java.configuration.updateBuildConfiguration": {
+          "type": [
+            "string"
+          ],
+          "enum": [
+            "disabled",
+            "interactive",
+            "automatic"
+          ],
+          "default": "interactive",
+          "description": "Specifies how modifications on build files update the Java classpath/configuration",
+          "scope": "window",
+          "order": 10
+        },
         "java.import.exclusions": {
           "type": "array",
           "description": "Configure glob patterns for excluding folders. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.",
@@ -361,8 +375,7 @@
             "**/archetype-resources/**",
             "**/META-INF/maven/**"
           ],
-          "scope": "window",
-          "order": 10
+          "scope": "window"
         },
         "java.project.resourceFilters": {
           "type": "array",
@@ -425,19 +438,6 @@
           ],
           "description": "Automatically show build status on startup.",
           "default": "notification",
-          "scope": "window"
-        },
-        "java.configuration.updateBuildConfiguration": {
-          "type": [
-            "string"
-          ],
-          "enum": [
-            "disabled",
-            "interactive",
-            "automatic"
-          ],
-          "default": "interactive",
-          "description": "Specifies how modifications on build files update the Java classpath/configuration",
           "scope": "window"
         },
         "java.project.encoding": {
