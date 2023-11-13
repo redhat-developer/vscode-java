@@ -40,10 +40,10 @@ export namespace StatusCommands {
 	};
 
 	export const startStandardServerCommand = {
-		title: "Load Projects",
+		title: "Select Projects...",
 		command: Commands.SWITCH_SERVER_MODE,
 		arguments: ['Standard', true],
-		tooltip: "Load Projects"
+		tooltip: "Select Projects..."
 	};
 }
 
@@ -66,8 +66,7 @@ export namespace ServerStatusItemFactory {
 
 	export function showNotImportedStatus(item: any): void {
 		item.severity = vscode.LanguageStatusSeverity?.Warning;
-		item.text = StatusIcon.notImported;
-		item.detail = "No projects are Imported";
+		item.text = "No projects are imported";
 		item.command = StatusCommands.startStandardServerCommand;
 	}
 

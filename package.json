@@ -75,11 +75,11 @@
     "javaBuildTools": [
       {
         "displayName": "Maven",
-        "fileSearchPattern": "**/pom.xml"
+        "buildFileNames": ["pom.xml"]
       },
       {
         "displayName": "Gradle",
-        "fileSearchPattern": "**/{build,settings}.gradle*"
+        "buildFileNames": ["build.gradle", "settings.gradle", "build.gradle.kts", "settings.gradle.kts"]
       }
     ],
     "semanticTokenTypes": [

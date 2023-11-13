@@ -32,9 +32,12 @@
 								"description": "The display name of the build file type.",
 								"type": "string"
 							},
-							"fileSearchPattern": {
-								"description": "The glob pattern used to search the build files.",
-								"type": "string"
+							"buildFileNames": {
+								"description": "The build file names that supported by the build tool.",
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
 							}
 						}
 					}

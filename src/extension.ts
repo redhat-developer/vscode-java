@@ -482,6 +482,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		}
 		if (buildFiles.length === 0) {
 			// cancelled by user
+			commands.executeCommand('setContext', 'java:serverMode', ServerMode.lightWeight);
 			serverStatusBarProvider.showNotImportedStatus();
 			return;
 		}
