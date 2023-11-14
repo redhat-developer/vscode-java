@@ -1534,8 +1534,8 @@
     "webpack-cli": "^4.6.0"
   },
   "dependencies": {
-    "@redhat-developer/vscode-extension-proposals": "0.0.21",
-    "@redhat-developer/vscode-redhat-telemetry": "^0.7.0",
+    "@redhat-developer/vscode-extension-proposals": "0.0.22",
+    "@redhat-developer/vscode-redhat-telemetry": "^0.7.1",
     "@vscode/codicons": "^0.0.32",
     "@vscode/webview-ui-toolkit": "1.2.2",
     "chokidar": "^3.5.3",
