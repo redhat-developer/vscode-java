@@ -997,6 +997,18 @@
           "default": 0,
           "markdownDescription": "Maximum number of completion results (not including snippets).\n`0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit.",
           "scope": "window"
+        },
+        "java.signatureHelp.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the signature help.",
+          "scope": "window"
+        },
+        "java.signatureHelp.description.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable to show the description in signature help.",
+          "scope": "window"
         }
       }
     },
@@ -1099,6 +1111,12 @@
           "description": "Limit number of items in arrays/collections/maps to list, if 0 then list all.",
           "default": 0,
           "scope": "window"
+        },
+        "java.edit.smartSemicolonDetection.enabled": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Defines the `smart semicolon` detection. Defaults to `false`.",
+          "scope": "window"
         }
       }
     },
@@ -1178,38 +1196,90 @@
       }
     },
     {
-      "id": "java-others",
-      "title": "Others",
+      "id": "java-codenagivation",
+      "title": "Code Navigation",
       "order": 120,
       "properties": {
-        "java.eclipse.downloadSources": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable download of Maven source artifacts for Eclipse projects.",
-          "scope": "window"
-        },
         "java.referencesCodeLens.enabled": {
           "type": "boolean",
           "default": false,
           "description": "Enable/disable the references code lens.",
-          "scope": "window"
-        },
-        "java.signatureHelp.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the signature help.",
-          "scope": "window"
-        },
-        "java.signatureHelp.description.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable to show the description in signature help.",
-          "scope": "window"
+          "scope": "window",
+          "order": 10
         },
         "java.implementationsCodeLens.enabled": {
           "type": "boolean",
           "default": false,
           "description": "Enable/disable the implementations code lens.",
+          "scope": "window",
+          "order": 20
+        },
+        "java.references.includeAccessors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include getter, setter and builder/constructor when finding references.",
+          "scope": "window",
+          "order": 30
+        },
+        "java.references.includeDecompiledSources": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include the decompiled sources when finding references.",
+          "scope": "window",
+          "order": 40
+        },
+        "java.symbols.includeSourceMethodDeclarations": {
+          "type": "boolean",
+          "markdownDescription": "Include method declarations from source files in symbol search.",
+          "default": false,
+          "scope": "window",
+          "order": 50
+        },
+        "java.typeHierarchy.lazyLoad": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
+          "scope": "window",
+          "order": 60
+        },
+        "java.inlayHints.parameterNames.enabled": {
+          "type": "string",
+          "enum": [
+            "none",
+            "literals",
+            "all"
+          ],
+          "enumDescriptions": [
+            "Disable parameter name hints",
+            "Enable parameter name hints only for literal arguments",
+            "Enable parameter name hints for literal and non-literal arguments"
+          ],
+          "default": "literals",
+          "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n `#java.inlayHints.parameterNames.exclusions#` can be used to disable the inlay hints for methods.",
+          "scope": "window",
+          "order": 70
+        },
+        "java.inlayHints.parameterNames.exclusions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "markdownDescription": "The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:\n - `java.lang.Math.*` - All the methods from java.lang.Math.\n - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.\n - `*.println(*)` - Methods named as 'println'.\n - `(from, to)` - Methods with two parameters named as 'from' and 'to'.\n - `(arg*)` - Methods with one parameter whose name starts with 'arg'.",
+          "scope": "window",
+          "order": 80
+        }
+      }
+    },
+    {
+      "id": "java-others",
+      "title": "Others",
+      "order": 130,
+      "properties": {
+        "java.eclipse.downloadSources": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable/disable download of Maven source artifacts for Eclipse projects.",
           "scope": "window"
         },
         "java.contentProvider.preferred": {
@@ -1230,65 +1300,10 @@
           "description": "Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.",
           "scope": "window"
         },
-        "java.references.includeAccessors": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include getter, setter and builder/constructor when finding references.",
-          "scope": "window"
-        },
-        "java.references.includeDecompiledSources": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include the decompiled sources when finding references.",
-          "scope": "window"
-        },
-        "java.typeHierarchy.lazyLoad": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
-          "scope": "window"
-        },
-        "java.symbols.includeSourceMethodDeclarations": {
-          "type": "boolean",
-          "markdownDescription": "Include method declarations from source files in symbol search.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.inlayHints.parameterNames.enabled": {
-          "type": "string",
-          "enum": [
-            "none",
-            "literals",
-            "all"
-          ],
-          "enumDescriptions": [
-            "Disable parameter name hints",
-            "Enable parameter name hints only for literal arguments",
-            "Enable parameter name hints for literal and non-literal arguments"
-          ],
-          "default": "literals",
-          "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n `#java.inlayHints.parameterNames.exclusions#` can be used to disable the inlay hints for methods.",
-          "scope": "window"
-        },
-        "java.inlayHints.parameterNames.exclusions": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "default": [],
-          "markdownDescription": "The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:\n - `java.lang.Math.*` - All the methods from java.lang.Math.\n - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.\n - `*.println(*)` - Methods named as 'println'.\n - `(from, to)` - Methods with two parameters named as 'from' and 'to'.\n - `(arg*)` - Methods with one parameter whose name starts with 'arg'.",
-          "scope": "window"
-        },
         "java.edit.validateAllOpenBuffersOnChanges": {
           "type": "boolean",
           "default": false,
           "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
-          "scope": "window"
-        },
-        "java.edit.smartSemicolonDetection.enabled": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Defines the `smart semicolon` detection. Defaults to `false`.",
           "scope": "window"
         },
         "java.editor.reloadChangedSources": {
