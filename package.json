@@ -666,13 +666,381 @@
           "type": "string",
           "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
           "default": null,
+          "markdownDeprecationMessage": "This configuration is deprecated and will be removed in the future. Please use `java.format.scheme` instead.",
           "scope": "window"
         },
         "java.format.settings.profile": {
           "type": "string",
           "description": "Optional formatter profile name from the Eclipse formatter settings.",
           "default": null,
+          "markdownDeprecationMessage": "This configuration is deprecated and will be removed in the future. Please use `java.format.scheme` instead.",
           "scope": "window"
+        },
+        "java.format.scheme": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": [
+                "eclipse",
+                "google"
+              ],
+              "enumDescriptions": [
+                "Use the eclipse formatter.",
+                "Use the google-java-format formatter."
+              ],
+              "markdownDescription": "Specifies the formatter style."
+            },
+            {
+              "type": "object",
+              "required": [
+                "style"
+              ],
+              "properties": {
+                "style": {
+                  "type": "string",
+                  "enum": [
+                    "eclipse",
+                    "google"
+                  ],
+                  "enumDescriptions": [
+                    "Use the eclipse formatter.",
+                    "Use the google-java-format formatter."
+                  ],
+                  "markdownDescription": "Specifies the formatter style."
+                },
+                "path": {
+                  "type": "string",
+                  "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings), will be ignored if the current style is not `eclipse`."
+                },
+                "profile": {
+                  "type": "string",
+                  "markdownDescription": "Optional formatter profile name from the Eclipse formatter settings, will be ignored if the current style is not `eclipse`."
+                },
+                "configurations": {
+                  "type": "object",
+                  "properties": {
+                    "lineSplit": {
+                      "type": "number",
+                      "markdownDescription": "Specify the length of the page. Beyond this length, the formatter will try to split the code. Defaults to `120`.",
+                      "default": 120
+                    },
+                    "comment.line.length": {
+                      "type": "number",
+                      "markdownDescription": "Specify the line length for comments. Defaults to `80`.",
+                      "default": 80
+                    },
+                    "join.wrapped.lines": {
+                      "type": "boolean",
+                      "markdownDescription": "Specify whether the formatter can join wrapped lines or not.",
+                      "default": true
+                    },
+                    "use.on.off.tags": {
+                      "type": "boolean",
+                      "markdownDescription": "Use the disabling and enabling tags defined respectively by the `disabling_tag` and the `enabling_tag` options.",
+                      "default": true
+                    },
+                    "disabling.tag": {
+                      "type": "string",
+                      "markdownDescription": "Define the tag to put in a comment to disable the formatting. Defaults to `@formatter:off`.",
+                      "default": "@formatter:off"
+                    },
+                    "enabling.tag": {
+                      "type": "string",
+                      "markdownDescription": "Define the tag to put in a comment to enable the formatting, Defaults to `@formatter:on`.",
+                      "default": "@formatter:on"
+                    },
+                    "indent.parameter.description": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether description of Javadoc parameters are indented.",
+                      "default": false
+                    },
+                    "indent.root.tags": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether Javadoc root tags are indented.",
+                      "default": false
+                    },
+                    "align.tags.descriptions.grouped": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether descriptions and names in Javadoc root tags, should be aligned and grouped by tag type.",
+                      "default": true
+                    },
+                    "align.tags.names.descriptions": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether names and descriptions in Javadoc root tags should be aligned.",
+                      "default": false
+                    },
+                    "clear.blank.lines.in.javadoc.comment": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether blank lines are cleared inside Javadoc comments.",
+                      "default": false
+                    },
+                    "blank.lines.between.import.groups": {
+                      "type": "number",
+                      "markdownDescription": "Control blank lines between import groups.",
+                      "default": 1
+                    },
+                    "format.line.comments": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether single line comments are formatted.",
+                      "default": true
+                    },
+                    "format.block.comments": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether multiple lines comments are formatted.",
+                      "default": true
+                    },
+                    "format.javadoc.comments": {
+                      "type": "boolean",
+                      "markdownDescription": "Control whether Javadoc comments are formatted.",
+                      "default": true
+                    },
+                    "parentheses.positions.in.method.invocation": {
+                      "type": "string",
+                      "enum": [
+                        "commonLines",
+                        "separateLinesIfNotEmpty",
+                        "separateLinesIfWrapped",
+                        "separateLines",
+                        "preservePositions"
+                      ],
+                      "enumDescriptions": [
+                        "Set opening and closing parentheses location in common lines with their contents (or simply a single line if the parentheses are empty).",
+                        "Set opening and closing parentheses location on a common line if the parentheses are empty and otherwise in separate lines from their contents.",
+                        "Set opening and closing parentheses location on separate lines from their contents if the contents are wrapped, and in common line if they fit in line width.",
+                        "Set parentheses location on separate lines from their contents, that is put a line break after the opening parenthesis and before the closing parenthesis.",
+                        "Set opening and closing parentheses location to be preserved from the original source."
+                      ],
+                      "markdownDescription": "Position parentheses in method invocations. Defaults to `commonLines`.",
+                      "default": "commonLines"
+                    },
+                    "keep.loop.body.block.on.one.line": {
+                      "type": "string",
+                      "enum": [
+                        "never",
+                        "ifEmpty",
+                        "ifSingleItem",
+                        "always",
+                        "preserve"
+                      ],
+                      "enumDescriptions": [
+                        "Never keep braced code on one line.",
+                        "Keep braced code on one line only if it's empty.",
+                        "Keep braced code on one line if it contains at most a single item.",
+                        "Always keep braced code on one line, as long as it doesn't exceed the line width limit.",
+                        "Keep braced code on one line as long as it doesn't exceed the line width limit and it was already in one line in the original source."
+                      ],
+                      "markdownDescription": "Control when a loop body block should be kept on one line. Defaults to `never`.",
+                      "default": "never"
+                    },
+                    "keep.anonymous.type.declaration.on.one.line": {
+                      "type": "string",
+                      "enum": [
+                        "never",
+                        "ifEmpty",
+                        "ifSingleItem",
+                        "always",
+                        "preserve"
+                      ],
+                      "enumDescriptions": [
+                        "Never keep braced code on one line.",
+                        "Keep braced code on one line only if it's empty.",
+                        "Keep braced code on one line if it contains at most a single item.",
+                        "Always keep braced code on one line, as long as it doesn't exceed the line width limit.",
+                        "Keep braced code on one line as long as it doesn't exceed the line width limit and it was already in one line in the original source."
+                      ],
+                      "markdownDescription": "Control when an anonymous type declaration should be kept on one line. Defaults to `never`.",
+                      "default": "never"
+                    },
+                    "keep.type.declaration.on.one.line": {
+                      "type": "string",
+                      "enum": [
+                        "never",
+                        "ifEmpty",
+                        "ifSingleItem",
+                        "always",
+                        "preserve"
+                      ],
+                      "enumDescriptions": [
+                        "Never keep braced code on one line.",
+                        "Keep braced code on one line only if it's empty.",
+                        "Keep braced code on one line if it contains at most a single item.",
+                        "Always keep braced code on one line, as long as it doesn't exceed the line width limit.",
+                        "Keep braced code on one line as long as it doesn't exceed the line width limit and it was already in one line in the original source."
+                      ],
+                      "markdownDescription": "Control when a type declaration should be kept on one line. Defaults to `never`.",
+                      "default": "never"
+                    },
+                    "keep.method.body.on.one.line": {
+                      "type": "string",
+                      "enum": [
+                        "never",
+                        "ifEmpty",
+                        "ifSingleItem",
+                        "always",
+                        "preserve"
+                      ],
+                      "enumDescriptions": [
+                        "Never keep braced code on one line.",
+                        "Keep braced code on one line only if it's empty.",
+                        "Keep braced code on one line if it contains at most a single item.",
+                        "Always keep braced code on one line, as long as it doesn't exceed the line width limit.",
+                        "Keep braced code on one line as long as it doesn't exceed the line width limit and it was already in one line in the original source."
+                      ],
+                      "markdownDescription": "Control when a method body should be kept on one line. Defaults to `never`.",
+                      "default": "never"
+                    },
+                    "insert.space.after.closing.angle.bracket.in.type.arguments": {
+                      "type": "string",
+                      "enum": [
+                        "insert",
+                        "doNotInsert"
+                      ],
+                      "markdownDescription": "Insert a space after the closing angle bracket in explicit type arguments on method/constructor invocations.",
+                      "default": "doNotInsert"
+                    },
+                    "insert.space.before.closing.brace.in.array.initializer": {
+                      "type": "string",
+                      "enum": [
+                        "insert",
+                        "doNotInsert"
+                      ],
+                      "markdownDescription": "Insert a space before the closing brace in an array initializer.",
+                      "default": "insert"
+                    },
+                    "insert.space.after.opening.brace.in.array.initializer": {
+                      "type": "string",
+                      "enum": [
+                        "insert",
+                        "doNotInsert"
+                      ],
+                      "markdownDescription": "Insert a space after the opening brace in an array initializer.",
+                      "default": "doNotInsert"
+                    },
+                    "alignment.for.enum.constants": {
+                      "type": "object",
+                      "properties": {
+                        "wrapping.style": {
+                          "type": "string",
+                          "enum": [
+                            "noSplit",
+                            "compact",
+                            "compactFirstBreak",
+                            "onePerLine",
+                            "nextShifted",
+                            "nextPerLine"
+                          ],
+                          "enumDescriptions": [
+                            "Disable alignment.",
+                            "The wrapping is done using as few lines as possible.",
+                            "The wrapping is done putting the first element on a new line and then wrapping next elements using as few lines as possible.",
+                            "The wrapping is done by putting each element on its own line.",
+                            "The wrapping is done by putting each element on its own line, all elements are indented by one except the first element.",
+                            "The wrapping is done by putting each element on its own line except the first element."
+                          ],
+                          "default": "compact",
+                          "markdownDescription": "The wrapping style. Defaults to `compact`."
+                        },
+                        "force.split": {
+                          "type": "boolean",
+                          "default": false,
+                          "markdownDescription": "Force split, even if line shorter than maximum line width."
+                        },
+                        "indentation.style": {
+                          "type": "string",
+                          "enum": [
+                            "indentDefault",
+                            "indentOnColumn",
+                            "indentByOne"
+                          ],
+                          "enumDescriptions": [
+                            "The wrapping is done by using the current indentation.",
+                            "The wrapping is done by indenting on column under the splitting location.",
+                            "The wrapping is done by indenting by one compare to the current indentation."
+                          ],
+                          "default": "indentDefault",
+                          "markdownDescription": "The indentation style. Defaults to `indentDefault`."
+                        }
+                      },
+                      "markdownDescription": "Alignment of enum constants.",
+                      "default": {}
+                    },
+                    "alignment.for.parameters.in.method.declaration": {
+                      "type": "object",
+                      "properties": {
+                        "wrapping.style": {
+                          "type": "string",
+                          "enum": [
+                            "noSplit",
+                            "compact",
+                            "compactFirstBreak",
+                            "onePerLine",
+                            "nextShifted",
+                            "nextPerLine"
+                          ],
+                          "enumDescriptions": [
+                            "Disable alignment.",
+                            "The wrapping is done using as few lines as possible.",
+                            "The wrapping is done putting the first element on a new line and then wrapping next elements using as few lines as possible.",
+                            "The wrapping is done by putting each element on its own line.",
+                            "The wrapping is done by putting each element on its own line, all elements are indented by one except the first element.",
+                            "The wrapping is done by putting each element on its own line except the first element."
+                          ],
+                          "default": "compact",
+                          "markdownDescription": "The wrapping style. Defaults to `compact`."
+                        },
+                        "force.split": {
+                          "type": "boolean",
+                          "default": false,
+                          "markdownDescription": "Force split, even if line shorter than maximum line width."
+                        },
+                        "indentation.style": {
+                          "type": "string",
+                          "enum": [
+                            "indentDefault",
+                            "indentOnColumn",
+                            "indentByOne"
+                          ],
+                          "enumDescriptions": [
+                            "The wrapping is done by using the current indentation.",
+                            "The wrapping is done by indenting on column under the splitting location.",
+                            "The wrapping is done by indenting by one compare to the current indentation."
+                          ],
+                          "default": "indentDefault",
+                          "markdownDescription": "The indentation style. Defaults to `indentDefault`."
+                        }
+                      },
+                      "markdownDescription": "alignment of parameters in method declaration.",
+                      "default": {}
+                    },
+                    "brace.position.for.block": {
+                      "type": "string",
+                      "enum": [
+                        "endOfLine",
+                        "nextLine",
+                        "nextLineIndented",
+                        "nextLineOnWrap"
+                      ],
+                      "enumDescriptions": [
+                        "Set a brace location at the end of a line.",
+                        "Set a brace location at the start of the next line with the right indentation.",
+                        "Set a brace location at the start of the next line with an extra indentation.",
+                        "Set a brace location at the start of the next line if a wrapping occurred."
+                      ],
+                      "markdownDescription": "Position the braces of a block. Defaults to `endOfLine`",
+                      "default": "endOfLine"
+                    }
+                  },
+                  "default": {},
+                  "markdownDescription": "The custom formatter configurations, which will take precedence over the corresponding settings in the scheme, will be ignored if the current style is not `eclipse`."
+                }
+              },
+              "default": {
+                "style": "eclipse"
+              }
+            }
+          ],
+          "scope": "window",
+          "markdownDescription": "Specifies the scheme of java formatter settings."
         },
         "java.format.comments.enabled": {
           "type": "boolean",
