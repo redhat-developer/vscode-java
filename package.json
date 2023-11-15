@@ -461,6 +461,7 @@
           "type": "boolean",
           "default": false,
           "description": "Enable/disable auto organize imports on save action",
+          "deprecationMessage": "This setting is deprecated, please configure 'editor.codeActionsOnSave' instead.",
           "scope": "window"
         },
         "java.import.exclusions": {
