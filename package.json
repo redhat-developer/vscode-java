@@ -338,12 +338,6 @@
             "usesOnlineServices",
             "telemetry"
           ]
-        },
-        "java.recommendations.dependency.analytics.show": {
-          "type": "boolean",
-          "default": true,
-          "description": "Show the recommended Dependency Analytics extension.",
-          "scope": "window"
         }
       }
     },
