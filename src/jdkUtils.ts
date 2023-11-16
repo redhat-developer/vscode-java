@@ -9,9 +9,28 @@ let cachedJdks: IJavaRuntime[];
 let cachedJreNames: string[];
 
 export async function loadSupportedJreNames(context: ExtensionContext): Promise<void> {
+	const config = await getContributesConfiguration(context, "java.configuration.runtimes");
+	cachedJreNames = config?.items?.properties?.name?.enum;
+}
+
+async function getContributesConfiguration(context: ExtensionContext, configId: string): Promise<any> {
 	const buffer = await workspace.fs.readFile(Uri.file(context.asAbsolutePath("package.json")));
 	const packageJson = JSON.parse(buffer.toString());
-	cachedJreNames = packageJson?.contributes?.configuration?.properties?.["java.configuration.runtimes"]?.items?.properties?.name?.enum;
+	/**
+	 * contributes.configuration can either be a single object,
+	 * representing a single category of settings, or an array
+	 * of objects, representing multiple categories of settings.
+	 */
+	const categories = packageJson?.contributes?.configuration;
+	if (Array.isArray(categories)) {
+		for (const category of categories) {
+			if (category?.properties?.[configId]) {
+				return category.properties[configId];
+			}
+		}
+	} else {
+		return categories?.properties?.[configId];
+	}
 }
 
 export function getSupportedJreNames(): string[] {
