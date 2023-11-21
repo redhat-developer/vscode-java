@@ -384,10 +384,10 @@ export async function getImportMode(context: ExtensionContext, selector: BuildFi
 		const answer: string = await window.showInformationMessage(
 			"Java build files are detected in the workspace. How do you want to import them?",
 			{ modal: true },
-			"Import All", "Let Me Select");
+			"Import All", "Let Me Select...");
 		if (answer === "Import All") {
 			return ImportMode.automatic;
-		} else if (answer === "Let Me Select") {
+		} else if (answer === "Let Me Select...") {
 			return ImportMode.manual;
 		}
 

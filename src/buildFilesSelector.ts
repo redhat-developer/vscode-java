@@ -100,34 +100,50 @@ export class BuildFileSelector {
 	 * Get pickers for all build files in the workspace.
 	 */
 	private async getBuildFilePickers(): Promise<IBuildFilePicker[]> {
-		const addedFolders: Map<string, IBuildFilePicker> = new Map<string, IBuildFilePicker>();
 		const uris: Uri[] = await workspace.findFiles(this.searchPattern, this.exclusionGlobPattern);
 		if (this.negatedExclusionSearchPattern) {
 			uris.push(...await workspace.findFiles(this.negatedExclusionSearchPattern, null /* force not use default exclusion */));
 		}
+
+		// group build files by build tool and then sort them by build tool name.
+		const groupByBuildTool = new Map<IBuildTool, Uri[]>();
 		for (const uri of uris) {
 			const buildType = this.buildTypes.find(buildType => buildType.buildFileNames.includes(path.basename(uri.fsPath)));
 			if (!buildType) {
 				continue;
 			}
-			const containingFolder = path.dirname(uri.fsPath);
-			if (addedFolders.has(containingFolder)) {
-				const picker = addedFolders.get(containingFolder);
-				if (!picker.buildTypeAndUri.has(buildType)) {
-					picker.detail += `, ./${workspace.asRelativePath(uri)}`;
-					picker.description += `, ${buildType.displayName}`;
-					picker.buildTypeAndUri.set(buildType, uri);
+			if (!groupByBuildTool.has(buildType)) {
+				groupByBuildTool.set(buildType, []);
+			}
+			groupByBuildTool.get(buildType)?.push(uri);
+		}
+
+		const buildTypeArray = Array.from(groupByBuildTool.keys());
+		buildTypeArray.sort((a, b) => a.displayName.localeCompare(b.displayName));
+		const addedFolders: Map<string, IBuildFilePicker> = new Map<string, IBuildFilePicker>();
+		for (const buildType of buildTypeArray) {
+			const uris = groupByBuildTool.get(buildType);
+			for (const uri of uris) {
+				const containingFolder = path.dirname(uri.fsPath);
+				if (addedFolders.has(containingFolder)) {
+					const picker = addedFolders.get(containingFolder);
+					if (!picker.buildTypeAndUri.has(buildType)) {
+						picker.detail += `, ./${workspace.asRelativePath(uri)}`;
+						picker.description += `, ${buildType.displayName}`;
+						picker.buildTypeAndUri.set(buildType, uri);
+					}
+				} else {
+					addedFolders.set(containingFolder, {
+						label: path.basename(containingFolder),
+						detail: `./${workspace.asRelativePath(uri)}`,
+						description: buildType.displayName,
+						buildTypeAndUri: new Map<IBuildTool, Uri>([[buildType, uri]]),
+						picked: true,
+					});
 				}
-			} else {
-				addedFolders.set(containingFolder, {
-					label: path.basename(containingFolder),
-					detail: `./${workspace.asRelativePath(uri)}`,
-					description: buildType.displayName,
-					buildTypeAndUri: new Map<IBuildTool, Uri>([[buildType, uri]]),
-					picked: true,
-				});
 			}
 		}
+
 		const pickers: IBuildFilePicker[] = Array.from(addedFolders.values());
 		return this.addSeparator(pickers);
 	}
