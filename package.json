@@ -212,6 +212,16 @@
         "language": "gradle-kotlin-dsl",
         "scopeName": "source.kotlin",
         "path": "./language-support/kotlin/kotlin.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.java"
+        ],
+        "scopeName": "inline.sql",
+        "path": "./language-support/sql/inline-sql.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.sql": "sql"
+        }
       }
     ],
     "jsonValidation": [
