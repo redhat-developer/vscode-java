@@ -72,6 +72,16 @@
       "^pom\\.xml$",
       ".*\\.gradle(\\.kts)?$"
     ],
+    "javaBuildTools": [
+      {
+        "displayName": "Maven",
+        "buildFileNames": ["pom.xml"]
+      },
+      {
+        "displayName": "Gradle",
+        "buildFileNames": ["build.gradle", "settings.gradle", "build.gradle.kts", "settings.gradle.kts"]
+      }
+    ],
     "semanticTokenTypes": [
       {
         "id": "annotation",
@@ -346,6 +356,21 @@
       "title": "Project Import/Update",
       "order": 20,
       "properties": {
+        "java.import.projectSelection": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "automatic"
+          ],
+          "enumDescriptions": [
+            "Manually select the build configuration files.",
+            "Let extension automatically scan and select the build configuration files."
+          ],
+          "default": "automatic",
+          "markdownDescription": "[Experimental] Specifies how to select build configuration files to import. \nNote: Currently, `Gradle` projects cannot be partially imported.",
+          "scope": "window",
+          "order": 10
+        },
         "java.configuration.updateBuildConfiguration": {
           "type": [
             "string"
@@ -358,7 +383,7 @@
           "default": "interactive",
           "description": "Specifies how modifications on build files update the Java classpath/configuration",
           "scope": "window",
-          "order": 10
+          "order": 20
         },
         "java.import.exclusions": {
           "type": "array",

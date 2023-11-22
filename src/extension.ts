@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, ProgressLocation, Position, Selection, Range } from 'vscode';
+import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, version } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -24,18 +24,19 @@ import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
-import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, onConfigurationChange, ServerMode } from './settings';
+import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, getImportMode, onConfigurationChange, ServerMode, ImportMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionBlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
+import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts } from './utils';
 import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
+import { BuildFileSelector, cleanupProjectPickerCache } from './buildFilesSelector';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -323,6 +324,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				const data = {};
 				try {
 					cleanupLombokCache(context);
+					cleanupProjectPickerCache(context);
 					deleteDirectory(workspacePath);
 					deleteDirectory(syntaxServerWorkspacePath);
 				} catch (error) {
@@ -381,7 +383,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 
 				const api: ExtensionAPI = apiManager.getApiInstance();
-				if (api.serverMode === switchTo || api.serverMode === ServerMode.standard) {
+				if (!force && (api.serverMode === switchTo || api.serverMode === ServerMode.standard)) {
 					return;
 				}
 
@@ -467,9 +469,24 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		return;
 	}
 
-	const checkConflicts: boolean = await ensureNoBuildToolConflicts(context, clientOptions);
-	if (!checkConflicts) {
-		return;
+	const selector: BuildFileSelector = new BuildFileSelector(context);
+	const importMode: ImportMode = await getImportMode(context, selector);
+	if (importMode === ImportMode.automatic) {
+		if (!await ensureNoBuildToolConflicts(context, clientOptions)) {
+			return;
+		}
+	} else {
+		const buildFiles: string[] = [];
+		if (importMode === ImportMode.manual) {
+			buildFiles.push(...await selector.getBuildFiles());
+		}
+		if (buildFiles.length === 0) {
+			// cancelled by user
+			commands.executeCommand('setContext', 'java:serverMode', ServerMode.lightWeight);
+			serverStatusBarProvider.showNotImportedStatus();
+			return;
+		}
+		clientOptions.initializationOptions.projectConfigurations = buildFiles;
 	}
 
 	if (apiManager.getApiInstance().serverMode === ServerMode.lightWeight) {
@@ -496,7 +513,7 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 
 	// Nothing found in negated exclusion pattern, do a normal search then.
 	const inclusionBlob: string = convertToGlob(inclusionPatterns);
-	const exclusionBlob: string = getExclusionBlob();
+	const exclusionBlob: string = getExclusionGlob();
 	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /* maxResults */)).length > 0) {
 		return true;
 	}
@@ -922,8 +939,7 @@ async function getTriggerFiles(): Promise<string[]> {
 		}
 
 		// Paths set by 'java.import.exclusions' will be ignored when searching trigger files.
-		const exclusionGlob = getExclusionBlob();
-
+		const exclusionGlob = getExclusionGlob();
 		const javaFilesUnderRoot: Uri[] = await workspace.findFiles(new RelativePattern(rootFolder, "*.java"), exclusionGlob, 1);
 		for (const javaFile of javaFilesUnderRoot) {
 			if (isPrefix(rootPath, javaFile.fsPath)) {

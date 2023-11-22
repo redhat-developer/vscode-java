@@ -8,6 +8,7 @@ import { cleanupLombokCache } from './lombokSupport';
 import { ensureExists, getJavaConfiguration } from './utils';
 import { apiManager } from './apiManager';
 import { isActive, setActive, smartSemicolonDetection } from './smartSemicolonDetection';
+import { BuildFileSelector, PICKED_BUILD_FILES } from './buildFilesSelector';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -366,4 +367,38 @@ export function handleTextDocumentChanges(document: TextDocument, changes: reado
 	}
 }
 
+export async function getImportMode(context: ExtensionContext, selector: BuildFileSelector): Promise<ImportMode> {
+	const mode = getJavaConfiguration().get<string>("import.projectSelection");
+	if (mode === "manual") {
+		// if no selectable build files, use automatic mode
+		const hasBuildFiles = await selector.hasBuildFiles();
+		if (!hasBuildFiles) {
+			return ImportMode.automatic;
+		}
 
+		// If the the manually picked build files has already cached, return manual mode.
+		if (context.workspaceState.get(PICKED_BUILD_FILES) !== undefined) {
+			return ImportMode.manual;
+		}
+
+		const answer: string = await window.showInformationMessage(
+			"Java build files are detected in the workspace. How do you want to import them?",
+			{ modal: true },
+			"Import All", "Let Me Select...");
+		if (answer === "Import All") {
+			return ImportMode.automatic;
+		} else if (answer === "Let Me Select...") {
+			return ImportMode.manual;
+		}
+
+		return ImportMode.skip;
+	}
+
+	return ImportMode.automatic;
+}
+
+export enum ImportMode {
+	automatic = 'automatic',
+	manual = 'manual',
+	skip = 'skip',
+}

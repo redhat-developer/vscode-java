@@ -43,6 +43,20 @@ class ServerStatusBarProvider implements Disposable {
 		}
 	}
 
+	public showNotImportedStatus(): void {
+		if (supportsLanguageStatus()) {
+			ServerStatusItemFactory.showNotImportedStatus(this.languageStatusItem);
+		} else {
+			if (this.isAdvancedStatusBarItem) {
+				(this.statusBarItem as any).name = "No projects are imported";
+			}
+			this.statusBarItem.text = StatusIcon.notImported;
+			this.statusBarItem.command = StatusCommands.startStandardServerCommand;
+			this.statusBarItem.tooltip = "No projects are imported, click to load projects";
+			this.statusBarItem.show();
+		}
+	}
+
 	public showStandardStatus(): void {
 		if (supportsLanguageStatus()) {
 			ServerStatusItemFactory.showStandardStatus(this.languageStatusItem);
@@ -112,7 +126,8 @@ export enum StatusIcon {
 	busy = "$(sync~spin)",
 	ready = "$(thumbsup)",
 	warning = "$(thumbsdown)",
-	error = "$(thumbsdown)"
+	error = "$(thumbsdown)",
+	notImported = "$(info)"
 }
 
 export const serverStatusBarProvider: ServerStatusBarProvider = new ServerStatusBarProvider();

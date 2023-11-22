@@ -21,6 +21,26 @@
 						"type": "string",
 						"description": "Regular expressions for specifying build file"
 					}
+				},
+				"javaBuildTools": {
+					"type": "array",
+					"description": "Information about the cared build files. Will be used when 'java.import.projectSelection' is 'manual'.",
+					"items": {
+						"type": "object",
+						"properties": {
+							"displayName": {
+								"description": "The display name of the build file type.",
+								"type": "string"
+							},
+							"buildFileNames": {
+								"description": "The build file names that supported by the build tool.",
+								"type": "array",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
 				}
 			}
 		}
