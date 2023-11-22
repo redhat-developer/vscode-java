@@ -1,0 +1,46 @@
+{
+	"injectionSelector": "L:source.java -comment -string",
+	"patterns": [
+		{
+			"contentName": "meta.embedded.block.sql",
+			"begin": "(?i)((/\\*\\s*(language=sql)\\s*\\*/)|((//\\s*(language=sql)\\s*)))",
+			"beginCaptures": {
+				"1": {
+					"name": "comment.block"
+				}
+			},
+			"end": "(?<=\")",
+			"patterns": [
+				{
+					"begin": "\\s*(\"\"\")$",
+					"beginCaptures": {
+						"0": { "name": "string.quoted.triple.java" }
+					},
+					"end": "\\s*(\"\"\")",
+					"endCaptures": {
+						"0": { "name": "string.quoted.triple.java" }
+					},
+					"patterns": [
+						{ "include": "source.sql" },
+						{ "include": "source.plpgsql.postgres" }
+					]
+				},
+				{
+					"begin": "\\s*(\")",
+					"beginCaptures": {
+						"0": { "name": "string.quoted.double.java" }
+					},
+					"end": "\\s*(\")",
+					"endCaptures": {
+						"0": { "name": "string.quoted.double.java" }
+					},
+					"patterns": [
+						{ "include": "source.sql" },
+						{ "include": "source.plpgsql.postgres" }
+					]
+				}
+			]
+		}
+	],
+	"scopeName": "inline.sql"
+}
