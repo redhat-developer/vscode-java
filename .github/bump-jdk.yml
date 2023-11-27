@@ -2,6 +2,7 @@ name: Update JDK Version
 on:
   schedule:
     - cron:  '0 10 * * 1'
+  workflow_dispatch:
 jobs:
   update-jdk-version:
     runs-on: ubuntu-latest
