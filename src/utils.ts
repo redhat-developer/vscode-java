@@ -162,7 +162,7 @@ export async function hasBuildToolConflicts(): Promise<boolean> {
 	// ignore the folders that already has .project file (already imported before)
 	const gradleDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle");
 	const gradleDirectoriesKts = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, ".gradle.kts");
-	gradleDirectories.concat(gradleDirectoriesKts);
+	gradleDirectories.push(...gradleDirectoriesKts);
 	const mavenDirectories = getDirectoriesByBuildFile(projectConfigurationFsPaths, eclipseDirectories, "pom.xml");
 	return gradleDirectories.some((gradleDir) => {
 		return mavenDirectories.includes(gradleDir);
