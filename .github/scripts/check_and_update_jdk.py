@@ -14,10 +14,6 @@ if latest_jdk is None:
 latest_jdk = latest_jdk.group('major')
 print(f'Latest JDK version: {latest_jdk}')
 
-# Write this to a file for the peter-evans/create-pull-request@v5 workflow
-with open('latest_jdk.txt', 'w') as f:
-    f.write(latest_jdk)
-
 # Query the vscode-java repo for the current supported JDK version
 with open('README.md', 'r') as f: # Open the README.md file in read mode
     readme = f.read() # Read the file content as a string
@@ -60,7 +56,11 @@ if latest_jdk != current_jdk:
     # If all tests passed, update the README.md and the package.json files
     if all_tests_passed:
         print('All tests passed')
-
+        
+        # Write this to a file for the peter-evans/create-pull-request@v5 workflow
+        with open('latest_jdk.txt', 'w') as f:
+            f.write(latest_jdk)
+            
         # Replace the current supported JDK version with the latest JDK version
         readme = re.sub(readme_ver_pattern, latest_jdk, readme)
 
@@ -83,5 +83,5 @@ if latest_jdk != current_jdk:
         exit(1)
 else:
     print('No new JDK version detected, nothing to do')
-    exit(1)
+    exit(0)
 exit(0)
