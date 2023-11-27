@@ -1,0 +1,40 @@
+name: Update JDK Version
+on:
+  schedule:
+    - cron:  '0 10 * * 1'
+jobs:
+  update-jdk-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Check and update JDK version
+        run: |
+          python .github/scripts/check_and_update_jdk.py
+          
+      - name: Read latest JDK version from file
+        run: |
+          version=$(cat latest_jdk.txt)
+          echo "Latest JDK version: $version"
+          echo "::set-env name=latest_jdk::$version" # set the latest_jdk environment variable
+
+      - name: Branch and push changes
+        if: ${{ success() }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Bump JDK to ${{ env.latest_jdk }}
+          title: Found JavaSE version ${{ env.latest_jdk }}
+          branch: update-jdk-${{ env.latest_jdk }}
+          
