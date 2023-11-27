@@ -26,12 +26,17 @@ jobs:
           
       - name: Read latest JDK version from file
         run: |
-          version=$(cat latest_jdk.txt)
-          echo "Latest JDK version: $version"
-          echo "::set-env name=latest_jdk::$version" # set the latest_jdk environment variable
+          if [ -f latest_jdk.txt ]; then
+            version=$(cat latest_jdk.txt)
+            echo "Latest JDK version: $version"
+            echo "::set-env name=latest_jdk::$version" # set the latest_jdk environment variable
+          else
+            echo "No new JDK version detected, nothing to do"
+            exit 0
+          fi
 
       - name: Branch and push changes
-        if: ${{ success() }}
+        if: ${{ success() && env.latest_jdk != '' }}
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
