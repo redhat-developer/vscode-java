@@ -40,16 +40,16 @@ if latest_jdk != current_jdk:
 
     # Check the test status for each test URL
     all_tests_passed = True
-    for test in tests:
-        response = requests.get(test)
-        data = ast.literal_eval(response.text)  # Use ast.literal_eval because response.json() fails
+    for i in range(len(tests)):
+        response = requests.get(tests[i])
+        data = ast.literal_eval(response.text)  # Use ast.literal_eval, because response.json() fails
         try:
-            if data['status'] != 'SUCCESS':
-                print(f'Test {test} failed')
+            if data['status'] != 'PASSED':
+                print(f'Test #{i + 1} failed ({tests[i]})')
                 all_tests_passed = False
                 break
         except KeyError:
-            print(f'Test {test} not found')
+            print(f'Test #{i + 1} not found ({tests[i]})')
             all_tests_passed = False
             break
 
