@@ -96,19 +96,12 @@ export class BuildFileSelector {
 	 * An empty array means user canceled the selection. Or `undefined` on cancellation.
 	 */
 	public async selectBuildFiles(): Promise<string[] | undefined> {
-		const cache = this.context.workspaceState.get<string[]>(PICKED_BUILD_FILES);
-		if (this.isInitialization && cache !== undefined) {
-			return cache;
-		}
-
 		const choices = await this.chooseBuildFilePickers();
 		if (choices === undefined) {
 			return undefined;
 		}
 		const pickedUris = await this.eliminateBuildToolConflict(choices);
-		if (pickedUris.length > 0) {
-			this.context.workspaceState.update(PICKED_BUILD_FILES, pickedUris);
-		}
+		this.context.workspaceState.update(PICKED_BUILD_FILES, pickedUris);
 		return pickedUris;
 	}
 
