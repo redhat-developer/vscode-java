@@ -3,7 +3,7 @@ import requests
 import json
 import ast
 
-readme_ver_pattern = r'(?<=Supports code from Java 1\.5 to Java )\d+'
+readme_ver_pattern = r'(?:(?<=Supports code from Java 1\.5 to Java )(\d+)|(?<=JavaSE-)~|(?<=path/to/jdk-)~)'  # After resolving current_jdk, we will replace ~
 
 # Query the Oracle website for the latest JDK version
 response = requests.get('http://javadl-esd-secure.oracle.com/update/baseline.version')
@@ -21,7 +21,7 @@ current_jdk = re.search(readme_ver_pattern, readme) # Search for the JDK version
 if current_jdk is None:
     print('Failed to retrieve current JDK version')
     exit(1)
-current_jdk = current_jdk.group(0)
+current_jdk = current_jdk.group(1)
 print(f'Current supported JDK version: {current_jdk}')
 
 # If the latest JDK version is not the same as the current supported JDK version, check the test status and update the files
@@ -56,11 +56,14 @@ if latest_jdk != current_jdk:
     # If all tests passed, update the README.md and the package.json files
     if all_tests_passed:
         print('All tests passed')
+
+        # Replace the ~ with current_jdk
+        readme_ver_pattern = re.sub('~', current_jdk, readme_ver_pattern)
         
         # Write this to a file for the peter-evans/create-pull-request@v5 workflow
         with open('latest_jdk.txt', 'w') as f:
             f.write(latest_jdk)
-            
+        
         # Replace the current supported JDK version with the latest JDK version
         readme = re.sub(readme_ver_pattern, latest_jdk, readme)
 
