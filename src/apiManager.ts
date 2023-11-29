@@ -18,6 +18,7 @@ class ApiManager {
     private onDidClasspathUpdateEmitter: Emitter<Uri> = new Emitter<Uri>();
     private onDidServerModeChangeEmitter: Emitter<ServerMode> = new Emitter<ServerMode>();
     private onDidProjectsImportEmitter: Emitter<Uri[]> = new Emitter<Uri[]>();
+    private onDidProjectsDeleteEmitter: Emitter<Uri[]> = new Emitter<Uri[]>();
     private traceEventEmitter: Emitter<any> = new Emitter<any>();
     private sourceInvalidatedEventEmitter: Emitter<SourceInvalidatedEvent> = new Emitter<SourceInvalidatedEvent>();
     private serverReadyPromiseResolve: (result: boolean) => void;
@@ -46,6 +47,7 @@ class ApiManager {
         const onDidClasspathUpdate = this.onDidClasspathUpdateEmitter.event;
         const onDidServerModeChange = this.onDidServerModeChangeEmitter.event;
         const onDidProjectsImport = this.onDidProjectsImportEmitter.event;
+        const onDidProjectsDelete = this.onDidProjectsDeleteEmitter.event;
         const traceEvent = this.traceEventEmitter.event;
 
         const serverReadyPromise: Promise<boolean> = new Promise<boolean>((resolve) => {
@@ -69,6 +71,7 @@ class ApiManager {
             serverMode,
             onDidServerModeChange,
             onDidProjectsImport,
+            onDidProjectsDelete,
             serverReady,
             onWillRequestStart,
             onDidRequestEnd,
@@ -95,6 +98,10 @@ class ApiManager {
 
     public fireDidProjectsImport(event: Uri[]): void {
         this.onDidProjectsImportEmitter.fire(event);
+    }
+
+    public fireDidProjectsDelete(event: Uri[]): void {
+        this.onDidProjectsDeleteEmitter.fire(event);
     }
 
     public fireTraceEvent(event: any): void {

@@ -34,12 +34,13 @@ import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./sta
 import { TracingLanguageClient } from './TracingLanguageClient';
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
-import { getAllJavaProjects, getJavaConfiguration } from "./utils";
+import { getAllJavaProjects, getAllProjects, getJavaConfiguration } from "./utils";
 import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
 import { registerDocumentValidationListener } from './diagnostic';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 import { ClientCodeActionProvider } from './clientCodeActionProvider';
+import { BuildFileSelector } from './buildFilesSelector';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -195,7 +196,7 @@ export class StandardLanguageClient {
 				case EventType.classpathUpdated:
 					apiManager.fireDidClasspathUpdate(Uri.parse(notification.data));
 					break;
-				case EventType.projectsImported:
+				case EventType.projectsImported: {
 					const projectUris: Uri[] = [];
 					if (notification.data) {
 						for (const uriString of notification.data) {
@@ -206,6 +207,19 @@ export class StandardLanguageClient {
 						apiManager.fireDidProjectsImport(projectUris);
 					}
 					break;
+				}
+				case EventType.projectsDeleted: {
+					const projectUris: Uri[] = [];
+					if (notification.data) {
+						for (const uriString of notification.data) {
+							projectUris.push(Uri.parse(uriString));
+						}
+					}
+					if (projectUris.length > 0) {
+						apiManager.fireDidProjectsDelete(projectUris);
+					}
+					break;
+				}
 				case EventType.incompatibleGradleJdkIssue:
 					const options: string[] = [];
 					const info = notification.data as GradleCompatibilityInfo;
@@ -641,7 +655,46 @@ export class StandardLanguageClient {
 
 	private registerCommandsForStandardServer(context: ExtensionContext, jdtEventEmitter: EventEmitter<Uri>): void {
 		context.subscriptions.push(commands.registerCommand(Commands.IMPORT_PROJECTS_CMD, async () => {
-			return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
+			if (getJavaConfiguration().get<string>("import.projectSelection") === "automatic") {
+				return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.IMPORT_PROJECTS);
+			}
+			const projectUris: string[] = await getAllProjects(true /* excludeDefaultProject */);
+			const buildFileSelector = new BuildFileSelector(context, projectUris, false);
+			const selectedBuildFiles = await buildFileSelector.selectBuildFiles();
+			if (selectedBuildFiles === undefined) {
+				return; // cancelled by user
+			}
+			const importedFolders = projectUris.map(uri => Uri.parse(uri).fsPath);
+			const allFoundBuildFiles = buildFileSelector.getAllFoundBuildFiles();
+			const foldersContainingBuildFiles = allFoundBuildFiles.map(uri => path.dirname(uri.fsPath));
+
+			const filesToImport = new Set<string>();
+			const folderToUpdate = new Set<string>();
+			selectedBuildFiles.forEach(buildFile => {
+				const folder = path.dirname(Uri.parse(buildFile).fsPath);
+				if (importedFolders.some(importedFolder => path.relative(importedFolder, folder) === "")) {
+					// update the project if the folder of the build file is already imported
+					folderToUpdate.add(Uri.file(folder).toString());
+				} else {
+					filesToImport.add(buildFile);
+				}
+			});
+
+			const folderToRemove = new Set<string>();
+			foldersContainingBuildFiles.forEach(folder => {
+				// for those unselected folders, if the folder is imported, delete the project.
+				const isSelected = selectedBuildFiles.some(buildFile => path.relative(path.dirname(Uri.parse(buildFile).fsPath), folder) === "");
+				const isFolderImported = importedFolders.some(importedFolder => path.relative(importedFolder, folder) === "");
+
+				if (!isSelected && isFolderImported) {
+					folderToRemove.add(Uri.file(folder).toString());
+				}
+			});
+
+			if (filesToImport.size > 0  || folderToUpdate.size > 0 || folderToRemove.size > 0) {
+				return await commands.executeCommand<void>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.CHANGE_IMPORTED_PROJECTS,
+					Array.from(filesToImport), Array.from(folderToUpdate), Array.from(folderToRemove));
+			}
 		}));
 
 		context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () => this.languageClient.outputChannel.show(ViewColumn.Three)));

@@ -162,6 +162,7 @@ export namespace Commands {
      */
     export const IMPORT_PROJECTS_CMD = 'java.project.import.command';
     export const IMPORT_PROJECTS = 'java.project.import';
+    export const CHANGE_IMPORTED_PROJECTS = 'java.project.changeImportedProjects';
     /**
      * Override or implements the methods from the supertypes.
      */

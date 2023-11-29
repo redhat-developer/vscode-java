@@ -469,7 +469,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		return;
 	}
 
-	const selector: BuildFileSelector = new BuildFileSelector(context);
+	const selector: BuildFileSelector = new BuildFileSelector(context, []);
 	const importMode: ImportMode = await getImportMode(context, selector);
 	if (importMode === ImportMode.automatic) {
 		if (!await ensureNoBuildToolConflicts(context, clientOptions)) {
@@ -478,7 +478,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 	} else {
 		const buildFiles: string[] = [];
 		if (importMode === ImportMode.manual) {
-			buildFiles.push(...await selector.getBuildFiles());
+			buildFiles.push(...(await selector.selectBuildFiles() || []));
 		}
 		if (buildFiles.length === 0) {
 			// cancelled by user
