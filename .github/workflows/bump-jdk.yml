@@ -1,11 +1,13 @@
 name: Update JDK Version
 on:
   schedule:
-    - cron:  '0 10 * * 1'
+    - cron:  '0 10 * * *'
   workflow_dispatch:
 jobs:
   update-jdk-version:
     runs-on: ubuntu-latest
+    env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,10 +39,12 @@ jobs:
 
       - name: Branch and push changes
         if: ${{ success() && env.latest_jdk != '' }}
-        uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Bump JDK to ${{ env.latest_jdk }}
-          title: Found JavaSE version ${{ env.latest_jdk }}
-          branch: update-jdk-${{ env.latest_jdk }}
+          run: |
+            git config --global user.email "redhattools-bot@users.noreply.github.com"
+            git config --global user.name "redhattools-bot"
+            git checkout -b "update-jdk-${{ env.latest_jdk }}"
+            git commit -am "Bump JDK to ${{ env.latest_jdk }}"
+            git push origin "update-jdk-${{ env.latest_jdk }}"
+            gh pr create --title "Found JavaSE version ${{ env.latest_jdk }}" --body "See [https://github.com/${{ github.repository }}/commit/${{ github.sha }}/checks/${{ github.check_run_id }}/logs](Raw logs)"
           
