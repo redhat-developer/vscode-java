@@ -111,7 +111,7 @@ export interface SourceInvalidatedEvent {
 	affectedEditorDocuments?: Uri[];
 }
 
-export const extensionApiVersion = '0.12';
+export const extensionApiVersion = '0.13';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -136,6 +136,16 @@ export interface ExtensionAPI {
 	 * The Uris in the array point to the project root path.
 	 */
 	readonly onDidProjectsImport: Event<Uri[]>;
+
+	/**
+	 * An event fires on projects deleted. This API is not supported in light weight server mode so far.
+	 * The Uris in the array point to the project root path.
+	 *
+	 * @since API version 0.13
+	 * @since extension version 1.25.0
+	 */
+	readonly onDidProjectsDelete: Event<Uri[]>;
+
 	readonly goToDefinition: GoToDefinitionCommand;
 	/**
 	 * Indicates the current active mode for Java Language Server. Possible modes are:

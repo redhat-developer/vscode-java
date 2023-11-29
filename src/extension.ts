@@ -36,7 +36,7 @@ import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
-import { BuildFileSelector, cleanupProjectPickerCache } from './buildFilesSelector';
+import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -395,7 +395,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 
 				if (choice === "Yes") {
-					await startStandardServer(context, requirements, clientOptions, workspacePath);
+					await startStandardServer(context, requirements, clientOptions, workspacePath, true /* triggeredByCommand */);
 				}
 			});
 
@@ -464,12 +464,12 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	});
 }
 
-async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string) {
+async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, triggeredByCommand: boolean = false) {
 	if (standardClient.getClientStatus() !== ClientStatus.uninitialized) {
 		return;
 	}
 
-	const selector: BuildFileSelector = new BuildFileSelector(context);
+	const selector: BuildFileSelector = new BuildFileSelector(context, []);
 	const importMode: ImportMode = await getImportMode(context, selector);
 	if (importMode === ImportMode.automatic) {
 		if (!await ensureNoBuildToolConflicts(context, clientOptions)) {
@@ -478,10 +478,14 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 	} else {
 		const buildFiles: string[] = [];
 		if (importMode === ImportMode.manual) {
-			buildFiles.push(...await selector.getBuildFiles());
+			const cache = context.workspaceState.get<string[]>(PICKED_BUILD_FILES);
+			if (cache === undefined || cache.length === 0 && triggeredByCommand) {
+				buildFiles.push(...await selector.selectBuildFiles() || []);
+			} else {
+				buildFiles.push(...cache);
+			}
 		}
 		if (buildFiles.length === 0) {
-			// cancelled by user
 			commands.executeCommand('setContext', 'java:serverMode', ServerMode.lightWeight);
 			serverStatusBarProvider.showNotImportedStatus();
 			return;
