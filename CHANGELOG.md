@@ -1,5 +1,24 @@
 # Change Log
 
+## 1.25.0 (November 30th, 2023)
+ * enhancement - Provide support for Java 21. See [#3292](https://github.com/redhat-developer/vscode-java/issues/3292).
+ * enhancement - Import projects by configurations. See [#3356](https://github.com/redhat-developer/vscode-java/pull/3356).
+ * enhancement - Support add/remove of imported projects. See [#3398](https://github.com/redhat-developer/vscode-java/pull/3398).
+ * enhancement - Host textmate definition for kotlin language. See [#3334](https://github.com/redhat-developer/vscode-java/issues/3334).
+ * enhancement - Categorize the extension settings. See [#2548](https://github.com/redhat-developer/vscode-java/issues/2548).
+ * enhancement - Add `maven.multiModuleProjectDirectory` property. See [#3380](https://github.com/redhat-developer/vscode-java/issues/3380).
+ * enhancement - Add capability to list all VM installs and update project JDK. See [JLS#2977](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2977).
+ * bug fix - Update to `vscode-languageclient` 8.2.0-next.3 (using Node 18) to fix IPC path length limitations. See [#3371](https://github.com/redhat-developer/vscode-java/issues/3371).
+ * bug fix - Avoid refreshing language server when contributing extension's dependency closure includes it. See [#3349](https://github.com/redhat-developer/vscode-java/issues/3349).
+ * bug fix - Wrongly encoded semantic tokens around `class` keyword. See [JLS#2920](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2920).
+ * bug fix - Cleanups & Organize Imports should only react to internal project preferences with `canUseInternalSettings`. See [#3399](https://github.com/redhat-developer/vscode-java/issues/3399), [#3370](https://github.com/redhat-developer/vscode-java/issues/3370), [JLS#2975](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2975).
+ * bug fix - Fix missing prompt to select build tool for Gradle/Maven mixed project. See [#3400](https://github.com/redhat-developer/vscode-java/issues/3400).
+ * bug fix - Respect the VS Code setting to disable extension recommendations. See [#3381](https://github.com/redhat-developer/vscode-java/issues/3381).
+ * bug fix - `IllegalArgumentException` on `completionItem/resolve` of package declaration. See [JLS#2924](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2924).
+ * bug fix - Add trace to understand the probability of document out-of-sync. See [JLS#2954](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2954).
+ * dependencies - Bump axios from 1.5.0 to 1.6.1. See [#3388](https://github.com/redhat-developer/vscode-java/pull/3388).
+ * dependencies - Update buildship to 3.1.8. See [JLS#2974](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2974).
+
 ## 1.24.0 (October 26th, 2023)
  * performance - Exclude certain folders (eg. `node_modules/`) from "trigger" file search on activation. [#3348](https://github.com/redhat-developer/vscode-java/pull/3348).
  * enhancement - Move snippet suggestions above matching keywords in completion list. See [#2584](https://github.com/redhat-developer/vscode-java/issues/2584).
