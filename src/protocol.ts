@@ -58,6 +58,7 @@ export enum FeatureStatus {
 export enum EventType {
     classpathUpdated = 100,
     projectsImported = 200,
+    projectsDeleted = 210,
     incompatibleGradleJdkIssue = 300,
     upgradeGradleWrapper = 400,
     sourceInvalidated = 500,

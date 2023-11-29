@@ -145,9 +145,24 @@ function parseToStringGlob(patterns: string[]): string {
  * @returns string array for the project uris.
  */
 export async function getAllJavaProjects(excludeDefaultProject: boolean = true): Promise<string[]> {
-	let projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+	const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS);
+	return filterDefaultProject(projectUris, excludeDefaultProject);
+}
+
+/**
+ * Get all projects from Java Language Server.
+ * @param excludeDefaultProject whether the default project should be excluded from the list, defaults to true.
+ * @returns string array for the project uris.
+ */
+export async function getAllProjects(excludeDefaultProject: boolean = true): Promise<string[]> {
+	const projectUris: string[] = await commands.executeCommand<string[]>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_ALL_JAVA_PROJECTS,
+		JSON.stringify({ includeNonJava: true }));
+	return filterDefaultProject(projectUris, excludeDefaultProject);
+}
+
+function filterDefaultProject(projectUris: string[], excludeDefaultProject: boolean): string[] {
 	if (excludeDefaultProject) {
-		projectUris = projectUris.filter((uriString) => {
+		return projectUris.filter((uriString) => {
 			const projectPath = Uri.parse(uriString).fsPath;
 			return path.basename(projectPath) !== "jdt.ls-java-project";
 		});
