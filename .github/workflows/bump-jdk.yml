@@ -37,8 +37,14 @@ jobs:
             exit 0
           fi
 
+      - name: Check for existing PR
+        id: check_pr
+        run: |
+          pr_number=$(gh pr list --search "Found JavaSE version ${{ env.latest_jdk }}" --json number --jq '.[0].number')
+          echo "pr_number=$pr_number" >> $GITHUB_ENV
+
       - name: Branch and push changes
-        if: ${{ success() && env.latest_jdk != '' }}
+        if: ${{ success() && env.latest_jdk != '' && steps.check_pr.outputs.pr_number == '' }}
         run: |
           git config --global user.email "redhattools-bot@users.noreply.github.com"
           git config --global user.name "redhattools-bot"
