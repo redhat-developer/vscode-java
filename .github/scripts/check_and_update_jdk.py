@@ -62,7 +62,7 @@ if latest_jdk != current_jdk:
         # Replace the ~ with current_jdk
         readme_ver_pattern = re.sub('~', current_jdk, readme_ver_pattern)
         
-        # Write this to a file for the peter-evans/create-pull-request@v5 workflow
+        # Write this to a file for the create-pull-request workflow
         with open('latest_jdk.txt', 'w') as f:
             f.write(latest_jdk)
         
