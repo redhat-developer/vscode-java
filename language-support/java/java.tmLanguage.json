@@ -1596,11 +1596,7 @@
 					"name": "string.quoted.triple.java",
 					"patterns": [
 						{
-							"match": "\\\\\"\"\"",
-							"name": "constant.character.escape.java"
-						},
-						{
-							"match": "\\\\.",
+							"match": "(\\\\\"\"\")(?!\")|(\\\\.)",
 							"name": "constant.character.escape.java"
 						}
 					]
