@@ -516,9 +516,9 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 	}
 
 	// Nothing found in negated exclusion pattern, do a normal search then.
-	const inclusionBlob: string = convertToGlob(inclusionPatterns);
-	const exclusionBlob: string = getExclusionGlob();
-	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /* maxResults */)).length > 0) {
+	const inclusionGlob: string = convertToGlob(inclusionPatterns);
+	const exclusionGlob: string = getExclusionGlob();
+	if (inclusionGlob && (await workspace.findFiles(inclusionGlob, exclusionGlob, 1 /* maxResults */)).length > 0) {
 		return true;
 	}
 
