@@ -23,6 +23,7 @@ vscode-java has opt-in telemetry collection, provided by [vscode-redhat-telemetr
  * The extension name and the choice made when a recommendation to install a 3rd party extension is proposed
  * The name of Java commands being manually executed, and any resulting errors
  * The number of results (eg. 20), whether an error occured (eg. false), and duration (in milliseconds) when code assist is activated
+ * Whether the language server ran out of memory and the maximum allocated memory at which that occured (eg. 200m)
  
 ## What's included in the general telemetry data
 
