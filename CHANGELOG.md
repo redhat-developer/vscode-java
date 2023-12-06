@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.25.1 (December 7th, 2023)
+ * performance - Avoid unnecessary (Maven) project updates. See [#3411](https://github.com/redhat-developer/vscode-java/issues/3411).
+ * bug fix - Out of sync editor content may report false compilation errors. See [JLS#2955](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2955).
+ * bug fix - Improved support for textmate definition for Kotlin DSL. See [#3403](https://github.com/redhat-developer/vscode-java/issues/3403).
+ * bug fix - No completion suggestions for package references when `matchCase` is set to `firstLetter`. See [JLS#2925](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2925).
+ * bug fix - Closing Text Blocks immediately after an escaped character produces incorrect syntax highlight. See [#3384](https://github.com/redhat-developer/vscode-java/issues/3384).
+ * bug fix - Fix the typo: blob -> glob. See [#3413](https://github.com/redhat-developer/vscode-java/pull/3413).
+
 ## 1.25.0 (November 30th, 2023)
  * enhancement - Provide support for Java 21. See [#3292](https://github.com/redhat-developer/vscode-java/issues/3292).
  * enhancement - Import projects by configurations. See [#3356](https://github.com/redhat-developer/vscode-java/pull/3356).
