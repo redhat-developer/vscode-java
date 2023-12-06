@@ -1160,6 +1160,9 @@ function registerOutOfMemoryDetection(storagePath: string) {
 				maxMem: getMaxMemFromConfiguration(true),
 			}
 		});
+		Telemetry.sendTelemetry("java.process.outofmemory", {
+			maxMem: getMaxMemFromConfiguration(true),
+		});
 		showOOMMessage();
 		serverStatusBarProvider.setError();
 		activationProgressNotification.hide();
