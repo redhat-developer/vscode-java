@@ -13,22 +13,12 @@ const languageServerDocumentSelector = [
 	{ pattern: '**/{build,settings}.gradle.kts'}
 ];
 
-export function supportsLanguageStatus(): boolean {
-	return !!vscode.languages.createLanguageStatusItem;
-}
-
 export namespace StatusCommands {
 	export const switchToStandardCommand = {
 		title: "Load Projects",
 		command: Commands.SWITCH_SERVER_MODE,
 		arguments: ['Standard', true],
 		tooltip: "LightWeight mode only provides limited features, please load projects to get full feature set"
-	};
-
-	export const showServerStatusCommand = {
-		title: "Show Build Status",
-		command: Commands.SHOW_SERVER_TASK_STATUS,
-		tooltip: "Show Build Status"
 	};
 
 	export const configureJavaRuntimeCommand = {
@@ -47,19 +37,16 @@ export namespace StatusCommands {
 }
 
 export namespace RuntimeStatusItemFactory {
-	export function create(text: string, vmInstallPath: string): any {
-		if (supportsLanguageStatus()) {
-			const item = vscode.languages.createLanguageStatusItem("javaRuntimeStatusItem", languageServerDocumentSelector);
-			item.severity = vscode.LanguageStatusSeverity?.Information;
-			item.name = "Java Runtime";
-			item.text = text;
-			item.command = StatusCommands.configureJavaRuntimeCommand;
-			if (vmInstallPath) {
-				item.command.tooltip = `Language Level: ${text} <${vmInstallPath}>`;
-			}
-			return item;
+	export function create(text: string, vmInstallPath: string): vscode.LanguageStatusItem {
+		const item = vscode.languages.createLanguageStatusItem("javaRuntimeStatusItem", languageServerDocumentSelector);
+		item.severity = vscode.LanguageStatusSeverity?.Information;
+		item.name = "Java Runtime";
+		item.text = text;
+		item.command = StatusCommands.configureJavaRuntimeCommand;
+		if (vmInstallPath) {
+			item.command.tooltip = `Language Level: ${text} <${vmInstallPath}>`;
 		}
-		return undefined;
+		return item;
 	}
 
 	export function update(item: any, text: string, vmInstallPath: string): void {
@@ -69,17 +56,14 @@ export namespace RuntimeStatusItemFactory {
 }
 
 export namespace BuildFileStatusItemFactory {
-	export function create(buildFilePath: string): any {
-		if (supportsLanguageStatus()) {
-			const fileName = path.basename(buildFilePath);
-			const item = vscode.languages.createLanguageStatusItem("javaBuildFileStatusItem", languageServerDocumentSelector);
-			item.severity = vscode.LanguageStatusSeverity?.Information;
-			item.name = "Java Build File";
-			item.text = fileName;
-			item.command = getOpenBuildFileCommand(buildFilePath);
-			return item;
-		}
-		return undefined;
+	export function create(buildFilePath: string): vscode.LanguageStatusItem {
+		const fileName = path.basename(buildFilePath);
+		const item = vscode.languages.createLanguageStatusItem("javaBuildFileStatusItem", languageServerDocumentSelector);
+		item.severity = vscode.LanguageStatusSeverity?.Information;
+		item.name = "Java Build File";
+		item.text = fileName;
+		item.command = getOpenBuildFileCommand(buildFilePath);
+		return item;
 	}
 
 	export function update(item: any, buildFilePath: string): void {

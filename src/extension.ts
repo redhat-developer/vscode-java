@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, version } from 'vscode';
+import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -22,7 +22,7 @@ import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } f
 import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
-import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
+import { languageStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, getImportMode, onConfigurationChange, ServerMode, ImportMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
@@ -399,7 +399,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 
 			context.subscriptions.push(snippetCompletionProvider.initialize());
 			context.subscriptions.push(serverStatusBarProvider);
-			context.subscriptions.push(runtimeStatusBarProvider);
+			context.subscriptions.push(languageStatusBarProvider);
 
 			const classEditorProviderRegistration = window.registerCustomEditorProvider(JavaClassEditorProvider.viewType, new JavaClassEditorProvider(context));
 			context.subscriptions.push(classEditorProviderRegistration);
@@ -410,7 +410,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				if (event === ServerMode.standard) {
 					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
-					runtimeStatusBarProvider.initialize(context);
+					languageStatusBarProvider.initialize(context);
 				}
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
