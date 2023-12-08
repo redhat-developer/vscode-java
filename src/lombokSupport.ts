@@ -7,8 +7,7 @@ import * as vscode from "vscode";
 import { ExtensionContext, window, commands } from "vscode";
 import { Commands } from "./commands";
 import { apiManager } from "./apiManager";
-import { supportsLanguageStatus } from "./languageStatusItemFactory";
-import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
+import { languageStatusBarProvider } from './runtimeStatusBarProvider';
 import { logger } from './log';
 import { getAllJavaProjects } from "./utils";
 
@@ -157,11 +156,11 @@ export async function checkLombokDependency(context: ExtensionContext) {
 			registerLombokConfigureCommand(context);
 			isLombokCommandInitialized = true;
 		}
-		runtimeStatusBarProvider.initializeLombokStatusBar();
+		languageStatusBarProvider.initializeLombokStatusBar();
 		isLombokStatusBarInitialized = true;
 	}
 	if (isLombokStatusBarInitialized && !projectLombokPath) {
-		runtimeStatusBarProvider.destroyLombokStatusBar();
+		languageStatusBarProvider.destroyLombokStatusBar();
 		isLombokStatusBarInitialized = false;
 		cleanupLombokCache(context);
 	}
@@ -245,16 +244,13 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 }
 
 export namespace LombokVersionItemFactory {
-	export function create(text: string): any {
-		if (supportsLanguageStatus()) {
-			const item = vscode.languages.createLanguageStatusItem("javaLombokVersionItem", languageServerDocumentSelector);
-			item.severity = vscode.LanguageStatusSeverity?.Information;
-			item.name = "Lombok Version";
-			item.text = text;
-			item.command = getLombokChangeCommand();
-			return item;
-		}
-		return undefined;
+	export function create(text: string): vscode.LanguageStatusItem {
+		const item = vscode.languages.createLanguageStatusItem("javaLombokVersionItem", languageServerDocumentSelector);
+		item.severity = vscode.LanguageStatusSeverity?.Information;
+		item.name = "Lombok Version";
+		item.text = text;
+		item.command = getLombokChangeCommand();
+		return item;
 	}
 
 	export function update(item: any, text: string): void {
