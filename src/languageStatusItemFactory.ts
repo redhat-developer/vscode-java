@@ -3,7 +3,6 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import { Commands } from "./commands";
-import { StatusIcon } from "./serverStatusBarProvider";
 
 const languageServerDocumentSelector = [
 	{ scheme: 'file', language: 'java' },
@@ -45,77 +44,6 @@ export namespace StatusCommands {
 		arguments: ['Standard', true],
 		tooltip: "Select Projects..."
 	};
-}
-
-export namespace ServerStatusItemFactory {
-	export function create(): any {
-		if (supportsLanguageStatus()) {
-			const item = vscode.languages.createLanguageStatusItem("JavaServerStatusItem", languageServerDocumentSelector);
-			item.name = "Java Language Server Status";
-			return item;
-		}
-		return undefined;
-	}
-
-	export function showLightWeightStatus(item: any): void {
-		item.severity = vscode.LanguageStatusSeverity?.Warning;
-		item.text = StatusIcon.lightWeight;
-		item.detail = "Lightweight Mode";
-		item.command = StatusCommands.switchToStandardCommand;
-	}
-
-	export function showNotImportedStatus(item: any): void {
-		item.severity = vscode.LanguageStatusSeverity?.Warning;
-		item.text = "No projects are imported";
-		item.command = StatusCommands.startStandardServerCommand;
-	}
-
-	export function showStandardStatus(item: any): void {
-		item.severity = vscode.LanguageStatusSeverity?.Information;
-		item.command = StatusCommands.showServerStatusCommand;
-	}
-
-	export function setBusy(item: any): void {
-		if (item.busy === true) {
-			return;
-		}
-		item.text = "Building";
-		item.busy = true;
-	}
-
-	export function setError(item: any): void {
-		item.busy = false;
-		item.severity = vscode.LanguageStatusSeverity?.Error;
-		item.command = {
-			title: "Open logs",
-			command: Commands.OPEN_LOGS
-		};
-		item.text = StatusIcon.error;
-		item.detail = "Errors occurred in initializing language server";
-	}
-
-	export function setWarning(item: any): void {
-		item.busy = false;
-		item.severity = vscode.LanguageStatusSeverity?.Error;
-		item.command = {
-			title: "Show PROBLEMS Panel",
-			command: "workbench.panel.markers.view.focus",
-			tooltip: "Errors occurred in project configurations, click to show the PROBLEMS panel"
-		};
-		item.text = StatusIcon.warning;
-		item.detail = "Project Configuration Error";
-	}
-
-	export function setReady(item: any): void {
-		if (item.text === StatusIcon.ready) {
-			return;
-		}
-		item.busy = false;
-		item.severity = vscode.LanguageStatusSeverity?.Information;
-		item.command = StatusCommands.showServerStatusCommand;
-		item.text = StatusIcon.ready;
-		item.detail = "";
-	}
 }
 
 export namespace RuntimeStatusItemFactory {

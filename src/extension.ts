@@ -129,8 +129,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 
 	cleanJavaWorkspaceStorage();
 
-	serverStatusBarProvider.initialize();
-
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
