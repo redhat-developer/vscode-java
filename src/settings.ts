@@ -8,7 +8,7 @@ import { cleanupLombokCache } from './lombokSupport';
 import { ensureExists, getJavaConfiguration } from './utils';
 import { apiManager } from './apiManager';
 import { isActive, setActive, smartSemicolonDetection } from './smartSemicolonDetection';
-import { BuildFileSelector, PICKED_BUILD_FILES } from './buildFilesSelector';
+import { BuildFileSelector, IMPORT_METHOD, PICKED_BUILD_FILES } from './buildFilesSelector';
 
 const DEFAULT_HIDDEN_FILES: string[] = ['**/.classpath', '**/.project', '**/.settings', '**/.factorypath'];
 const IS_WORKSPACE_JDK_ALLOWED = "java.ls.isJdkAllowed";
@@ -370,6 +370,11 @@ export function handleTextDocumentChanges(document: TextDocument, changes: reado
 export async function getImportMode(context: ExtensionContext, selector: BuildFileSelector): Promise<ImportMode> {
 	const mode = getJavaConfiguration().get<string>("import.projectSelection");
 	if (mode === "manual") {
+		// use automatic mode if user has selected "Import All" before.
+		if (context.workspaceState.get(IMPORT_METHOD) === "Import All") {
+			return ImportMode.automatic;
+		}
+
 		// if no selectable build files, use automatic mode
 		const hasBuildFiles = await selector.hasBuildFiles();
 		if (!hasBuildFiles) {
@@ -386,6 +391,7 @@ export async function getImportMode(context: ExtensionContext, selector: BuildFi
 			{ modal: true },
 			"Import All", "Let Me Select...");
 		if (answer === "Import All") {
+			context.workspaceState.update(IMPORT_METHOD, "Import All");
 			return ImportMode.automatic;
 		} else if (answer === "Let Me Select...") {
 			return ImportMode.manual;

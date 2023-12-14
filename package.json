@@ -1678,7 +1678,7 @@
     "@types/vscode": "^1.77.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
-    "@vscode/test-electron": "^2.1.5",
+    "@vscode/test-electron": "^2.3.8",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "css-loader": "^6.7.3",
