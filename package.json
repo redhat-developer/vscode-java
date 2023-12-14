@@ -17,7 +17,8 @@
         "java.home",
         "java.jdt.ls.vmargs",
         "java.configuration.runtimes",
-        "java.import.gradle.java.home"
+        "java.import.gradle.java.home",
+        "java.import.gradle.home"
       ]
     },
     "virtualWorkspaces": false
@@ -641,7 +642,7 @@
           "type": "string",
           "default": null,
           "description": "Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.",
-          "scope": "window",
+          "scope": "machine-overridable",
           "order": 40
         },
         "java.import.gradle.java.home": {
