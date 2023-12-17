@@ -30,6 +30,11 @@ class SnippetCompletionProviderImpl implements CompletionItemProvider {
 
     public async provideCompletionItems(_document: TextDocument, _position: Position, _token: CancellationToken, _context: CompletionContext): Promise<CompletionItem[]> {
 
+        const config = vscode.workspace.getConfiguration('java');
+        if (config.get('disableSnippets')) {
+            return [];
+        }
+
         const snippetItems: CompletionItem[] = [];
         for (const label of Object.keys(this.snippets)) {
             const snippetContent = this.snippets[label];

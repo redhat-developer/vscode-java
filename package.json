@@ -225,6 +225,11 @@
       "title": "Startup",
       "order": 10,
       "properties": {
+        "java.disableSnippets": {
+          "type": "boolean",
+          "default": false,
+          "description": "Disable all Java snippets."
+        },
         "java.home": {
           "type": [
             "string",
