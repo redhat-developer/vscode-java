@@ -3,6 +3,7 @@
 import { CompletionItemProvider, TextDocument, Position, CancellationToken, CompletionContext, CompletionItem, CompletionItemKind, SnippetString, MarkdownString, languages, Disposable } from "vscode";
 import * as fse from 'fs-extra';
 import * as path from 'path';
+import * as vscode from 'vscode';
 
 class SnippetCompletionProvider implements Disposable {
 
