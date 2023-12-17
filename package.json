@@ -228,7 +228,7 @@
         "java.disableSnippets": {
           "type": "boolean",
           "default": false,
-          "description": "Disable all Java snippets."
+          "description": "Disable Snippets provided by this extension."
         },
         "java.home": {
           "type": [
