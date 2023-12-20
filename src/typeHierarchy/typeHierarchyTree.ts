@@ -105,6 +105,10 @@ export class TypeHierarchyTree {
 		this.api.setInput(input);
 	}
 
+	public getBaseItem() {
+		return this.baseItem;
+	}
+
 	private async isValidRequestPosition(uri: vscode.Uri, position: vscode.Position) {
 		const doc = await vscode.workspace.openTextDocument(uri);
 		let range = doc.getWordRangeAtPosition(position);

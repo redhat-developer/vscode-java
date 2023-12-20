@@ -5,6 +5,7 @@ import { getActiveLanguageClient } from "../extension";
 import { LanguageClient } from "vscode-languageclient/node";
 import { getRootItem, resolveTypeHierarchy, typeHierarchyDirectionToContextString } from "./util";
 import { CancellationToken, commands, workspace } from "vscode";
+import { typeHierarchyTree } from "./typeHierarchyTree";
 
 export class TypeHierarchyTreeInput implements SymbolTreeInput<TypeHierarchyItem> {
 	readonly contextValue: string = "javaTypeHierarchy";
@@ -132,8 +133,9 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<TypeHiera
 				vscode.Uri.parse(element.uri), <vscode.TextDocumentShowOptions>{ selection: element.selectionRange }
 			]
 		} : undefined;
-		// workaround: set a specific id to refresh the collapsible state for treeItems, see: https://github.com/microsoft/vscode/issues/114614#issuecomment-763428052
-		treeItem.id = `${element.data["element"]}${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
+		// Append the trigger item and the direction to make sure that requesting on the same symbol would preserve the collapse state,
+		// while for different symbol, reset the collapse state.
+		treeItem.id = `${typeHierarchyTree.getBaseItem()?.data?.["element"]}-${this.model.getDirection()}-${element.data?.["element"]}`;
 		if (element.expand) {
 			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
 		} else if (this.model.getDirection() === TypeHierarchyDirection.children || this.model.getDirection() === TypeHierarchyDirection.both) {
