@@ -143,8 +143,8 @@ export class StandardLanguageClient {
 						showImportFinishNotification(context);
 					}
 					checkLombokDependency(context);
-					apiManager.getApiInstance().onDidClasspathUpdate((e: Uri) => {
-						checkLombokDependency(context);
+					apiManager.getApiInstance().onDidClasspathUpdate((projectUri: Uri) => {
+						checkLombokDependency(context, projectUri);
 					});
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
