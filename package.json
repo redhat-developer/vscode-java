@@ -659,6 +659,13 @@
           "description": "Specifies default mojo execution action when no associated metadata can be detected.",
           "scope": "window",
           "order": 90
+        },
+        "java.configuration.maven.lifecycleMappings": {
+          "type": "string",
+          "default": null,
+          "description": "Path to Maven's lifecycle mappings xml",
+          "scope": "window",
+          "order": 100
         }
       }
     },
