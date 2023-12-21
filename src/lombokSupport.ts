@@ -4,7 +4,7 @@ import * as fse from "fs-extra";
 import * as path from "path";
 import * as semver from 'semver';
 import * as vscode from "vscode";
-import { ExtensionContext, window, commands } from "vscode";
+import { ExtensionContext, window, commands, Uri } from "vscode";
 import { Commands } from "./commands";
 import { apiManager } from "./apiManager";
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
@@ -117,7 +117,7 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 	updateActiveLombokPath(lombokJarPath);
 }
 
-export async function checkLombokDependency(context: ExtensionContext) {
+export async function checkLombokDependency(context: ExtensionContext, projectUri?: Uri) {
 	if (!isLombokSupportEnabled()) {
 		return;
 	}
@@ -126,7 +126,7 @@ export async function checkLombokDependency(context: ExtensionContext) {
 	let currentLombokVersion: string = undefined;
 	let previousLombokVersion: string = undefined;
 	let currentLombokClasspath: string = undefined;
-	const projectUris: string[] = await getAllJavaProjects();
+	const projectUris: string[] = projectUri ? [projectUri.toString()] : await getAllJavaProjects();
 	for (const projectUri of projectUris) {
 		const classpathResult = await apiManager.getApiInstance().getClasspaths(projectUri, {scope: 'test'});
 		for (const classpath of classpathResult.classpaths) {
