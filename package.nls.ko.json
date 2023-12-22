@@ -23,5 +23,6 @@
 	"java.action.showSubtypeHierarchy": "Subtype 계층 구조 표시",
 	"java.action.changeBaseType": "이 유형을 기준으로",
 	"java.project.createModuleInfo.command": "module-info.java 생성",
-	"java.action.filesExplorerPasteAction": "클립보드 텍스트를 파일에 붙여넣기"
+	"java.action.filesExplorerPasteAction": "클립보드 텍스트를 파일에 붙여넣기",
+	"java.action.doCleanup": "정리 작업을 수행합니다"
 }

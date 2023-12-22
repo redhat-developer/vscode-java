@@ -183,6 +183,7 @@ export namespace Commands {
      * Organize imports silently.
      */
     export const ORGANIZE_IMPORTS_SILENTLY = "java.edit.organizeImports";
+    export const MANUAL_CLEANUP = "java.action.doCleanup";
     /**
      * Handle a paste event.
      */
