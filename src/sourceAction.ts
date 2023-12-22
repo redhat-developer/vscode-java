@@ -1,17 +1,37 @@
 'use strict';
 
-import { commands, window, ExtensionContext, ViewColumn, Uri, Disposable, workspace, TextEditorRevealType } from 'vscode';
+import { Disposable, ExtensionContext, TextEditorRevealType, Uri, ViewColumn, commands, window, workspace } from 'vscode';
 import { CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
-import { ListOverridableMethodsRequest, AddOverridableMethodsRequest, CheckHashCodeEqualsStatusRequest, GenerateHashCodeEqualsRequest,
-OrganizeImportsRequest, ImportCandidate, ImportSelection, GenerateToStringRequest, CheckToStringStatusRequest, VariableBinding, GenerateAccessorsRequest, CheckConstructorStatusRequest, GenerateConstructorsRequest, CheckDelegateMethodsStatusRequest, GenerateDelegateMethodsRequest, AccessorKind, AccessorCodeActionRequest, AccessorCodeActionParams } from './protocol';
+import {
+    AccessorCodeActionParams,
+    AccessorCodeActionRequest,
+    AccessorKind,
+    AddOverridableMethodsRequest,
+    CheckConstructorStatusRequest,
+    CheckDelegateMethodsStatusRequest,
+    CheckHashCodeEqualsStatusRequest,
+    CheckToStringStatusRequest,
+    GenerateAccessorsRequest,
+    GenerateConstructorsRequest,
+    GenerateDelegateMethodsRequest,
+    GenerateHashCodeEqualsRequest,
+    GenerateToStringRequest,
+    ImportCandidate, ImportSelection,
+    ListOverridableMethodsRequest,
+    CleanupRequest,
+    OrganizeImportsRequest,
+    VariableBinding
+} from './protocol';
 import { applyWorkspaceEdit } from './standardLanguageClient';
+import { getActiveLanguageClient } from './extension';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
     registerHashCodeEqualsCommand(languageClient, context);
     registerOrganizeImportsCommand(languageClient, context);
+    registerCleanupCommand(languageClient, context);
     registerChooseImportCommand(context);
     registerGenerateToStringCommand(languageClient, context);
     registerGenerateAccessorsCommand(languageClient, context);
@@ -64,6 +84,15 @@ function registerOverrideMethodsCommand(languageClient: LanguageClient, context:
         });
         await applyWorkspaceEdit(workspaceEdit, languageClient);
         await revealWorkspaceEdit(workspaceEdit, languageClient);
+    }));
+}
+
+function registerCleanupCommand(languageClient: LanguageClient, context: ExtensionContext): void {
+    // Only active when editorLangId == java
+    context.subscriptions.push(commands.registerCommand(Commands.MANUAL_CLEANUP, async () => {
+        const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+        const workspaceEdit = await languageClient.sendRequest(CleanupRequest.type, languageClient.code2ProtocolConverter.asTextDocumentIdentifier(window.activeTextEditor.document));
+        await applyWorkspaceEdit(workspaceEdit, languageClient);
     }));
 }
 
