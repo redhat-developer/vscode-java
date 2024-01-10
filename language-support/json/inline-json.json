@@ -1,0 +1,44 @@
+{
+	"injectionSelector": "L:source.java -comment -string",
+	"patterns": [
+		{
+			"contentName": "meta.embedded.block.json",
+			"begin": "(?i)((/\\*\\s*(language=json)\\s*\\*/)|((//\\s*(language=json)\\s*)))",
+			"beginCaptures": {
+				"1": {
+					"name": "comment.block"
+				}
+			},
+			"end": "(?<=\")",
+			"patterns": [
+				{
+					"begin": "\\s*(\"\"\")$",
+					"beginCaptures": {
+						"0": { "name": "string.quoted.triple.java" }
+					},
+					"end": "\\s*(\"\"\")",
+					"endCaptures": {
+						"0": { "name": "string.quoted.triple.java" }
+					},
+					"patterns": [
+						{ "include": "source.json" }
+					]
+				},
+				{
+					"begin": "\\s*(\")",
+					"beginCaptures": {
+						"0": { "name": "string.quoted.double.java" }
+					},
+					"end": "\\s*(\")",
+					"endCaptures": {
+						"0": { "name": "string.quoted.double.java" }
+					},
+					"patterns": [
+						{ "include": "source.json" }
+					]
+				}
+			]
+		}
+	],
+	"scopeName": "inline.json"
+}
