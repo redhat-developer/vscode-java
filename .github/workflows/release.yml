@@ -117,6 +117,7 @@ jobs:
       - name: Clean tests
         run: npx gulp clean_test_folder
       - name: Prepare Lombok Support
+        if: false
         run: |
           npx gulp download_lombok
       - name: Prepare Pre-Release
