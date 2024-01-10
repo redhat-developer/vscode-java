@@ -222,6 +222,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.sql": "sql"
         }
+      },
+      {
+        "injectTo": [
+          "source.java"
+        ],
+        "scopeName": "inline.json",
+        "path": "./language-support/json/inline-json.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.json": "json"
+        }
       }
     ],
     "jsonValidation": [
