@@ -1,35 +1,29 @@
 'use strict';
 
 import * as fse from "fs-extra";
-import { StatusBarItem, window, StatusBarAlignment, TextEditor, Uri, commands, workspace, version, languages, Command, ExtensionContext } from "vscode";
+import { window, TextEditor, Uri, commands, workspace, ExtensionContext, LanguageStatusItem } from "vscode";
 import { Commands } from "./commands";
 import { Disposable } from "vscode-languageclient";
 import * as path from "path";
 import { apiManager } from "./apiManager";
-import * as semver from "semver";
 import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
-import { BuildFileStatusItemFactory, RuntimeStatusItemFactory, StatusCommands, supportsLanguageStatus } from "./languageStatusItemFactory";
+import { BuildFileStatusItemFactory, RuntimeStatusItemFactory } from "./languageStatusItemFactory";
 import { getAllJavaProjects, getJavaConfiguration, hasBuildToolConflicts } from "./utils";
 import { LombokVersionItemFactory, getLombokVersion, isLombokImported } from "./lombokSupport";
 
-class RuntimeStatusBarProvider implements Disposable {
-	private statusBarItem: StatusBarItem;
-	private runtimeStatusItem: any;
-	private buildFileStatusItem: any;
-	private lombokVersionItem: any;
+class LanguageStatusBarProvider implements Disposable {
+	private runtimeStatusItem: LanguageStatusItem;
+	private buildFileStatusItem: LanguageStatusItem;
+	private lombokVersionItem: LanguageStatusItem;
 	private javaProjects: Map<string, IProjectInfo>;
 	private fileProjectMapping: Map<string, string>;
 	private storagePath: string | undefined;
 	private disposables: Disposable[];
-	// Adopt new API for status bar item, meanwhile keep the compatibility with Theia.
-	// See: https://github.com/redhat-developer/vscode-java/issues/1982
-	private isAdvancedStatusBarItem: boolean;
 
 	constructor() {
 		this.javaProjects = new Map<string, IProjectInfo>();
 		this.fileProjectMapping = new Map<string, string>();
 		this.disposables = [];
-		this.isAdvancedStatusBarItem = semver.gte(version, "1.57.0");
 	}
 
 	public async initialize(context: ExtensionContext): Promise<void> {
@@ -37,15 +31,6 @@ class RuntimeStatusBarProvider implements Disposable {
 		const storagePath = context.storagePath;
 		if (storagePath) {
 			this.storagePath = Uri.file(path.join(storagePath, "..", "..")).fsPath;
-		}
-
-		if (!supportsLanguageStatus()) {
-			if (this.isAdvancedStatusBarItem) {
-				this.statusBarItem = (window.createStatusBarItem as any)("java.runtimeStatus", StatusBarAlignment.Right, 0);
-				(this.statusBarItem as any).name = "Java Runtime Configuration";
-			} else {
-				this.statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right, 0);
-			}
 		}
 
 		let projectUriStrings: string[];
@@ -57,10 +42,6 @@ class RuntimeStatusBarProvider implements Disposable {
 
 		for (const uri of projectUriStrings) {
 			this.javaProjects.set(Uri.parse(uri).fsPath, undefined);
-		}
-
-		if (!supportsLanguageStatus()) {
-			this.statusBarItem.command = StatusCommands.configureJavaRuntimeCommand;
 		}
 
 		this.disposables.push(window.onDidChangeActiveTextEditor((textEditor) => {
@@ -111,7 +92,6 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	public dispose(): void {
-		this.statusBarItem?.dispose();
 		this.runtimeStatusItem?.dispose();
 		this.buildFileStatusItem?.dispose();
 		this.lombokVersionItem?.dispose();
@@ -176,63 +156,47 @@ class RuntimeStatusBarProvider implements Disposable {
 	}
 
 	private async updateItem(context: ExtensionContext, textEditor: TextEditor): Promise<void> {
-		if (!textEditor || path.extname(textEditor.document.fileName) !== ".java" && !supportsLanguageStatus()) {
-			this.statusBarItem?.hide();
+		if (!textEditor || path.extname(textEditor.document.fileName) !== ".java") {
 			return;
 		}
 
 		const uri: Uri = textEditor.document.uri;
 		const projectPath: string = this.findOwnerProject(uri);
 		if (!projectPath) {
-			if (supportsLanguageStatus()) {
-				this.hideRuntimeStatusItem();
-				this.hideBuildFileStatusItem();
-				this.hideLombokVersionItem();
-			} else {
-				this.statusBarItem?.hide();
-			}
+			this.hideRuntimeStatusItem();
+			this.hideBuildFileStatusItem();
+			this.hideLombokVersionItem();
 			return;
 		}
 
 		const projectInfo: IProjectInfo = await this.getProjectInfo(projectPath);
 		if (!projectInfo) {
-			if (supportsLanguageStatus()) {
-				this.hideRuntimeStatusItem();
-				this.hideBuildFileStatusItem();
-				this.hideLombokVersionItem();
-			} else {
-				this.statusBarItem?.hide();
-			}
+			this.hideRuntimeStatusItem();
+			this.hideBuildFileStatusItem();
+			this.hideLombokVersionItem();
 			return;
 		}
 
 		const text = this.getJavaRuntimeFromVersion(projectInfo.sourceLevel);
-		if (supportsLanguageStatus()) {
-			const buildFilePath = await this.getBuildFilePath(context, projectPath);
-			if (!this.runtimeStatusItem) {
-				this.runtimeStatusItem = RuntimeStatusItemFactory.create(text, projectInfo.vmInstallPath);
-				if (buildFilePath) {
-					this.buildFileStatusItem = BuildFileStatusItemFactory.create(buildFilePath);
-				}
-			} else {
-				RuntimeStatusItemFactory.update(this.runtimeStatusItem, text, projectInfo.vmInstallPath);
-				if (buildFilePath) {
-					BuildFileStatusItemFactory.update(this.buildFileStatusItem, buildFilePath);
-				}
-			}
-			if (!this.lombokVersionItem) {
-				if (isLombokImported()) {
-					this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion());
-				}
-			} else {
-				if (isLombokImported()) {
-					LombokVersionItemFactory.update(this.lombokVersionItem, getLombokVersion());
-				}
+		const buildFilePath = await this.getBuildFilePath(context, projectPath);
+		if (!this.runtimeStatusItem) {
+			this.runtimeStatusItem = RuntimeStatusItemFactory.create(text, projectInfo.vmInstallPath);
+			if (buildFilePath) {
+				this.buildFileStatusItem = BuildFileStatusItemFactory.create(buildFilePath);
 			}
 		} else {
-			this.statusBarItem.text = text;
-			this.statusBarItem.tooltip = projectInfo.vmInstallPath ? `Language Level: ${this.statusBarItem.text} <${projectInfo.vmInstallPath}>` : "Configure Java Runtime";
-			this.statusBarItem.show();
+			RuntimeStatusItemFactory.update(this.runtimeStatusItem, text, projectInfo.vmInstallPath);
+			if (buildFilePath) {
+				BuildFileStatusItemFactory.update(this.buildFileStatusItem, buildFilePath);
+			}
+		}
+
+		if (isLombokImported()) {
+			if (!this.lombokVersionItem) {
+				this.lombokVersionItem = LombokVersionItemFactory.create(getLombokVersion());
+			} else {
+				LombokVersionItemFactory.update(this.lombokVersionItem, getLombokVersion());
+			}
 		}
 	}
 
@@ -302,4 +266,4 @@ interface IProjectInfo {
 const SOURCE_LEVEL_KEY = "org.eclipse.jdt.core.compiler.source";
 const VM_INSTALL_PATH = "org.eclipse.jdt.ls.core.vm.location";
 
-export const runtimeStatusBarProvider: RuntimeStatusBarProvider = new RuntimeStatusBarProvider();
+export const languageStatusBarProvider: LanguageStatusBarProvider = new LanguageStatusBarProvider();

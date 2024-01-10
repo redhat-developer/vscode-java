@@ -192,6 +192,10 @@ export namespace Commands {
      */
     export const CLIPBOARD_ONPASTE = 'java.action.clipboardPasteAction';
     /**
+     * Custom paste action in files explorer
+     */
+     export const FILESEXPLORER_ONPASTE = 'java.action.filesExplorerPasteAction';
+    /**
      * Choose type to import.
      */
     export const CHOOSE_IMPORTS = "java.action.organizeImports.chooseImports";
@@ -340,5 +344,10 @@ export namespace Commands {
     * Smart semicolon detection.
     */
     export const SMARTSEMICOLON_DETECTION = "java.edit.smartSemicolonDetection";
+
+    /**
+     * Determine if pasted text is a java file and resolve packages
+     */
+    export const RESOLVE_PASTED_TEXT = "java.project.resolveText";
 
 }

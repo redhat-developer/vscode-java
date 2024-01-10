@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, version } from 'vscode';
+import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -22,7 +22,7 @@ import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } f
 import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
-import { runtimeStatusBarProvider } from './runtimeStatusBarProvider';
+import { languageStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
 import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, getImportMode, onConfigurationChange, ServerMode, ImportMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
@@ -37,6 +37,7 @@ import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib'
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
+import { pasteFile } from './pasteAction';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -93,6 +94,14 @@ function getHeapDumpFolderFromSettings(): string {
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	await loadSupportedJreNames(context);
+	context.subscriptions.push(commands.registerCommand(Commands.FILESEXPLORER_ONPASTE, async () => {
+		const originalClipboard = await env.clipboard.readText();
+		// Hack in order to get path to selected folder if applicable (see https://github.com/microsoft/vscode/issues/3553#issuecomment-1098562676)
+		await commands.executeCommand('copyFilePath');
+		const folder = await env.clipboard.readText();
+		await env.clipboard.writeText(originalClipboard);
+		pasteFile(folder);
+	}));
 	context.subscriptions.push(markdownPreviewProvider);
 	context.subscriptions.push(commands.registerCommand(Commands.TEMPLATE_VARIABLES, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.TEMPLATE_VARIABLES}.md`)), 'Predefined Variables', "", context);
@@ -128,8 +137,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	registerOutOfMemoryDetection(storagePath);
 
 	cleanJavaWorkspaceStorage();
-
-	serverStatusBarProvider.initialize();
 
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
@@ -401,7 +408,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 
 			context.subscriptions.push(snippetCompletionProvider.initialize());
 			context.subscriptions.push(serverStatusBarProvider);
-			context.subscriptions.push(runtimeStatusBarProvider);
+			context.subscriptions.push(languageStatusBarProvider);
 
 			const classEditorProviderRegistration = window.registerCustomEditorProvider(JavaClassEditorProvider.viewType, new JavaClassEditorProvider(context));
 			context.subscriptions.push(classEditorProviderRegistration);
@@ -412,7 +419,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				if (event === ServerMode.standard) {
 					syntaxClient.stop();
 					fileEventHandler.setServerStatus(true);
-					runtimeStatusBarProvider.initialize(context);
+					languageStatusBarProvider.initialize(context);
 				}
 				commands.executeCommand('setContext', 'java:serverMode', event);
 			});
@@ -516,9 +523,9 @@ async function workspaceContainsBuildFiles(): Promise<boolean> {
 	}
 
 	// Nothing found in negated exclusion pattern, do a normal search then.
-	const inclusionBlob: string = convertToGlob(inclusionPatterns);
-	const exclusionBlob: string = getExclusionGlob();
-	if (inclusionBlob && (await workspace.findFiles(inclusionBlob, exclusionBlob, 1 /* maxResults */)).length > 0) {
+	const inclusionGlob: string = convertToGlob(inclusionPatterns);
+	const exclusionGlob: string = getExclusionGlob();
+	if (inclusionGlob && (await workspace.findFiles(inclusionGlob, exclusionGlob, 1 /* maxResults */)).length > 0) {
 		return true;
 	}
 
@@ -652,7 +659,7 @@ function enableJavadocSymbols() {
 	});
 }
 
-function getTempWorkspace() {
+export function getTempWorkspace() {
 	return path.resolve(os.tmpdir(), `vscodesws_${makeRandomHexString(5)}`);
 }
 

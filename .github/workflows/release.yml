@@ -1,0 +1,193 @@
+name: release
+
+on:
+    schedule:
+      - cron: '0 8 * * *'
+    workflow_dispatch:
+      inputs:
+        JDT_LS_VERSION:
+          description: 'The (optional) release version (including qualifier) of JDT-LS to use.'
+          type: string
+        publishPreRelease:
+          description: 'Publish a pre-release ?'
+          required: true
+          type: choice
+          options:
+            - 'true'
+            - 'false'
+          default: 'true'
+        publishToMarketPlace:
+          description: 'Publish to VS Code Marketplace ?'
+          required: true
+          type: choice
+          options:
+            - 'true'
+            - 'false'
+          default: 'false'
+        publishToOVSX:
+          description: 'Publish to OpenVSX Registry ?'
+          required: true
+          type: choice
+          options:
+            - 'true'
+            - 'false'
+          default: 'false'
+jobs:
+  should-build-change:
+    runs-on: ubuntu-latest
+    outputs:
+        repo-cache-hit: ${{ steps.cache-last-commit.outputs.cache-hit }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: 'eclipse-jdtls/eclipse.jdt.ls'
+          fetch-depth: 2
+          path: eclipse.jdt.ls
+      - uses: actions/checkout@v3
+        with:
+          repository: 'redhat-developer/vscode-java'
+          fetch-depth: 2
+          path: vscode-java
+      - run: |
+          pushd eclipse.jdt.ls
+          git rev-parse HEAD >> ../lastCommit
+          popd
+          pushd vscode-java
+          git rev-parse HEAD >> ../lastCommit
+      - name: Check New Changes
+        id: cache-last-commit
+        uses: actions/cache@v2
+        with:
+          path: lastCommit
+          key: lastCommit-${{ hashFiles('lastCommit') }}
+  packaging-job:
+    runs-on: ubuntu-latest
+    needs: should-build-change
+    if: ${{ needs.should-build-change.outputs.repo-cache-hit != 'true' || github.event_name != 'schedule' }}
+    steps:
+      - name: Checkout JDT-LS
+        if: "${{ inputs.JDT_LS_VERSION == '' }}"
+        uses: actions/checkout@v2
+        with:
+          repository: eclipse-jdtls/eclipse.jdt.ls
+      - name: Cache Maven local repository
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.m2/wrapper
+            !~/.m2/repository/org/eclipse/jdt/ls
+          key: maven-local-${{ hashFiles('**/pom.xml') }}
+      - name: Set Up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - name: Build JDT-LS
+        if: "${{ inputs.JDT_LS_VERSION == '' }}"
+        run: |
+          ./mvnw clean verify -B -DskipTests -Pserver-distro
+          mkdir ../staging
+          cp org.eclipse.jdt.ls.product/distro/jdt-language-server-*.tar.gz ../staging
+      - name: Check Out VS Code Java
+        uses: actions/checkout@v2
+      - name: Set Up NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install NodeJS dependencies
+        run: npm install -g typescript "@vscode/vsce" "ovsx"
+      - name: Download JDT-LS Release
+        if: "${{ inputs.JDT_LS_VERSION != '' }}"
+        run: |
+          version=`echo ${{ inputs.JDT_LS_VERSION }} | cut -d- -f1`
+          curl -LO https://download.eclipse.org/jdtls/milestones/${version}/jdt-language-server-${{ inputs.JDT_LS_VERSION }}.tar.gz
+      - name: Build vscode-java
+        run: |
+          npm install
+          npm run vscode:prepublish
+          npm run compile
+      - name: Test vscode-java
+        env:
+          SKIP_COMMANDS_TEST: true
+          SKIP_CLASSPATH_TEST: true
+        run: |
+          $(echo "xvfb-run --auto-servernum") npm run test --silent
+        continue-on-error: true
+      - name: Clean tests
+        run: npx gulp clean_test_folder
+      - name: Prepare Lombok Support
+        run: |
+          npx gulp download_lombok
+      - name: Prepare Pre-Release
+        if: ${{ github.event_name == 'schedule' || inputs.publishPreRelease == 'true' }}
+        run: |
+          npx gulp prepare_pre_release
+          echo "publishPreReleaseFlag=--pre-release" >> $GITHUB_ENV
+      - name: Prepare JDT-LS
+        run: |
+          rm -rf ./out
+          mkdir server/
+          if [ -e jdt-language-server-*.tar.gz ]; then
+            tar -xf jdt-language-server-*.tar.gz -C server/
+          else
+            tar -xf ../staging/jdt-language-server-*.tar.gz -C server/
+          fi
+          echo "EXT_VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
+      - name: Package vscode-java
+        run: |
+          platforms=("win32-x64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
+          for platform in ${platforms[@]}; do
+            npx gulp download_jre --target ${platform} --javaVersion 17
+            vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+          done
+          rm -rf jre/
+          vsce package ${{ env.publishPreReleaseFlag }} -o vscode-java-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+          ls -lash *.vsix
+      - name: Upload VSIX Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: vscode-java
+          path: |
+            java-*-${{ env.EXT_VERSION }}-${{github.run_number}}.vsix
+            vscode-java-${{ env.EXT_VERSION }}-${{github.run_number}}.vsix
+          if-no-files-found: error
+      - name: Publish to GH Release Tab
+        if: ${{ inputs.publishToMarketPlace == 'true' && inputs.publishToOVSX == 'true' }}
+        uses: "marvinpinto/action-automatic-releases@919008cf3f741b179569b7a6fb4d8860689ab7f0"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "v${{ env.EXT_VERSION }}"
+          title: "${{ env.EXT_VERSION }}"
+          draft: true
+          files: |
+            java-*-${{ env.EXT_VERSION }}-${{github.run_number}}.vsix
+            vscode-java-${{ env.EXT_VERSION }}-${{ github.run_number }}.vsix
+  release-job:
+    environment: ${{ (inputs.publishToMarketPlace == 'true' || inputs.publishToOVSX == 'true') && 'release' || 'pre-release' }}
+    runs-on: ubuntu-latest
+    needs: packaging-job
+    steps:
+      - name: Set Up NodeJS
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: |
+          npm install -g typescript "@vscode/vsce" "ovsx"
+      - name: Download VSIX & JDT-LS
+        uses: actions/download-artifact@v3
+      - name: Publish to VS Code Marketplace
+        if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' || inputs.publishPreRelease == 'true' }}
+        run: |
+          for platformVsix in vscode-java/java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
+            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+          done
+          vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
+      - name: Publish to OpenVSX Registry
+        if: ${{ github.event_name == 'schedule' || inputs.publishToOVSX == 'true' || inputs.publishPreRelease == 'true' }}
+        run: |
+          for platformVsix in vscode-java/java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
+            ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+          done
+          ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }}  --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix

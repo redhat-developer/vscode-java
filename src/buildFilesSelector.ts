@@ -5,6 +5,7 @@ import { IBuildTool, getContributedBuildTools } from "./plugin";
 
 export const PICKED_BUILD_FILES = "java.pickedBuildFiles";
 export const BUILD_TOOL_FOR_CONFLICTS = "java.buildToolForConflicts";
+export const IMPORT_METHOD = "java.importMethod";
 export class BuildFileSelector {
 	/**
 	 * The build tools that are contributed/supported by extensions.
@@ -295,4 +296,5 @@ interface IBuildFilePicker extends QuickPickItem {
 export function cleanupProjectPickerCache(context: ExtensionContext) {
 	context.workspaceState.update(PICKED_BUILD_FILES, undefined);
 	context.workspaceState.update(BUILD_TOOL_FOR_CONFLICTS, undefined);
+	context.workspaceState.update(IMPORT_METHOD, undefined);
 }

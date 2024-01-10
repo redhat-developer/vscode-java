@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.25.0",
+  "version": "1.26.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -17,7 +17,8 @@
         "java.home",
         "java.jdt.ls.vmargs",
         "java.configuration.runtimes",
-        "java.import.gradle.java.home"
+        "java.import.gradle.java.home",
+        "java.import.gradle.home"
       ]
     },
     "virtualWorkspaces": false
@@ -211,6 +212,16 @@
         "language": "gradle-kotlin-dsl",
         "scopeName": "source.kotlin",
         "path": "./language-support/kotlin/kotlin.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.java"
+        ],
+        "scopeName": "inline.sql",
+        "path": "./language-support/sql/inline-sql.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.sql": "sql"
+        }
       }
     ],
     "jsonValidation": [
@@ -641,7 +652,7 @@
           "type": "string",
           "default": null,
           "description": "Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.",
-          "scope": "window",
+          "scope": "machine-overridable",
           "order": 40
         },
         "java.import.gradle.java.home": {
@@ -759,6 +770,16 @@
             "org.springframework.lang.Nullable"
           ],
           "markdownDescription": "Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
+          "scope": "window"
+        },
+        "java.compile.nullAnalysis.nonnullbydefault": {
+          "type": "array",
+          "default": [
+            "javax.annotation.ParametersAreNonnullByDefault",
+            "org.eclipse.jdt.annotation.NonNullByDefault",
+            "org.springframework.lang.NonNullApi"
+          ],
+          "markdownDescription": "Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
           "scope": "window"
         },
         "java.compile.nullAnalysis.mode": {
@@ -1487,6 +1508,11 @@
         "command": "java.server.restart",
         "title": "%java.server.restart%",
         "category": "Java"
+      },
+      {
+        "command": "java.action.filesExplorerPasteAction",
+        "title": "%java.action.filesExplorerPasteAction%",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -1504,6 +1530,12 @@
         "key": "ctrl+shift+v",
         "mac": "cmd+shift+v",
         "when": "javaLSReady && editorLangId == java"
+      },
+      {
+        "command": "java.action.filesExplorerPasteAction",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "explorerViewletFocus && config.editor.pasteAs.enabled"
       }
     ],
     "menus": {
@@ -1622,6 +1654,10 @@
         {
           "command": "java.server.restart",
           "when": "javaLSReady"
+        },
+        {
+          "command": "java.action.filesExplorerPasteAction",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -1678,7 +1714,7 @@
     "@types/vscode": "^1.77.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
-    "@vscode/test-electron": "^2.1.5",
+    "@vscode/test-electron": "^2.3.8",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
     "css-loader": "^6.7.3",
