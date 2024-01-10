@@ -1,5 +1,29 @@
 # Change Log
 
+## 1.26.0 (January 11th, 2024)
+ * performance - Reduce delegate command calls when classpath changes. See [#3439](https://github.com/redhat-developer/vscode-java/pull/3439).
+ * performance - Ensure initial import of projects respect resource filter settings. See [#2972](https://github.com/redhat-developer/vscode-java/issues/2972).
+ * performance - Improve the performance of "Organize Imports" when "favorite static imports" are involved. See [#3383](https://github.com/redhat-developer/vscode-java/issues/3383).
+ * enhancement - Add String Templates (Java 21) preview support. See [JLS#2994](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2994).
+ * enhancement - Support syntax highlight for embedded SQL, JSON, XML & YAML languages. See [#831](https://github.com/redhat-developer/vscode-java/issues/831), [#3455](https://github.com/redhat-developer/vscode-java/pull/3455).
+ * enhancement - Generate correct sources when pasting Java code into the file explorer view. See [#3323](https://github.com/redhat-developer/vscode-java/issues/3323).
+ * enhancement - Quick assists converting string concatenations to `StringBuilder`, `StringBuffer`, `String.format(..)`, `MessageFormat`. See [JLS#3007](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3007).
+ * enhancement - Quick assists inverting `equals` comparison & handling of lambda expressions. See [JLS#2996](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2996).
+ * enhancement - Support "non-null" assertions by default using null analysis. See [#3431](https://github.com/redhat-developer/vscode-java/issues/3431).
+ * enhancement - Make the language server status a normal status bar item for better visibility. See [#3416](https://github.com/redhat-developer/vscode-java/issues/3416).
+ * bug fix - Fix multiline semantic highlighting for `implements`, `extends`, and `permits` keywords. See [JLS#2995](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2995).
+ * bug fix - Use wrapper distribution when `gradle-wrapper.properties` exists. See [JLS#3012](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3012).
+ * bug fix - Fix false positive parameter mismatch error. See [JLS#2992](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2992).
+ * bug fix - Document pasting should defer to other contributors when there are no changes. See [#3444](https://github.com/redhat-developer/vscode-java/issues/3444).
+ * bug fix - Use Lombok 1.18.31 snapshot to avoid errors for annotations with parameters. See [#3454](https://github.com/redhat-developer/vscode-java/issues/3454).
+ * bug fix - Remember the choice when asking project selection on import. See [#3415](https://github.com/redhat-developer/vscode-java/issues/3415).
+ * bug fix - Guard against `null` completion context and insertion text. See [#3422](https://github.com/redhat-developer/vscode-java/issues/3422).
+ * bug fix - The assignment to variable `workingCopy` has no effect. See [JLS#3002](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3002).
+ * bug fix - Change scope of `java.import.gradle.home` to `machine-overridable`. See [#3430](https://github.com/redhat-developer/vscode-java/pull/3430).
+ * bug fix - Filter excessive logging of artifact download from m2e in "debug mode". See [JLS#3011](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3011).
+ * dependencies - Bump follow-redirects from 1.15.2 to 1.15.4. See [#3457](https://github.com/redhat-developer/vscode-java/pull/3457).
+ * debt - Remove the legacy status bar item implementation. See [#3081](https://github.com/redhat-developer/vscode-java/issues/3081).
+
 ## 1.25.1 (December 7th, 2023)
  * performance - Avoid unnecessary (Maven) project updates. See [#3411](https://github.com/redhat-developer/vscode-java/issues/3411).
  * bug fix - Out of sync editor content may report false compilation errors. See [JLS#2955](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2955).
