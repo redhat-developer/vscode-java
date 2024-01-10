@@ -78,7 +78,8 @@ if latest_jdk != current_jdk:
             package = json.load(f)
 
         # Add the latest JDK version to the java.configuration.runtimes array
-        next(filter(lambda e: e['id'] == "java-jdks", package['contributes']['configuration']))['properties']['java.configuration.runtimes']['items']['properties']['name']['enum']
+        jdks_config = next(filter(lambda e: e['id'] == "java-jdks", package['contributes']['configuration']))
+        jdks_config['properties']['java.configuration.runtimes']['items']['properties']['name']['enum'].append(f'JavaSE-{latest_jdk}')
 
         # Write the updated package.json file
         with open('package.json', 'w') as f:
