@@ -232,6 +232,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.json": "json"
         }
+      },
+      {
+        "injectTo": [
+          "source.java"
+        ],
+        "scopeName": "inline.xml",
+        "path": "./language-support/xml/inline-xml.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.xml": "xml"
+        }
       }
     ],
     "jsonValidation": [
