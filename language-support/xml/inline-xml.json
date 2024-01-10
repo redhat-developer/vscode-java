@@ -1,0 +1,44 @@
+{
+	"injectionSelector": "L:source.java -comment -string",
+	"patterns": [
+		{
+			"contentName": "meta.embedded.block.xml",
+			"begin": "(?i)((/\\*\\s*(language=xml)\\s*\\*/)|((//\\s*(language=xml)\\s*)))",
+			"beginCaptures": {
+				"1": {
+					"name": "comment.block"
+				}
+			},
+			"end": "(?<=\")",
+			"patterns": [
+				{
+					"begin": "\\s*(\"\"\")$",
+					"beginCaptures": {
+						"0": { "name": "string.quoted.triple.java" }
+					},
+					"end": "\\s*(\"\"\")",
+					"endCaptures": {
+						"0": { "name": "string.quoted.triple.java" }
+					},
+					"patterns": [
+						{ "include": "text.xml" }
+					]
+				},
+				{
+					"begin": "\\s*(\")",
+					"beginCaptures": {
+						"0": { "name": "string.quoted.double.java" }
+					},
+					"end": "\\s*(\")",
+					"endCaptures": {
+						"0": { "name": "string.quoted.double.java" }
+					},
+					"patterns": [
+						{ "include": "text.xml" }
+					]
+				}
+			]
+		}
+	],
+	"scopeName": "inline.xml"
+}
