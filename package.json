@@ -242,6 +242,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.xml": "xml"
         }
+      },
+      {
+        "injectTo": [
+          "source.java"
+        ],
+        "scopeName": "inline.yaml",
+        "path": "./language-support/yaml/inline-yaml.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.yaml": "yaml"
+        }
       }
     ],
     "jsonValidation": [
