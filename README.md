@@ -209,6 +209,7 @@ The following settings are supported:
 * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(disable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
 * `java.compile.nullAnalysis.nonnull`: Specify the Nonnull annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
 * `java.compile.nullAnalysis.nullable`: Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
+* `java.compile.nullAnalysis.nonnullbydefault`: Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
 * `java.import.maven.offline.enabled`: Enable/disable the Maven offline mode. Defaults to `false`.
 * `java.codeAction.sortMembers.avoidVolatileChanges`: Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring. Defaults to `true`.
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
@@ -238,9 +239,6 @@ The following settings are supported:
   - `manual`: Manually reload the sources of the open class files
 * `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
-
-New in 1.26.0
-* `java.compile.nullAnalysis.nonnullbydefault`: Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
 
 Semantic Highlighting
 ===============
