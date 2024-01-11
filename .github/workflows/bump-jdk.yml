@@ -24,6 +24,9 @@ jobs:
 
       - name: Check and update JDK version
         run: |
+          if [ -f latest_jdk.txt ]; then
+            rm latest_jdk.txt  # Remove previous records
+          fi
           python .github/scripts/check_and_update_jdk.py
           
       - name: Read latest JDK version from file
