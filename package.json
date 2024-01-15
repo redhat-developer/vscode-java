@@ -210,7 +210,7 @@
       },
       {
         "language": "gradle-kotlin-dsl",
-        "scopeName": "source.kotlin",
+        "scopeName": "source.gradle-kotlin-dsl",
         "path": "./language-support/kotlin/kotlin.tmLanguage.json"
       },
       {
