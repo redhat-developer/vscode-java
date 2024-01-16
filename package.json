@@ -252,6 +252,16 @@
         "embeddedLanguages": {
           "meta.embedded.block.yaml": "yaml"
         }
+      },
+      {
+        "injectTo": [
+          "source.java"
+        ],
+        "scopeName": "inline.html",
+        "path": "./language-support/html/inline-html.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.html": "html"
+        }
       }
     ],
     "jsonValidation": [
