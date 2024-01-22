@@ -299,3 +299,20 @@ async function addAutoDetectedJdks(configuredJREs: any[]): Promise<any[]> {
 
 	return configuredJREs;
 }
+
+export function resolveActualCause(callstack: any): any {
+	if (!callstack) {
+		return;
+	}
+
+	const callstacks = callstack.split(/\r?\n/);
+	if (callstacks?.length) {
+		for (let i = callstacks.length - 1; i >= 0; i--) {
+			if (callstacks[i]?.startsWith("Caused by:")) {
+				return callstacks.slice(i).join("\n");
+			}
+		}
+	}
+
+	return callstack;
+}
