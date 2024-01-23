@@ -7,8 +7,7 @@ on:
   issue_comment:
     types: [created]
   schedule:
-    # every morning at 00:00 am
-    - cron: '0 0 * * *'
+    - cron: '0 10 * * *'
 
 jobs:
   noResponse:
@@ -17,7 +16,7 @@ jobs:
       - uses: lee-dohm/no-response@9bb0a4b5e6a45046f00353d5de7d90fb8bd773bb #v0.5.0
         with:
           token: ${{ github.token }}
-          daysUntilClose: 14 # Number of days of inactivity before an Issue is closed for lack of response
+          daysUntilClose: 30 # Number of days of inactivity before an Issue is closed for lack of response
           responseRequiredLabel: "need info" # Label indicating that a response from the original author is required
           closeComment: >
             This issue has been closed automatically because it needs more information and has not had recent activity. Please reach out if you have or find the answers we need so that we can investigate further.
