@@ -1,11 +1,12 @@
 'use strict';
 
 import * as fs from 'fs';
-import * as path from 'path';
-import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
-import { Commands } from './commands';
 import { IJavaRuntime } from 'jdk-utils';
+import * as path from 'path';
+import { Uri, WorkspaceConfiguration, commands, version, workspace } from 'vscode';
+import { Commands } from './commands';
 import { getSupportedJreNames, listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
+import glob = require('glob');
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
@@ -315,4 +316,9 @@ export function resolveActualCause(callstack: any): any {
 	}
 
 	return callstack;
+}
+
+export function hasWorkspaceImproperlyExited(workspacePath: string): boolean {
+	const result = new glob.GlobSync(`${workspacePath}/.metadata/.plugins/org.eclipse.core.resources/*.snap`);
+	return result.found.length > 0;
 }

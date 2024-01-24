@@ -1,5 +1,6 @@
 'use strict';
 
+import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import * as chokidar from 'chokidar';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
@@ -9,35 +10,34 @@ import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, Even
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
+import { BuildFileSelector, cleanupProjectPickerCache, PICKED_BUILD_FILES } from './buildFilesSelector';
 import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands } from './commands';
+import { getMessage } from './errorUtils';
 import { ClientStatus, ExtensionAPI, TraceEvent } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
+import { JavaClassEditorProvider } from './javaClassEditor';
 import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
+import { loadSupportedJreNames } from './jdkUtils';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { OutputInfoCollector } from './outputInfoCollector';
+import { pasteFile } from './pasteAction';
 import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
 import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider } from './serverStatusBarProvider';
-import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, getImportMode, onConfigurationChange, ServerMode, ImportMode } from './settings';
+import { activationProgressNotification } from "./serverTaskPresenter";
+import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getImportMode, getJavaServerMode, handleTextDocumentChanges, ImportMode, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
-import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, resolveActualCause } from './utils';
-import glob = require('glob');
 import { Telemetry } from './telemetry';
-import { getMessage } from './errorUtils';
-import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
-import { activationProgressNotification } from "./serverTaskPresenter";
-import { loadSupportedJreNames } from './jdkUtils';
-import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
-import { pasteFile } from './pasteAction';
+import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, hasWorkspaceImproperlyExited, resolveActualCause } from './utils';
+import glob = require('glob');
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -328,16 +328,29 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 			}));
 
-			if (cleanWorkspaceExists) {
-				const data = {};
-				try {
-					cleanupLombokCache(context);
-					cleanupProjectPickerCache(context);
-					deleteDirectory(workspacePath);
-					deleteDirectory(syntaxServerWorkspacePath);
-				} catch (error) {
-					data['error'] = getMessage(error);
-					window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
+			const workspaceImproperlyExited = hasWorkspaceImproperlyExited(workspacePath);
+			if (cleanWorkspaceExists || workspaceImproperlyExited) {
+				if (workspaceImproperlyExited) {
+					apiManager.fireTraceEvent({
+						name: 'java.ls.error.notification',
+						properties: {
+							message: "The workspace exited with unsaved changes in the previous session.",
+						},
+					});
+				}
+				const data = {
+					reason: workspaceImproperlyExited ? 'automatic' : 'manual'
+				};
+				if (cleanWorkspaceExists) {
+					try {
+						cleanupLombokCache(context);
+						cleanupProjectPickerCache(context);
+						deleteDirectory(workspacePath);
+						deleteDirectory(syntaxServerWorkspacePath);
+					} catch (error) {
+						data['error'] = getMessage(error);
+						window.showErrorMessage(`Failed to delete ${workspacePath}: ${error}`);
+					}
 				}
 				await Telemetry.sendTelemetry(Commands.CLEAN_WORKSPACE, data);
 			}
