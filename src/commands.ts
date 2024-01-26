@@ -350,4 +350,18 @@ export namespace Commands {
      */
     export const RESOLVE_PASTED_TEXT = "java.project.resolveText";
 
+    /**
+     * The command when clicking the server status bar item.
+     */
+    export const OPEN_STATUS_SHORTCUT = "_java.openShortcuts";
+
+}
+
+/**
+ * Command titles used to render in the UI
+ */
+export namespace CommandTitle {
+    export const OPEN_JAVA_SETTINGS = "$(settings-gear) Open Java Settings";
+    export const OPEN_LOGS = "$(output) Open Logs...";
+    export const CLEAN_WORKSPACE_CACHE = "$(trash) Clean Workspace Cache";
 }

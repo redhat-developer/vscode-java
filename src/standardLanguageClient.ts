@@ -75,13 +75,11 @@ export class StandardLanguageClient {
 
 		serverStatus.initialize();
 		serverStatus.onServerStatusChanged(status => {
-			if (status === ServerStatusKind.busy) {
-				serverStatusBarProvider.setBusy();
-			} else if (status === ServerStatusKind.error) {
+			if (status === ServerStatusKind.error) {
 				serverStatusBarProvider.setError();
 			} else if (status === ServerStatusKind.warning) {
 				serverStatusBarProvider.setWarning();
-			} else {
+			} else if (status === ServerStatusKind.ready) {
 				serverStatusBarProvider.setReady();
 			}
 		});
@@ -180,9 +178,6 @@ export class StandardLanguageClient {
 				case 'Message':
 					// message goes to progress report instead
 					break;
-			}
-			if (!serverStatus.hasErrors()) {
-				serverStatusBarProvider.updateTooltip(report.message);
 			}
 		});
 
