@@ -17,7 +17,6 @@ class ServerStatusBarProvider implements Disposable {
 	public showLightWeightStatus(): void {
 		this.statusBarItem.name = "Java Server Mode";
 		this.statusBarItem.text = `${StatusIcon.lightWeight} Java: Lightweight Mode`;
-		this.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
 		this.statusBarItem.command = StatusCommands.switchToStandardCommand;
 		this.statusBarItem.tooltip = "Java language server is running in LightWeight mode, click to switch to Standard mode";
 	}
@@ -25,7 +24,6 @@ class ServerStatusBarProvider implements Disposable {
 	public showNotImportedStatus(): void {
 		this.statusBarItem.name = "No projects are imported";
 		this.statusBarItem.text = `${StatusIcon.notImported} Java: No Projects Imported`;
-		this.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
 		this.statusBarItem.command = StatusCommands.startStandardServerCommand;
 		this.statusBarItem.tooltip = "No projects are imported, click to load projects";
 	}
@@ -33,7 +31,6 @@ class ServerStatusBarProvider implements Disposable {
 	public setBusy(process: string): void {
 		this.statusBarItem.text = `${StatusIcon.busy} Java: ${process}`;
 		this.statusBarItem.tooltip = process;
-		this.statusBarItem.backgroundColor = undefined;
 		this.statusBarItem.command = {
 			title: "Show Java status menu",
 			command: Commands.OPEN_STATUS_SHORTCUT,
@@ -44,7 +41,6 @@ class ServerStatusBarProvider implements Disposable {
 
 	public setError(): void {
 		this.statusBarItem.text = `${StatusIcon.java} Java: Error`;
-		this.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.errorBackground");
 		this.statusBarItem.tooltip = "Show Java status menu";
 		this.statusBarItem.command = {
 			title: "Show Java status menu",
@@ -56,7 +52,6 @@ class ServerStatusBarProvider implements Disposable {
 
 	public setWarning(): void {
 		this.statusBarItem.text = `${StatusIcon.java} Java: Warning`;
-		this.statusBarItem.backgroundColor = new ThemeColor("statusBarItem.warningBackground");
 		this.statusBarItem.tooltip = "Show Java status menu";
 		this.statusBarItem.command = {
 			title: "Show Java status menu",
