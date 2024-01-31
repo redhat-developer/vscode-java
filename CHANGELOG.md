@@ -1,5 +1,20 @@
 # Change Log
 
+## 1.27.0 (February 1st, 2024)
+ * enhancement - Make the server status bar item more user friendly. See [#3473](https://github.com/redhat-developer/vscode-java/issues/3473).
+ * enhancement - Support syntax highlight for embedded HTML. See [#3465](https://github.com/redhat-developer/vscode-java/pull/3465).
+ * enhancement - Add Unnamed patterns and variables (Java 21) preview support. See [JLS#2963](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2963).
+ * enhancement - Add quick fixes for for suppressing warnings using `@SuppressWarnings`. See [JLS#2698](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2698).
+ * enhancement - Add quick fixes for uninitialized `final` fields. See [JLS#1328](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1328).
+ * enhancement - Add support for externally provided `lifecycle-mapping-metadata.xml` file. See [#3393](https://github.com/redhat-developer/vscode-java/issues/3393).
+ * bug fix - Allow generic snippets to be returned when completion token is `null`. See [#3466](https://github.com/redhat-developer/vscode-java/issues/3466).
+ * bug fix - Allow to import the newly created maven submodule within a multi-module project. See [#3464](https://github.com/redhat-developer/vscode-java/issues/3464).
+ * bug fix - Use `source.gradle-kotlin-dsl` instead of `source.kotlin` to avoid clashes with other Kotlin grammars. See [#3463](https://github.com/redhat-developer/vscode-java/pull/3463).
+ * bug fix - Log the error details when initialization fails. See [#3472](https://github.com/redhat-developer/vscode-java/pull/3472).
+ * bug fix - Avoid string concatenation with `Runtime.getRuntime().exec(..)`. See [JLS#3022](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3022).
+ * dependencies - Adopt the Lombok 1.18.31 edge release. See [#3461](https://github.com/redhat-developer/vscode-java/pull/3461).
+ * build -  Automatically suggest updates based on JDT-LS Java language support. See [#3402](https://github.com/redhat-developer/vscode-java/pull/3402).
+
 ## 1.26.0 (January 11th, 2024)
  * performance - Reduce delegate command calls when classpath changes. See [#3439](https://github.com/redhat-developer/vscode-java/pull/3439).
  * performance - Ensure initial import of projects respect resource filter settings. See [#2972](https://github.com/redhat-developer/vscode-java/issues/2972).
