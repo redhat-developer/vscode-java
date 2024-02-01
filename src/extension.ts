@@ -5,12 +5,12 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, QuickPickItemKind, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
 import { ClientErrorHandler } from './clientErrorHandler';
-import { Commands } from './commands';
+import { Commands, CommandTitle } from './commands';
 import { ClientStatus, ExtensionAPI, TraceEvent } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
 import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
@@ -23,7 +23,7 @@ import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
-import { serverStatusBarProvider } from './serverStatusBarProvider';
+import { serverStatusBarProvider, ShortcutQuickPickItem } from './serverStatusBarProvider';
 import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, getImportMode, onConfigurationChange, ServerMode, ImportMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { JavaClassEditorProvider } from './javaClassEditor';
@@ -38,6 +38,7 @@ import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
 import { pasteFile } from './pasteAction';
+import { ServerStatusKind } from './serverStatus';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -343,6 +344,50 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			}
 
 			// Register commands here to make it available even when the language client fails
+			context.subscriptions.push(commands.registerCommand(Commands.OPEN_STATUS_SHORTCUT, async (status: string) => {
+				const items: ShortcutQuickPickItem[] = [];
+				let statusCommand: string;
+				if (status === ServerStatusKind.error || status === ServerStatusKind.warning) {
+					statusCommand = "workbench.panel.markers.view.focus";
+				} else {
+					statusCommand = Commands.SHOW_SERVER_TASK_STATUS;
+				}
+
+				items.push({
+					label: `$(coffee) Java Status: ${status}`,
+					command: statusCommand,
+				}, {
+					label: "",
+					kind: QuickPickItemKind.Separator,
+					command: "",
+				}, {
+					label: CommandTitle.OPEN_JAVA_SETTINGS,
+					command: "workbench.action.openSettings",
+					args: ["java"],
+				}, {
+					label: CommandTitle.OPEN_LOGS,
+					command: Commands.OPEN_LOGS,
+				}, {
+					label: CommandTitle.CLEAN_WORKSPACE_CACHE,
+					command: Commands.CLEAN_WORKSPACE
+				});
+
+				const choice = await window.showQuickPick(items);
+				if (!choice) {
+					return;
+				}
+
+				apiManager.fireTraceEvent({
+					name: "triggerShortcutCommand",
+					properties: {
+						message: choice.command,
+					},
+				});
+
+				if (choice.command) {
+					commands.executeCommand(choice.command, ...(choice.args || []));
+				}
+			}));
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_LOG, (column: ViewColumn) => openServerLogFile(storagePath, column)));
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDOUT_LOG, (column: ViewColumn) => openRollingServerLogFile(storagePath, '.out-jdt.ls', column)));
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_SERVER_STDERR_LOG, (column: ViewColumn) => openRollingServerLogFile(storagePath, '.error-jdt.ls', column)));
@@ -510,7 +555,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 	standardClient.start().then(async () => {
 		standardClient.registerLanguageClientActions(context, await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins")), jdtEventEmitter);
 	});
-	serverStatusBarProvider.showStandardStatus();
+	serverStatusBarProvider.setBusy("Activating...");
 }
 
 async function workspaceContainsBuildFiles(): Promise<boolean> {
