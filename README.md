@@ -193,6 +193,7 @@ The following settings are supported:
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
 * `java.configuration.maven.globalSettings` : Path to Maven's global settings.xml.
+* `java.configuration.maven.lifecycleMappings` : Path to Maven's lifecycle mappings xml.
 * `java.eclipse.downloadSources` : Enable/disable download of Maven source artifacts for Eclipse projects.
 * `java.references.includeDecompiledSources` : Include the decompiled sources when finding references. Default to true.
 * `java.project.sourcePaths`: Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.
@@ -239,9 +240,6 @@ The following settings are supported:
   - `manual`: Manually reload the sources of the open class files
 * `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
-
-New in 1.27.0
-* `java.configuration.maven.lifecycleMappings` : Path to Maven's lifecycle mappings xml.
 
 Semantic Highlighting
 ===============
