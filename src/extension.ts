@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, QuickPickItemKind, RelativePattern, TextDocument, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, QuickPickItemKind, RelativePattern, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -30,7 +30,6 @@ import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, resolveActualCause } from './utils';
-import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
@@ -39,6 +38,7 @@ import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
+import glob = require('glob');
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -399,7 +399,16 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_FORMATTER, async () => openFormatter(context.extensionPath)));
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_FILE, async (uri: string) => {
 				const parsedUri = Uri.parse(uri);
-				await window.showTextDocument(parsedUri);
+				const editor = await window.showTextDocument(parsedUri);
+				// Reveal the document at the specified line, if possible (e.g. jumping to a specific javadoc method).
+				if (editor && parsedUri.scheme === 'jdt' && parsedUri.fragment) {
+					const line = parseInt(parsedUri.fragment);
+					if (isNaN(line) || line < 1 || line > editor.document.lineCount) {
+						return;
+					}
+					const range = editor.document.lineAt(line -1).range;
+					editor.revealRange(range, TextEditorRevealType.AtTop);
+				}
 			}));
 
 			context.subscriptions.push(commands.registerCommand(Commands.CLEAN_WORKSPACE, (force?: boolean) => cleanWorkspace(workspacePath, force)));
