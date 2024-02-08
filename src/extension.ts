@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
+import * as semver from 'semver';
 import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, QuickPickItemKind, RelativePattern, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
@@ -13,7 +14,7 @@ import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands, CommandTitle } from './commands';
 import { ClientStatus, ExtensionAPI, TraceEvent } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
-import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable } from './javaServerStarter';
+import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable, removeEquinoxFragmentOnDarwinX64 } from './javaServerStarter';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
@@ -30,6 +31,7 @@ import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, resolveActualCause } from './utils';
+import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
@@ -38,7 +40,6 @@ import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
-import glob = require('glob');
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -138,6 +139,17 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	registerOutOfMemoryDetection(storagePath);
 
 	cleanJavaWorkspaceStorage();
+
+	// https://github.com/redhat-developer/vscode-java/issues/3484
+	if (process.platform === 'darwin' && process.arch === 'x64') {
+		try {
+			if (semver.lt(os.release(), '20.0.0')) {
+				removeEquinoxFragmentOnDarwinX64(context);
+			}
+		} catch (error) {
+			// do nothing
+		}
+	}
 
 	return requirements.resolveRequirements(context).catch(error => {
 		// show error
