@@ -4,6 +4,7 @@ import { Disposable, ExtensionContext, TextEditorRevealType, Uri, ViewColumn, co
 import { CodeActionParams, WorkspaceEdit } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands } from './commands';
+import { getActiveLanguageClient } from './extension';
 import {
     AccessorCodeActionParams,
     AccessorCodeActionRequest,
@@ -13,6 +14,7 @@ import {
     CheckDelegateMethodsStatusRequest,
     CheckHashCodeEqualsStatusRequest,
     CheckToStringStatusRequest,
+    CleanupRequest,
     GenerateAccessorsRequest,
     GenerateConstructorsRequest,
     GenerateDelegateMethodsRequest,
@@ -20,12 +22,10 @@ import {
     GenerateToStringRequest,
     ImportCandidate, ImportSelection,
     ListOverridableMethodsRequest,
-    CleanupRequest,
     OrganizeImportsRequest,
     VariableBinding
 } from './protocol';
 import { applyWorkspaceEdit } from './standardLanguageClient';
-import { getActiveLanguageClient } from './extension';
 
 export function registerCommands(languageClient: LanguageClient, context: ExtensionContext) {
     registerOverrideMethodsCommand(languageClient, context);
@@ -215,7 +215,7 @@ function registerGenerateToStringCommand(languageClient: LanguageClient, context
             const fieldItems = result.fields.map((field) => {
                 return {
                     label: `${field.name}: ${field.type}`,
-                    picked: true,
+                    picked: field.isSelected,
                     originalField: field
                 };
             });
