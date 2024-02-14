@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.28.0 (February 15th, 2024)
+ * enhancement - Unnamed classes & instance `main` methods (Java 21) preview support. See [JLS#3042](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3042).
+ * enhancement - Add support for activating cleanup actions through keyboard shortcut. See [#3424](https://github.com/redhat-developer/vscode-java/issues/3424).
+ * enhancement - Jump to specific position of `.class` when clicking on Javadoc link. See [#3490](https://github.com/redhat-developer/vscode-java/pull/3490).
+ * bug fix - Fix startup failure on macOS (x64) 10.15 or older. See [#3484](https://github.com/redhat-developer/vscode-java/issues/3484).
+ * bug fix - Support Gradle 8.5 with Java 21. See [#3470](https://github.com/redhat-developer/vscode-java/issues/3470).
+
 ## 1.27.0 (February 1st, 2024)
  * enhancement - Make the server status bar item more user friendly. See [#3473](https://github.com/redhat-developer/vscode-java/issues/3473).
  * enhancement - Support syntax highlight for embedded HTML. See [#3465](https://github.com/redhat-developer/vscode-java/pull/3465).
