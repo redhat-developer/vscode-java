@@ -220,6 +220,8 @@ The following settings are supported:
 * `java.completion.matchCase`: Specify whether to match case for code completion. Defaults to `firstLetter`.
 * `java.compile.nullAnalysis.mode`: Specify how to enable the annotation-based null analysis. Supported values are `disabled` (disable the null analysis), `interactive` (asks when null annotation types are detected), `automatic` (automatically enable null analysis when null annotation types are detected). Defaults to `interactive`.
 * `java.cleanup.actionsOnSave`: **Deprecated, please use 'java.cleanup.actions' instead.** The list of clean ups to be run on the current document when it's saved. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
+* `java.cleanup.actions`: The list of clean ups to be run on the current document when it's saved or when the cleanup command is issued. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
+* `java.saveActions.cleanup`: Enable/disable cleanup actions on save.
 * `java.import.gradle.annotationProcessing.enabled`: Enable/disable the annotation processing on Gradle projects and delegate to JDT APT. Only works for Gradle 5.2 or higher.
 * `java.sharedIndexes.enabled`: [Experimental] Specify whether to share indexes between different workspaces. Defaults to `auto` and the shared indexes is automatically enabled in Visual Studio Code - Insiders.
   - auto
@@ -241,9 +243,6 @@ The following settings are supported:
 * `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
 
-New in 1.28.1
-* `java.cleanup.actions`: The list of clean ups to be run on the current document when it's saved or when the cleanup command is issued. Clean ups can automatically fix code style or programming mistakes. [Click here](document/_java.learnMoreAboutCleanUps.md#java-clean-ups) to learn more about what each clean up does.
-* `java.saveActions.cleanup`: Enable/disable cleanup actions on save.
 
 Semantic Highlighting
 ===============
