@@ -38,12 +38,12 @@ jobs:
     outputs:
         repo-cache-hit: ${{ steps.cache-last-commit.outputs.cache-hit }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: 'eclipse-jdtls/eclipse.jdt.ls'
           fetch-depth: 2
           path: eclipse.jdt.ls
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: 'redhat-developer/vscode-java'
           fetch-depth: 2
@@ -56,7 +56,7 @@ jobs:
           git rev-parse HEAD >> ../lastCommit
       - name: Check New Changes
         id: cache-last-commit
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: lastCommit
           key: lastCommit-${{ hashFiles('lastCommit') }}
@@ -67,11 +67,11 @@ jobs:
     steps:
       - name: Checkout JDT-LS
         if: "${{ inputs.JDT_LS_VERSION == '' }}"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           repository: eclipse-jdtls/eclipse.jdt.ls
       - name: Cache Maven local repository
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -79,7 +79,7 @@ jobs:
             !~/.m2/repository/org/eclipse/jdt/ls
           key: maven-local-${{ hashFiles('**/pom.xml') }}
       - name: Set Up Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -90,9 +90,9 @@ jobs:
           mkdir ../staging
           cp org.eclipse.jdt.ls.product/distro/jdt-language-server-*.tar.gz ../staging
       - name: Check Out VS Code Java
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Set Up NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
       - name: Install NodeJS dependencies
@@ -145,7 +145,7 @@ jobs:
           vsce package ${{ env.publishPreReleaseFlag }} -o vscode-java-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           ls -lash *.vsix
       - name: Upload VSIX Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: vscode-java
           path: |
@@ -169,14 +169,14 @@ jobs:
     needs: packaging-job
     steps:
       - name: Set Up NodeJS
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
       - name: Install dependencies
         run: |
           npm install -g typescript "@vscode/vsce" "ovsx"
       - name: Download VSIX & JDT-LS
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       - name: Publish to VS Code Marketplace
         if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' || inputs.publishPreRelease == 'true' }}
         run: |
