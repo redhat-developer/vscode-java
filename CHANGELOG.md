@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.28.0 (February 15th, 2024)
+## 1.28.1 (February 15th, 2024)
  * enhancement - Unnamed classes & instance `main` methods (Java 21) preview support. See [JLS#3042](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3042).
  * enhancement - Add support for activating cleanup actions through keyboard shortcut. See [#3424](https://github.com/redhat-developer/vscode-java/issues/3424).
  * enhancement - Jump to specific position of `.class` when clicking on Javadoc link. See [#3490](https://github.com/redhat-developer/vscode-java/pull/3490).
