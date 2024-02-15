@@ -181,13 +181,13 @@ jobs:
         if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' || inputs.publishPreRelease == 'true' }}
         run: |
           for platformVsix in vscode-java/java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
-            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+            vsce publish --skip-duplicate -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
           done
-          vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
+          vsce publish --skip-duplicate -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
       - name: Publish to OpenVSX Registry
         if: ${{ github.event_name == 'schedule' || inputs.publishToOVSX == 'true' || inputs.publishPreRelease == 'true' }}
         run: |
           for platformVsix in vscode-java/java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
-            ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+            ovsx publish --skip-duplicate -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
           done
-          ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }}  --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
+          ovsx publish --skip-duplicate -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }}  --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
