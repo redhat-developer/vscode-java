@@ -1235,10 +1235,11 @@
               "lambdaExpressionFromAnonymousClass",
               "lambdaExpression",
               "switchExpression",
-              "tryWithResource"
+              "tryWithResource",
+              "renameFile"
             ]
           },
-          "default": [],
+          "default": ["renameFile"],
           "scope": "window",
           "order": 10
         },
