@@ -338,6 +338,11 @@ export class StandardLanguageClient {
 			apiManager.fireTraceEvent(e);
 			if (e.name === Telemetry.SERVER_INITIALIZED_EVT) {
 				return Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, e.properties);
+			} else if (e.name === Telemetry.LS_ERROR) {
+				const exception: string = e?.properties.exception;
+				if (exception !== undefined && exception.includes("dtree.ObjectNotFoundException")) {
+					return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
+				}
 			}
 		});
 

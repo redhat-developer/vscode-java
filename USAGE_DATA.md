@@ -16,6 +16,7 @@ vscode-java has opt-in telemetry collection, provided by [vscode-redhat-telemetr
  * The total size (in bytes) of libraries that were indexed after project initialization
  * The number of error markers on the project(s)
  * The number of unresolved imports within the project(s)
+ * Errors relating to running the language server, such as the message & stacktrace
  * Whether there is a mismatch between the project's requested source level, and the JDK used for the project (eg. true)
  * Information about the following settings. In the case of settings that store a well defined value (eg. path/url/string), we simply collect whether the setting has been set.
    * `java.settings.url`, `java.format.settings.url`, `java.quickfix.showAt`, `java.symbols.includeSourceMethodDeclarations`, `java.completion.collapseCompletionItems`, `java.completion.guessMethodArguments`, `java.completion.postfix.enabled`, `java.cleanup.actionsOnSave`, `java.sharedIndexes.enabled`, `java.inlayHints.parameterNames.enabled`, `java.server.launchMode`, `java.autobuild.enabled`

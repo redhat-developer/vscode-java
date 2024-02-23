@@ -9,6 +9,7 @@ export namespace Telemetry {
 	export const STARTUP_EVT = "startup";
 	export const COMPLETION_EVENT = "textCompletion";
 	export const SERVER_INITIALIZED_EVT = "java.workspace.initialized";
+	export const LS_ERROR = "java.ls.error";
 	let telemetryManager: TelemetryService = null;
 	let serverInitializedReceived = false;
 
