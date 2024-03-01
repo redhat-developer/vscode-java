@@ -340,9 +340,17 @@ export class StandardLanguageClient {
 			if (e.name === Telemetry.SERVER_INITIALIZED_EVT) {
 				return Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, e.properties);
 			} else if (e.name === Telemetry.LS_ERROR) {
+				const tags = [];
 				const exception: string = e?.properties.exception;
-				if (exception !== undefined && exception.includes("dtree.ObjectNotFoundException")) {
-					return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
+				if (exception !== undefined) {
+					if (exception.includes("dtree.ObjectNotFoundException")) {
+						tags.push("dtree.ObjectNotFoundException");
+					}
+
+					if (tags.length > 0) {
+						e.properties['tags'] = tags;
+						return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
+					}
 				}
 			}
 		});
