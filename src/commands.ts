@@ -362,7 +362,7 @@ export namespace Commands {
  * Command titles used to render in the UI
  */
 export namespace CommandTitle {
-    export const OPEN_JAVA_SETTINGS = "$(settings-gear) Open Java Settings";
+    export const OPEN_JAVA_SETTINGS = "$(settings-gear) Open Java Settings...";
     export const OPEN_LOGS = "$(output) Open Logs...";
-    export const CLEAN_WORKSPACE_CACHE = "$(trash) Clean Workspace Cache";
+    export const CLEAN_WORKSPACE_CACHE = "$(trash) Clean Workspace Cache...";
 }

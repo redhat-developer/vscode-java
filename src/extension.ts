@@ -366,7 +366,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 
 				items.push({
-					label: `$(coffee) Java Status: ${status}`,
+					label: `$(coffee) Status: ${status}`,
 					command: statusCommand,
 				}, {
 					label: "",
@@ -830,6 +830,8 @@ async function openLogs() {
 	await commands.executeCommand(Commands.OPEN_SERVER_LOG, ViewColumn.One);
 	await commands.executeCommand(Commands.OPEN_SERVER_STDOUT_LOG, ViewColumn.One);
 	await commands.executeCommand(Commands.OPEN_SERVER_STDERR_LOG, ViewColumn.One);
+	const client = await getActiveLanguageClient();
+	client?.outputChannel.show(true);
 }
 
 function openLogFile(logFile, openingFailureWarning: string, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
