@@ -1236,10 +1236,12 @@
               "lambdaExpression",
               "switchExpression",
               "tryWithResource",
-              "renameFile"
+              "renameFileToType"
             ]
           },
-          "default": ["renameFile"],
+          "default": [
+            "renameFileToType"
+          ],
           "scope": "window",
           "order": 10
         },
