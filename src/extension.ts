@@ -376,7 +376,10 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					command: Commands.CLEAN_WORKSPACE
 				});
 
-				const choice = await window.showQuickPick(items);
+				const choice = await window.showQuickPick(items, {
+					ignoreFocusOut: true,
+					placeHolder: "Press 'ESC' to close."
+				});
 				if (!choice) {
 					return;
 				}
