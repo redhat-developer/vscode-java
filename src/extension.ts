@@ -358,21 +358,13 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			// Register commands here to make it available even when the language client fails
 			context.subscriptions.push(commands.registerCommand(Commands.OPEN_STATUS_SHORTCUT, async (status: string) => {
 				const items: ShortcutQuickPickItem[] = [];
-				let statusCommand: string;
 				if (status === ServerStatusKind.error || status === ServerStatusKind.warning) {
-					statusCommand = "workbench.panel.markers.view.focus";
+					commands.executeCommand("workbench.panel.markers.view.focus");
 				} else {
-					statusCommand = Commands.SHOW_SERVER_TASK_STATUS;
+					commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
 				}
 
 				items.push({
-					label: `$(coffee) Status: ${status}`,
-					command: statusCommand,
-				}, {
-					label: "",
-					kind: QuickPickItemKind.Separator,
-					command: "",
-				}, {
 					label: CommandTitle.OPEN_JAVA_SETTINGS,
 					command: "workbench.action.openSettings",
 					args: ["java"],
@@ -384,7 +376,10 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					command: Commands.CLEAN_WORKSPACE
 				});
 
-				const choice = await window.showQuickPick(items);
+				const choice = await window.showQuickPick(items, {
+					ignoreFocusOut: true,
+					placeHolder: "Press 'ESC' to close."
+				});
 				if (!choice) {
 					return;
 				}
