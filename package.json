@@ -83,6 +83,21 @@
         "buildFileNames": ["build.gradle", "settings.gradle", "build.gradle.kts", "settings.gradle.kts"]
       }
     ],
+    "javaShortcuts": [
+      {
+        "title": "$(settings-gear) Open Java Settings",
+        "command": "workbench.action.openSettings",
+        "arguments": ["java"]
+      },
+      {
+        "title": "$(output) Open Logs",
+        "command": "java.open.logs"
+      },
+      {
+        "title": "$(trash) Clean Workspace Cache...",
+        "command": "java.clean.workspace"
+      }
+    ],
     "semanticTokenTypes": [
       {
         "id": "annotation",

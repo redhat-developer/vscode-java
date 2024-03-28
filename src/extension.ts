@@ -19,7 +19,7 @@ import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { OutputInfoCollector } from './outputInfoCollector';
-import { collectJavaExtensions, getBundlesToReload, isContributedPartUpdated } from './plugin';
+import { collectJavaExtensions, getBundlesToReload, getShortcuts, IJavaShortcut, isContributedPartUpdated } from './plugin';
 import { registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
@@ -364,17 +364,13 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS, true);
 				}
 
-				items.push({
-					label: CommandTitle.OPEN_JAVA_SETTINGS,
-					command: "workbench.action.openSettings",
-					args: ["java"],
-				}, {
-					label: CommandTitle.OPEN_LOGS,
-					command: Commands.OPEN_LOGS,
-				}, {
-					label: CommandTitle.CLEAN_WORKSPACE_CACHE,
-					command: Commands.CLEAN_WORKSPACE
-				});
+				items.push(...getShortcuts().map((shortcut: IJavaShortcut) => {
+					return {
+						label: shortcut.title,
+						command: shortcut.command,
+						args: shortcut.arguments,
+					};
+				}));
 
 				const choice = await window.showQuickPick(items);
 				if (!choice) {
