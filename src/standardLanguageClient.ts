@@ -698,7 +698,7 @@ export class StandardLanguageClient {
 		}));
 
 		context.subscriptions.push(commands.registerCommand(Commands.OPEN_OUTPUT, () => this.languageClient.outputChannel.show(ViewColumn.Three)));
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, () => serverTaskPresenter.presentServerTaskView()));
+		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SERVER_TASK_STATUS, (preserveFocus?: boolean) => serverTaskPresenter.presentServerTaskView(preserveFocus)));
 	}
 
 	public start(): Promise<void> {
