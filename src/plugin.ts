@@ -25,12 +25,9 @@ export function getShortcuts(): Array<IJavaShortcut> {
 			if (extension.id === EXTENSION_ID) {
 				continue;
 			}
-			const contributesSection = extension.packageJSON['contributes'];
-			if (contributesSection) {
-				const shortcuts = contributesSection['javaShortcuts'];
-				if (shortcuts && Array.isArray(shortcuts) && shortcuts.length) {
-					javaShortcuts.push(...shortcuts);
-				}
+			const shortcuts = getShortcutsRegistration(extension);
+			if (shortcuts) {
+				javaShortcuts.push(...shortcuts);
 			}
 		}
 	}
