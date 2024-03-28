@@ -8,12 +8,12 @@ import { getJavaConfiguration } from "./utils";
 const JAVA_SERVER_TASK_PRESENTER_TASK_NAME = "Java Build Status";
 
 export namespace serverTaskPresenter {
-	export async function presentServerTaskView() {
+	export async function presentServerTaskView(preserveFocus?: boolean) {
 		const execution = await getPresenterTaskExecution();
 		const terminals = window.terminals;
 		const presenterTerminals = terminals.filter(terminal => terminal.name.indexOf(execution.task.name) >= 0);
 		if (presenterTerminals.length > 0) {
-			presenterTerminals[0].show();
+			presenterTerminals[0].show(preserveFocus);
 		}
 		activationProgressNotification.hide();
 	}

@@ -361,7 +361,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				if (status === ServerStatusKind.error || status === ServerStatusKind.warning) {
 					commands.executeCommand("workbench.panel.markers.view.focus");
 				} else {
-					commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS);
+					commands.executeCommand(Commands.SHOW_SERVER_TASK_STATUS, true);
 				}
 
 				items.push({
@@ -376,10 +376,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					command: Commands.CLEAN_WORKSPACE
 				});
 
-				const choice = await window.showQuickPick(items, {
-					ignoreFocusOut: true,
-					placeHolder: "Press 'ESC' to close."
-				});
+				const choice = await window.showQuickPick(items);
 				if (!choice) {
 					return;
 				}
