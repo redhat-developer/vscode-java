@@ -76,11 +76,18 @@
     "javaBuildTools": [
       {
         "displayName": "Maven",
-        "buildFileNames": ["pom.xml"]
+        "buildFileNames": [
+          "pom.xml"
+        ]
       },
       {
         "displayName": "Gradle",
-        "buildFileNames": ["build.gradle", "settings.gradle", "build.gradle.kts", "settings.gradle.kts"]
+        "buildFileNames": [
+          "build.gradle",
+          "settings.gradle",
+          "build.gradle.kts",
+          "settings.gradle.kts"
+        ]
       }
     ],
     "semanticTokenTypes": [
@@ -270,1185 +277,1188 @@
         "url": "./schemas/package.schema.json"
       }
     ],
-    "configuration":[{
-      "id": "java-startup",
-      "title": "Startup",
-      "order": 10,
-      "properties": {
-        "java.home": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Specifies the folder path to the JDK (17 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-17.0_3\"",
-          "scope": "machine-overridable",
-          "deprecationMessage": "This setting is deprecated, please use 'java.jdt.ls.java.home' instead.",
-          "order": 0
-        },
-        "java.jdt.ls.java.home": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": null,
-          "description": "Specifies the folder path to the JDK (17 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-17.0_3\"",
-          "scope": "machine-overridable",
-          "order": 10
-        },
-        "java.jdt.ls.vmargs": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "default": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m -Xlog:disable",
-          "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m -Xlog:disable` to optimize memory usage with the parallel garbage collector",
-          "scope": "machine-overridable",
-          "order": 20
-        },
-        "java.server.launchMode": {
-          "type": "string",
-          "enum": [
-            "Standard",
-            "LightWeight",
-            "Hybrid"
-          ],
-          "enumDescriptions": [
-            "Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc.",
-            "Starts a syntax server with lower start-up cost. Only provides syntax features such as outline, navigation, javadoc, syntax errors.",
-            "Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready."
-          ],
-          "description": "The launch mode for the Java extension",
-          "default": "Hybrid",
-          "scope": "window",
-          "order": 30
-        },
-        "java.configuration.workspaceCacheLimit": {
-          "type": [
-            "null",
-            "integer"
-          ],
-          "default": 90,
-          "minimum": 1,
-          "description": "The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.",
-          "scope": "application",
-          "order": 40
-        },
-        "java.sharedIndexes.enabled": {
-          "type": "string",
-          "enum": [
-            "auto",
-            "on",
-            "off"
-          ],
-          "default": "auto",
-          "markdownDescription": "[Experimental] Specify whether to share indexes between different workspaces. When set to `auto`, shared indexes will be enabled in Visual Studio Code - Insiders.",
-          "scope": "window",
-          "order": 50
-        },
-        "java.sharedIndexes.location": {
-          "type": "string",
-          "markdownDescription": "Specifies a common index location for all workspaces. See default values as follows:\n \nWindows: First use `\"$APPDATA\\\\.jdt\\\\index\"`, or `\"~\\\\.jdt\\\\index\"` if it does not exist\n \nmacOS: `\"~/Library/Caches/.jdt/index\"`\n \nLinux: First use `\"$XDG_CACHE_HOME/.jdt/index\"`, or `\"~/.cache/.jdt/index\"` if it does not exist",
-          "default": "",
-          "scope": "window",
-          "order": 60
-        },
-        "java.jdt.ls.lombokSupport.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Whether to load lombok processors from project classpath",
-          "scope": "window",
-          "order": 70
-        },
-        "java.jdt.ls.protobufSupport.enabled": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Specify whether to automatically add Protobuf output source directories to the classpath.\n\n**Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher.",
-          "scope": "window",
-          "order": 80
-        },
-        "java.jdt.ls.androidSupport.enabled": {
-          "type": "string",
-          "enum": [
-            "auto",
-            "on",
-            "off"
-          ],
-          "default": "auto",
-          "markdownDescription": "[Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders.\n\n**Note:** Only works for Android Gradle Plugin `3.2.0` or higher.",
-          "scope": "window",
-          "order": 90
-        },
-        "java.trace.server": {
-          "type": "string",
-          "enum": [
-            "off",
-            "messages",
-            "verbose"
-          ],
-          "default": "off",
-          "description": "Traces the communication between VS Code and the Java language server.",
-          "scope": "window"
-        },
-        "redhat.telemetry.enabled": {
-          "type": "boolean",
-          "default": null,
-          "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
-          "scope": "window",
-          "tags": [
-            "usesOnlineServices",
-            "telemetry"
-          ]
-        }
-      }
-    },
-    {
-      "id": "java-projectimport",
-      "title": "Project Import/Update",
-      "order": 20,
-      "properties": {
-        "java.import.projectSelection": {
-          "type": "string",
-          "enum": [
-            "manual",
-            "automatic"
-          ],
-          "enumDescriptions": [
-            "Manually select the build configuration files.",
-            "Let extension automatically scan and select the build configuration files."
-          ],
-          "default": "automatic",
-          "markdownDescription": "[Experimental] Specifies how to select build configuration files to import. \nNote: Currently, `Gradle` projects cannot be partially imported.",
-          "scope": "window",
-          "order": 10
-        },
-        "java.configuration.updateBuildConfiguration": {
-          "type": [
-            "string"
-          ],
-          "enum": [
-            "disabled",
-            "interactive",
-            "automatic"
-          ],
-          "default": "interactive",
-          "description": "Specifies how modifications on build files update the Java classpath/configuration",
-          "scope": "window",
-          "order": 20
-        },
-        "java.import.exclusions": {
-          "type": "array",
-          "description": "Configure glob patterns for excluding folders. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.",
-          "default": [
-            "**/node_modules/**",
-            "**/.metadata/**",
-            "**/archetype-resources/**",
-            "**/META-INF/maven/**"
-          ],
-          "scope": "window"
-        },
-        "java.project.resourceFilters": {
-          "type": "array",
-          "items": {
+    "configuration": [
+      {
+        "id": "java-startup",
+        "title": "Startup",
+        "order": 10,
+        "properties": {
+          "java.home": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "Specifies the folder path to the JDK (17 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-17.0_3\"",
+            "scope": "machine-overridable",
+            "deprecationMessage": "This setting is deprecated, please use 'java.jdt.ls.java.home' instead.",
+            "order": 0
+          },
+          "java.jdt.ls.java.home": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": null,
+            "description": "Specifies the folder path to the JDK (17 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-17.0_3\"",
+            "scope": "machine-overridable",
+            "order": 10
+          },
+          "java.jdt.ls.vmargs": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "default": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m -Xlog:disable",
+            "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx1G -Xms100m -Xlog:disable` to optimize memory usage with the parallel garbage collector",
+            "scope": "machine-overridable",
+            "order": 20
+          },
+          "java.server.launchMode": {
             "type": "string",
-            "pattern": "^(?!\\*).*"
-          },
-          "default": [
-            "node_modules",
-            "\\.git"
-          ],
-          "markdownDescription": "Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, [\"node_modules\",\"\\.git\"] will exclude all files and folders named `node_modules` or `.git`. Pattern expressions must be compatible with `java.util.regex.Pattern`. Defaults to [\"node_modules\",\"\\.git\"].",
-          "scope": "window"
-        },
-        "java.configuration.checkProjectSettingsExclusions": {
-          "deprecationMessage": "Please use 'java.import.generatesMetadataFilesAtProjectRoot' to control whether to generate the project metadata files at the project root. And use 'files.exclude' to control whether to hide the project metadata files from the file explorer.",
-          "type": "boolean",
-          "default": false,
-          "description": "Controls whether to exclude extension-generated project settings files (.project, .classpath, .factorypath, .settings/) from the file explorer.",
-          "scope": "window"
-        },
-        "java.import.generatesMetadataFilesAtProjectRoot": {
-          "type": "boolean",
-          "markdownDescription": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Click [HERE](command:_java.metadataFilesGeneration) to learn how to change the setting to make it take effect.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.project.importOnFirstTimeStartup": {
-          "type": "string",
-          "enum": [
-            "disabled",
-            "interactive",
-            "automatic"
-          ],
-          "default": "automatic",
-          "description": "Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time.",
-          "scope": "application"
-        },
-        "java.project.importHint": {
-          "type": "boolean",
-          "description": "Enable/disable the server-mode switch information, when Java projects import is skipped on startup.",
-          "default": true,
-          "scope": "application"
-        },
-        "java.showBuildStatusOnStart.enabled": {
-          "anyOf": [
-            {
-              "enum": [
-                "notification",
-                "terminal",
-                "off"
-              ],
-              "enumDescriptions": [
-                "Show the build status via progress notification on start",
-                "Show the build status via terminal on start",
-                "Do not show any build status on start"
-              ]
-            },
-            "boolean"
-          ],
-          "description": "Automatically show build status on startup.",
-          "default": "notification",
-          "scope": "window"
-        },
-        "java.project.encoding": {
-          "enum": [
-            "ignore",
-            "warning",
-            "setDefault"
-          ],
-          "enumDescriptions": [
-            "Ignore project encoding settings",
-            "Show warning if a project has no explicit encoding set",
-            "Set the default workspace encoding settings"
-          ],
-          "default": "ignore",
-          "markdownDescription": "Project encoding settings",
-          "scope": "window"
-        }
-      }
-    },
-    {
-      "id": "java-unmanagedfolder",
-      "title": "Unmanaged Folder",
-      "order": 30,
-      "properties": {
-        "java.project.sourcePaths": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "markdownDescription": "Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
-          "default": [],
-          "scope": "window",
-          "order": 10
-        },
-        "java.project.outputPath": {
-          "type": [
-            "string",
-            "null"
-          ],
-          "markdownDescription": "A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
-          "default": "",
-          "scope": "window",
-          "order": 20
-        },
-        "java.project.referencedLibraries": {
-          "type": [
-            "array",
-            "object"
-          ],
-          "description": "Configure glob patterns for referencing local libraries to a Java project.",
-          "default": [
-            "lib/**/*.jar"
-          ],
-          "properties": {
-            "include": {
-              "type": "array"
-            },
-            "exclude": {
-              "type": "array"
-            },
-            "sources": {
-              "type": "object"
-            }
-          },
-          "required": [
-            "include"
-          ],
-          "additionalProperties": false,
-          "scope": "window",
-          "order": 30
-        }
-      }
-    },
-    {
-      "id": "java-maven",
-      "title": "Maven",
-      "order": 40,
-      "properties": {
-        "java.import.maven.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the Maven importer.",
-          "scope": "window",
-          "order": 10
-        },
-        "java.import.maven.offline.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable the Maven offline mode.",
-          "scope": "window",
-          "order": 20
-        },
-        "java.import.maven.disableTestClasspathFlag": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects.",
-          "scope": "window",
-          "order": 30
-        },
-        "java.maven.downloadSources": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable download of Maven source artifacts as part of importing Maven projects.",
-          "scope": "window",
-          "order": 40
-        },
-        "java.maven.updateSnapshots": {
-          "type": "boolean",
-          "default": false,
-          "description": "Force update of Snapshots/Releases.",
-          "scope": "window",
-          "order": 50
-        },
-        "java.configuration.maven.userSettings": {
-          "type": "string",
-          "default": null,
-          "description": "Path to Maven's user settings.xml",
-          "scope": "window",
-          "order": 60
-        },
-        "java.configuration.maven.globalSettings": {
-          "type": "string",
-          "default": null,
-          "description": "Path to Maven's global settings.xml",
-          "scope": "window",
-          "order": 70
-        },
-        "java.configuration.maven.notCoveredPluginExecutionSeverity": {
-          "type": "string",
-          "enum": [
-            "ignore",
-            "warning",
-            "error"
-          ],
-          "default": "warning",
-          "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
-          "scope": "window",
-          "order": 80
-        },
-        "java.configuration.maven.defaultMojoExecutionAction": {
-          "type": "string",
-          "enum": [
-            "ignore",
-            "warn",
-            "error",
-            "execute"
-          ],
-          "default": "ignore",
-          "description": "Specifies default mojo execution action when no associated metadata can be detected.",
-          "scope": "window",
-          "order": 90
-        },
-        "java.configuration.maven.lifecycleMappings": {
-          "type": "string",
-          "default": null,
-          "description": "Path to Maven's lifecycle mappings xml",
-          "scope": "window",
-          "order": 100
-        }
-      }
-    },
-    {
-      "id": "java-gradle",
-      "title": "Gradle",
-      "order": 50,
-      "properties": {
-        "java.import.gradle.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the Gradle importer.",
-          "scope": "window",
-          "order": 10
-        },
-        "java.import.gradle.wrapper.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Use Gradle from the 'gradle-wrapper.properties' file.",
-          "scope": "window",
-          "order": 20
-        },
-        "java.import.gradle.version": {
-          "type": "string",
-          "default": null,
-          "description": "Use Gradle from the specific version if the Gradle wrapper is missing or disabled.",
-          "scope": "window",
-          "order": 30
-        },
-        "java.import.gradle.home": {
-          "type": "string",
-          "default": null,
-          "description": "Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.",
-          "scope": "machine-overridable",
-          "order": 40
-        },
-        "java.import.gradle.java.home": {
-          "type": "string",
-          "default": null,
-          "description": "The location to the JVM used to run the Gradle daemon.",
-          "scope": "machine-overridable",
-          "order": 50
-        },
-        "java.import.gradle.user.home": {
-          "type": "string",
-          "default": null,
-          "description": "Setting for GRADLE_USER_HOME.",
-          "scope": "window",
-          "order": 55
-        },
-        "java.import.gradle.offline.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable the Gradle offline mode.",
-          "scope": "window",
-          "order": 60
-        },
-        "java.import.gradle.arguments": {
-          "type": "string",
-          "default": null,
-          "description": "Arguments to pass to Gradle.",
-          "scope": "machine",
-          "order": 70
-        },
-        "java.import.gradle.jvmArguments": {
-          "type": "string",
-          "default": null,
-          "description": "JVM arguments to pass to Gradle.",
-          "scope": "machine",
-          "order": 80
-        },
-        "java.import.gradle.annotationProcessing.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the annotation processing on Gradle projects and delegate Annotation Processing to JDT APT. Only works for Gradle 5.2 or higher.",
-          "scope": "window",
-          "order": 90
-        },
-        "java.imports.gradle.wrapper.checksums": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "default": {},
-            "required": [
-              "sha256"
+            "enum": [
+              "Standard",
+              "LightWeight",
+              "Hybrid"
             ],
-            "properties": {
-              "sha256": {
-                "type": "string",
-                "label": "SHA-256 checksum."
-              },
-              "allowed": {
-                "type": "boolean",
-                "default": true,
-                "label": "Is allowed?"
-              }
-            },
-            "additionalProperties": false,
-            "uniqueItems": true
-          },
-          "description": "Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers",
-          "default": [],
-          "scope": "application"
-        }
-      }
-    },
-    {
-      "id": "java-build",
-      "title": "Build",
-      "order": 60,
-      "properties": {
-        "java.autobuild.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the 'auto build'",
-          "scope": "window",
-          "order": 10
-        },
-        "java.maxConcurrentBuilds": {
-          "type": "integer",
-          "default": 1,
-          "description": "Max simultaneous project builds",
-          "scope": "window",
-          "minimum": 1,
-          "order": 20
-        },
-        "java.settings.url": {
-          "type": "string",
-          "markdownDescription": "Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)",
-          "default": null,
-          "scope": "window",
-          "order": 30
-        },
-        "java.compile.nullAnalysis.nonnull": {
-          "type": "array",
-          "default": [
-            "javax.annotation.Nonnull",
-            "org.eclipse.jdt.annotation.NonNull",
-            "org.springframework.lang.NonNull"
-          ],
-          "markdownDescription": "Specify the Nonnull annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
-          "scope": "window"
-        },
-        "java.compile.nullAnalysis.nullable": {
-          "type": "array",
-          "default": [
-            "javax.annotation.Nullable",
-            "org.eclipse.jdt.annotation.Nullable",
-            "org.springframework.lang.Nullable"
-          ],
-          "markdownDescription": "Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
-          "scope": "window"
-        },
-        "java.compile.nullAnalysis.nonnullbydefault": {
-          "type": "array",
-          "default": [
-            "javax.annotation.ParametersAreNonnullByDefault",
-            "org.eclipse.jdt.annotation.NonNullByDefault",
-            "org.springframework.lang.NonNullApi"
-          ],
-          "markdownDescription": "Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
-          "scope": "window"
-        },
-        "java.compile.nullAnalysis.mode": {
-          "type": "string",
-          "enum": [
-            "disabled",
-            "interactive",
-            "automatic"
-          ],
-          "default": "interactive",
-          "markdownDescription": "Specify how to enable the annotation-based null analysis.",
-          "scope": "window"
-        },
-        "java.errors.incompleteClasspath.severity": {
-          "type": [
-            "string"
-          ],
-          "enum": [
-            "ignore",
-            "info",
-            "warning",
-            "error"
-          ],
-          "default": "warning",
-          "description": "Specifies the severity of the message when the classpath is incomplete for a Java file",
-          "scope": "window"
-        }
-      }
-    },
-    {
-      "id": "java-jdks",
-      "title": "Installed JDKs",
-      "order": 70,
-      "properties": {
-        "java.configuration.runtimes": {
-          "type": "array",
-          "description": "Map Java Execution Environments to local JDKs.",
-          "items": {
-            "type": "object",
-            "default": {},
-            "required": [
-              "path",
-              "name"
+            "enumDescriptions": [
+              "Provides full features such as intellisense, refactoring, building, Maven/Gradle support etc.",
+              "Starts a syntax server with lower start-up cost. Only provides syntax features such as outline, navigation, javadoc, syntax errors.",
+              "Provides full features with better responsiveness. It starts a standard language server and a secondary syntax server. The syntax server provides syntax features until the standard server is ready."
             ],
-            "properties": {
-              "name": {
-                "type": "string",
+            "description": "The launch mode for the Java extension",
+            "default": "Hybrid",
+            "scope": "window",
+            "order": 30
+          },
+          "java.configuration.workspaceCacheLimit": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "default": 90,
+            "minimum": 1,
+            "description": "The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.",
+            "scope": "application",
+            "order": 40
+          },
+          "java.sharedIndexes.enabled": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "default": "auto",
+            "markdownDescription": "[Experimental] Specify whether to share indexes between different workspaces. When set to `auto`, shared indexes will be enabled in Visual Studio Code - Insiders.",
+            "scope": "window",
+            "order": 50
+          },
+          "java.sharedIndexes.location": {
+            "type": "string",
+            "markdownDescription": "Specifies a common index location for all workspaces. See default values as follows:\n \nWindows: First use `\"$APPDATA\\\\.jdt\\\\index\"`, or `\"~\\\\.jdt\\\\index\"` if it does not exist\n \nmacOS: `\"~/Library/Caches/.jdt/index\"`\n \nLinux: First use `\"$XDG_CACHE_HOME/.jdt/index\"`, or `\"~/.cache/.jdt/index\"` if it does not exist",
+            "default": "",
+            "scope": "window",
+            "order": 60
+          },
+          "java.jdt.ls.lombokSupport.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to load lombok processors from project classpath",
+            "scope": "window",
+            "order": 70
+          },
+          "java.jdt.ls.protobufSupport.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Specify whether to automatically add Protobuf output source directories to the classpath.\n\n**Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher.",
+            "scope": "window",
+            "order": 80
+          },
+          "java.jdt.ls.androidSupport.enabled": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "default": "auto",
+            "markdownDescription": "[Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders.\n\n**Note:** Only works for Android Gradle Plugin `3.2.0` or higher.",
+            "scope": "window",
+            "order": 90
+          },
+          "java.trace.server": {
+            "type": "string",
+            "enum": [
+              "off",
+              "messages",
+              "verbose"
+            ],
+            "default": "off",
+            "description": "Traces the communication between VS Code and the Java language server.",
+            "scope": "window"
+          },
+          "redhat.telemetry.enabled": {
+            "type": "boolean",
+            "default": null,
+            "markdownDescription": "Enable usage data and errors to be sent to Red Hat servers. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection).",
+            "scope": "window",
+            "tags": [
+              "usesOnlineServices",
+              "telemetry"
+            ]
+          }
+        }
+      },
+      {
+        "id": "java-projectimport",
+        "title": "Project Import/Update",
+        "order": 20,
+        "properties": {
+          "java.import.projectSelection": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "automatic"
+            ],
+            "enumDescriptions": [
+              "Manually select the build configuration files.",
+              "Let extension automatically scan and select the build configuration files."
+            ],
+            "default": "automatic",
+            "markdownDescription": "[Experimental] Specifies how to select build configuration files to import. \nNote: Currently, `Gradle` projects cannot be partially imported.",
+            "scope": "window",
+            "order": 10
+          },
+          "java.configuration.updateBuildConfiguration": {
+            "type": [
+              "string"
+            ],
+            "enum": [
+              "disabled",
+              "interactive",
+              "automatic"
+            ],
+            "default": "interactive",
+            "description": "Specifies how modifications on build files update the Java classpath/configuration",
+            "scope": "window",
+            "order": 20
+          },
+          "java.import.exclusions": {
+            "type": "array",
+            "description": "Configure glob patterns for excluding folders. Use `!` to negate patterns to allow subfolders imports. You have to include a parent directory. The order is important.",
+            "default": [
+              "**/node_modules/**",
+              "**/.metadata/**",
+              "**/archetype-resources/**",
+              "**/META-INF/maven/**"
+            ],
+            "scope": "window"
+          },
+          "java.project.resourceFilters": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^(?!\\*).*"
+            },
+            "default": [
+              "node_modules",
+              "\\.git"
+            ],
+            "markdownDescription": "Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, [\"node_modules\",\"\\.git\"] will exclude all files and folders named `node_modules` or `.git`. Pattern expressions must be compatible with `java.util.regex.Pattern`. Defaults to [\"node_modules\",\"\\.git\"].",
+            "scope": "window"
+          },
+          "java.configuration.checkProjectSettingsExclusions": {
+            "deprecationMessage": "Please use 'java.import.generatesMetadataFilesAtProjectRoot' to control whether to generate the project metadata files at the project root. And use 'files.exclude' to control whether to hide the project metadata files from the file explorer.",
+            "type": "boolean",
+            "default": false,
+            "description": "Controls whether to exclude extension-generated project settings files (.project, .classpath, .factorypath, .settings/) from the file explorer.",
+            "scope": "window"
+          },
+          "java.import.generatesMetadataFilesAtProjectRoot": {
+            "type": "boolean",
+            "markdownDescription": "Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Click [HERE](command:_java.metadataFilesGeneration) to learn how to change the setting to make it take effect.",
+            "default": false,
+            "scope": "window"
+          },
+          "java.project.importOnFirstTimeStartup": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "interactive",
+              "automatic"
+            ],
+            "default": "automatic",
+            "description": "Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time.",
+            "scope": "application"
+          },
+          "java.project.importHint": {
+            "type": "boolean",
+            "description": "Enable/disable the server-mode switch information, when Java projects import is skipped on startup.",
+            "default": true,
+            "scope": "application"
+          },
+          "java.showBuildStatusOnStart.enabled": {
+            "anyOf": [
+              {
                 "enum": [
-                  "J2SE-1.5",
-                  "JavaSE-1.6",
-                  "JavaSE-1.7",
-                  "JavaSE-1.8",
-                  "JavaSE-9",
-                  "JavaSE-10",
-                  "JavaSE-11",
-                  "JavaSE-12",
-                  "JavaSE-13",
-                  "JavaSE-14",
-                  "JavaSE-15",
-                  "JavaSE-16",
-                  "JavaSE-17",
-                  "JavaSE-18",
-                  "JavaSE-19",
-                  "JavaSE-20",
-                  "JavaSE-21",
-                  "JavaSE-22"
+                  "notification",
+                  "terminal",
+                  "off"
                 ],
-                "description": "Java Execution Environment name. Must be unique."
+                "enumDescriptions": [
+                  "Show the build status via progress notification on start",
+                  "Show the build status via terminal on start",
+                  "Do not show any build status on start"
+                ]
               },
-              "path": {
-                "type": "string",
-                "pattern": ".*(?<!\\/bin|\\/bin\\/|\\\\bin|\\\\bin\\\\)$",
-                "description": "JDK home path. Should be the JDK installation directory, not the Java bin path.\n On Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"."
+              "boolean"
+            ],
+            "description": "Automatically show build status on startup.",
+            "default": "notification",
+            "scope": "window"
+          },
+          "java.project.encoding": {
+            "enum": [
+              "ignore",
+              "warning",
+              "setDefault"
+            ],
+            "enumDescriptions": [
+              "Ignore project encoding settings",
+              "Show warning if a project has no explicit encoding set",
+              "Set the default workspace encoding settings"
+            ],
+            "default": "ignore",
+            "markdownDescription": "Project encoding settings",
+            "scope": "window"
+          }
+        }
+      },
+      {
+        "id": "java-unmanagedfolder",
+        "title": "Unmanaged Folder",
+        "order": 30,
+        "properties": {
+          "java.project.sourcePaths": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "markdownDescription": "Relative paths to the workspace where stores the source files. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
+            "default": [],
+            "scope": "window",
+            "order": 10
+          },
+          "java.project.outputPath": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "markdownDescription": "A relative path to the workspace where stores the compiled output. `Only` effective in the `WORKSPACE` scope. The setting will `NOT` affect Maven or Gradle project.",
+            "default": "",
+            "scope": "window",
+            "order": 20
+          },
+          "java.project.referencedLibraries": {
+            "type": [
+              "array",
+              "object"
+            ],
+            "description": "Configure glob patterns for referencing local libraries to a Java project.",
+            "default": [
+              "lib/**/*.jar"
+            ],
+            "properties": {
+              "include": {
+                "type": "array"
+              },
+              "exclude": {
+                "type": "array"
               },
               "sources": {
-                "type": "string",
-                "description": "JDK sources path."
-              },
-              "javadoc": {
-                "type": "string",
-                "description": "JDK javadoc path."
-              },
-              "default": {
-                "type": "boolean",
-                "description": "Is default runtime? Only one runtime can be default."
+                "type": "object"
               }
             },
-            "additionalProperties": false
+            "required": [
+              "include"
+            ],
+            "additionalProperties": false,
+            "scope": "window",
+            "order": 30
+          }
+        }
+      },
+      {
+        "id": "java-maven",
+        "title": "Maven",
+        "order": 40,
+        "properties": {
+          "java.import.maven.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable the Maven importer.",
+            "scope": "window",
+            "order": 10
           },
-          "default": [],
-          "scope": "machine-overridable"
-        },
-        "java.configuration.detectJdksAtStart": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `#java.configuration.runtimes#`, the extension will use that version first."
-        }
-      }
-    },
-    {
-      "id": "java-formatting",
-      "title": "Formatting",
-      "order": 80,
-      "properties": {
-        "java.format.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable default Java formatter",
-          "scope": "window",
-          "order": 10
-        },
-        "java.format.settings.url": {
-          "type": "string",
-          "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
-          "default": null,
-          "scope": "window",
-          "order": 20
-        },
-        "java.format.settings.profile": {
-          "type": "string",
-          "description": "Optional formatter profile name from the Eclipse formatter settings.",
-          "default": null,
-          "scope": "window",
-          "order": 30
-        },
-        "java.format.comments.enabled": {
-          "type": "boolean",
-          "description": "Includes the comments during code formatting.",
-          "default": true,
-          "scope": "window"
-        },
-        "java.format.onType.enabled": {
-          "type": "boolean",
-          "description": "Enable/disable automatic block formatting when typing `;`, `<enter>` or `}`",
-          "default": true,
-          "scope": "window"
-        }
-      }
-    },
-    {
-      "id": "java-codecompletion",
-      "title": "Code Completion",
-      "order": 90,
-      "properties": {
-        "java.completion.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable code completion support",
-          "scope": "window",
-          "order": 10
-        },
-        "java.completion.postfix.enabled": {
-          "type": "boolean",
-          "default": true,
-          "markdownDescription": "Enable/disable postfix completion support. `#editor.snippetSuggestions#` can be used to customize how postfix snippets are sorted.",
-          "scope": "window",
-          "order": 20
-        },
-        "java.completion.chain.enabled": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Enable/disable chain completion support. Chain completions are only available when completions are invoked by the completions shortcut",
-          "scope": "window",
-          "order": 30
-        },
-        "java.completion.favoriteStaticMembers": {
-          "type": "array",
-          "description": "Defines a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",
-          "default": [
-            "org.junit.Assert.*",
-            "org.junit.Assume.*",
-            "org.junit.jupiter.api.Assertions.*",
-            "org.junit.jupiter.api.Assumptions.*",
-            "org.junit.jupiter.api.DynamicContainer.*",
-            "org.junit.jupiter.api.DynamicTest.*",
-            "org.mockito.Mockito.*",
-            "org.mockito.ArgumentMatchers.*",
-            "org.mockito.Answers.*"
-          ],
-          "scope": "window",
-          "order": 40
-        },
-        "java.completion.filteredTypes": {
-          "type": "array",
-          "description": "Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.",
-          "default": [
-            "java.awt.*",
-            "com.sun.*",
-            "sun.*",
-            "jdk.*",
-            "org.graalvm.*",
-            "io.micrometer.shaded.*"
-          ],
-          "scope": "window",
-          "order": 50
-        },
-        "java.completion.guessMethodArguments": {
-          "type": [
-            "boolean",
-            "string"
-          ],
-          "enum": [
-            "auto",
-            "off",
-            "insertParameterNames",
-            "insertBestGuessedArguments"
-          ],
-          "enumDescriptions": [
-            "Use 'off' only when using Visual Studio Code - Insiders, other platform will defaults to 'insertBestGuessedArguments'.",
-            "Method arguments will not be inserted during completion.",
-            "The parameter names will be inserted during completion.",
-            "The best guessed arguments will be inserted during completion according to the code context."
-          ],
-          "default": "auto",
-          "description": "Specify how the arguments will be filled during completion.",
-          "scope": "window",
-          "order": 60
-        },
-        "java.completion.matchCase": {
-          "type": "string",
-          "enum": [
-            "firstLetter",
-            "off"
-          ],
-          "enumDescriptions": [
-            "Match case for the first letter when doing completion.",
-            "Do not match case when doing completion."
-          ],
-          "default": "firstLetter",
-          "markdownDescription": "Specify whether to match case for code completion.",
-          "scope": "window",
-          "order": 70
-        },
-        "java.completion.importOrder": {
-          "type": "array",
-          "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group. As a result, the empty string (e.g. '') can be used to group all other imports. Static imports are prefixed with a '#'",
-          "default": [
-            "#",
-            "java",
-            "javax",
-            "org",
-            "com",
-            ""
-          ],
-          "scope": "window",
-          "order": 80
-        },
-        "java.completion.lazyResolveTextEdit.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "[Experimental] Enable/disable lazily resolving text edits for code completion.",
-          "scope": "window"
-        },
-        "java.completion.maxResults": {
-          "type": "integer",
-          "default": 0,
-          "markdownDescription": "Maximum number of completion results (not including snippets).\n`0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit.",
-          "scope": "window"
-        },
-        "java.signatureHelp.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable the signature help.",
-          "scope": "window"
-        },
-        "java.signatureHelp.description.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable to show the description in signature help.",
-          "scope": "window"
-        },
-        "java.completion.collapseCompletionItems": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Enable/disable the collapse of overloaded methods in completion items. Overrides `#java.completion.guessMethodArguments#`.",
-          "scope": "window"
-        }
-      }
-    },
-    {
-      "id": "java-codegeneration",
-      "title": "Code Generation",
-      "order": 100,
-      "properties": {
-        "java.templates.fileHeader": {
-          "type": "array",
-          "markdownDescription": "Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
-          "scope": "window",
-          "default": [],
-          "order": 10
-        },
-        "java.templates.typeComment": {
-          "type": "array",
-          "markdownDescription": "Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
-          "scope": "window",
-          "default": [],
-          "order": 20
-        },
-        "java.codeGeneration.insertionLocation": {
-          "type": "string",
-          "enum": [
-            "afterCursor",
-            "beforeCursor",
-            "lastMember"
-          ],
-          "enumDescriptions": [
-            "Insert the generated code after the member where the cursor is located.",
-            "Insert the generated code before the member where the cursor is located.",
-            "Insert the generated code as the last member of the target type."
-          ],
-          "description": "Specifies the insertion location of the code generated by source actions.",
-          "default": "afterCursor",
-          "scope": "window",
-          "order": 30
-        },
-        "java.codeGeneration.hashCodeEquals.useJava7Objects": {
-          "type": "boolean",
-          "description": "Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.codeGeneration.hashCodeEquals.useInstanceof": {
-          "type": "boolean",
-          "description": "Use 'instanceof' to compare types when generating the hashCode and equals methods.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.codeGeneration.useBlocks": {
-          "type": "boolean",
-          "description": "Use blocks in 'if' statements when generating the methods.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.codeGeneration.generateComments": {
-          "type": "boolean",
-          "description": "Generate method comments when generating the methods.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.codeGeneration.toString.template": {
-          "type": "string",
-          "description": "The template for generating the toString method.",
-          "default": "${object.className} [${member.name()}=${member.value}, ${otherMembers}]"
-        },
-        "java.codeGeneration.toString.codeStyle": {
-          "type": "string",
-          "enum": [
-            "STRING_CONCATENATION",
-            "STRING_BUILDER",
-            "STRING_BUILDER_CHAINED",
-            "STRING_FORMAT"
-          ],
-          "enumDescriptions": [
-            "String concatenation",
-            "StringBuilder/StringBuffer",
-            "StringBuilder/StringBuffer - chained call",
-            "String.format/MessageFormat"
-          ],
-          "description": "The code style for generating the toString method.",
-          "default": "STRING_CONCATENATION"
-        },
-        "java.codeGeneration.toString.skipNullValues": {
-          "type": "boolean",
-          "description": "Skip null values when generating the toString method.",
-          "default": false,
-          "scope": "window"
-        },
-        "java.codeGeneration.toString.listArrayContents": {
-          "type": "boolean",
-          "description": "List contents of arrays instead of using native toString().",
-          "default": true,
-          "scope": "window"
-        },
-        "java.codeGeneration.toString.limitElements": {
-          "type": "integer",
-          "description": "Limit number of items in arrays/collections/maps to list, if 0 then list all.",
-          "default": 0,
-          "scope": "window"
-        },
-        "java.edit.smartSemicolonDetection.enabled": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Defines the `smart semicolon` detection. Defaults to `false`.",
-          "scope": "window"
-        }
-      }
-    },
-    {
-      "id": "java-codeaction",
-      "title": "Code Action",
-      "order": 110,
-      "properties": {
-        "java.cleanup.actions": {
-          "type": "array",
-          "markdownDescription": "The list of clean ups to be run on the current document when it's saved or when the cleanup command is issued. Clean ups can automatically fix code style or programming mistakes. Click [HERE](command:_java.learnMoreAboutCleanUps) to learn more about what each clean up does.",
-          "items": {
+          "java.import.maven.offline.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable the Maven offline mode.",
+            "scope": "window",
+            "order": 20
+          },
+          "java.import.maven.disableTestClasspathFlag": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable test classpath segregation. When enabled, this permits the usage of test resources within a Maven project as dependencies within the compile scope of other projects.",
+            "scope": "window",
+            "order": 30
+          },
+          "java.maven.downloadSources": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable download of Maven source artifacts as part of importing Maven projects.",
+            "scope": "window",
+            "order": 40
+          },
+          "java.maven.updateSnapshots": {
+            "type": "boolean",
+            "default": false,
+            "description": "Force update of Snapshots/Releases.",
+            "scope": "window",
+            "order": 50
+          },
+          "java.configuration.maven.userSettings": {
+            "type": "string",
+            "default": null,
+            "description": "Path to Maven's user settings.xml",
+            "scope": "window",
+            "order": 60
+          },
+          "java.configuration.maven.globalSettings": {
+            "type": "string",
+            "default": null,
+            "description": "Path to Maven's global settings.xml",
+            "scope": "window",
+            "order": 70
+          },
+          "java.configuration.maven.notCoveredPluginExecutionSeverity": {
             "type": "string",
             "enum": [
-              "qualifyMembers",
-              "qualifyStaticMembers",
-              "addOverride",
-              "addDeprecated",
-              "stringConcatToTextBlock",
-              "invertEquals",
-              "addFinalModifier",
-              "instanceofPatternMatch",
-              "lambdaExpressionFromAnonymousClass",
-              "lambdaExpression",
-              "switchExpression",
-              "tryWithResource",
+              "ignore",
+              "warning",
+              "error"
+            ],
+            "default": "warning",
+            "description": "Specifies severity if the plugin execution is not covered by Maven build lifecycle.",
+            "scope": "window",
+            "order": 80
+          },
+          "java.configuration.maven.defaultMojoExecutionAction": {
+            "type": "string",
+            "enum": [
+              "ignore",
+              "warn",
+              "error",
+              "execute"
+            ],
+            "default": "ignore",
+            "description": "Specifies default mojo execution action when no associated metadata can be detected.",
+            "scope": "window",
+            "order": 90
+          },
+          "java.configuration.maven.lifecycleMappings": {
+            "type": "string",
+            "default": null,
+            "description": "Path to Maven's lifecycle mappings xml",
+            "scope": "window",
+            "order": 100
+          }
+        }
+      },
+      {
+        "id": "java-gradle",
+        "title": "Gradle",
+        "order": 50,
+        "properties": {
+          "java.import.gradle.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable the Gradle importer.",
+            "scope": "window",
+            "order": 10
+          },
+          "java.import.gradle.wrapper.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Use Gradle from the 'gradle-wrapper.properties' file.",
+            "scope": "window",
+            "order": 20
+          },
+          "java.import.gradle.version": {
+            "type": "string",
+            "default": null,
+            "description": "Use Gradle from the specific version if the Gradle wrapper is missing or disabled.",
+            "scope": "window",
+            "order": 30
+          },
+          "java.import.gradle.home": {
+            "type": "string",
+            "default": null,
+            "description": "Use Gradle from the specified local installation directory or GRADLE_HOME if the Gradle wrapper is missing or disabled and no 'java.import.gradle.version' is specified.",
+            "scope": "machine-overridable",
+            "order": 40
+          },
+          "java.import.gradle.java.home": {
+            "type": "string",
+            "default": null,
+            "description": "The location to the JVM used to run the Gradle daemon.",
+            "scope": "machine-overridable",
+            "order": 50
+          },
+          "java.import.gradle.user.home": {
+            "type": "string",
+            "default": null,
+            "description": "Setting for GRADLE_USER_HOME.",
+            "scope": "window",
+            "order": 55
+          },
+          "java.import.gradle.offline.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable the Gradle offline mode.",
+            "scope": "window",
+            "order": 60
+          },
+          "java.import.gradle.arguments": {
+            "type": "string",
+            "default": null,
+            "description": "Arguments to pass to Gradle.",
+            "scope": "machine",
+            "order": 70
+          },
+          "java.import.gradle.jvmArguments": {
+            "type": "string",
+            "default": null,
+            "description": "JVM arguments to pass to Gradle.",
+            "scope": "machine",
+            "order": 80
+          },
+          "java.import.gradle.annotationProcessing.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable the annotation processing on Gradle projects and delegate Annotation Processing to JDT APT. Only works for Gradle 5.2 or higher.",
+            "scope": "window",
+            "order": 90
+          },
+          "java.imports.gradle.wrapper.checksums": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "default": {},
+              "required": [
+                "sha256"
+              ],
+              "properties": {
+                "sha256": {
+                  "type": "string",
+                  "label": "SHA-256 checksum."
+                },
+                "allowed": {
+                  "type": "boolean",
+                  "default": true,
+                  "label": "Is allowed?"
+                }
+              },
+              "additionalProperties": false,
+              "uniqueItems": true
+            },
+            "description": "Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers",
+            "default": [],
+            "scope": "application"
+          }
+        }
+      },
+      {
+        "id": "java-build",
+        "title": "Build",
+        "order": 60,
+        "properties": {
+          "java.autobuild.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable the 'auto build'",
+            "scope": "window",
+            "order": 10
+          },
+          "java.maxConcurrentBuilds": {
+            "type": "integer",
+            "default": 1,
+            "description": "Max simultaneous project builds",
+            "scope": "window",
+            "minimum": 1,
+            "order": 20
+          },
+          "java.settings.url": {
+            "type": "string",
+            "markdownDescription": "Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)",
+            "default": null,
+            "scope": "window",
+            "order": 30
+          },
+          "java.compile.nullAnalysis.nonnull": {
+            "type": "array",
+            "default": [
+              "javax.annotation.Nonnull",
+              "org.eclipse.jdt.annotation.NonNull",
+              "org.springframework.lang.NonNull"
+            ],
+            "markdownDescription": "Specify the Nonnull annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
+            "scope": "window"
+          },
+          "java.compile.nullAnalysis.nullable": {
+            "type": "array",
+            "default": [
+              "javax.annotation.Nullable",
+              "org.eclipse.jdt.annotation.Nullable",
+              "org.springframework.lang.Nullable"
+            ],
+            "markdownDescription": "Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
+            "scope": "window"
+          },
+          "java.compile.nullAnalysis.nonnullbydefault": {
+            "type": "array",
+            "default": [
+              "javax.annotation.ParametersAreNonnullByDefault",
+              "org.eclipse.jdt.annotation.NonNullByDefault",
+              "org.springframework.lang.NonNullApi"
+            ],
+            "markdownDescription": "Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
+            "scope": "window"
+          },
+          "java.compile.nullAnalysis.mode": {
+            "type": "string",
+            "enum": [
+              "disabled",
+              "interactive",
+              "automatic"
+            ],
+            "default": "interactive",
+            "markdownDescription": "Specify how to enable the annotation-based null analysis.",
+            "scope": "window"
+          },
+          "java.errors.incompleteClasspath.severity": {
+            "type": [
+              "string"
+            ],
+            "enum": [
+              "ignore",
+              "info",
+              "warning",
+              "error"
+            ],
+            "default": "warning",
+            "description": "Specifies the severity of the message when the classpath is incomplete for a Java file",
+            "scope": "window"
+          }
+        }
+      },
+      {
+        "id": "java-jdks",
+        "title": "Installed JDKs",
+        "order": 70,
+        "properties": {
+          "java.configuration.runtimes": {
+            "type": "array",
+            "description": "Map Java Execution Environments to local JDKs.",
+            "items": {
+              "type": "object",
+              "default": {},
+              "required": [
+                "path",
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "J2SE-1.5",
+                    "JavaSE-1.6",
+                    "JavaSE-1.7",
+                    "JavaSE-1.8",
+                    "JavaSE-9",
+                    "JavaSE-10",
+                    "JavaSE-11",
+                    "JavaSE-12",
+                    "JavaSE-13",
+                    "JavaSE-14",
+                    "JavaSE-15",
+                    "JavaSE-16",
+                    "JavaSE-17",
+                    "JavaSE-18",
+                    "JavaSE-19",
+                    "JavaSE-20",
+                    "JavaSE-21",
+                    "JavaSE-22",
+                    "JavaSE-21"
+                  ],
+                  "description": "Java Execution Environment name. Must be unique."
+                },
+                "path": {
+                  "type": "string",
+                  "pattern": ".*(?<!\\/bin|\\/bin\\/|\\\\bin|\\\\bin\\\\)$",
+                  "description": "JDK home path. Should be the JDK installation directory, not the Java bin path.\n On Windows, backslashes must be escaped, i.e.\n\"path\":\"C:\\\\Program Files\\\\Java\\\\jdk1.8.0_161\"."
+                },
+                "sources": {
+                  "type": "string",
+                  "description": "JDK sources path."
+                },
+                "javadoc": {
+                  "type": "string",
+                  "description": "JDK javadoc path."
+                },
+                "default": {
+                  "type": "boolean",
+                  "description": "Is default runtime? Only one runtime can be default."
+                }
+              },
+              "additionalProperties": false
+            },
+            "default": [],
+            "scope": "machine-overridable"
+          },
+          "java.configuration.detectJdksAtStart": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `#java.configuration.runtimes#`, the extension will use that version first."
+          }
+        }
+      },
+      {
+        "id": "java-formatting",
+        "title": "Formatting",
+        "order": 80,
+        "properties": {
+          "java.format.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable default Java formatter",
+            "scope": "window",
+            "order": 10
+          },
+          "java.format.settings.url": {
+            "type": "string",
+            "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
+            "default": null,
+            "scope": "window",
+            "order": 20
+          },
+          "java.format.settings.profile": {
+            "type": "string",
+            "description": "Optional formatter profile name from the Eclipse formatter settings.",
+            "default": null,
+            "scope": "window",
+            "order": 30
+          },
+          "java.format.comments.enabled": {
+            "type": "boolean",
+            "description": "Includes the comments during code formatting.",
+            "default": true,
+            "scope": "window"
+          },
+          "java.format.onType.enabled": {
+            "type": "boolean",
+            "description": "Enable/disable automatic block formatting when typing `;`, `<enter>` or `}`",
+            "default": true,
+            "scope": "window"
+          }
+        }
+      },
+      {
+        "id": "java-codecompletion",
+        "title": "Code Completion",
+        "order": 90,
+        "properties": {
+          "java.completion.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable code completion support",
+            "scope": "window",
+            "order": 10
+          },
+          "java.completion.postfix.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Enable/disable postfix completion support. `#editor.snippetSuggestions#` can be used to customize how postfix snippets are sorted.",
+            "scope": "window",
+            "order": 20
+          },
+          "java.completion.chain.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable/disable chain completion support. Chain completions are only available when completions are invoked by the completions shortcut",
+            "scope": "window",
+            "order": 30
+          },
+          "java.completion.favoriteStaticMembers": {
+            "type": "array",
+            "description": "Defines a list of static members or types with static members. Content assist will propose those static members even if the import is missing.",
+            "default": [
+              "org.junit.Assert.*",
+              "org.junit.Assume.*",
+              "org.junit.jupiter.api.Assertions.*",
+              "org.junit.jupiter.api.Assumptions.*",
+              "org.junit.jupiter.api.DynamicContainer.*",
+              "org.junit.jupiter.api.DynamicTest.*",
+              "org.mockito.Mockito.*",
+              "org.mockito.ArgumentMatchers.*",
+              "org.mockito.Answers.*"
+            ],
+            "scope": "window",
+            "order": 40
+          },
+          "java.completion.filteredTypes": {
+            "type": "array",
+            "description": "Defines the type filters. All types whose fully qualified name matches the selected filter strings will be ignored in content assist or quick fix proposals and when organizing imports. For example 'java.awt.*' will hide all types from the awt packages.",
+            "default": [
+              "java.awt.*",
+              "com.sun.*",
+              "sun.*",
+              "jdk.*",
+              "org.graalvm.*",
+              "io.micrometer.shaded.*"
+            ],
+            "scope": "window",
+            "order": 50
+          },
+          "java.completion.guessMethodArguments": {
+            "type": [
+              "boolean",
+              "string"
+            ],
+            "enum": [
+              "auto",
+              "off",
+              "insertParameterNames",
+              "insertBestGuessedArguments"
+            ],
+            "enumDescriptions": [
+              "Use 'off' only when using Visual Studio Code - Insiders, other platform will defaults to 'insertBestGuessedArguments'.",
+              "Method arguments will not be inserted during completion.",
+              "The parameter names will be inserted during completion.",
+              "The best guessed arguments will be inserted during completion according to the code context."
+            ],
+            "default": "auto",
+            "description": "Specify how the arguments will be filled during completion.",
+            "scope": "window",
+            "order": 60
+          },
+          "java.completion.matchCase": {
+            "type": "string",
+            "enum": [
+              "firstLetter",
+              "off"
+            ],
+            "enumDescriptions": [
+              "Match case for the first letter when doing completion.",
+              "Do not match case when doing completion."
+            ],
+            "default": "firstLetter",
+            "markdownDescription": "Specify whether to match case for code completion.",
+            "scope": "window",
+            "order": 70
+          },
+          "java.completion.importOrder": {
+            "type": "array",
+            "description": "Defines the sorting order of import statements. A package or type name prefix (e.g. 'org.eclipse') is a valid entry. An import is always added to the most specific group. As a result, the empty string (e.g. '') can be used to group all other imports. Static imports are prefixed with a '#'",
+            "default": [
+              "#",
+              "java",
+              "javax",
+              "org",
+              "com",
+              ""
+            ],
+            "scope": "window",
+            "order": 80
+          },
+          "java.completion.lazyResolveTextEdit.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "[Experimental] Enable/disable lazily resolving text edits for code completion.",
+            "scope": "window"
+          },
+          "java.completion.maxResults": {
+            "type": "integer",
+            "default": 0,
+            "markdownDescription": "Maximum number of completion results (not including snippets).\n`0` (the default value) disables the limit, all results are returned. In case of performance problems, consider setting a sensible limit.",
+            "scope": "window"
+          },
+          "java.signatureHelp.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable the signature help.",
+            "scope": "window"
+          },
+          "java.signatureHelp.description.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable to show the description in signature help.",
+            "scope": "window"
+          },
+          "java.completion.collapseCompletionItems": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable/disable the collapse of overloaded methods in completion items. Overrides `#java.completion.guessMethodArguments#`.",
+            "scope": "window"
+          }
+        }
+      },
+      {
+        "id": "java-codegeneration",
+        "title": "Code Generation",
+        "order": 100,
+        "properties": {
+          "java.templates.fileHeader": {
+            "type": "array",
+            "markdownDescription": "Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+            "scope": "window",
+            "default": [],
+            "order": 10
+          },
+          "java.templates.typeComment": {
+            "type": "array",
+            "markdownDescription": "Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+            "scope": "window",
+            "default": [],
+            "order": 20
+          },
+          "java.codeGeneration.insertionLocation": {
+            "type": "string",
+            "enum": [
+              "afterCursor",
+              "beforeCursor",
+              "lastMember"
+            ],
+            "enumDescriptions": [
+              "Insert the generated code after the member where the cursor is located.",
+              "Insert the generated code before the member where the cursor is located.",
+              "Insert the generated code as the last member of the target type."
+            ],
+            "description": "Specifies the insertion location of the code generated by source actions.",
+            "default": "afterCursor",
+            "scope": "window",
+            "order": 30
+          },
+          "java.codeGeneration.hashCodeEquals.useJava7Objects": {
+            "type": "boolean",
+            "description": "Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher.",
+            "default": false,
+            "scope": "window"
+          },
+          "java.codeGeneration.hashCodeEquals.useInstanceof": {
+            "type": "boolean",
+            "description": "Use 'instanceof' to compare types when generating the hashCode and equals methods.",
+            "default": false,
+            "scope": "window"
+          },
+          "java.codeGeneration.useBlocks": {
+            "type": "boolean",
+            "description": "Use blocks in 'if' statements when generating the methods.",
+            "default": false,
+            "scope": "window"
+          },
+          "java.codeGeneration.generateComments": {
+            "type": "boolean",
+            "description": "Generate method comments when generating the methods.",
+            "default": false,
+            "scope": "window"
+          },
+          "java.codeGeneration.toString.template": {
+            "type": "string",
+            "description": "The template for generating the toString method.",
+            "default": "${object.className} [${member.name()}=${member.value}, ${otherMembers}]"
+          },
+          "java.codeGeneration.toString.codeStyle": {
+            "type": "string",
+            "enum": [
+              "STRING_CONCATENATION",
+              "STRING_BUILDER",
+              "STRING_BUILDER_CHAINED",
+              "STRING_FORMAT"
+            ],
+            "enumDescriptions": [
+              "String concatenation",
+              "StringBuilder/StringBuffer",
+              "StringBuilder/StringBuffer - chained call",
+              "String.format/MessageFormat"
+            ],
+            "description": "The code style for generating the toString method.",
+            "default": "STRING_CONCATENATION"
+          },
+          "java.codeGeneration.toString.skipNullValues": {
+            "type": "boolean",
+            "description": "Skip null values when generating the toString method.",
+            "default": false,
+            "scope": "window"
+          },
+          "java.codeGeneration.toString.listArrayContents": {
+            "type": "boolean",
+            "description": "List contents of arrays instead of using native toString().",
+            "default": true,
+            "scope": "window"
+          },
+          "java.codeGeneration.toString.limitElements": {
+            "type": "integer",
+            "description": "Limit number of items in arrays/collections/maps to list, if 0 then list all.",
+            "default": 0,
+            "scope": "window"
+          },
+          "java.edit.smartSemicolonDetection.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Defines the `smart semicolon` detection. Defaults to `false`.",
+            "scope": "window"
+          }
+        }
+      },
+      {
+        "id": "java-codeaction",
+        "title": "Code Action",
+        "order": 110,
+        "properties": {
+          "java.cleanup.actions": {
+            "type": "array",
+            "markdownDescription": "The list of clean ups to be run on the current document when it's saved or when the cleanup command is issued. Clean ups can automatically fix code style or programming mistakes. Click [HERE](command:_java.learnMoreAboutCleanUps) to learn more about what each clean up does.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "qualifyMembers",
+                "qualifyStaticMembers",
+                "addOverride",
+                "addDeprecated",
+                "stringConcatToTextBlock",
+                "invertEquals",
+                "addFinalModifier",
+                "instanceofPatternMatch",
+                "lambdaExpressionFromAnonymousClass",
+                "lambdaExpression",
+                "switchExpression",
+                "tryWithResource",
+                "renameFileToType"
+              ]
+            },
+            "default": [
               "renameFileToType"
-            ]
+            ],
+            "scope": "window",
+            "order": 10
           },
-          "default": [
-            "renameFileToType"
-          ],
-          "scope": "window",
-          "order": 10
-        },
-        "java.cleanup.actionsOnSave": {
-          "type": "array",
-          "deprecationMessage": "Deprecated, please use 'java.cleanup.actions' instead.",
-          "items": {
+          "java.cleanup.actionsOnSave": {
+            "type": "array",
+            "deprecationMessage": "Deprecated, please use 'java.cleanup.actions' instead.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "qualifyMembers",
+                "qualifyStaticMembers",
+                "addOverride",
+                "addDeprecated",
+                "stringConcatToTextBlock",
+                "invertEquals",
+                "addFinalModifier",
+                "instanceofPatternMatch",
+                "lambdaExpressionFromAnonymousClass",
+                "lambdaExpression",
+                "switchExpression",
+                "tryWithResource"
+              ]
+            },
+            "default": [],
+            "scope": "window"
+          },
+          "java.saveActions.cleanup": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable cleanup actions on save."
+          },
+          "java.saveActions.organizeImports": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable auto organize imports on save action",
+            "scope": "window",
+            "order": 20
+          },
+          "java.sources.organizeImports.starThreshold": {
+            "type": "integer",
+            "description": "Specifies the number of imports added before a star-import declaration is used.",
+            "default": 99,
+            "scope": "window",
+            "minimum": 1,
+            "order": 30
+          },
+          "java.sources.organizeImports.staticStarThreshold": {
+            "type": "integer",
+            "description": "Specifies the number of static imports added before a star-import declaration is used.",
+            "default": 99,
+            "scope": "window",
+            "minimum": 1,
+            "order": 40
+          },
+          "java.quickfix.showAt": {
             "type": "string",
             "enum": [
-              "qualifyMembers",
-              "qualifyStaticMembers",
-              "addOverride",
-              "addDeprecated",
-              "stringConcatToTextBlock",
-              "invertEquals",
-              "addFinalModifier",
-              "instanceofPatternMatch",
-              "lambdaExpressionFromAnonymousClass",
-              "lambdaExpression",
-              "switchExpression",
-              "tryWithResource"
-            ]
+              "line",
+              "problem"
+            ],
+            "default": "line",
+            "description": "Show quickfixes at the problem or line level.",
+            "scope": "window"
           },
-          "default": [],
-          "scope": "window"
-        },
-        "java.saveActions.cleanup": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable cleanup actions on save."
-        },
-        "java.saveActions.organizeImports": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable auto organize imports on save action",
-          "scope": "window",
-          "order": 20
-        },
-        "java.sources.organizeImports.starThreshold": {
-          "type": "integer",
-          "description": "Specifies the number of imports added before a star-import declaration is used.",
-          "default": 99,
-          "scope": "window",
-          "minimum": 1,
-          "order": 30
-        },
-        "java.sources.organizeImports.staticStarThreshold": {
-          "type": "integer",
-          "description": "Specifies the number of static imports added before a star-import declaration is used.",
-          "default": 99,
-          "scope": "window",
-          "minimum": 1,
-          "order": 40
-        },
-        "java.quickfix.showAt": {
-          "type": "string",
-          "enum": [
-            "line",
-            "problem"
-          ],
-          "default": "line",
-          "description": "Show quickfixes at the problem or line level.",
-          "scope": "window"
-        },
-        "java.codeAction.sortMembers.avoidVolatileChanges": {
-          "type": "boolean",
-          "default": true,
-          "description": "Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring.",
-          "scope": "window"
-        },
-        "java.refactoring.extract.interface.replace": {
-          "type": "boolean",
-          "markdownDescription": "Specify whether to replace all the occurrences of the subtype with the new extracted interface.",
-          "default": true
-        }
-      }
-    },
-    {
-      "id": "java-codenagivation",
-      "title": "Code Navigation",
-      "order": 120,
-      "properties": {
-        "java.referencesCodeLens.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable the references code lens.",
-          "scope": "window",
-          "order": 10
-        },
-        "java.implementationsCodeLens.enabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable the implementations code lens.",
-          "scope": "window",
-          "order": 20
-        },
-        "java.references.includeAccessors": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include getter, setter and builder/constructor when finding references.",
-          "scope": "window",
-          "order": 30
-        },
-        "java.references.includeDecompiledSources": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include the decompiled sources when finding references.",
-          "scope": "window",
-          "order": 40
-        },
-        "java.symbols.includeSourceMethodDeclarations": {
-          "type": "boolean",
-          "markdownDescription": "Include method declarations from source files in symbol search.",
-          "default": false,
-          "scope": "window",
-          "order": 50
-        },
-        "java.typeHierarchy.lazyLoad": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
-          "scope": "window",
-          "order": 60
-        },
-        "java.inlayHints.parameterNames.enabled": {
-          "type": "string",
-          "enum": [
-            "none",
-            "literals",
-            "all"
-          ],
-          "enumDescriptions": [
-            "Disable parameter name hints",
-            "Enable parameter name hints only for literal arguments",
-            "Enable parameter name hints for literal and non-literal arguments"
-          ],
-          "default": "literals",
-          "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n `#java.inlayHints.parameterNames.exclusions#` can be used to disable the inlay hints for methods.",
-          "scope": "window",
-          "order": 70
-        },
-        "java.inlayHints.parameterNames.exclusions": {
-          "type": "array",
-          "items": {
-            "type": "string"
+          "java.codeAction.sortMembers.avoidVolatileChanges": {
+            "type": "boolean",
+            "default": true,
+            "description": "Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring.",
+            "scope": "window"
           },
-          "default": [],
-          "markdownDescription": "The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:\n - `java.lang.Math.*` - All the methods from java.lang.Math.\n - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.\n - `*.println(*)` - Methods named as 'println'.\n - `(from, to)` - Methods with two parameters named as 'from' and 'to'.\n - `(arg*)` - Methods with one parameter whose name starts with 'arg'.",
-          "scope": "window",
-          "order": 80
+          "java.refactoring.extract.interface.replace": {
+            "type": "boolean",
+            "markdownDescription": "Specify whether to replace all the occurrences of the subtype with the new extracted interface.",
+            "default": true
+          }
+        }
+      },
+      {
+        "id": "java-codenagivation",
+        "title": "Code Navigation",
+        "order": 120,
+        "properties": {
+          "java.referencesCodeLens.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable the references code lens.",
+            "scope": "window",
+            "order": 10
+          },
+          "java.implementationsCodeLens.enabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable the implementations code lens.",
+            "scope": "window",
+            "order": 20
+          },
+          "java.references.includeAccessors": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include getter, setter and builder/constructor when finding references.",
+            "scope": "window",
+            "order": 30
+          },
+          "java.references.includeDecompiledSources": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include the decompiled sources when finding references.",
+            "scope": "window",
+            "order": 40
+          },
+          "java.symbols.includeSourceMethodDeclarations": {
+            "type": "boolean",
+            "markdownDescription": "Include method declarations from source files in symbol search.",
+            "default": false,
+            "scope": "window",
+            "order": 50
+          },
+          "java.typeHierarchy.lazyLoad": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
+            "scope": "window",
+            "order": 60
+          },
+          "java.inlayHints.parameterNames.enabled": {
+            "type": "string",
+            "enum": [
+              "none",
+              "literals",
+              "all"
+            ],
+            "enumDescriptions": [
+              "Disable parameter name hints",
+              "Enable parameter name hints only for literal arguments",
+              "Enable parameter name hints for literal and non-literal arguments"
+            ],
+            "default": "literals",
+            "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n `#java.inlayHints.parameterNames.exclusions#` can be used to disable the inlay hints for methods.",
+            "scope": "window",
+            "order": 70
+          },
+          "java.inlayHints.parameterNames.exclusions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "markdownDescription": "The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:\n - `java.lang.Math.*` - All the methods from java.lang.Math.\n - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.\n - `*.println(*)` - Methods named as 'println'.\n - `(from, to)` - Methods with two parameters named as 'from' and 'to'.\n - `(arg*)` - Methods with one parameter whose name starts with 'arg'.",
+            "scope": "window",
+            "order": 80
+          }
+        }
+      },
+      {
+        "id": "java-others",
+        "title": "Others",
+        "order": 130,
+        "properties": {
+          "java.eclipse.downloadSources": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable download of Maven source artifacts for Eclipse projects.",
+            "scope": "window"
+          },
+          "java.contentProvider.preferred": {
+            "type": "string",
+            "description": "Preferred content provider (a 3rd party decompiler id, usually)",
+            "default": null,
+            "scope": "window"
+          },
+          "java.foldingRange.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.",
+            "scope": "window"
+          },
+          "java.selectionRange.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.",
+            "scope": "window"
+          },
+          "java.edit.validateAllOpenBuffersOnChanges": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
+            "scope": "window"
+          },
+          "java.editor.reloadChangedSources": {
+            "type": "string",
+            "enum": [
+              "ask",
+              "auto",
+              "manual"
+            ],
+            "enumDescriptions": [
+              "Ask to reload the sources of the open class files",
+              "Automatically reload the sources of the open class files",
+              "Manually reload the sources of the open class files"
+            ],
+            "default": "ask",
+            "markdownDescription": "Specifies whether to reload the sources of the open class files when their source jar files are changed.",
+            "scope": "window"
+          }
         }
       }
-    },
-    {
-      "id": "java-others",
-      "title": "Others",
-      "order": 130,
-      "properties": {
-        "java.eclipse.downloadSources": {
-          "type": "boolean",
-          "default": false,
-          "description": "Enable/disable download of Maven source artifacts for Eclipse projects.",
-          "scope": "window"
-        },
-        "java.contentProvider.preferred": {
-          "type": "string",
-          "description": "Preferred content provider (a 3rd party decompiler id, usually)",
-          "default": null,
-          "scope": "window"
-        },
-        "java.foldingRange.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.",
-          "scope": "window"
-        },
-        "java.selectionRange.enabled": {
-          "type": "boolean",
-          "default": true,
-          "description": "Enable/disable Smart Selection support for Java. Disabling this option will not affect the VS Code built-in word-based and bracket-based smart selection.",
-          "scope": "window"
-        },
-        "java.edit.validateAllOpenBuffersOnChanges": {
-          "type": "boolean",
-          "default": false,
-          "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
-          "scope": "window"
-        },
-        "java.editor.reloadChangedSources": {
-          "type": "string",
-          "enum": [
-            "ask",
-            "auto",
-            "manual"
-          ],
-          "enumDescriptions": [
-            "Ask to reload the sources of the open class files",
-            "Automatically reload the sources of the open class files",
-            "Manually reload the sources of the open class files"
-          ],
-          "default": "ask",
-          "markdownDescription": "Specifies whether to reload the sources of the open class files when their source jar files are changed.",
-          "scope": "window"
-        }
-      }
-    }],
+    ],
     "configurationDefaults": {
       "[java]": {
         "editor.suggest.snippetsPreventQuickSuggestions": false
