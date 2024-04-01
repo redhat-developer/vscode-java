@@ -41,6 +41,27 @@
 							}
 						}
 					}
+				},
+				"javaShortcuts": {
+					"type": "array",
+					"description": "Shortcuts to be listed when clicking server status bar item.",
+					"items": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"description": "The title of the quick pick item.",
+								"type": "string"
+							},
+							"command": {
+								"description": "The command to be executed when the quick pick is selected.",
+								"type": "string"
+							},
+							"arguments": {
+								"description": "The arguments to be passed to the command.",
+								"type": "array"
+							}
+						}
+					}
 				}
 			}
 		}
