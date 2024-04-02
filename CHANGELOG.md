@@ -1,5 +1,27 @@
 # Change Log
 
+## 1.29.0 (April 3rd, 2024)
+ * enhancement - Provide support for Java 22. See [#3538](https://github.com/redhat-developer/vscode-java/issues/3538).
+ * enhancement - Simplify the server status item click action & add contribution point. See [#3537](https://github.com/redhat-developer/vscode-java/pull/3537), [#3548](https://github.com/redhat-developer/vscode-java/pull/3548), [#3546](https://github.com/redhat-developer/vscode-java/pull/3546).
+ * enhancement - Add setting to group completion items representing overloaded methods together. See [#3492](https://github.com/redhat-developer/vscode-java/pull/3492).
+ * enhancement - Renaming primary type declaration should update source file name on save. See [#3408](https://github.com/redhat-developer/vscode-java/issues/3408).
+ * enhancement - Support updating whole classpath of the project in delegate commands. See [JLS#3098](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3098).
+ * enhancement - Open output channel as well when opening logs. See [#3531](https://github.com/redhat-developer/vscode-java/pull/3531).
+ * enhancement - Read the server logs in order to discover early startup log messages. See [JLS#3106](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3106).
+ * enhancement - Report errors of type `dtree.ObjectNotFoundException` as `java.ls.error`. See [#3509](https://github.com/redhat-developer/vscode-java/pull/3509).
+ * bug fix - Signature help should display all overloaded methods. See [JLS#3052](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3052).
+ * bug fix - Fix issues with Unnamed classes (Java 21) (reference computation, code actions, compilation). See [JLS#3069](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3069), [JLS#3089](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3089), [JLS#3090](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3090).
+ * bug fix - Record Patterns may cause `VerifyError`. See [#3479](https://github.com/redhat-developer/vscode-java/issues/3479).
+ * bug fix - Support list of patterns in case statements (Java 21). See [JLS#3043](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3043).
+ * bug fix - Allow methods, inherited fields, inherited methods for `Generate toString()` code action. See [#2639](https://github.com/redhat-developer/vscode-java/issues/2639).
+ * bug fix - Update Buildship to 3.1.10, which fixes "Marker property value is too long". See [JLS#2424](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2424).
+ * bug fix - Set the `nullUncheckedConversion` setting to be ignored by default. See [#3501](https://github.com/redhat-developer/vscode-java/issues/3501).
+ * bug fix - Fix NPE when fetching the classpath of the project. See [JLS#3115](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3115).
+ * dependencies - Bump follow-redirects from 1.15.4 to 1.15.6. See [#3534](https://github.com/redhat-developer/vscode-java/pull/3534).
+ * build - Adopt the Lombok 1.18.32 release. See [#3543](https://github.com/redhat-developer/vscode-java/pull/3543).
+ * build - Update various GitHub reusable workflows to v4. See [#3519](https://github.com/redhat-developer/vscode-java/pull/3519).
+ * build - Update release version regular expression for `bump-jdk` workflow. See [#3552](https://github.com/redhat-developer/vscode-java/pull/3552).
+
 ## 1.28.1 (February 15th, 2024)
  * enhancement - Unnamed classes & instance `main` methods (Java 21) preview support. See [JLS#3042](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3042).
  * enhancement - Add support for activating cleanup actions through keyboard shortcut. See [#3424](https://github.com/redhat-developer/vscode-java/issues/3424).
