@@ -105,14 +105,21 @@ jobs:
       - name: Build vscode-java
         run: |
           npm install
-          npm run vscode:prepublish
-          npm run compile
+      - name: Prepare JDT-LS
+        run: |
+          rm -rf ./out
+          mkdir server/
+          if [ -e jdt-language-server-*.tar.gz ]; then
+            tar -xf jdt-language-server-*.tar.gz -C server/
+          else
+            tar -xf ../staging/jdt-language-server-*.tar.gz -C server/
+          fi
+          echo "EXT_VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
       - name: Test vscode-java
         env:
           SKIP_COMMANDS_TEST: true
-          SKIP_CLASSPATH_TEST: true
         run: |
-          $(echo "xvfb-run --auto-servernum") npm run test --silent
+          xvfb-run --auto-servernum npm run test --silent
         continue-on-error: true
       - name: Clean tests
         run: npx gulp clean_test_folder
@@ -124,16 +131,6 @@ jobs:
         run: |
           npx gulp prepare_pre_release
           echo "publishPreReleaseFlag=--pre-release" >> $GITHUB_ENV
-      - name: Prepare JDT-LS
-        run: |
-          rm -rf ./out
-          mkdir server/
-          if [ -e jdt-language-server-*.tar.gz ]; then
-            tar -xf jdt-language-server-*.tar.gz -C server/
-          else
-            tar -xf ../staging/jdt-language-server-*.tar.gz -C server/
-          fi
-          echo "EXT_VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
       - name: Package vscode-java
         run: |
           platforms=("win32-x64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
