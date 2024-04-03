@@ -245,6 +245,19 @@ export async function getJavaConfig(javaHome: string) {
 			break;
 	}
 
+	const javacSupport = javaConfig.jdt.ls.javac.enabled;
+	switch (javacSupport) {
+		case "on":
+			javaConfig.jdt.ls.javac.enabled = true;
+			break;
+		case "off":
+			javaConfig.jdt.ls.javac.enabled = false;
+			break;
+		default:
+			javaConfig.jdt.ls.javac.enabled = false;
+			break;
+	}
+
 	if (javaConfig.completion.matchCase === "auto") {
 		javaConfig.completion.matchCase = "firstLetter";
 	}
