@@ -137,7 +137,9 @@ function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: Work
 		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig)
 		|| hasConfigKeyChanged('sharedIndexes.location', oldConfig, newConfig)
 		|| hasConfigKeyChanged('transport', oldConfig, newConfig)
-		|| hasConfigKeyChanged('diagnostic.filter', oldConfig, newConfig);
+		|| hasConfigKeyChanged('diagnostic.filter', oldConfig, newConfig)
+		|| hasConfigKeyChanged('jdt.ls.javac.enabled', oldConfig, newConfig)
+		|| hasConfigKeyChanged('java.completion.engine', oldConfig, newConfig);
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {
