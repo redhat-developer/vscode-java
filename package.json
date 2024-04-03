@@ -404,6 +404,17 @@
             "scope": "window",
             "order": 90
           },
+          "java.jdt.ls.javac.enabled": {
+            "type": "string",
+            "enum": [
+              "on",
+              "off"
+            ],
+            "default": "off",
+            "markdownDescription": "[Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 23",
+            "scope": "window",
+            "order": 95
+          },
           "java.trace.server": {
             "type": "string",
             "enum": [
@@ -1002,6 +1013,21 @@
             "description": "Enable/disable code completion support",
             "scope": "window",
             "order": 10
+          },
+          "java.completion.engine": {
+            "type": "string",
+            "default": "ecj",
+            "description": "[Experimental] Select code completion engine",
+            "scope": "window",
+            "enum": [
+              "ecj",
+              "dom"
+            ],
+            "markdownEnumDescriptions": [
+              "Use ECJ-based code completion engine (default)",
+              "Use (highly experimental) JDT DOM-based code completion engine (requires `java.jdt.ls.javac.enabled` to be `on`)"
+            ],
+            "order": 1000
           },
           "java.completion.postfix.enabled": {
             "type": "boolean",

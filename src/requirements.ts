@@ -9,8 +9,8 @@ import { Commands } from './commands';
 import { logger } from './log';
 import { checkJavaPreferences } from './settings';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
+import { getJavaConfiguration } from './utils';
 
-const REQUIRED_JDK_VERSION = 17;
 /* eslint-disable @typescript-eslint/naming-convention */
 export interface RequirementsData {
     tooling_jre: string;
@@ -41,6 +41,7 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         const preferenceName = javaPreferences.preference;
         let javaHome = javaPreferences.javaHome;
         let javaVersion: number = 0;
+        const REQUIRED_JDK_VERSION = ('on' === getJavaConfiguration().get('jdt.ls.javac.enabled'))?23:17;
         if (javaHome) {
             const source = `${preferenceName} variable defined in ${env.appName} settings`;
             javaHome = expandHomeDir(javaHome);
