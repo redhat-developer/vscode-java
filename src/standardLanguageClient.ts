@@ -3,7 +3,7 @@
 import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
-import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit } from "vscode-languageclient";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, ClientCapabilities, FeatureState } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -107,6 +107,7 @@ export class StandardLanguageClient {
 
 		// Create the language client and start the client.
 		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
+		this.languageClient.registerFeature(new DisableWillRenameFeature());
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
@@ -871,4 +872,21 @@ export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageC
 	} else {
 		return Promise.resolve(true);
 	}
+}
+
+/**
+ * 'workspace/willRenameFiles' already handled so we need to disable it.
+ * @see fileEventHandler.registerFileEventHandlers
+ */
+export class DisableWillRenameFeature implements StaticFeature {
+	fillClientCapabilities(capabilities: ClientCapabilities): void {
+		capabilities.workspace.fileOperations.willRename = false;
+	}
+	getState(): FeatureState {
+		return null;
+	}
+	clear(): void {}
+	fillInitializeParams?: () => void;
+	preInitialize?: () => void;
+	initialize(): void {}
 }
