@@ -1,4 +1,4 @@
-import { CancellationToken, commands, DataTransfer, DocumentPasteEdit as VDocumentPasteEdit, DocumentPasteEditProvider, DocumentPasteProviderMetadata, ExtensionContext, languages, Range, TextDocument, window } from "vscode";
+import { CancellationToken, commands, DataTransfer, DocumentPasteEdit as VDocumentPasteEdit, DocumentPasteEditProvider, DocumentPasteProviderMetadata, ExtensionContext, languages, Range, TextDocument, window, DocumentPasteEditContext, ProviderResult, DocumentPasteEdit } from "vscode";
 import { FormattingOptions, Location, WorkspaceEdit as PWorkspaceEdit } from "vscode-languageclient";
 import { LanguageClient } from "vscode-languageclient/node";
 import { Commands } from "./commands";
@@ -6,7 +6,8 @@ import { JAVA_SELECTOR } from "./standardLanguageClient";
 
 const TEXT_MIMETYPE: string = "text/plain";
 const MIMETYPES: DocumentPasteProviderMetadata = {
-	pasteMimeTypes: [TEXT_MIMETYPE]
+	pasteMimeTypes: [TEXT_MIMETYPE],
+	providedPasteEditKinds: []
 };
 
 /**
@@ -61,7 +62,7 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 		}
 	}
 
-	async provideDocumentPasteEdits(document: TextDocument, ranges: readonly Range[], dataTransfer: DataTransfer, token: CancellationToken): Promise<VDocumentPasteEdit> {
+	async provideDocumentPasteEdits?(document: TextDocument, ranges: readonly Range[], dataTransfer: DataTransfer, context: DocumentPasteEditContext, token: CancellationToken): Promise<DocumentPasteEdit[]> {
 
 		const insertText: string = await dataTransfer.get(TEXT_MIMETYPE).asString();
 
@@ -92,10 +93,12 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 		try {
 			const pasteResponse: PDocumentPasteEdit = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.HANDLE_PASTE_EVENT, JSON.stringify(pasteEventParams));
 			if (pasteResponse) {
-				return {
-					insertText: pasteResponse.insertText,
-					additionalEdit: pasteResponse.additionalEdit ? await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
-				} as VDocumentPasteEdit;
+				return [
+					{
+						insertText: pasteResponse.insertText,
+						additionalEdit: pasteResponse.additionalEdit ? await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
+					}
+				] as DocumentPasteEdit[];
 			}
 		} catch (e) {
 			// Do nothing
