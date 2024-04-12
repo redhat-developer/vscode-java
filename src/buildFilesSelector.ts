@@ -2,6 +2,7 @@ import { ExtensionContext, MessageItem, QuickPickItem, QuickPickItemKind, Uri, W
 import { convertToGlob, getExclusionGlob, getInclusionPatternsFromNegatedExclusion } from "./utils";
 import * as path from "path";
 import { IBuildTool, getContributedBuildTools } from "./plugin";
+import { ACTIVE_BUILD_TOOL_STATE } from "./settings";
 
 export const PICKED_BUILD_FILES = "java.pickedBuildFiles";
 export const BUILD_TOOL_FOR_CONFLICTS = "java.buildToolForConflicts";
@@ -293,8 +294,9 @@ interface IBuildFilePicker extends QuickPickItem {
 	buildToolAndUri: Map<IBuildTool, Uri>;
 }
 
-export function cleanupProjectPickerCache(context: ExtensionContext) {
+export function cleanupWorkspaceState(context: ExtensionContext) {
 	context.workspaceState.update(PICKED_BUILD_FILES, undefined);
 	context.workspaceState.update(BUILD_TOOL_FOR_CONFLICTS, undefined);
 	context.workspaceState.update(IMPORT_METHOD, undefined);
+	context.workspaceState.update(ACTIVE_BUILD_TOOL_STATE, undefined);
 }
