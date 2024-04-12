@@ -58,10 +58,7 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 			executable.transport = TransportKind.stdio;
 			break;
 		default:
-			const isInsider: boolean = version.includes("insider");
-			const javaExtVersion = context.extension.packageJSON?.version;
-			const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(javaExtVersion);
-			executable.transport = (isInsider || isPreReleaseVersion) ? TransportKind.pipe : TransportKind.stdio;
+			executable.transport = TransportKind.pipe;
 			break;
 	}
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
