@@ -37,7 +37,7 @@ import { getMessage } from './errorUtils';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
-import { BuildFileSelector, PICKED_BUILD_FILES, cleanupProjectPickerCache } from './buildFilesSelector';
+import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './buildFilesSelector';
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
 
@@ -345,7 +345,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				const data = {};
 				try {
 					cleanupLombokCache(context);
-					cleanupProjectPickerCache(context);
+					cleanupWorkspaceState(context);
 					deleteDirectory(workspacePath);
 					deleteDirectory(syntaxServerWorkspacePath);
 				} catch (error) {
