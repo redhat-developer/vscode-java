@@ -269,7 +269,7 @@ For information on getting started, refer to the [CONTRIBUTING instructions](CON
 Continuous Integration builds can be installed from [http://download.jboss.org/jbosstools/jdt.ls/staging/](http://download.jboss.org/jbosstools/jdt.ls/staging/?C=M;O=D). Download the most recent `java-<version>.vsix` file and install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
 Stable releases are archived under http://download.jboss.org/jbosstools/static/jdt.ls/stable/.
 
-Also, you can contribute your own VSCode extension to enhance the existing features by following the instructions [here](https://github.com/redhat-developer/vscode-java/wiki/Contribute-a-Java-Extension).
+Also, you can contribute your own VS Code extension to enhance the existing features by following the instructions [here](https://github.com/redhat-developer/vscode-java/wiki/Contribute-a-Java-Extension).
 
 Feedback
 ===============
