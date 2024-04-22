@@ -1157,6 +1157,24 @@
           "scope": "window",
           "order": 30
         },
+        "java.codeGeneration.addFinalForNewDeclaration": {
+          "type": "string",
+          "enum": [
+            "none",
+            "fields",
+            "variables",
+            "all"
+          ],
+          "enumDescriptions": [
+            "Do not generate final modifier.",
+            "Generate 'final' modifier only for new field declarations.",
+            "Generate 'final' modifier only for new variable declarations.",
+            "Generate 'final' modifier for all new declarations."
+          ],
+          "description": "Whether to generate the 'final' modifer for code actions that create new declarations.",
+          "default": "none",
+          "scope": "window"
+        },
         "java.codeGeneration.hashCodeEquals.useJava7Objects": {
           "type": "boolean",
           "description": "Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher.",
