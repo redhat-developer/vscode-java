@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.30.0 (April 25th, 2024)
+ * enhancement - Add `final` to new declarations generated from code actions. See [#3586](https://github.com/redhat-developer/vscode-java/pull/3586).
+ * bug fix - Change default client/server transport from `stdio` to `pipe`. See [#3587](https://github.com/redhat-developer/vscode-java/pull/3587).
+ * bug fix - Qualifier of workspace symbol search should be wildcard search. See [JLS#3134](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3134).
+ * bug fix - Fix the document paste handling provider for VS Code 1.88.0. See [#3568](https://github.com/redhat-developer/vscode-java/issues/3568).
+ * bug fix - Clear active build tool selection after cleaning the language server workspace of mixed Maven/Gradle project. See [#3567](https://github.com/redhat-developer/vscode-java/issues/3567).
+ * bug fix - Static imports with wildcard should resolve all elements. See [#3564](https://github.com/redhat-developer/vscode-java/issues/3564).
+ * bug fix - Language Server fails to start with multiple `--add-exports` in `java.jdt.ls.vmargs`. See [#3577](https://github.com/redhat-developer/vscode-java/issues/3577).
+ * bug fix - Make `java.import.gradle.user.home` scope `machine-overridable`. See [#3569](https://github.com/redhat-developer/vscode-java/issues/3569).
+ * bug fix - Disable automatic handling of `workspace/willRenameFiles`. See [#3565](https://github.com/redhat-developer/vscode-java/pull/3565).
+ * build - Fix tests in release workflow. See [#3562](https://github.com/redhat-developer/vscode-java/pull/3562).
+
 ## 1.29.0 (April 3rd, 2024)
  * enhancement - Provide support for Java 22. See [#3538](https://github.com/redhat-developer/vscode-java/issues/3538).
  * enhancement - Simplify the server status item click action & add contribution point. See [#3537](https://github.com/redhat-developer/vscode-java/pull/3537), [#3548](https://github.com/redhat-developer/vscode-java/pull/3548), [#3546](https://github.com/redhat-developer/vscode-java/pull/3546).
