@@ -202,6 +202,11 @@ The following settings are supported:
   - `afterCursor`: Insert the generated code after the member where the cursor is located.
   - `beforeCursor`: Insert the generated code before the member where the cursor is located.
   - `lastMember`: Insert the generated code as the last member of the target type.
+* `java.codeGeneration.addFinalForNewDeclaration`: Whether to generate the 'final' modifer for code actions that create new declarations. Defaults to `none`.
+  - `none`: Do not generate final modifier
+  - `fields`: Generate 'final' modifier only for new field declarations
+  - `variables`: Generate 'final' modifier only for new variable declarations
+  - `all`: Generate 'final' modifier for all new declarations
 * `java.settings.url` : Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)
 * `java.symbols.includeSourceMethodDeclarations` : Include method declarations from source files in symbol search. Defaults to `false`.
 * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
@@ -243,13 +248,6 @@ The following settings are supported:
 * `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
 * `java.completion.collapseCompletionItems`: Enable/disable the collapse of overloaded methods in completion items. Overrides `java.completion.guessMethodArguments`. Defaults to `false`.
-
-New in 1.30.0
-* `java.codeGeneration.addFinalForNewDeclaration`: Whether to generate the 'final' modifer for code actions that create new declarations. Defaults to `none`.
-  - `none`: Do not generate final modifier
-  - `fields`: Generate 'final' modifier only for new field declarations
-  - `variables`: Generate 'final' modifier only for new variable declarations
-  - `all`: Generate 'final' modifier for all new declarations
 
 Semantic Highlighting
 ===============
