@@ -1,8 +1,9 @@
-import { CancellationToken, commands, DataTransfer, DocumentPasteEdit as VDocumentPasteEdit, DocumentPasteEditProvider, DocumentPasteProviderMetadata, ExtensionContext, languages, Range, TextDocument, window, DocumentPasteEditContext, ProviderResult, DocumentPasteEdit } from "vscode";
+import { CancellationToken, commands, DataTransfer, DocumentPasteEdit as VDocumentPasteEdit, DocumentPasteEditProvider, DocumentPasteProviderMetadata, ExtensionContext, languages, Range, TextDocument, window, DocumentPasteEditContext, ProviderResult, DocumentPasteEdit, version } from "vscode";
 import { FormattingOptions, Location, WorkspaceEdit as PWorkspaceEdit } from "vscode-languageclient";
 import { LanguageClient } from "vscode-languageclient/node";
 import { Commands } from "./commands";
 import { JAVA_SELECTOR } from "./standardLanguageClient";
+import * as semver from 'semver';
 
 const TEXT_MIMETYPE: string = "text/plain";
 const MIMETYPES: DocumentPasteProviderMetadata = {
@@ -62,12 +63,13 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 		}
 	}
 
-	async provideDocumentPasteEdits?(document: TextDocument, ranges: readonly Range[], dataTransfer: DataTransfer, context: DocumentPasteEditContext, token: CancellationToken): Promise<DocumentPasteEdit[]> {
+	async provideDocumentPasteEdits?(document: TextDocument, ranges: readonly Range[], dataTransfer: DataTransfer, context: DocumentPasteEditContext, token: CancellationToken): Promise<any> {
+
 
 		const insertText: string = await dataTransfer.get(TEXT_MIMETYPE).asString();
 
 		// don't try to provide for multi character inserts; the implementation will get messy and the feature won't be that helpful
-		if (!insertText || token.isCancellationRequested || ranges.length !== 1) {
+		if (!insertText || (!!token && token.isCancellationRequested) || ranges.length !== 1) {
 			return null;
 		}
 
@@ -93,12 +95,15 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 		try {
 			const pasteResponse: PDocumentPasteEdit = await commands.executeCommand(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.HANDLE_PASTE_EVENT, JSON.stringify(pasteEventParams));
 			if (pasteResponse) {
-				return [
-					{
-						insertText: pasteResponse.insertText,
-						additionalEdit: pasteResponse.additionalEdit ? await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
-					}
-				] as DocumentPasteEdit[];
+				const pasteEdit = {
+					insertText: pasteResponse.insertText,
+					additionalEdit: pasteResponse.additionalEdit ? await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(pasteResponse.additionalEdit) : undefined
+				};
+				if (semver.lt(version, '1.88.0')) {
+					return pasteEdit as DocumentPasteEdit;
+				} else {
+					return [ pasteEdit ] as DocumentPasteEdit[];
+				}
 			}
 		} catch (e) {
 			// Do nothing
