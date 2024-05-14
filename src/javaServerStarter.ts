@@ -6,12 +6,13 @@ import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
 import { ExtensionContext, version, workspace } from 'vscode';
-import { Executable, ExecutableOptions, StreamInfo, TransportKind } from 'vscode-languageclient/node';
+import { Executable, ExecutableOptions, StreamInfo, TransportKind, generateRandomPipeName } from 'vscode-languageclient/node';
 import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 import { RequirementsData } from './requirements';
 import { IS_WORKSPACE_VMARGS_ALLOWED, getJavaEncoding, getJavaagentFlag, getKey, isInWorkspaceFolder } from './settings';
 import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp } from './utils';
+import { log } from 'console';
 
 // eslint-disable-next-line no-var
 declare var v8debug;
@@ -50,9 +51,16 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	executable.command = path.resolve(`${requirements.tooling_jre}/bin/java`);
 	executable.args = prepareParams(requirements, workspacePath, context, isSyntaxServer);
 	const transportKind = getJavaConfiguration().get('transport');
+
 	switch (transportKind) {
 		case 'pipe':
 			executable.transport = TransportKind.pipe;
+			try {
+				generateRandomPipeName();
+			} catch (error) {
+				logger.warn(`Falling back to 'stdio' (from 'pipe') due to : ${error}`);
+				executable.transport = TransportKind.stdio;
+			}
 			break;
 		case 'stdio':
 			executable.transport = TransportKind.stdio;
