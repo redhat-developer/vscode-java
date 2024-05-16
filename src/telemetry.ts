@@ -11,7 +11,6 @@ export namespace Telemetry {
 	export const SERVER_INITIALIZED_EVT = "java.workspace.initialized";
 	export const LS_ERROR = "java.ls.error";
 	let telemetryManager: TelemetryService = null;
-	let serverInitializedReceived = false;
 
 	/**
 	 * Starts the telemetry service
@@ -26,7 +25,6 @@ export namespace Telemetry {
 		const redhatService = await getRedHatService(context);
 		const telemService = await redhatService.getTelemetryService();
 		telemetryManager = telemService;
-		setTimeout(sendEmptyStartUp, 60000); // assume LS may not have initialized
 		return telemService;
 	}
 
@@ -45,7 +43,6 @@ export namespace Telemetry {
 
 		let properties: any;
 		if (eventName === STARTUP_EVT) {
-			serverInitializedReceived = true;
 			properties= { ...data, ...javaSettings };
 		} else {
 			properties= { ...data};
@@ -55,12 +52,6 @@ export namespace Telemetry {
 			name: eventName,
 			properties
 		});
-	}
-
-	function sendEmptyStartUp() {
-		if (!serverInitializedReceived) {
-			return sendTelemetry(STARTUP_EVT);
-		}
 	}
 
 	function getJavaSettingsForTelemetry(config: WorkspaceConfiguration) {
