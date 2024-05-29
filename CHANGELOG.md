@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.31.0 (May 30th, 2024)
+ * performance - Create the default project only when it is necessary. See [#3452](https://github.com/redhat-developer/vscode-java/issues/3452).
+ * performance - Improve order of operations when importing multi-module Maven projects. See [#3637](https://github.com/redhat-developer/vscode-java/issues/3637).
+ * enhancement - Support delegate API to retrieve/update active profiles of Maven projects. See [JLS#3158](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3158).
+ * enhancement - Support delegate API for updating Java project options. See [JLS#3162](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3162).
+ * bug fix - Fix indentation for new line preceded by comma. See [#3396](https://github.com/redhat-developer/vscode-java/issues/3396).
+ * bug fix - Support document paste across older versions of VS Code. See [#3631](https://github.com/redhat-developer/vscode-java/issues/3631).
+ * bug fix - Fall back to `stdio` transport if `pipe` is likely to fail. See [#3649](https://github.com/redhat-developer/vscode-java/issues/3649).
+ * bug fix - Switch expression on a boolean value does not report error. See [JLS#3141](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3141).
+ * bug fix - Only clean default project when building workspace if it exists. See [JLS#3153](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3153).
+ * bug fix - Avoid sending an "empty" (lacking project data) startup event. See [#3655](https://github.com/redhat-developer/vscode-java/pull/3655).
+ * dependencies - Update vscode-redhat-telemetry to 0.8.0. See [#3659](https://github.com/redhat-developer/vscode-java/pull/3659).
+
 ## 1.30.0 (April 25th, 2024)
  * enhancement - Add `final` to new declarations generated from code actions. See [#3586](https://github.com/redhat-developer/vscode-java/pull/3586).
  * bug fix - Change default client/server transport from `stdio` to `pipe`. See [#3587](https://github.com/redhat-developer/vscode-java/pull/3587).
