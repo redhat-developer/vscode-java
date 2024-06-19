@@ -69,7 +69,7 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 			executable.transport = TransportKind.pipe;
 			break;
 	}
-	logger.info(`Starting Java server with: ${executable.command} ${executable.args.join(' ')}`);
+	logger.info(`Starting Java server with: ${executable.command} ${executable.args?.join(' ')}`);
 	return executable;
 }
 export function awaitServerConnection(port): Thenable<StreamInfo> {
