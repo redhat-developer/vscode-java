@@ -53,7 +53,11 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	const transportKind = getJavaConfiguration().get('transport');
 
 	switch (transportKind) {
+		case 'stdio':
+			executable.transport = TransportKind.stdio;
+			break;
 		case 'pipe':
+		default:
 			executable.transport = TransportKind.pipe;
 			try {
 				generateRandomPipeName();
@@ -61,12 +65,6 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 				logger.warn(`Falling back to 'stdio' (from 'pipe') due to : ${error}`);
 				executable.transport = TransportKind.stdio;
 			}
-			break;
-		case 'stdio':
-			executable.transport = TransportKind.stdio;
-			break;
-		default:
-			executable.transport = TransportKind.pipe;
 			break;
 	}
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args?.join(' ')}`);
