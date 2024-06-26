@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.32.0 (June 27th, 2024)
+ * performance - Ensure every null analysis annotation has a value defined when enabled. See [#3387](https://github.com/redhat-developer/vscode-java/issues/3387).
+ * enhancement - Add `final` to "Extract to local variable" quick assist if requested. See [#3308](https://github.com/redhat-developer/vscode-java/issues/3308).
+ * bug fix - Fix issues with the Lombok annotation handler. See [#3561](https://github.com/redhat-developer/vscode-java/issues/3561).
+ * bug fix - Revalidate project files after classpath changes when autobuild is off. See [JLS#3155](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3155).
+ * bug fix - Code completion fails with classes that are permitted by a sealed class. See [#3636](https://github.com/redhat-developer/vscode-java/issues/3636).
+ * bug fix - Perform verification on pipe name when transport kind is `default`. See [#3680](https://github.com/redhat-developer/vscode-java/pull/3680).
+ * bug fix - Some code actions may fail to resolve when machine's processor count too low. See [JLS#3180](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3180).
+ * bug fix - Support the import of multi-folder Gradle projects with same name. See [JLS#1743](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1743).
+ * bug fix - Autobuild setting should be respected on initialization. See [JLS#3176](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3176).
+ * bug fix - Improve chain completion by waiting for either "main" or "context" chains. See [JLS#2730](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2730).
+ * bug fix - Report only one instance of a logged error through telemetry. See [JLS#3190](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3190).
+ * build - Fix NPE when using 'Launch Extension - JDTLS Client' to local debug extension. See [#3677](https://github.com/redhat-developer/vscode-java/pull/3677).
+
 ## 1.31.0 (May 30th, 2024)
  * performance - Create the default project only when it is necessary. See [#3452](https://github.com/redhat-developer/vscode-java/issues/3452).
  * performance - Improve order of operations when importing multi-module Maven projects. See [#3637](https://github.com/redhat-developer/vscode-java/issues/3637).
