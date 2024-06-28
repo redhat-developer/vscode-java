@@ -673,16 +673,15 @@ export async function getActiveLanguageClient(): Promise<LanguageClient | undefi
 }
 
 function enableJavadocSymbols() {
-	// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
-	// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
 	languages.setLanguageConfiguration('java', {
+		//Indentation rules identical to js/ts. Copied from https://github.com/Microsoft/vscode/blob/41ddd41b71ea2bd5c6e49125beeb3e951f3d9c7c/extensions/typescript-language-features/src/features/languageConfiguration.ts#L17-L18
 		indentationRules: {
-			// ^(.*\*/)?\s*\}.*$
-			decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
-			// ^.*\{[^}"']*$
-			increaseIndentPattern: /^.*\{[^}"']*$/
+			decreaseIndentPattern: /^((?!.*?\/\*).*\*\/)?\s*[\}\]].*$/,
+			increaseIndentPattern: /^((?!\/\/).)*(\{[^}"'`]*|\([^)"'`]*|\[[^\]"'`]*)$/
 		},
 		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
+		// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
+		// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
 		onEnterRules: [
 			{
 				// e.g. /** | */ or /* | */
