@@ -10,7 +10,7 @@ import { logger } from './log';
 import { checkJavaPreferences } from './settings';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 
-const REQUIRED_JDK_VERSION = 17;
+const REQUIRED_JDK_VERSION = 22;
 /* eslint-disable @typescript-eslint/naming-convention */
 export interface RequirementsData {
     tooling_jre: string;

@@ -404,6 +404,17 @@
             "scope": "window",
             "order": 90
           },
+          "java.jdt.ls.javac.enabled": {
+            "type": "string",
+            "enum": [
+              "on",
+              "off"
+            ],
+            "default": "off",
+            "markdownDescription": "[Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 22",
+            "scope": "window",
+            "order": 95
+          },
           "java.trace.server": {
             "type": "string",
             "enum": [

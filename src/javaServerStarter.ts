@@ -104,7 +104,36 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 				// See https://github.com/redhat-developer/vscode-java/issues/2264
 				// It requires the internal API sun.nio.fs.WindowsFileAttributes.isDirectoryLink() to check if a Windows directory is symlink.
 				'--add-opens',
-				'java.base/sun.nio.fs=ALL-UNNAMED');
+				'java.base/sun.nio.fs=ALL-UNNAMED'
+				);
+
+	const javacEnabled = 'on' === getJavaConfiguration().get('jdt.ls.javac.enabled');
+	if (javacEnabled) {
+		// Javac flags
+		params.push(
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+		'--add-opens',
+		'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+		'-DICompilationUnitResolver=org.eclipse.jdt.core.dom.JavacCompilationUnitResolver',
+		'-DCompilationUnit.DOM_BASED_OPERATIONS=true',
+		// Javac based completion is useless for now
+		// '-DCompilationUnit.codeComplete.DOM_BASED_OPERATIONS=true',
+		'-DAbstractImageBuilder.compiler=org.eclipse.jdt.internal.javac.JavacCompiler'
+		);
+	}
 
 	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1',
 				'-Dosgi.bundles.defaultStartLevel=4',
