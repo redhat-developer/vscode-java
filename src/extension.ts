@@ -6,7 +6,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CodeActionContext, commands, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, QuickPickItemKind, RelativePattern, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
+import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, MarkdownString, QuickPickItemKind, RelativePattern, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -20,7 +20,7 @@ import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { OutputInfoCollector } from './outputInfoCollector';
 import { collectJavaExtensions, getBundlesToReload, getShortcuts, IJavaShortcut, isContributedPartUpdated } from './plugin';
-import { registerClientProviders } from './providerDispatcher';
+import { fixJdtSchemeHoverLinks, registerClientProviders } from './providerDispatcher';
 import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
@@ -93,6 +93,25 @@ function getHeapDumpFolderFromSettings(): string {
 	return results[1] || results[2] || results[3];
 }
 
+const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\\\))|([^)]))+))\)/g;
+
+/**
+ * Replace `jdt://` links in the documentation with links that execute the VS Code command required to open the referenced file.
+ *
+ * Extracted from {@link fixJdtSchemeHoverLinks} for use in completion item documentation.
+ *
+ * @param oldDocumentation the documentation to fix the links in
+ * @returns the documentation with fixed links
+ */
+export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): MarkdownString {
+	const newContent: string = oldDocumentation.value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
+		const uri = `command:${Commands.OPEN_FILE}?${encodeURI(JSON.stringify([encodeURIComponent(group2)]))}`;
+		return `${group1}${uri})`;
+	});
+	const mdString = new MarkdownString(newContent);
+	mdString.isTrusted = true;
+	return mdString;
+}
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	await loadSupportedJreNames(context);
@@ -224,6 +243,13 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 								}
 							});
 						}
+					},
+					resolveCompletionItem: async (item, token, next): Promise<CompletionItem> => {
+						const completionItem = await next(item, token);
+						if (completionItem.documentation instanceof MarkdownString) {
+							completionItem.documentation = fixJdtLinksInDocumentation(completionItem.documentation);
+						}
+						return completionItem;
 					},
 					// https://github.com/redhat-developer/vscode-java/issues/2130
 					// include all diagnostics for the current line in the CodeActionContext params for the performance reason

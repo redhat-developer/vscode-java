@@ -5,7 +5,7 @@ import { DocumentSymbol as clientDocumentSymbol, DocumentSymbolRequest, HoverReq
 import { LanguageClient } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import { Commands } from "./commands";
-import { getActiveLanguageClient } from "./extension";
+import { fixJdtLinksInDocumentation, getActiveLanguageClient } from "./extension";
 import { createClientHoverProvider } from "./hoverAction";
 import { ClassFileContentsRequest } from "./protocol";
 import { ServerMode } from "./settings";
@@ -197,8 +197,6 @@ function overwriteWorkspaceSymbolProvider(context: ExtensionContext): void {
 	});
 }
 
-const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\\\))|([^)]))+))\)/g;
-
 /**
  * Returns the hover with all jdt:// links replaced with a command:// link that opens the jdt URI.
  *
@@ -209,17 +207,11 @@ const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\
  * @param hover The hover to fix the jdt:// links for
  * @returns the hover with all jdt:// links replaced with a command:// link that opens the jdt URI
  */
-function fixJdtSchemeHoverLinks(hover: Hover): Hover {
+export function fixJdtSchemeHoverLinks(hover: Hover): Hover {
 	const newContents: (MarkedString | MarkdownString)[] = [];
 	for (const content of hover.contents) {
 		if (content instanceof MarkdownString) {
-			const newContent: string = (<MarkdownString>content).value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
-				const uri = `command:${Commands.OPEN_FILE}?${encodeURI(JSON.stringify([encodeURIComponent(group2)]))}`;
-				return `${group1}${uri})`;
-			});
-			const mdString = new MarkdownString(newContent);
-			mdString.isTrusted = true;
-			newContents.push(mdString);
+			newContents.push(fixJdtLinksInDocumentation(content));
 		} else {
 			newContents.push(content);
 		}
