@@ -19,7 +19,12 @@ export const javaRefactorKinds: Map<CodeActionKind, string> = new Map([
 
 export class RefactorDocumentProvider implements CodeActionProvider {
     provideCodeActions() {
-        return [];
+        return [{
+            // The aim of this is to expose the source actions in the light bulb.
+            title: "Source Actions...",
+            command: "editor.action.sourceAction",
+            kind: CodeActionKind.Empty,
+        }];
     }
 
     public static readonly metadata: CodeActionProviderMetadata = {
