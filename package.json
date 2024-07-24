@@ -1474,6 +1474,15 @@
             "markdownDescription": "Specifies whether to recheck all open Java files for diagnostics when editing a Java file.",
             "scope": "window"
           },
+          "java.diagnostic.filter": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "description": "Specifies a list of file patterns for which matching documents should not have their diagnostics reported (eg. '**/Foo.java').",
+            "scope": "window"
+          },
           "java.editor.reloadChangedSources": {
             "type": "string",
             "enum": [
