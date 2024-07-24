@@ -136,11 +136,16 @@ function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: Work
 		|| hasConfigKeyChanged('jdt.ls.vmargs', oldConfig, newConfig)
 		|| hasConfigKeyChanged('server.launchMode', oldConfig, newConfig)
 		|| hasConfigKeyChanged('sharedIndexes.location', oldConfig, newConfig)
-		|| hasConfigKeyChanged('transport', oldConfig, newConfig);
+		|| hasConfigKeyChanged('transport', oldConfig, newConfig)
+		|| hasConfigKeyChanged('diagnostic.filter', oldConfig, newConfig);
 }
 
 function hasConfigKeyChanged(key, oldConfig, newConfig) {
-	return oldConfig.get(key) !== newConfig.get(key);
+	const oldValue = oldConfig.get(key);
+	const newValue = newConfig.get(key);
+	return Array.isArray(oldValue) && Array.isArray(newValue)
+		? JSON.stringify(oldValue) !== JSON.stringify(newValue)
+		: oldValue !== newValue;
 }
 
 export function getJavaEncoding(): string {
