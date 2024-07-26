@@ -14,7 +14,7 @@ import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands, CommandTitle } from './commands';
 import { ClientStatus, ExtensionAPI, TraceEvent } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
-import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable, removeEquinoxFragmentOnDarwinX64 } from './javaServerStarter';
+import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable, removeEquinoxFragmentOnDarwinX64, startedFromSources } from './javaServerStarter';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
@@ -30,7 +30,7 @@ import { snippetCompletionProvider } from './snippetCompletionProvider';
 import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, resolveActualCause } from './utils';
+import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, resolveActualCause, getVersion } from './utils';
 import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
@@ -158,6 +158,10 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	registerOutOfMemoryDetection(storagePath);
 
 	cleanJavaWorkspaceStorage();
+
+	if (!startedFromSources()) { // Dev mode: version may not match package.json, deleting the in-use folder
+		cleanOldGlobalStorage(context);
+	}
 
 	// https://github.com/redhat-developer/vscode-java/issues/3484
 	if (process.platform === 'darwin' && process.arch === 'x64') {
@@ -1099,6 +1103,26 @@ async function cleanJavaWorkspaceStorage() {
 			}
 		});
 	}
+}
+
+async function cleanOldGlobalStorage(context: ExtensionContext) {
+	const currentVersion = getVersion(context.extensionPath);
+	const globalStoragePath = context.globalStorageUri?.fsPath; // .../Code/User/globalStorage/redhat.java
+
+	ensureExists(globalStoragePath);
+
+	// delete folders in .../User/globalStorage/redhat.java that are not named the current version
+	fs.promises.readdir(globalStoragePath).then(async (files) => {
+		await Promise.all(files.map(async (file) => {
+			const currentPath = path.join(globalStoragePath, file);
+			const stat = await fs.promises.stat(currentPath);
+
+			if (stat.isDirectory() && file !== currentVersion) {
+				logger.info(`Removing old folder in globalStorage : ${file}`);
+				deleteDirectory(currentPath);
+			}
+		}));
+	});
 }
 
 export function registerCodeCompletionTelemetryListener() {

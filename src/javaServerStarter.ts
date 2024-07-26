@@ -11,7 +11,7 @@ import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 import { RequirementsData } from './requirements';
 import { IS_WORKSPACE_VMARGS_ALLOWED, getJavaEncoding, getJavaagentFlag, getKey, isInWorkspaceFolder } from './settings';
-import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp } from './utils';
+import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp, getVersion } from './utils';
 import { log } from 'console';
 
 // eslint-disable-next-line no-var
@@ -254,15 +254,7 @@ export function getSharedIndexCache(context: ExtensionContext): string {
 
 function resolveConfiguration(context, configDir) {
 	ensureExists(context.globalStoragePath);
-	const extensionPath = path.resolve(context.extensionPath, "package.json");
-	const packageFile = JSON.parse(fs.readFileSync(extensionPath, 'utf8'));
-	let version;
-	if (packageFile) {
-		version = packageFile.version;
-	}
-	else {
-		version = '0.0.0';
-	}
+	const version = getVersion(context.extensionPath);
 	let configuration = path.resolve(context.globalStoragePath, version);
 	ensureExists(configuration);
 	configuration = path.resolve(configuration, configDir);
@@ -288,7 +280,7 @@ function startedInDebugMode(): boolean {
 	return hasDebugFlag(args);
 }
 
-function startedFromSources(): boolean {
+export function startedFromSources(): boolean {
 	return process.env['DEBUG_VSCODE_JAVA'] === 'true';
 }
 
