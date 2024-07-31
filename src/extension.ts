@@ -6,8 +6,8 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, MarkdownString, QuickPickItemKind, RelativePattern, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from 'vscode';
-import { CancellationToken, CodeActionParams, CodeActionRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
+import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, MarkdownString, QuickPickItemKind, Range, RelativePattern, SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
+import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
 import { ClientErrorHandler } from './clientErrorHandler';
@@ -235,6 +235,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						extractInterfaceSupport: true,
 						advancedUpgradeGradleSupport: true,
 						executeClientCommandSupport: true,
+						snippetEditSupport: true,
 					},
 					triggerFiles,
 				},
@@ -303,7 +304,60 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						}, (error) => {
 							return client.handleFailedRequest(CodeActionRequest.type, token, error, []);
 						});
-					}
+					},
+
+					resolveCodeAction: async (item, token, next) => {
+						const client: LanguageClient = standardClient.getClient();
+						const documentUris = [];
+						const snippetEdits = [];
+						const resolveCodeAction = async (item, token) => {
+							return client.sendRequest(CodeActionResolveRequest.type, client.code2ProtocolConverter.asCodeActionSync(item), token).then(async (result) => {
+								if (token.isCancellationRequested) {
+									return item;
+								}
+								const docChanges = result.edit.documentChanges;
+								for (const editType of docChanges) {
+									if ("textDocument" in editType) {
+										for (const edit of editType.edits) {
+											if ("snippet" in edit) {
+												documentUris.push(editType.textDocument.uri);
+												snippetEdits.push(new SnippetTextEdit(asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
+											}
+										}
+									}
+								}
+								const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
+								const docEdits = codeAction.edit.entries();
+								const newWorkspaceEdit = new WorkspaceEdit();
+								for (const doc of docEdits) {
+									const uri = doc[0];
+									if (documentUris.includes(uri.toString())) {
+										const editList = [];
+										for (const edit of doc[1]) {
+											let isSnippet = false;
+											snippetEdits.forEach((snippet, index) => {
+												if (edit.range.isEqual(snippet.range) && documentUris[index] === uri.toString()) {
+													editList.push(snippet);
+													isSnippet = true;
+												}
+											});
+											if (!isSnippet) {
+												editList.push(edit);
+											}
+										}
+										newWorkspaceEdit.set(uri, editList);
+									} else {
+										newWorkspaceEdit.set(uri, doc[1]);
+									}
+								}
+								codeAction.edit = newWorkspaceEdit;
+								return codeAction;
+							}, (error) => {
+								return client.handleFailedRequest(CodeActionResolveRequest.type, token, error, item);
+							});
+						 };
+						return resolveCodeAction(item, token);
+					},
 				},
 				revealOutputChannelOn: RevealOutputChannelOn.Never,
 				errorHandler: new ClientErrorHandler(extensionName),
@@ -1188,6 +1242,10 @@ function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
 				break;
 		}
 	}));
+}
+
+function asRange(value) {
+	return value ? new Range(value.start.line, value.start.character, value.end.line, value.end.character) : undefined;
 }
 
 
