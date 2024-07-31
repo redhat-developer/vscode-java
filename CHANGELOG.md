@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.33.0 (August 1st, 2024)
+ * performance - Clean up invalid projects during initialization to prevent build cycles. See [#3639](https://github.com/redhat-developer/vscode-java/issues/3639).
+ * enhancement - Expose source actions via. the code action (light bulb) menu. See [#3714](https://github.com/redhat-developer/vscode-java/pull/3714).
+ * enhancement - Use `java.diagnostic.filter` to exclude files from the "Problems" tab. See [#2150](https://github.com/redhat-developer/vscode-java/issues/2150).
+ * enhancement - Clear out-of-date files under extension's global storage. See [#2597](https://github.com/redhat-developer/vscode-java/issues/2597).
+ * enhancement - Add support for callees based on implementors for call hierarchy. See [JLS#2780](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2780).
+ * bug fix - Links to classes do not appear in completion documentation. See [#3697](https://github.com/redhat-developer/vscode-java/issues/3697).
+ * bug fix - Add tag property to better track kinds of stacktrace errors of interest. See [#3720](https://github.com/redhat-developer/vscode-java/pull/3720).
+ * dependencies - Target platform update resulting in **loss of support for Java versions older than 1.8**. See [JLS#3227](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3227).
+
 ## 1.32.0 (June 27th, 2024)
  * performance - Ensure every null analysis annotation has a value defined when enabled. See [#3387](https://github.com/redhat-developer/vscode-java/issues/3387).
  * enhancement - Add `final` to "Extract to local variable" quick assist if requested. See [#3308](https://github.com/redhat-developer/vscode-java/issues/3308).
