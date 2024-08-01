@@ -226,6 +226,8 @@ export async function getJavaConfig(javaHome: string) {
 	const editorConfig = workspace.getConfiguration('editor');
 	javaConfig.format.insertSpaces = editorConfig.get('insertSpaces');
 	javaConfig.format.tabSize = editorConfig.get('tabSize');
+	const filesConfig = workspace.getConfiguration('files');
+	javaConfig.associations = filesConfig.get('associations');
 	const isInsider: boolean = version.includes("insider");
 	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
 	switch (androidSupport) {

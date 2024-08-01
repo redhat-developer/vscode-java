@@ -39,8 +39,8 @@ export async function registerOrganizeImportsOnPasteCommand(): Promise<void> {
 	});
 
 	action.then((wasApplied) => {
-		const fileURI = editor.document.uri.toString();
-		if (wasApplied && fileURI.endsWith(".java")) {
+		if (wasApplied && editor.document.languageId === "java") {
+			const fileURI = editor.document.uri.toString();
 			const hasText: boolean = documentText !== null && /\S/.test(documentText);
 			if (hasText) {
 				// Organize imports silently to avoid surprising the user

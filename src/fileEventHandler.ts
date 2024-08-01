@@ -174,7 +174,25 @@ function getWillRenameHandler(client: LanguageClient) {
 }
 
 function isJavaFile(uri: Uri): boolean {
-    return uri.fsPath && uri.fsPath.endsWith(".java");
+    if (uri.fsPath && uri.fsPath.endsWith(".java")) {
+        return true;
+    }
+    let result = false;
+    const associations = workspace.getConfiguration().get("files.associations");
+    if (associations !== null) {
+        Object.keys(associations).forEach(pattern => {
+            const langId = associations[pattern];
+            if (langId === 'java' && pattern.startsWith('*.') && pattern.length > 2) {
+                const ext = pattern.substring(2);
+                if (!ext.includes('?') && !ext.includes('*')) {
+                    if (uri.fsPath && uri.fsPath.endsWith(`.${ext}`)) {
+                        result = true;
+                    }
+                }
+            }
+        });
+    }
+    return result;
 }
 
 async function isFile(uri: Uri): Promise<boolean> {

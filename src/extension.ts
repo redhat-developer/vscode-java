@@ -208,7 +208,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					{ scheme: 'untitled', language: 'java' }
 				],
 				synchronize: {
-					configurationSection: ['java', 'editor.insertSpaces', 'editor.tabSize'],
+					configurationSection: ['java', 'editor.insertSpaces', 'editor.tabSize', "files.associations"],
 				},
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
@@ -1061,7 +1061,7 @@ async function getTriggerFiles(): Promise<string[]> {
 function getJavaFilePathOfTextDocument(document: TextDocument): string | undefined {
 	if (document) {
 		const resource = document.uri;
-		if (resource.scheme === 'file' && resource.fsPath.endsWith('.java')) {
+		if (resource.scheme === 'file' && document.languageId === "java") {
 			return path.normalize(resource.fsPath);
 		}
 	}
