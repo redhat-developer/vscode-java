@@ -5,7 +5,7 @@ import requests
 import json
 import ast
 
-readme_ver_pattern = r'(?:(?<=Supports code from Java 1\.5 to Java )(\d+)|(?<=JavaSE-)~|(?<=path/to/jdk-)~)'  # After resolving current_jdk, we will replace ~
+readme_ver_pattern = r'(?:(?<=Supports code from Java 1\.8 to Java )(\d+)|(?<=JavaSE-)~|(?<=path/to/jdk-)~)'  # After resolving current_jdk, we will replace ~
 
 # Query the Oracle website for the latest JDK version
 response = requests.get('http://javadl-esd-secure.oracle.com/update/baseline.version')
