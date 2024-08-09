@@ -315,19 +315,21 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 								if (token.isCancellationRequested) {
 									return item;
 								}
-								const docChanges = result.edit.documentChanges;
-								for (const editType of docChanges) {
-									if ("textDocument" in editType) {
-										for (const edit of editType.edits) {
-											if ("snippet" in edit) {
-												documentUris.push(editType.textDocument.uri);
-												snippetEdits.push(new SnippetTextEdit(asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
+								const docChanges = result.edit !== undefined ? result.edit.documentChanges : undefined;
+								if (docChanges !== undefined) {
+									for (const editType of docChanges) {
+										if ("textDocument" in editType) {
+											for (const edit of editType.edits) {
+												if ("snippet" in edit) {
+													documentUris.push(editType.textDocument.uri);
+													snippetEdits.push(new SnippetTextEdit(asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
+												}
 											}
 										}
 									}
 								}
 								const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
-								const docEdits = codeAction.edit.entries();
+								const docEdits = codeAction.edit !== undefined? codeAction.edit.entries() : [];
 								const newWorkspaceEdit = new WorkspaceEdit();
 								for (const doc of docEdits) {
 									const uri = doc[0];
