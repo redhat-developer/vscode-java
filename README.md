@@ -16,7 +16,7 @@ Quick Start
 1. Install the Extension
 2. On the following platforms, the extension should activate without any setup : `win32-x64`, `darwin-x64`, `darwin-arm64`, `linux-x64`, `linux-arm64`.\
 If on another platform, or using the "universal" version, you can [set](#setting-the-jdk) a _Java_ Development Kit. It must be Java 17 or above.
-3. Optionally, download and install a Java Development Kit for your project (Java 1.5 or above is supported). See [Project JDKs](#project-jdks) for more details
+3. Optionally, download and install a Java Development Kit for your project (Java 1.8 or above is supported). See [Project JDKs](#project-jdks) for more details
 4. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
 
