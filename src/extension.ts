@@ -317,43 +317,44 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 								}
 								const docChanges = result.edit !== undefined ? result.edit.documentChanges : undefined;
 								if (docChanges !== undefined) {
-									for (const editType of docChanges) {
-										if ("textDocument" in editType) {
-											for (const edit of editType.edits) {
+									for (const docChange of docChanges) {
+										if ("textDocument" in docChange) {
+											for (const edit of docChange.edits) {
 												if ("snippet" in edit) {
-													documentUris.push(editType.textDocument.uri);
-													snippetEdits.push(new SnippetTextEdit(asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
+													documentUris.push(docChange.textDocument.uri);
+													snippetEdits.push(new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
 												}
 											}
 										}
 									}
-								}
-								const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
-								const docEdits = codeAction.edit !== undefined? codeAction.edit.entries() : [];
-								const newWorkspaceEdit = new WorkspaceEdit();
-								for (const doc of docEdits) {
-									const uri = doc[0];
-									if (documentUris.includes(uri.toString())) {
-										const editList = [];
-										for (const edit of doc[1]) {
-											let isSnippet = false;
-											snippetEdits.forEach((snippet, index) => {
-												if (edit.range.isEqual(snippet.range) && documentUris[index] === uri.toString()) {
-													editList.push(snippet);
-													isSnippet = true;
+									const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
+									const docEdits = codeAction.edit !== undefined? codeAction.edit.entries() : [];
+									const newWorkspaceEdit = new WorkspaceEdit();
+									for (const docEdit of docEdits) {
+										const uri = docEdit[0];
+										if (documentUris.includes(uri.toString())) {
+											const editList = [];
+											for (const edit of docEdit[1]) {
+												let isSnippet = false;
+												snippetEdits.forEach((snippet, index) => {
+													if (edit.range.isEqual(snippet.range) && documentUris[index] === uri.toString()) {
+														editList.push(snippet);
+														isSnippet = true;
+													}
+												});
+												if (!isSnippet) {
+													editList.push(edit);
 												}
-											});
-											if (!isSnippet) {
-												editList.push(edit);
 											}
+											newWorkspaceEdit.set(uri, editList);
+										} else {
+											newWorkspaceEdit.set(uri, docEdit[1]);
 										}
-										newWorkspaceEdit.set(uri, editList);
-									} else {
-										newWorkspaceEdit.set(uri, doc[1]);
 									}
+									codeAction.edit = newWorkspaceEdit;
+									return codeAction;
 								}
-								codeAction.edit = newWorkspaceEdit;
-								return codeAction;
+								return await client.protocol2CodeConverter.asCodeAction(result, token);
 							}, (error) => {
 								return client.handleFailedRequest(CodeActionResolveRequest.type, token, error, item);
 							});
@@ -1245,9 +1246,3 @@ function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
 		}
 	}));
 }
-
-function asRange(value) {
-	return value ? new Range(value.start.line, value.start.character, value.end.line, value.end.character) : undefined;
-}
-
-
