@@ -329,7 +329,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 									}
 									const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
 									const docEdits = codeAction.edit !== undefined? codeAction.edit.entries() : [];
-									const newWorkspaceEdit = new WorkspaceEdit();
 									for (const docEdit of docEdits) {
 										const uri = docEdit[0];
 										if (documentUris.includes(uri.toString())) {
@@ -346,12 +345,10 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 													editList.push(edit);
 												}
 											}
-											newWorkspaceEdit.set(uri, editList);
-										} else {
-											newWorkspaceEdit.set(uri, docEdit[1]);
+											codeAction.edit.set(uri, null);
+											codeAction.edit.set(uri, editList);
 										}
 									}
-									codeAction.edit = newWorkspaceEdit;
 									return codeAction;
 								}
 								return await client.protocol2CodeConverter.asCodeAction(result, token);
