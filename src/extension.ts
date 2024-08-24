@@ -40,6 +40,7 @@ import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './buildFilesSelector';
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
+import { searchScopeBarProvider } from './searchScopeStatusBarProvider';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -544,6 +545,17 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					await startStandardServer(context, requirements, clientOptions, workspacePath, true /* triggeredByCommand */);
 				}
 			});
+
+			context.subscriptions.push(commands.registerCommand(Commands.CHANGE_JAVA_SEARCH_SCOPE, async () => {
+				const selection = await window.showQuickPick(["all", "main"], {
+					canPickMany: false,
+					placeHolder: "Choose a Java Search Scope",
+				});
+				if(selection) {
+					workspace.getConfiguration().update("java.search.scope", selection, false).then(() => searchScopeBarProvider.update());
+				}
+			}));
+			context.subscriptions.push(searchScopeBarProvider);
 
 			context.subscriptions.push(snippetCompletionProvider.initialize());
 			context.subscriptions.push(serverStatusBarProvider);

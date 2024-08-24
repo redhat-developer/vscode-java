@@ -1500,6 +1500,19 @@
             "default": "ask",
             "markdownDescription": "Specifies whether to reload the sources of the open class files when their source jar files are changed.",
             "scope": "window"
+          },
+          "java.search.scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "main"
+            ],
+            "enumDescriptions": [
+              "Search on all classpath entries including reference libraries and projects.",
+              "All classpath entries excluding test classpath entries."
+            ],
+            "default": "all",
+            "markdownDescription": "Specifies the scope which must be used for search operation like \n - Find Reference\n - Call hierarchy\n"
           }
         }
       }
@@ -1657,6 +1670,11 @@
       {
         "command": "java.action.doCleanup",
         "title": "%java.action.doCleanup%",
+        "category": "Java"
+      },
+      {
+        "command": "java.change.searchScope",
+        "title": "%java.change.searchScope%",
         "category": "Java"
       }
     ],
