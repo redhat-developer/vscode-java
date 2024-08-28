@@ -1,5 +1,14 @@
 # Change Log
 
+## 1.34.0 (August 29th, 2024)
+ * enhancement - Support custom source file extensions through `files.associations`. See [#3731](https://github.com/redhat-developer/vscode-java/pull/3731).
+ * enhancement - Add telemetry for detecting language server running out of memory. See [#3743](https://github.com/redhat-developer/vscode-java/pull/3743).
+ * bug fix - Fix `ClassCastException` for the file paste event. See [JLS#3239](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3239).
+ * bug fix - Invalid code actions suggested on deletion of a file. See [#3663](https://github.com/redhat-developer/vscode-java/issues/3663).
+ * bug fix - Better handling when file path contains non-ASCII characters. See [#3735](https://github.com/redhat-developer/vscode-java/issues/3735).
+ * bug fix - Add Gradle 8.8 to compatibility check. See [JLS#3212](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3212).
+ * documentation - Fix stale reference in "Quick Start". See [#3741](https://github.com/redhat-developer/vscode-java/pull/3741).
+
 ## 1.33.0 (August 1st, 2024)
  * performance - Clean up invalid projects during initialization to prevent build cycles. See [#3639](https://github.com/redhat-developer/vscode-java/issues/3639).
  * enhancement - Expose source actions via. the code action (light bulb) menu. See [#3714](https://github.com/redhat-developer/vscode-java/pull/3714).
