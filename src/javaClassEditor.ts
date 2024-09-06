@@ -41,16 +41,9 @@ export class JavaClassEditorProvider implements vscode.CustomReadonlyEditorProvi
 			${style}
 		</head>
 		<body>
-			<div class="center">
-				<p>This file is not displayed in the text editor because it is a Java class file. Click here to decompile and open.</p>
-				<button id="btn"><center>Decompile Class File</center></button>
-			<div>
 			<script nonce="${nonce}">
 				const vscode = acquireVsCodeApi();
-				document.getElementById("btn").addEventListener("click", decompiled);
-				function decompiled() {
-					vscode.postMessage({ command: 'decompiled' });
-				}
+				vscode.postMessage({ command: 'decompiled' });
 			</script>
 		</body>
 		</html>
