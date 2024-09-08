@@ -105,6 +105,11 @@
       {
         "title": "$(trash) Clean Workspace Cache...",
         "command": "java.clean.workspace"
+      },
+      {
+        "command": "java.change.searchScope",
+        "title": "$(search) Search Scope",
+        "category": "Java"
       }
     ],
     "semanticTokenTypes": [
