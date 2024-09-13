@@ -344,3 +344,65 @@ Cleans up lambda expression wherever possible in the following ways:
     ```java
     ArrayList::new;
     ```
+
+### `organizeImports`
+
+Performs the "Organize Imports" operation.
+
+**Note** : Since clean ups are meant to be applied without user feedback (eg. prompts about ambiguous types), this may leave some types unresolved. To properly resolve these ambiguous types, one can do so manually (code actions, source actions), or by calling "Organize Imports" through the command palette / key binding (<kbd>shift</kbd> + <kbd>alt</kbd> + <kbd>o</kbd>).
+
+For example:
+
+```java
+package test1;
+public class A {
+    public void test() {
+        List<String> a1;
+        Iterator<String> a2;
+        Map<String, String> a3;
+        Set<String> a4;
+        JarFile a5;
+        StringTokenizer a6;
+        Path a7;
+        URI a8;
+        HttpURLConnection a9;
+        InputStream a10;
+        Field a11;
+        Parser a12;
+    }
+}
+```
+
+becomes:
+
+```java
+package test1;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+import java.util.jar.JarFile;
+
+public class A {
+    public void test() {
+        List<String> a1;
+        Iterator<String> a2;
+        Map<String, String> a3;
+        Set<String> a4;
+        JarFile a5;
+        StringTokenizer a6;
+        Path a7;
+        URI a8;
+        HttpURLConnection a9;
+        InputStream a10;
+        Field a11;
+        Parser a12;
+    }
+}
+```
