@@ -27,5 +27,6 @@
 	"java.server.restart": "Restart Java Language Server",
 	"java.edit.smartSemicolonDetection": "Java Smart Semicolon Detection",
 	"java.action.filesExplorerPasteAction": "Paste Clipboard Text Into a File",
-	"java.action.doCleanup": "Performs Cleanup Actions"
+	"java.action.doCleanup": "Performs Cleanup Actions",
+	"java.change.searchScope": "Change Search Scope"
 }

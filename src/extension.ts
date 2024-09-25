@@ -545,6 +545,16 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 			});
 
+			context.subscriptions.push(commands.registerCommand(Commands.CHANGE_JAVA_SEARCH_SCOPE, async () => {
+				const selection = await window.showQuickPick(["all", "main"], {
+					canPickMany: false,
+					placeHolder: `Current: ${workspace.getConfiguration().get("java.search.scope")}`,
+				});
+				if(selection) {
+					workspace.getConfiguration().update("java.search.scope", selection, false);
+				}
+			}));
+
 			context.subscriptions.push(snippetCompletionProvider.initialize());
 			context.subscriptions.push(serverStatusBarProvider);
 			context.subscriptions.push(languageStatusBarProvider);
