@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.35.0 (September 26th, 2024)
+ * performance - Consider token to limit the chains that are searched. See [JLS#2835](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2835).
+ * enhancement - Provide support for Java 23. See [#3774](https://github.com/redhat-developer/vscode-java/pull/3774).
+ * enhancement - Show decompiled content directly on opened `.class` file. See [#3759](https://github.com/redhat-developer/vscode-java/issues/3759).
+ * enhancement - Support dynamic code actions through LSP snippet syntax. See [#3686](https://github.com/redhat-developer/vscode-java/issues/3686).
+ * enhancement - Introduce new type mismatch quickfix for constructor invocations. See [#3040](https://github.com/redhat-developer/vscode-java/issues/3040).
+ * enhancement - Control scope for search operations (eg. references, call hierarchy, workspace symbols). See [#2649](https://github.com/redhat-developer/vscode-java/issues/2649).
+ * enhancement - Add "Organize Imports" as a clean up. See [#3764](https://github.com/redhat-developer/vscode-java/pull/3764).
+ * bug fix - Import Gradle project via. Buildship if Gradle Build Server is not available. See [JLS#3245](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3245).
+ * bug fix - Copy/paste will not escape content within String literal when code has error. See [#3761](https://github.com/redhat-developer/vscode-java/issues/3761).
+ * bug fix - Respect `unwantedRecommendations`. See [#3767](https://github.com/redhat-developer/vscode-java/pull/3767).
+ * dependencies - Bump webpack from 5.76.0 to 5.94.0. See [#3756](https://github.com/redhat-developer/vscode-java/pull/3756).
+ * dependencies - Update vscode-redhat-telemetry to 0.9.0. See [#3778](https://github.com/redhat-developer/vscode-java/pull/3778).
+
 ## 1.34.0 (August 29th, 2024)
  * enhancement - Support custom source file extensions through `files.associations`. See [#3731](https://github.com/redhat-developer/vscode-java/pull/3731).
  * enhancement - Add telemetry for detecting language server running out of memory. See [#3743](https://github.com/redhat-developer/vscode-java/pull/3743).
@@ -100,7 +114,7 @@
  * bug fix - Log the error details when initialization fails. See [#3472](https://github.com/redhat-developer/vscode-java/pull/3472).
  * bug fix - Avoid string concatenation with `Runtime.getRuntime().exec(..)`. See [JLS#3022](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3022).
  * dependencies - Adopt the Lombok 1.18.31 edge release. See [#3461](https://github.com/redhat-developer/vscode-java/pull/3461).
- * build -  Automatically suggest updates based on JDT-LS Java language support. See [#3402](https://github.com/redhat-developer/vscode-java/pull/3402).
+ * build - Automatically suggest updates based on JDT-LS Java language support. See [#3402](https://github.com/redhat-developer/vscode-java/pull/3402).
 
 ## 1.26.0 (January 11th, 2024)
  * performance - Reduce delegate command calls when classpath changes. See [#3439](https://github.com/redhat-developer/vscode-java/pull/3439).
