@@ -1443,6 +1443,21 @@
             "markdownDescription": "The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:\n - `java.lang.Math.*` - All the methods from java.lang.Math.\n - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.\n - `*.println(*)` - Methods named as 'println'.\n - `(from, to)` - Methods with two parameters named as 'from' and 'to'.\n - `(arg*)` - Methods with one parameter whose name starts with 'arg'.",
             "scope": "window",
             "order": 80
+          },
+          "java.search.scope": {
+            "type": "string",
+            "enum": [
+              "all",
+              "main"
+            ],
+            "enumDescriptions": [
+              "Search on all classpath entries including reference libraries and projects.",
+              "All classpath entries excluding test classpath entries."
+            ],
+            "default": "all",
+            "markdownDescription": "Specifies the scope which must be used for search operation like \n - Find Reference\n - Call Hierarchy\n - Workspace Symbols",
+            "scope": "window",
+            "order": 90
           }
         }
       },
@@ -1505,19 +1520,6 @@
             "default": "ask",
             "markdownDescription": "Specifies whether to reload the sources of the open class files when their source jar files are changed.",
             "scope": "window"
-          },
-          "java.search.scope": {
-            "type": "string",
-            "enum": [
-              "all",
-              "main"
-            ],
-            "enumDescriptions": [
-              "Search on all classpath entries including reference libraries and projects.",
-              "All classpath entries excluding test classpath entries."
-            ],
-            "default": "all",
-            "markdownDescription": "Specifies the scope which must be used for search operation like \n - Find Reference\n - Call hierarchy\n"
           }
         }
       }

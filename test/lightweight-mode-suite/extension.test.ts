@@ -25,7 +25,8 @@ suite('Java Language Extension - LightWeight', () => {
 				Commands.OPEN_FILE,
 				Commands.CLEAN_SHARED_INDEXES,
 				Commands.RESTART_LANGUAGE_SERVER,
-				Commands.FILESEXPLORER_ONPASTE
+				Commands.FILESEXPLORER_ONPASTE,
+				Commands.CHANGE_JAVA_SEARCH_SCOPE
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
