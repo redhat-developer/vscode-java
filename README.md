@@ -249,8 +249,6 @@ The following settings are supported:
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
 * `java.completion.collapseCompletionItems`: Enable/disable the collapse of overloaded methods in completion items. Overrides `java.completion.guessMethodArguments`. Defaults to `false`.
 * `java.diagnostic.filter`: Specifies a list of file patterns for which matching documents should not have their diagnostics reported (eg. '**/Foo.java').
-
-New in 1.35.0
 * `java.search.scope`: Specifies the scope which must be used for search operation like
   - Find Reference
   - Call Hierarchy
