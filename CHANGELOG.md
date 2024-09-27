@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.35.1 (September 30th, 2024)
+ * bug fix - Dynamic code actions fail on Windows. See [#3780](https://github.com/redhat-developer/vscode-java/issues/3780).
+
 ## 1.35.0 (September 26th, 2024)
  * performance - Consider token to limit the chains that are searched. See [JLS#2835](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/2835).
  * enhancement - Provide support for Java 23. See [#3774](https://github.com/redhat-developer/vscode-java/pull/3774).
