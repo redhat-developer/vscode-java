@@ -235,7 +235,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						extractInterfaceSupport: true,
 						advancedUpgradeGradleSupport: true,
 						executeClientCommandSupport: true,
-						snippetEditSupport: true,
+						snippetEditSupport: false,
 					},
 					triggerFiles,
 				},
