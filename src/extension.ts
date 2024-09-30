@@ -235,7 +235,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						extractInterfaceSupport: true,
 						advancedUpgradeGradleSupport: true,
 						executeClientCommandSupport: true,
-						snippetEditSupport: false,
+						snippetEditSupport: true,
 					},
 					triggerFiles,
 				},
@@ -321,7 +321,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 										if ("textDocument" in docChange) {
 											for (const edit of docChange.edits) {
 												if ("snippet" in edit) {
-													documentUris.push(docChange.textDocument.uri);
+													documentUris.push(Uri.parse(docChange.textDocument.uri).toString());
 													snippetEdits.push(new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
 												}
 											}
