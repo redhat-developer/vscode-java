@@ -800,6 +800,11 @@ function enableJavadocSymbols() {
 				// e.g.  *-----*/|
 				beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
 				action: { indentAction: IndentAction.None, removeText: 1 }
+			},
+			{
+				// e.g. /// ...| (Markdown javadoc)
+				beforeText: /^\s*\/\/\/(.*)?$/,
+				action: { indentAction: IndentAction.None, appendText: '/// ' }
 			}
 		]
 	});
