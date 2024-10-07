@@ -21,7 +21,6 @@ import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { OutputInfoCollector } from './outputInfoCollector';
 import { collectJavaExtensions, getBundlesToReload, getShortcuts, IJavaShortcut, isContributedPartUpdated } from './plugin';
 import { fixJdtSchemeHoverLinks, registerClientProviders } from './providerDispatcher';
-import { initialize as initializeRecommendation } from './recommendation';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
 import { serverStatusBarProvider, ShortcutQuickPickItem } from './serverStatusBarProvider';
@@ -34,7 +33,6 @@ import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuild
 import glob = require('glob');
 import { Telemetry } from './telemetry';
 import { getMessage } from './errorUtils';
-import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib';
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './buildFilesSelector';
@@ -149,11 +147,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	}
 	initializeLogFile(clientLogFile);
 
-	const telemetryService: Promise<TelemetryService> = Telemetry.startTelemetry(context);
-
 	enableJavadocSymbols();
-
-	initializeRecommendation(context, telemetryService);
 
 	registerOutOfMemoryDetection(storagePath);
 
