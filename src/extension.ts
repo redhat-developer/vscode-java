@@ -38,6 +38,7 @@ import { loadSupportedJreNames } from './jdkUtils';
 import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './buildFilesSelector';
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
+import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib/node';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -146,6 +147,8 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 		deleteClientLog(storagePath);
 	}
 	initializeLogFile(clientLogFile);
+
+	Telemetry.startTelemetry(context);
 
 	enableJavadocSymbols();
 
