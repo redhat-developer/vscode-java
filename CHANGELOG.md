@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.36.0 (October 31st, 2024)
+ * enhancement - Experimental support for using `javac` as the compiler. See [#3558](https://github.com/redhat-developer/vscode-java/pull/3558), [JLS#3167](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3167).
+   * `java.jdt.ls.javac.enabled`: Enables Javac-based compilation.
+     * Requires running with **Java 23**. Make sure to use `java.jdt.ls.java.home` for this.
+     * Defaults to `off`
+   * `java.completion.engine`: Select code completion engine. (`ecj` or `dom`)
+     * Requires `java.jdt.ls.javac.enabled` to be `on`
+     * Defaults to `ecj`
+ * enhancement - Automatically add `///` on new line when editing Markdown comments (JEP 467). See [#3801](https://github.com/redhat-developer/vscode-java/issues/3801).
+ * bug fix - Re-enable dynamic code actions by fixing the URI comparison. See [#3792](https://github.com/redhat-developer/vscode-java/pull/3792).
+ * bug fix - Intermittent failures to suggest Java core packages for completion & code actions. See [#3797](https://github.com/redhat-developer/vscode-java/issues/3797).
+ * bug fix - `java.diagnostic.filter` is broken on Windows. See [JLS#3290](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3290).
+ * bug fix - Type declaration snippets should respect `java.templates.typeComment`. See [JLS#3295](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3295).
+ * bug fix - Linux release package files have excessive permissions. See [JLS#3293](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3293).
+ * bug fix - Remove Dependency Analytics extension from being recommended. See [#3804](https://github.com/redhat-developer/vscode-java/pull/3804).
+ * bug fix - Update embedded lombok library name to reflect actual version. See [#3833](https://github.com/redhat-developer/vscode-java/pull/3833).
+ * dependencies - Use Node 20 in release-job only. See [#3809](https://github.com/redhat-developer/vscode-java/pull/3809).
+
 ## 1.35.1 (September 30th, 2024)
  * bug fix - Dynamic code actions fail on Windows. See [#3780](https://github.com/redhat-developer/vscode-java/issues/3780).
 
