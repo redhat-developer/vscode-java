@@ -248,13 +248,11 @@ The following settings are supported:
 * `java.edit.smartSemicolonDetection.enabled`: Defines the `smart semicolon` detection. Defaults to `false`.
 * `java.configuration.detectJdksAtStart`: Automatically detect JDKs installed on local machine at startup. If you have specified the same JDK version in `java.configuration.runtimes`, the extension will use that version first. Defaults to `true`.
 * `java.completion.collapseCompletionItems`: Enable/disable the collapse of overloaded methods in completion items. Overrides `java.completion.guessMethodArguments`. Defaults to `false`.
-* `java.diagnostic.filter`: Specifies a list of file patterns for which matching documents should not have their diagnostics reported (eg. '**/Foo.java').
+* `java.diagnostic.filter`: Specifies a list of file patterns for which matching documents should not have their diagnostics reported (eg. '\*\*/Foo.java').
 * `java.search.scope`: Specifies the scope which must be used for search operation like
   - Find Reference
   - Call Hierarchy
   - Workspace Symbols
-
-New in 1.36.0
 * `java.jdt.ls.javac.enabled`: [Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 23. Defaults to `off`.
 * `java.completion.engine`: [Experimental] Select code completion engine. Defaults to `ecj`.
 
