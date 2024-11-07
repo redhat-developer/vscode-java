@@ -86,7 +86,7 @@ jobs:
       - name: Build JDT-LS
         if: "${{ inputs.JDT_LS_VERSION == '' }}"
         run: |
-          ./mvnw clean verify -B -DskipTests -Pserver-distro
+          ./mvnw clean verify -B -U -DskipTests -Pserver-distro
           mkdir ../staging
           cp org.eclipse.jdt.ls.product/distro/jdt-language-server-*.tar.gz ../staging
       - name: Check Out VS Code Java
