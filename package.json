@@ -1422,26 +1422,33 @@
             "scope": "window",
             "order": 30
           },
+          "java.references.includeDeclarations": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include declarations when finding references.",
+            "scope": "window",
+            "order": 40
+          },
           "java.references.includeDecompiledSources": {
             "type": "boolean",
             "default": true,
             "description": "Include the decompiled sources when finding references.",
             "scope": "window",
-            "order": 40
+            "order": 50
           },
           "java.symbols.includeSourceMethodDeclarations": {
             "type": "boolean",
             "markdownDescription": "Include method declarations from source files in symbol search.",
             "default": false,
             "scope": "window",
-            "order": 50
+            "order": 60
           },
           "java.typeHierarchy.lazyLoad": {
             "type": "boolean",
             "default": false,
             "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
             "scope": "window",
-            "order": 60
+            "order": 70
           },
           "java.inlayHints.parameterNames.enabled": {
             "type": "string",
@@ -1458,7 +1465,7 @@
             "default": "literals",
             "markdownDescription": "Enable/disable inlay hints for parameter names:\n```java\n\nInteger.valueOf(/* s: */ '123', /* radix: */ 10)\n \n```\n `#java.inlayHints.parameterNames.exclusions#` can be used to disable the inlay hints for methods.",
             "scope": "window",
-            "order": 70
+            "order": 80
           },
           "java.inlayHints.parameterNames.exclusions": {
             "type": "array",
@@ -1468,7 +1475,7 @@
             "default": [],
             "markdownDescription": "The patterns for the methods that will be disabled to show the inlay hints. Supported pattern examples:\n - `java.lang.Math.*` - All the methods from java.lang.Math.\n - `*.Arrays.asList` - Methods named as 'asList' in the types named as 'Arrays'.\n - `*.println(*)` - Methods named as 'println'.\n - `(from, to)` - Methods with two parameters named as 'from' and 'to'.\n - `(arg*)` - Methods with one parameter whose name starts with 'arg'.",
             "scope": "window",
-            "order": 80
+            "order": 90
           },
           "java.search.scope": {
             "type": "string",
@@ -1483,7 +1490,7 @@
             "default": "all",
             "markdownDescription": "Specifies the scope which must be used for search operation like \n - Find Reference\n - Call Hierarchy\n - Workspace Symbols",
             "scope": "window",
-            "order": 90
+            "order": 100
           }
         }
       },
