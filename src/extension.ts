@@ -6,7 +6,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, MarkdownString, QuickPickItemKind, Range, RelativePattern, SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
+import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern, SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -307,54 +307,57 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						const client: LanguageClient = standardClient.getClient();
 						const documentUris = [];
 						const snippetEdits = [];
-						const resolveCodeAction = async (item, token) => {
-							return client.sendRequest(CodeActionResolveRequest.type, client.code2ProtocolConverter.asCodeActionSync(item), token).then(async (result) => {
-								if (token.isCancellationRequested) {
-									return item;
-								}
-								const docChanges = result.edit !== undefined ? result.edit.documentChanges : undefined;
-								if (docChanges !== undefined) {
-									for (const docChange of docChanges) {
-										if ("textDocument" in docChange) {
-											for (const edit of docChange.edits) {
-												if ("snippet" in edit) {
-													documentUris.push(Uri.parse(docChange.textDocument.uri).toString());
-													snippetEdits.push(new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
-												}
+						return client.sendRequest(CodeActionResolveRequest.type, client.code2ProtocolConverter.asCodeActionSync(item), token).then(async (result) => {
+							if (token.isCancellationRequested) {
+								return item;
+							}
+							const docChanges = result.edit !== undefined ? result.edit.documentChanges : undefined;
+							if (docChanges !== undefined) {
+								for (const docChange of docChanges) {
+									if ("textDocument" in docChange) {
+										for (const edit of docChange.edits) {
+											if ("snippet" in edit) {
+												documentUris.push(Uri.parse(docChange.textDocument.uri).toString());
+												snippetEdits.push(new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
 											}
 										}
 									}
-									const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
-									const docEdits = codeAction.edit !== undefined? codeAction.edit.entries() : [];
-									for (const docEdit of docEdits) {
-										const uri = docEdit[0];
-										if (documentUris.includes(uri.toString())) {
-											const editList = [];
-											for (const edit of docEdit[1]) {
-												let isSnippet = false;
-												snippetEdits.forEach((snippet, index) => {
-													if (edit.range.isEqual(snippet.range) && documentUris[index] === uri.toString()) {
-														editList.push(snippet);
-														isSnippet = true;
-													}
-												});
-												if (!isSnippet) {
-													editList.push(edit);
-												}
-											}
-											codeAction.edit.set(uri, null);
-											codeAction.edit.set(uri, editList);
-										}
-									}
-									return codeAction;
 								}
-								return await client.protocol2CodeConverter.asCodeAction(result, token);
-							}, (error) => {
-								return client.handleFailedRequest(CodeActionResolveRequest.type, token, error, item);
-							});
-						 };
-						return resolveCodeAction(item, token);
+								const codeAction = await client.protocol2CodeConverter.asCodeAction(result, token);
+								const docEdits = codeAction.edit !== undefined? codeAction.edit.entries() : [];
+								for (const docEdit of docEdits) {
+									const uri = docEdit[0];
+									if (documentUris.includes(uri.toString())) {
+										const editList = [];
+										for (const edit of docEdit[1]) {
+											let isSnippet = false;
+											snippetEdits.forEach((snippet, index) => {
+												if (edit.range.isEqual(snippet.range) && documentUris[index] === uri.toString()) {
+													editList.push(snippet);
+													isSnippet = true;
+												}
+											});
+											if (!isSnippet) {
+												editList.push(edit);
+											}
+										}
+										codeAction.edit.set(uri, null);
+										codeAction.edit.set(uri, editList);
+									}
+								}
+								return codeAction;
+							}
+							return await client.protocol2CodeConverter.asCodeAction(result, token);
+						}, (error) => {
+							return client.handleFailedRequest(CodeActionResolveRequest.type, token, error, item);
+						});
 					},
+
+					provideReferences: async(document, position, options, token, next): Promise<Location[]> => {
+						// Override includeDeclaration from VS Code by allowing it to be configured
+						options.includeDeclaration = getJavaConfiguration().get('references.includeDeclarations');
+						return await next(document, position, options, token);
+					}
 				},
 				revealOutputChannelOn: RevealOutputChannelOn.Never,
 				errorHandler: new ClientErrorHandler(extensionName),
