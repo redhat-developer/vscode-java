@@ -127,18 +127,14 @@ gulp.task('download_lombok', async function (done) {
 	}
 
 	await new Promise(function (resolve, reject) {
-		const lombokVersion = '1.18.35';
+		const lombokVersion = '1.18.34';
 		// The latest lombok version can be found on the website https://projectlombok.org/downloads
-		const lombokUrl = `https://projectlombok.org/lombok-edge.jar`;
+		const lombokUrl = `https://projectlombok.org/downloads/lombok-${lombokVersion}.jar`;
 		download(lombokUrl)
 			.pipe(gulp.dest("./lombok/"))
 			.on("error", reject)
-			.on("end", () => {
-				fse.renameSync("./lombok/lombok-edge.jar", `./lombok/lombok-${lombokVersion}.jar`);
-				resolve();
-			});
+			.on("end", resolve);
 	});
-	// TODO: Switch to stable version once lombok 1.18.35 is released.
 	done();
 });
 
