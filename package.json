@@ -1313,7 +1313,8 @@
                 "switchExpression",
                 "tryWithResource",
                 "renameFileToType",
-                "organizeImports"
+                "organizeImports",
+                "removeUnusedLambdaParameters"
               ]
             },
             "default": [

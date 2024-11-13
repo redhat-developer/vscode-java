@@ -406,3 +406,29 @@ public class A {
     }
 }
 ```
+
+### `removeUnusedLambdaParameters`
+
+Rename unused lambda parameters, or unused pattern variables to `_`.
+
+For example:
+
+```java
+J j = (a, b) -> System.out.println(a);
+
+switch (r) {
+    case R(_, long l) -> {}
+    case R r2 -> {}
+}
+```
+
+becomes:
+
+```java
+J j = (a, _) -> System.out.println(a);
+
+switch (r) {
+    case R(_, _) -> {}
+    case R _ -> {}
+}
+```
