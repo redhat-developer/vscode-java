@@ -192,7 +192,7 @@ public void order(String[] books) {
 Converts an anonymous class creation to the lambda expression.
 
 ### Example
-Let's convert the anonymous class `Runnable(){...}` to a lamda expression.
+Let's convert the anonymous class `Runnable(){...}` to a lambda expression.
 #### Before
 
 ```java

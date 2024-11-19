@@ -22,4 +22,4 @@
 
 ##### Expected Result
 
-##### Additional Informations
+##### Additional Information
