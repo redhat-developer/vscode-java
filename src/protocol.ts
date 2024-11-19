@@ -366,11 +366,25 @@ export namespace GetRefactorEditRequest {
     export const type = new RequestType<GetRefactorEditParams, RefactorWorkspaceEdit, void>('java/getRefactorEdit');
 }
 
+export namespace GetChangeSignatureInfoRequest {
+    export const type = new RequestType<CodeActionParams, ChangeSignatureInfo, void>('java/getChangeSignatureInfo');
+}
+
 export interface SelectionInfo {
     name: string;
     length: number;
     offset: number;
     params?: string[];
+}
+
+export interface ChangeSignatureInfo {
+    methodIdentifier: string;
+	modifier: string;
+	returnType: string;
+	methodName: string;
+	parameters: any;
+    exceptions: any;
+    errorMessage: string;
 }
 
 export interface InferSelectionParams {

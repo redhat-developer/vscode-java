@@ -6,7 +6,7 @@ import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri,
 import { FormattingOptions, WorkspaceEdit, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest, GetChangeSignatureInfoRequest, ChangeSignatureInfo } from './protocol';
 import { ChangeSignaturePanel } from './refactoring/changeSignaturePanel';
 import { getExtractInterfaceArguments, revealExtractedInterface } from './refactoring/extractInterface';
 
@@ -112,7 +112,12 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                 }
                 commandArguments.push(...args);
             } else if (command === 'changeSignature') {
-                ChangeSignaturePanel.render(context.extensionUri, languageClient, command, params, formattingOptions, commandInfo);
+                const changeSignatureInfo: ChangeSignatureInfo = await languageClient.sendRequest(GetChangeSignatureInfoRequest.type, params);
+                if (changeSignatureInfo.errorMessage !== undefined) {
+                    window.showWarningMessage(changeSignatureInfo.errorMessage);
+                    return;
+                }
+                ChangeSignaturePanel.render(context.extensionUri, languageClient, command, params, formattingOptions, changeSignatureInfo);
                 return;
             }
 
