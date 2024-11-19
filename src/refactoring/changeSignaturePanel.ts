@@ -23,7 +23,7 @@ export class ChangeSignaturePanel {
 	private readonly panel: WebviewPanel;
 	private disposables: Disposable[] = [];
 
-	// method matadata
+	// method metadata
 	private methodIdentifier: string | undefined;
 	private methodName: string | undefined;
 	private modifier: string | undefined;

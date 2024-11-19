@@ -57,7 +57,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
     }
 
     // See https://github.com/redhat-developer/vscode-java/issues/2939
-    // The client side listener should avoid inserting duplicated conents
+    // The client side listener should avoid inserting duplicated contents
     // when the file creation event is triggered from a WorkspaceEdit.
     // Given that the VS Code API doesn't provide a way to distinguish
     // the event source, a workaround is to wait 100ms and let WorkspaceEdit

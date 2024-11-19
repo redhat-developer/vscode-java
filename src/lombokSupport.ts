@@ -67,8 +67,8 @@ function lombokPath2Version(lombokPath: string): string {
 }
 
 function lombokPath2VersionNumber(lombokPath: string): string {
-	const lombokVersioNumber = lombokPath2Version(lombokPath).split('-')[1];
-	return lombokVersioNumber;
+	const lombokVersionNumber = lombokPath2Version(lombokPath).split('-')[1];
+	return lombokVersionNumber;
 }
 
 export function getLombokVersion(): string {
@@ -149,7 +149,7 @@ export async function checkLombokDependency(context: ExtensionContext, projectUr
 	}
 	projectLombokPath = currentLombokClasspath;
 	/* if projectLombokPath is undefined, it means that this project has not imported Lombok.
-	 * We don't need initalize Lombok status bar in this case.
+	 * We don't need initialize Lombok status bar in this case.
 	*/
 	if (!isLombokStatusBarInitialized && projectLombokPath) {
 		if (!isLombokCommandInitialized) {

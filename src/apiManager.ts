@@ -24,7 +24,7 @@ class ApiManager {
     private serverReadyPromiseResolve: (result: boolean) => void;
 
     public initialize(requirements: RequirementsData, serverMode: ServerMode): void {
-        // if it's manual import mode, set the server mode to lightwight, so that the
+        // if it's manual import mode, set the server mode to lightweight, so that the
         // project explorer won't spinning until import project is triggered.
         if (getJavaConfiguration().get<string>("import.projectSelection") === "manual") {
             serverMode = ServerMode.lightWeight;

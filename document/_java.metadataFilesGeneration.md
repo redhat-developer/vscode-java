@@ -2,7 +2,7 @@
 
 We use the setting `java.import.generatesMetadataFilesAtProjectRoot` to control where the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated:
 - `true`: Metadata files will be generated at the project's root.
-- `false`: Metadata files will be generated at the workspace storage. To be specifc, the path will be: `<WORKSPACE_STORAGE_PATH>/redhat.java/jdt_ws/.metadata/.plugins/org.eclipse.core.resources/.projects/<PROJECT_NAME>/`.
+- `false`: Metadata files will be generated at the workspace storage. To be specific, the path will be: `<WORKSPACE_STORAGE_PATH>/redhat.java/jdt_ws/.metadata/.plugins/org.eclipse.core.resources/.projects/<PROJECT_NAME>/`.
 
 By default, the setting is set to `false`.
 
