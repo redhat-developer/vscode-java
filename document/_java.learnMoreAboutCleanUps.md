@@ -407,9 +407,9 @@ public class A {
 }
 ```
 
-### `removeUnusedLambdaParameters`
+### `renameUnusedLocalVariables`
 
-Rename unused lambda parameters, or unused pattern variables to `_`.
+Rename unused loop variables, try-with-resource variables, catch parameters, lambda parameters, pattern variables to `_`.
 
 For example:
 

@@ -1314,7 +1314,7 @@
                 "tryWithResource",
                 "renameFileToType",
                 "organizeImports",
-                "removeUnusedLambdaParameters"
+                "renameUnusedLocalVariables"
               ]
             },
             "default": [
