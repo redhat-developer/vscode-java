@@ -123,7 +123,7 @@ The following settings are supported:
 * `java.configuration.maven.userSettings` : Path to Maven's user settings.xml.
 * `java.configuration.checkProjectSettingsExclusions`: **Deprecated, please use 'java.import.generatesMetadataFilesAtProjectRoot' to control whether to generate the project metadata files at the project root. And use 'files.exclude' to control whether to hide the project metadata files from the file explorer.** Controls whether to exclude extension-generated project settings files (`.project`, `.classpath`, `.factorypath`, `.settings/`) from the file explorer. Defaults to `false`.
 * `java.referencesCodeLens.enabled` : Enable/disable the references code lenses.
-* `java.implementationsCodeLens.enabled` : Enable/disable the implementations code lenses.
+* `java.implementationCodeLens` : Enable/disable the implementations code lens for the provided categories.
 * `java.signatureHelp.enabled` : Enable/disable signature help support (triggered on `(`).
 * `java.signatureHelp.description.enabled` : Enable/disable to show the description in signature help. Defaults to `false`.
 * `java.contentProvider.preferred` : Preferred content provider (see 3rd party decompilers available in [vscode-java-decompiler](https://github.com/dgileadi/vscode-java-decompiler)).

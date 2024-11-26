@@ -1409,10 +1409,22 @@
             "scope": "window",
             "order": 10
           },
-          "java.implementationsCodeLens.enabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Enable/disable the implementations code lens.",
+          "java.implementationCodeLens": {
+            "type": "string",
+            "enum": [
+              "none",
+              "types",
+              "methods",
+              "all"
+            ],
+            "enumDescriptions": [
+              "Disable the implementations code lens",
+              "Enable the implementations code lens only for types",
+              "Enable the implementations code lens only for methods",
+              "Enable the implementations code lens for types and methods"
+            ],
+            "default": "none",
+            "description": "Enable/disable the implementations code lens for the provided categories.",
             "scope": "window",
             "order": 20
           },
