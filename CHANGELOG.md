@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.37.0 (November 28th, 2024)
+ * performance - Improve performance of code action requests. See [#3845](https://github.com/redhat-developer/vscode-java/pull/3845).
+ * performance - Improve performance of all language server requests that resolve a document URI. See [JLS#3313](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3313).
+ * enhancement - Code action for unused pattern variable, lambda parameter, etc. and the corresponding clean up. See [#3856](https://github.com/redhat-developer/vscode-java/pull/3856), [#3864](https://github.com/redhat-developer/vscode-java/pull/3864).
+ * enhancement - Add setting to control inclusion of declarations in reference search. See [#3850](https://github.com/redhat-developer/vscode-java/issues/3850).
+ * bug fix - Mapstruct implementation class not generated. See [#3836](https://github.com/redhat-developer/vscode-java/issues/3836).
+ * bug fix - Open more requested system packages for tests with `javac` support. See [#3847](https://github.com/redhat-developer/vscode-java/pull/3847).
+ * bug fix - Fix some typos in documentation. See [#3863](https://github.com/redhat-developer/vscode-java/pull/3863)
+ * build - Add Maven (`-U`) flag for updating artifacts from snapshot repositories. See [#3848](https://github.com/redhat-developer/vscode-java/pull/3848).
+
 ## 1.36.0 (October 31st, 2024)
  * enhancement - Experimental support for using `javac` as the compiler. See [#3558](https://github.com/redhat-developer/vscode-java/pull/3558), [JLS#3167](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3167).
    * `java.jdt.ls.javac.enabled`: Enables Javac-based compilation.
