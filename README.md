@@ -255,8 +255,6 @@ The following settings are supported:
   - Workspace Symbols
 * `java.jdt.ls.javac.enabled`: [Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 23. Defaults to `off`.
 * `java.completion.engine`: [Experimental] Select code completion engine. Defaults to `ecj`.
-
-New in 1.37.0
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
 
 Semantic Highlighting
