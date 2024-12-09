@@ -278,7 +278,7 @@ function download_server_fn(){
 
 function build_server_fn(){
 	fse.removeSync('./server');
-	cp.execSync(mvnw() + ' -Pserver-distro clean package -Declipse.jdt.ls.skipGradleChecksums', { cwd: server_dir, stdio: [0, 1, 2] });
+	cp.execSync(mvnw() + ' -Pserver-distro clean package -U -Declipse.jdt.ls.skipGradleChecksums', { cwd: server_dir, stdio: [0, 1, 2] });
 	gulp.src(server_dir + '/org.eclipse.jdt.ls.product/distro/*.tar.gz', { encoding: false })
 		.pipe(decompress())
 		.pipe(gulp.dest('./server'));
