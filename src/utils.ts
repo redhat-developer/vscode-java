@@ -272,6 +272,14 @@ export async function getJavaConfig(javaHome: string) {
 		const userConfiguredJREs: any[] = javaConfig.configuration.runtimes;
 		javaConfig.configuration.runtimes = await addAutoDetectedJdks(userConfiguredJREs);
 	}
+
+	if (!isPreferenceOverridden("java.implementationCodeLens") && javaConfig.implementationsCodeLens){
+		const deprecatedImplementations: boolean | undefined = javaConfig.implementationsCodeLens.enabled;
+		if (deprecatedImplementations !== undefined){
+			javaConfig.implementationCodeLens = deprecatedImplementations ? "types" : "none";
+		}
+	}
+
 	return javaConfig;
 }
 
