@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.38.0 (December 19th, 2024)
+ * enhancement - Add code lens for interface / abstract method implementations. See [#3813](https://github.com/redhat-developer/vscode-java/issues/3813).
+   * `java.implementationCodelens.enabled` replaced by `java.implementationCodeLens`
+   *  Values for new setting are `"none"`, `"types"`, `"methods"`, `"all"`
+ * enhancement - Add quick fix for sealed class within empty switch expression. See [JLS#3345](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3345).
+ * enhancement - Support code assist on unresolved types. See [#1123](https://github.com/redhat-developer/vscode-java/issues/1123).
+ * bug fix - Improve rendering of Markdown Comments (JEP 467). See [JLS#3332](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3332).
+ * build - Check for updated snapshot repositories when running build. See [#3889](https://github.com/redhat-developer/vscode-java/pull/3889).
+ * dependencies - Bump cross-spawn from 7.0.3 to 7.0.6. See [#3862](https://github.com/redhat-developer/vscode-java/pull/3862).
+ * dependencies - Update vscode-redhat-telemetry to 0.9.1. See [#3886](https://github.com/redhat-developer/vscode-java/pull/3886).
+
 ## 1.37.0 (November 28th, 2024)
  * performance - Improve performance of code action requests. See [#3845](https://github.com/redhat-developer/vscode-java/pull/3845).
  * performance - Improve performance of all language server requests that resolve a document URI. See [JLS#3313](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3313).

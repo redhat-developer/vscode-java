@@ -257,6 +257,9 @@ The following settings are supported:
 * `java.completion.engine`: [Experimental] Select code completion engine. Defaults to `ecj`.
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
 
+New in 1.38.0
+* `java.implementationCodeLens` : Enable/disable the implementations code lens for the provided categories. Possible values are `none`, `types`, `methods`, `all`. Note that this option replaces `java.implementationsCodeLens.enabled`.
+
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).
