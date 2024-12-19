@@ -2,7 +2,7 @@
 
 ## 1.38.0 (December 19th, 2024)
  * enhancement - Add code lens for interface / abstract method implementations. See [#3813](https://github.com/redhat-developer/vscode-java/issues/3813).
-   * `java.implementationCodelens.enabled` replaced by `java.implementationCodeLens`
+   * `java.implementationCodeLens.enabled` replaced by `java.implementationCodeLens`
    *  Values for new setting are `"none"`, `"types"`, `"methods"`, `"all"`
  * enhancement - Add quick fix for sealed class within empty switch expression. See [JLS#3345](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3345).
  * enhancement - Support code assist on unresolved types. See [#1123](https://github.com/redhat-developer/vscode-java/issues/1123).
