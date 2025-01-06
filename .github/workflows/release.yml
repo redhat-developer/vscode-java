@@ -135,7 +135,7 @@ jobs:
         run: |
           platforms=("win32-x64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
           for platform in ${platforms[@]}; do
-            npx gulp download_jre --target ${platform} --javaVersion 17
+            npx gulp download_jre --target ${platform} --javaVersion 21
             vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           done
           rm -rf jre/

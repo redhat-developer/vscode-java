@@ -311,7 +311,7 @@
               "null"
             ],
             "default": null,
-            "description": "Specifies the folder path to the JDK (17 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-17.0_3\"",
+            "description": "Specifies the folder path to the JDK (21 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-21.0_5\"",
             "scope": "machine-overridable",
             "deprecationMessage": "This setting is deprecated, please use 'java.jdt.ls.java.home' instead.",
             "order": 0
@@ -322,7 +322,7 @@
               "null"
             ],
             "default": null,
-            "description": "Specifies the folder path to the JDK (17 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-17.0_3\"",
+            "description": "Specifies the folder path to the JDK (21 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-21.0_5\"",
             "scope": "machine-overridable",
             "order": 10
           },
