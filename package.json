@@ -1960,7 +1960,7 @@
     "lodash.findindex": "^4.6.0",
     "lodash.template": ">=4.5.0",
     "minimist": ">=1.2.6",
-    "mocha": "^9.2.2",
+    "mocha": "^11.1.0",
     "request": "^2.88.2",
     "sinon": "^14.0.0",
     "style-loader": "^3.3.1",
