@@ -1314,7 +1314,8 @@
                 "tryWithResource",
                 "renameFileToType",
                 "organizeImports",
-                "renameUnusedLocalVariables"
+                "renameUnusedLocalVariables",
+                "useSwitchForInstanceofPattern"
               ]
             },
             "default": [
