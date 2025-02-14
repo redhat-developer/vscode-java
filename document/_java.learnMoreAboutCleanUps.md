@@ -432,3 +432,44 @@ switch (r) {
     case R _ -> {}
 }
 ```
+
+### `useSwitchForInstanceofPattern`
+
+Convert if/else chains to pattern matching switch statements.
+
+For example:
+
+```java
+int i, j;
+double d;
+boolean b;
+if (x instanceof Integer xint) {
+    i = xint.intValue();
+} else if (x instanceof Double xdouble) {
+    d = xdouble.doubleValue();
+} else if (x instanceof Boolean xboolean) {
+    b = xboolean.booleanValue();
+} else {
+    i = 0;
+    d = 0.0D;
+    b = false;
+}
+```
+
+becomes:
+
+```java
+int i, j;
+double d;
+boolean b;
+switch (x) {
+    case Integer xint -> i = xint.intValue();
+    case Double xdouble -> d = xdouble.doubleValue();
+    case Boolean xboolean -> b = xboolean.booleanValue();
+    case null, default -> {
+        i = 0;
+        d = 0.0D;
+        b = false;
+    }
+}
+```
