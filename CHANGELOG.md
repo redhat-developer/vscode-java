@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.40.0 (February 27nd, 2025)
+ * enhancement - Support for inherited document symbols. See [#2342](https://github.com/redhat-developer/vscode-java/issues/2342).
+ * enhancement - Introduce approximately 15 new quick fixes. See [JLS#3368](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3368), [JLS#3372](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3372).
+ * enhancement - Introduce quick assist & cleanup converting a pattern-instanceof-if-chain to a switch statement. See [#3951](https://github.com/redhat-developer/vscode-java/pull/3951).
+ * bug fix - Unicode characters not rendering correctly in decompiled file. See [#3949](https://github.com/redhat-developer/vscode-java/issues/3949).
+ * bug fix - Fix a potential deadlock in search-based functionality. See [#3926](https://github.com/redhat-developer/vscode-java/issues/3926).
+ * bug fix - Adopt the Lombok 1.18.36 release. See [#3939](https://github.com/redhat-developer/vscode-java/pull/3939).
+
 ## 1.39.0 (January 22nd, 2025)
  * performance - Enhance initialization of gradle projects. See [JLS#3357](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3357).
  * enhancement - Implementation code lens for non interface/abstract base types/methods. See [JLS#3355](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3355).
