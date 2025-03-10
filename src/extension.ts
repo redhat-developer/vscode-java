@@ -6,7 +6,7 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern, SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, ViewColumn, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
+import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern, SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
@@ -318,7 +318,11 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 										for (const edit of docChange.edits) {
 											if ("snippet" in edit) {
 												documentUris.push(Uri.parse(docChange.textDocument.uri).toString());
-												snippetEdits.push(new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value)));
+												const snippet = new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value));
+												if (semver.gte(version, '1.98.0')) {
+													snippet["keepWhitespace"] = true;
+												}
+												snippetEdits.push(snippet);
 											}
 										}
 									}
