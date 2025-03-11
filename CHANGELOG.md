@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.40.0 (February 27nd, 2025)
+## 1.40.0 (February 27th, 2025)
  * enhancement - Support for inherited document symbols. See [#2342](https://github.com/redhat-developer/vscode-java/issues/2342).
  * enhancement - Introduce approximately 15 new quick fixes. See [JLS#3368](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3368), [JLS#3372](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3372).
  * enhancement - Introduce quick assist & cleanup converting a pattern-instanceof-if-chain to a switch statement. See [#3951](https://github.com/redhat-developer/vscode-java/pull/3951).
