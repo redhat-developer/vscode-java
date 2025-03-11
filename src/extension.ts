@@ -248,7 +248,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					},
 					resolveCompletionItem: async (item, token, next): Promise<CompletionItem> => {
 						const completionItem = await next(item, token);
-						if (completionItem.documentation instanceof MarkdownString) {
+						if (completionItem?.documentation instanceof MarkdownString) {
 							completionItem.documentation = fixJdtLinksInDocumentation(completionItem.documentation);
 						}
 						return completionItem;
