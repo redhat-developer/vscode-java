@@ -61,7 +61,7 @@ export class ExtendedOutlineQuickPick {
 				range: s.range
 			};
 			quickPickItems.push(item);
-			if (icon === 'symbol-class') {
+			if (icon === 'symbol-class' || icon === 'symbol-interface') {
 				const items: QuickPickItem[] = s.children.map(s => ({
 					label: `$(${getLThemeIcon(s.kind).id}) ${s.name}`,
 					// custom quick pick has automatic space between label & description
