@@ -1989,7 +1989,8 @@
     "vscode-languageclient": "8.2.0-next.3",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.7.1"
+    "winston-daily-rotate-file": "^4.7.1",
+    "vscode-variables": "^1.0.1"
   },
   "overrides": {
     "vscode-languageserver-protocol": "3.17.6-next.1"
