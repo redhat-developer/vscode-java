@@ -40,6 +40,10 @@ if latest_jdk != current_jdk:
     all_tests_passed = True
     for i in range(len(tests)):
         response = requests.get(tests[i])
+        if not response.ok:
+            print(f'Test #{i + 1} not found ({tests[i]})')
+            all_tests_passed = False
+            break
         data = ast.literal_eval(response.text)  # Use ast.literal_eval, because response.json() fails
         try:
             if data['status'] != 'PASSED':
