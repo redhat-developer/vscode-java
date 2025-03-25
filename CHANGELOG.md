@@ -1,5 +1,22 @@
 # Change Log
 
+## 1.41.0 (March 27th, 2025)
+ * enhancement - Provide support for Java 24. See [#3983](https://github.com/redhat-developer/vscode-java/pull/3983).
+ * enhancement - Add `Make static` refactoring. See [JLS#3400](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3400).
+ * enhancement - Adopt quick fixes for some more problems. See [JLS#3398](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3398).
+   - `MethodButWithConstructorName`, `UsingDeprecatedMethod`,
+   - `VarIsNotAllowedHere`, `SwitchExpressionsReturnWithinSwitchExpression`
+ * enhancement - Code action to ignore configurable compiler problems. See [#1791](https://github.com/redhat-developer/vscode-java/issues/1791).
+ * bug fix - Fix indentation for snippet strings within code actions. See [#3970](https://github.com/redhat-developer/vscode-java/pull/3970).
+ * bug fix - Only rename source file to match the single public type declaration. See [#3963](https://github.com/redhat-developer/vscode-java/issues/3963).
+ * bug fix - Fix inherited document symbols to work for interfaces as well. See [#3972](https://github.com/redhat-developer/vscode-java/pull/3972).
+ * bug fix - Detect changes to watched files that are outside of the workspace. [JLS#1765](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/1765), [JLS#3407](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3407).
+ * bug fix - Guard against `null` workspace edits (eg. for `Organize Imports`). See [#3978](https://github.com/redhat-developer/vscode-java/issues/3978).
+ * bug fix - Guard against `null` completion item resolved on cancellation. See [#3973](https://github.com/redhat-developer/vscode-java/pull/3973).
+ * bug fix - Fix commands test by including new commands. See [#3966](https://github.com/redhat-developer/vscode-java/pull/3966).
+ * build - Fix `check_and_update_jdk` script by catching missing test URL. See [#3982](https://github.com/redhat-developer/vscode-java/pull/3982).
+ * dependencies - Update serialize-javascript, mocha, sinon, css-loader. See [#3948](https://github.com/redhat-developer/vscode-java/pull/3948), [#3967](https://github.com/redhat-developer/vscode-java/pull/3967).
+
 ## 1.40.0 (February 27th, 2025)
  * enhancement - Support for inherited document symbols. See [#2342](https://github.com/redhat-developer/vscode-java/issues/2342).
  * enhancement - Introduce approximately 15 new quick fixes. See [JLS#3368](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3368), [JLS#3372](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3372).

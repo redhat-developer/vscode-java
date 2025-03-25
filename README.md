@@ -253,7 +253,7 @@ The following settings are supported:
   - Find Reference
   - Call Hierarchy
   - Workspace Symbols
-* `java.jdt.ls.javac.enabled`: [Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 23. Defaults to `off`.
+* `java.jdt.ls.javac.enabled`: [Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 24. Defaults to `off`.
 * `java.completion.engine`: [Experimental] Select code completion engine. Defaults to `ecj`.
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
 
