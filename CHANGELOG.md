@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.41.1 (April 1st, 2025)
+ * bug fix - Fix issues with preference manager by reverting "merge" behaviour. See [#3995](https://github.com/redhat-developer/vscode-java/issues/3995).
+ * bug fix - Add missing "Create record" quick fix. See [#3988](https://github.com/redhat-developer/vscode-java/issues/3988).
+
 ## 1.41.0 (March 27th, 2025)
  * enhancement - Provide support for Java 24. See [#3983](https://github.com/redhat-developer/vscode-java/pull/3983).
  * enhancement - Add `Make static` refactoring. See [JLS#3400](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3400).
