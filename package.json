@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.38.0",
+  "version": "1.38.0-hr",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -40,6 +40,7 @@
     "multi-root ready"
   ],
   "activationEvents": [
+    "onStartupFinished",
     "onLanguage:java",
     "workspaceContains:pom.xml",
     "workspaceContains:*/pom.xml",
