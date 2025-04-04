@@ -343,15 +343,21 @@ export class StandardLanguageClient {
 			} else if (e.name === Telemetry.LS_ERROR) {
 				const tags = [];
 				const exception: string = e?.properties.exception;
+				const message: string = e?.properties.message;
 				if (exception !== undefined) {
 					if (exception.includes("dtree.ObjectNotFoundException")) {
 						tags.push("dtree.ObjectNotFoundException");
 					}
-
-					if (tags.length > 0) {
-						e.properties['tags'] = tags;
-						return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
+				}
+				if (message !== undefined) {
+					if (message.includes("workspace exited with unsaved changes")) {
+						tags.push("workspace-exited-unsaved-changes");
 					}
+				}
+
+				if (tags.length > 0) {
+					e.properties['tags'] = tags;
+					return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
 				}
 			}
 		});
