@@ -16,7 +16,7 @@ For instance:
 ```java
 private int value;
 
-public void getValue() {
+public int getValue() {
 	return value;
 }
 ```
@@ -26,7 +26,7 @@ becomes:
 ```java
 private int value;
 
-public void getValue() {
+public int getValue() {
 	return this.value;
 }
 ```
