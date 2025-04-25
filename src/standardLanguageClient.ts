@@ -493,22 +493,22 @@ export class StandardLanguageClient {
 
 			return window.withProgress({ location: ProgressLocation.Window }, async p => {
 				p.report({ message: 'Rebuilding projects...' });
-				return new Promise(async (resolve, reject) => {
-					const start = new Date().getTime();
+				const start = new Date().getTime();
 
-					let res: CompileWorkspaceStatus;
-					try {
-						res = token ? await this.languageClient.sendRequest(BuildProjectRequest.type, params, token) :
-							await this.languageClient.sendRequest(BuildProjectRequest.type, params);
-					} catch (error) {
-						if (error && error.code === -32800) { // Check if the request is cancelled.
-							res = CompileWorkspaceStatus.cancelled;
-						}
-						reject(error);
+				let res: CompileWorkspaceStatus;
+				try {
+					res = token ? await this.languageClient.sendRequest(BuildProjectRequest.type, params, token) :
+					await this.languageClient.sendRequest(BuildProjectRequest.type, params);
+				} catch (error) {
+					if (error && error.code === -32800) { // Check if the request is cancelled.
+						res = CompileWorkspaceStatus.cancelled;
 					}
+					throw error;
+				}
 
-					const elapsed = new Date().getTime() - start;
-					const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
+				const elapsed = new Date().getTime() - start;
+				const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
+				return new Promise(async (resolve, reject) => {
 					setTimeout(() => { // set a timeout so user would still see the message when build time is short
 						resolve(res);
 					}, humanVisibleDelay);
@@ -540,11 +540,7 @@ export class StandardLanguageClient {
 				const humanVisibleDelay = elapsed < 1000 ? 1000 : 0;
 				return new Promise((resolve, reject) => {
 					setTimeout(() => { // set a timeout so user would still see the message when build time is short
-						if (res === CompileWorkspaceStatus.succeed) {
-							resolve(res);
-						} else {
-							reject(res);
-						}
+						resolve(res);
 					}, humanVisibleDelay);
 				});
 			});
