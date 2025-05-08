@@ -53,6 +53,7 @@
     "workspaceContains:*/settings.gradle.kts",
     "workspaceContains:.classpath",
     "workspaceContains:*/.classpath",
+    "workspaceContains:src/**/*.java",
     "onCommand:_java.templateVariables",
     "onCommand:_java.metadataFilesGeneration"
   ],
