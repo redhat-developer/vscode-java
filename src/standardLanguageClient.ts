@@ -494,7 +494,7 @@ export class StandardLanguageClient {
 				})),
 				// we can consider expose 'isFullBuild' according to users' feedback,
 				// currently set it to true by default.
-				isFullBuild: isFullBuild === undefined ? true : isFullBuild,
+				isFullBuild: isFullBuild === undefined ? false : isFullBuild,
 			};
 
 			return window.withProgress({ location: ProgressLocation.Window }, async p => {
