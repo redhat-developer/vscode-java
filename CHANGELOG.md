@@ -1,5 +1,15 @@
 # Change Log
 
+## 1.42.0 (May 15th, 2025)
+ * enhancement - Implement methods in newly created type from an inherited sealed class. See [JLS#1570](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/1570).
+ * enhancement - Code action for "The left-hand side of an assginment must be a variable". See [JLS#3441](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3441).
+ * bug fix - Avoid `StackOverflowError` when computing Extended Outline. See [JLS#3435](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3435).
+ * bug fix - Compilation failure with primitive array comparison. See [#4020](https://github.com/redhat-developer/vscode-java/issues/4020).
+ * bug fix - Avoid notifying of failures for workspace builds. See [#4032](https://github.com/redhat-developer/vscode-java/pull/4032).
+ * bug fix - Report language server exiting with unsaved changes as `java.ls.error`. See [#4033](https://github.com/redhat-developer/vscode-java/pull/4033).
+ * documentation - Javac-based (experimental) compilation should require latest released Java SDK (24). See [#4029](https://github.com/redhat-developer/vscode-java/issues/4029).
+ * documentation - Fix return type typo in `qualifyMembers` example. See [#4026](https://github.com/redhat-developer/vscode-java/pull/4026).
+
 ## 1.41.1 (April 1st, 2025)
  * bug fix - Fix issues with preference manager by reverting "merge" behaviour. See [#3995](https://github.com/redhat-developer/vscode-java/issues/3995).
  * bug fix - Add missing "Create record" quick fix. See [#3988](https://github.com/redhat-developer/vscode-java/issues/3988).
