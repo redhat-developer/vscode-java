@@ -6,6 +6,7 @@ import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscod
 import { Commands } from './commands';
 import { IJavaRuntime } from 'jdk-utils';
 import { getSupportedJreNames, listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
+const vscodeVariables = require('vscode-variables');
 
 export function getJavaConfiguration(): WorkspaceConfiguration {
 	return workspace.getConfiguration('java');
@@ -346,4 +347,13 @@ export function getVersion(extensionPath: string): string {
 	}
 
 	return '0.0.0';
+}
+
+export function getVSCodeVariablesMap(): any {
+	const keys = [
+		"userHome", "workspaceFolder", "workspaceFolderBasename"
+	];
+	const res = {};
+	keys.forEach(key => res[key] = vscodeVariables(`\${${key}}`));
+	return res;
 }

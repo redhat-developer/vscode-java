@@ -11,7 +11,7 @@ import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 import { RequirementsData } from './requirements';
 import { IS_WORKSPACE_VMARGS_ALLOWED, getJavaEncoding, getJavaagentFlag, getKey, isInWorkspaceFolder } from './settings';
-import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp, getVersion } from './utils';
+import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp, getVersion, getVSCodeVariablesMap } from './utils';
 import { log } from 'console';
 
 // eslint-disable-next-line no-var
@@ -39,7 +39,7 @@ const DEPENDENCY_COLLECTOR_IMPL_BF= 'bf';
 export function prepareExecutable(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
-	options.env = Object.assign({ syntaxserver : isSyntaxServer }, process.env);
+	options.env = Object.assign({ syntaxserver: isSyntaxServer }, process.env, getVSCodeVariablesMap());
 	if (os.platform() === 'win32') {
 		const vmargs = getJavaConfiguration().get('jdt.ls.vmargs', '');
 		const watchParentProcess = '-DwatchParentProcess=false';
