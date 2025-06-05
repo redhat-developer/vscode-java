@@ -420,6 +420,18 @@
             "scope": "window",
             "order": 95
           },
+          "java.jdt.ls.appcds.enabled": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "on",
+              "off"
+            ],
+            "default": "auto",
+            "markdownDescription": "[Experimental] Enable Java AppCDS (Application Class Data Sharing) for improvements to extension activation. When set to `auto`, AppCDS will be enabled in Visual Studio Code - Insiders, and for pre-release versions.",
+            "scope": "machine-overridable",
+            "order": 100
+          },
           "java.trace.server": {
             "type": "string",
             "enum": [

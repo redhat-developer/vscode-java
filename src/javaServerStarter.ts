@@ -36,6 +36,11 @@ export const HEAP_DUMP = '-XX:+HeapDumpOnOutOfMemoryError';
 const DEPENDENCY_COLLECTOR_IMPL= '-Daether.dependencyCollector.impl=';
 const DEPENDENCY_COLLECTOR_IMPL_BF= 'bf';
 
+const UNLOCK_DIAGNOSTIC_VM_OPTIONS= '-XX:+UnlockDiagnosticVMOptions';
+const ALLOW_ARCHIVING_WITH_JAVA_AGENT= '-XX:+AllowArchivingWithJavaAgent';
+const AUTO_CREATE_SHARED_ARCHIVE= '-XX:+AutoCreateSharedArchive';
+const SHARED_ARCHIVE_FILE_LOC= '-XX:SharedArchiveFile=';
+
 export function prepareExecutable(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
@@ -223,6 +228,23 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 		const sharedIndexLocation: string = resolveIndexCache(context);
 		if (sharedIndexLocation) {
 			params.push(`-Djdt.core.sharedIndexLocation=${sharedIndexLocation}`);
+		}
+
+		const hasJDWP = params.find((param: string) => param.includes('jdwp')) !== undefined;
+		const isInsider: boolean = version.includes("insider");
+		const extVersion = getVersion(context.extensionPath);
+		const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(extVersion);
+		const globalStoragePath = path.resolve(context.globalStorageUri?.fsPath, extVersion); // .../Code/User/globalStorage/redhat.java/1.42.0/
+		const appCDSMode = workspace.getConfiguration().get('java.jdt.ls.appcds.enabled');
+		const useAppCDS = (appCDSMode === 'on') || (appCDSMode === 'auto' && (isInsider || isPreReleaseVersion));
+
+		ensureExists(globalStoragePath);
+		const sharedArchiveLocation = path.join(globalStoragePath, "jdtls.jsa");
+		if (useAppCDS && vmargs.indexOf(SHARED_ARCHIVE_FILE_LOC) < 0 && !hasJDWP) {
+			params.push(UNLOCK_DIAGNOSTIC_VM_OPTIONS);
+			params.push(ALLOW_ARCHIVING_WITH_JAVA_AGENT); // required due to use of '-javaagent'
+			params.push(AUTO_CREATE_SHARED_ARCHIVE);
+			params.push(`${SHARED_ARCHIVE_FILE_LOC}${sharedArchiveLocation}`);
 		}
 	}
 
