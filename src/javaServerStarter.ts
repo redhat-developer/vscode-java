@@ -36,6 +36,11 @@ export const HEAP_DUMP = '-XX:+HeapDumpOnOutOfMemoryError';
 const DEPENDENCY_COLLECTOR_IMPL= '-Daether.dependencyCollector.impl=';
 const DEPENDENCY_COLLECTOR_IMPL_BF= 'bf';
 
+const UNLOCK_DIAGNOSTIC_VM_OPTIONS= '-XX:+UnlockDiagnosticVMOptions';
+const ALLOW_ARCHIVING_WITH_JAVA_AGENT= '-XX:+AllowArchivingWithJavaAgent';
+const AUTO_CREATE_SHARED_ARCHIVE= '-XX:+AutoCreateSharedArchive';
+const SHARED_ARCHIVE_FILE_LOC= '-XX:SharedArchiveFile=';
+
 export function prepareExecutable(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
@@ -90,8 +95,8 @@ export function awaitServerConnection(port): Thenable<StreamInfo> {
 function prepareParams(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): string[] {
 	const params: string[] = [];
 	if (DEBUG) {
-		const port = isSyntaxServer ? 1045 : 1044;
-		params.push(`-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${port},quiet=y`);
+		// const port = isSyntaxServer ? 1045 : 1044;
+		// params.push(`-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${port},quiet=y`);
 		// suspend=y is the default. Use this form if you need to debug the server startup code:
 		//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 	}
@@ -216,6 +221,18 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 		const sharedIndexLocation: string = resolveIndexCache(context);
 		if (sharedIndexLocation) {
 			params.push(`-Djdt.core.sharedIndexLocation=${sharedIndexLocation}`);
+		}
+
+		const hasJDWP = params.find((param: string) => param.includes('jdwp')) !== undefined;
+		const version = getVersion(context.extensionPath);
+		const globalStoragePath = path.resolve(context.globalStorageUri?.fsPath, version); // .../Code/User/globalStorage/redhat.java/1.42.0/
+		ensureExists(globalStoragePath);
+		const sharedArchiveLocation = globalStoragePath ? path.join(globalStoragePath, "jdtls.jsa") : undefined;
+		if (vmargs.indexOf(SHARED_ARCHIVE_FILE_LOC) < 0 && !hasJDWP) {
+			params.push(UNLOCK_DIAGNOSTIC_VM_OPTIONS);
+			params.push(ALLOW_ARCHIVING_WITH_JAVA_AGENT); // required due to use of '-javaagent'
+			params.push(AUTO_CREATE_SHARED_ARCHIVE);
+			params.push(`${SHARED_ARCHIVE_FILE_LOC}${sharedArchiveLocation}`);
 		}
 	}
 
