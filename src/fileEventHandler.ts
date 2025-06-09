@@ -10,6 +10,7 @@ import { WillRenameFiles } from './protocol';
 import { getJavaConfiguration } from './utils';
 import { userInfo } from 'os';
 import * as stringInterpolate from 'fmtr';
+import { apiManager } from './apiManager';
 
 let serverReady: boolean = false;
 
@@ -25,6 +26,18 @@ export function registerFileEventHandlers(client: LanguageClient, context: Exten
     if (workspace.onWillRenameFiles) {
         context.subscriptions.push(workspace.onWillRenameFiles(getWillRenameHandler(client)));
     }
+
+    // extension activated and empty Java file is in active editor ?
+    // type declaration snippet handler activated too late so adjust the file here
+    apiManager.getApiInstance().serverReady().then(async () => {
+        const te = window.activeTextEditor?.document;
+        if (te && te.getText().trim().length === 0) {
+            setServerStatus(true);
+            handleNewJavaFiles({
+                files: [te.uri]
+            });
+        }
+    });
 }
 
 async function handleNewJavaFiles(e: FileCreateEvent) {
