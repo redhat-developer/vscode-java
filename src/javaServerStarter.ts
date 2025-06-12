@@ -96,6 +96,13 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 		//  params.push('-agentlib:jdwp=transport=dt_socket,server=y,address=1044');
 	}
 
+	// See https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3465
+	if (requirements.tooling_jre_version >= 24) {
+		params.push('-Djdk.xml.maxGeneralEntitySizeLimit=0',
+					'-Djdk.xml.totalEntitySizeLimit=0'
+					);
+	}
+
 	params.push('--add-modules=ALL-SYSTEM',
 				'--add-opens',
 				'java.base/java.util=ALL-UNNAMED',
