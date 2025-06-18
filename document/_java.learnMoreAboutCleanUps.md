@@ -473,3 +473,113 @@ switch (x) {
     }
 }
 ```
+
+### `redundantComparisonStatement`
+
+Remove redundant comparison statement.
+
+For example:
+
+```java
+if (i != 123) {
+    return i;
+} else {
+    return 123;
+}
+```
+
+becomes:
+
+```java
+return i;
+```
+
+### `redundantFallingThroughBlockEnd`
+
+Remove redundant end of block with jump statement.
+
+For example:
+
+```java
+if (0 < i) {
+    System.out.println("Doing something");
+    return i + 10;
+}
+return i + 10;
+```
+
+becomes:
+
+```java
+if (0 < i) {
+    System.out.println("Doing something");
+}
+return i + 10;
+```
+
+### `redundantIfCondition`
+
+Remove redundant if condition.
+
+For example:
+
+```java
+if (isValid) {
+    return 0;
+} else if (!isValid) {
+    return -1;
+}
+```
+
+becomes:
+
+```java
+if (isValid) {
+    return 0;
+} else {
+    return -1;
+}
+```
+
+### `redundantModifiers`
+
+Remove redundant modifiers.
+
+For example:
+
+```java
+public abstract interface IFoo {
+    public static final int MAGIC_NUMBER = 646;
+    public abstract int foo ();
+    public int bar (int bazz);
+}
+```
+
+becomes:
+
+```java
+public interface IFoo {
+    int MAGIC_NUMBER = 646;
+    int foo ();
+    int bar (int bazz);
+}
+```
+
+### `redundantSuperCall`
+
+Remove redundant `super()` class in constructor.
+
+For example:
+
+```java
+MyClass() {
+    super();
+}
+```
+
+becomes:
+
+```java
+MyClass() {
+}
+```
