@@ -81,7 +81,7 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '23'
+          java-version: '24'
           distribution: 'adopt'
       - name: Build JDT-LS
         if: "${{ inputs.JDT_LS_VERSION == '' }}"
@@ -94,7 +94,7 @@ jobs:
       - name: Set Up NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
       - name: Install NodeJS dependencies
         run: npm install -g typescript "@vscode/vsce" "ovsx"
       - name: Download JDT-LS Release
@@ -168,7 +168,7 @@ jobs:
       - name: Set Up NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Install dependencies
         run: |
           npm install -g typescript "@vscode/vsce" "ovsx"
