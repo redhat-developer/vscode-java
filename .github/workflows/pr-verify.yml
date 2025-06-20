@@ -18,8 +18,8 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'adopt'
+          java-version: '24'
+          distribution: 'temurin'
       - run: npm install -g typescript "vsce"
       - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
       - run: mkdir server && tar -xvzf jdt-language-server-latest.tar.gz -C ./server && rm jdt-language-server-latest.tar.gz
