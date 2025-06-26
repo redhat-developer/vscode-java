@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.43.0 (June 26th, 2025)
+ * performance - "Rebuild Projects" command should be done incrementally. See [#4041](https://github.com/redhat-developer/vscode-java/pull/4041).
+ * enhancement - Adopt quick fixes for various modifier corrections. See [JLS#1053](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1053).
+   - `BodyForNativeMethod`, `MethodRequiresBody`, `OuterLocalMustBeEffectivelyFinal`,
+   - `MissingSynchronizedModifierInInheritedMethod`, `MethodCanBeStatic`, `OverridingDeprecatedMethod`
+ * enhancement - Add cleanups for various redundant modifiers/expressions/statements. See [#4066](https://github.com/redhat-developer/vscode-java/issues/4066).
+ * enhancement - Increase default value for maximum heap size (`Xmx`) from `1G` to `2G`. See [#4062](https://github.com/redhat-developer/vscode-java/pull/4062).
+ * bug fix - Fix issues with Lombok `@Builder` annotation on `record` type declarations. See [#4050](https://github.com/redhat-developer/vscode-java/issues/4050).
+ * bug fix - Prevent code actions from failing with "Document does not match the AST". See [#4027](https://github.com/redhat-developer/vscode-java/issues/4027).
+ * bug fix - Handle snippets when opened (empty) Java file triggers activation. See [#3940](https://github.com/redhat-developer/vscode-java/issues/3940).
+ * bug fix - Remove JAXP entity limits when runtime is Java 24 or higher. See [#4071](https://github.com/redhat-developer/vscode-java/pull/4071).
+
 ## 1.42.0 (May 15th, 2025)
  * enhancement - Implement methods in newly created type from an inherited sealed class. See [JLS#1570](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/1570).
  * enhancement - Code action for "The left-hand side of an assginment must be a variable". See [JLS#3441](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3441).
