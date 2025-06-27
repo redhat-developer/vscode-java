@@ -81,8 +81,8 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '23'
-          distribution: 'adopt'
+          java-version: '24'
+          distribution: 'temurin'
       - name: Build JDT-LS
         if: "${{ inputs.JDT_LS_VERSION == '' }}"
         run: |
