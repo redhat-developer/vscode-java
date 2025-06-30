@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.43.1 (July 1st, 2025)
+* bug fix - Fix compilation issue when annotation exists on a record class. [#4096](https://github.com/redhat-developer/vscode-java/issues/4096)
+
 ## 1.43.0 (June 26th, 2025)
  * performance - "Rebuild Projects" command should be done incrementally. See [#4041](https://github.com/redhat-developer/vscode-java/pull/4041).
  * enhancement - Adopt quick fixes for various modifier corrections. See [JLS#1053](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1053).
