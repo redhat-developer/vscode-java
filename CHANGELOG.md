@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.44.0 (July 31st, 2025)
+ * performance - Improve startup with (optional) Java Application Class-Data Sharing. See [#4067](https://github.com/redhat-developer/vscode-java/pull/4067).
+ * enhancement - Add code actions for creating method in base type. See [#4064](https://github.com/redhat-developer/vscode-java/issues/4064).
+ * bug fix - Fix Gradle/Java Compatibility Matrix for recent Java versions. See [JLS#3485](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3485).
+ * bug fix - Detect JBang installed JDKs. See [#3799](https://github.com/redhat-developer/vscode-java/issues/3799).
+ * dependencies - Update M2E 2.8.0 to 2.9.0. See [JLS#3477](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3477).
+
 ## 1.43.1 (July 1st, 2025)
 * bug fix - Fix compilation issue when annotation exists on a record class. [#4096](https://github.com/redhat-developer/vscode-java/issues/4096)
 
