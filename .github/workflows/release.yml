@@ -94,7 +94,7 @@ jobs:
       - name: Set Up NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
       - name: Install NodeJS dependencies
         run: npm install -g typescript "@vscode/vsce" "ovsx"
       - name: Download JDT-LS Release
