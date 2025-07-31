@@ -256,8 +256,6 @@ The following settings are supported:
 * `java.jdt.ls.javac.enabled`: [Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 24. Defaults to `off`.
 * `java.completion.engine`: [Experimental] Select code completion engine. Defaults to `ecj`.
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
-
-New in 1.44.0
 * `java.jdt.ls.appcds.enabled` : [Experimental] Enable Java AppCDS (Application Class Data Sharing) for improvements to extension activation. When set to `auto`, AppCDS will be enabled in Visual Studio Code - Insiders, and for pre-release versions.
 
 Semantic Highlighting
