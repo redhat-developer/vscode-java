@@ -53,8 +53,8 @@ const config = {
 	},
 }
 
-const configAssets = {
-	name: 'assets',
+const configChangeSignature = {
+	name: 'changeSignature',
 	mode: 'none',
 	entry: {
 		changeSignature: './src/webview/changeSignature/index.tsx',
@@ -95,4 +95,47 @@ const configAssets = {
 		extensions: ['.js', '.ts', '.tsx']
 	}
 }
-module.exports = [config, configAssets];
+
+const configDashboard = {
+	name: 'dashboard',
+	mode: 'none',
+	entry: {
+		dashboard: './src/webview/dashboard/index.tsx',
+	},
+	module: {
+		rules: [{
+			test: /\.ts(x?)$/,
+			exclude: /node_modules/,
+			loader: 'ts-loader',
+			options: {
+				configFile: 'tsconfig.webview.json'
+			}
+		}, {
+			test: /\.(css)$/,
+			use: [{
+				loader: 'style-loader'
+			}, {
+				loader: 'css-loader'
+			}]
+		}, {
+			test: /\.(ttf)$/,
+			type: 'asset/inline',
+		}]
+	},
+	output: {
+		filename: '[name].js',
+		path: path.resolve(__dirname, 'dist'),
+		publicPath: '/',
+		devtoolModuleFilenameTemplate: "../[resource-path]"
+	},
+	plugins: [
+		new webpack.ProvidePlugin({
+			process: 'process/browser',
+		}),
+	],
+	devtool: 'source-map',
+	resolve: {
+		extensions: ['.js', '.ts', '.tsx']
+	}
+}
+module.exports = [config, configChangeSignature, configDashboard];

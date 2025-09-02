@@ -6,9 +6,12 @@ import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions, IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern, SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
+import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
+	IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern,
+	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn,
+	WebviewView, WebviewViewResolveContext, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
-import { LanguageClient } from 'vscode-languageclient/node';
+import { Executable, LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
 import { ClientErrorHandler } from './clientErrorHandler';
 import { Commands, CommandTitle } from './commands';
@@ -39,6 +42,8 @@ import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib/node';
+import { Deferred } from './promiseUtil';
+import { getWebviewContent } from './dashboard/dashboard';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -46,6 +51,17 @@ const jdtEventEmitter = new EventEmitter<Uri>();
 const extensionName = 'Language Support for Java';
 let storagePath: string;
 let clientLogFile: string;
+
+const excutable=  new Deferred<Executable>();
+
+export async function getExecutable(): Promise<Executable> {
+	return excutable.promise;
+}
+
+const javaConfigDeferred = new Deferred<any>();
+export async function getComputedJavaConfig(): Promise<any> {
+	return javaConfigDeferred.promise;
+}
 
 /**
  * Shows a message about the server crashing due to an out of memory issue
@@ -113,6 +129,21 @@ export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): Ma
 }
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+	console.log('registering webview provider');
+	context.subscriptions.push(window.registerWebviewViewProvider('vscode-java-dashboard', {
+		resolveWebviewView: async function (webviewView: WebviewView, webviewContext: WebviewViewResolveContext, token: CancellationToken): Promise<void> {
+
+			webviewView.webview.options = {
+						enableScripts: true,
+						enableCommandUris: true,
+						localResourceRoots: [context.extensionUri]
+					};
+
+			webviewView.webview.html = await getWebviewContent(webviewView.webview, context.extensionUri);
+		}
+	}));
+	console.log('registered webview provider');
+
 	await loadSupportedJreNames(context);
 	context.subscriptions.push(commands.registerCommand(Commands.FILESEXPLORER_ONPASTE, async () => {
 		const originalClipboard = await env.clipboard.readText();
@@ -196,6 +227,9 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			let requireStandardServer = (serverMode !== ServerMode.lightWeight) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
 			let initFailureReported: boolean = false;
 
+			const javaConfig = await getJavaConfig(requirements.java_home);
+			javaConfigDeferred.resolve(javaConfig);
+
 			// Options to control the language client
 			const clientOptions: LanguageClientOptions = {
 				// Register the server for java
@@ -211,7 +245,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				initializationOptions: {
 					bundles: collectJavaExtensions(extensions.all),
 					workspaceFolders: workspace.workspaceFolders ? workspace.workspaceFolders.map(f => f.uri.toString()) : null,
-					settings: { java: await getJavaConfig(requirements.java_home) },
+					settings: { java:  javaConfig },
 					extendedClientCapabilities: {
 						classFileContentsSupport: true,
 						overrideMethodsPromptSupport: true,
@@ -400,6 +434,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			// no need to pass `resolve` into any code past this point,
 			// since `resolve` is a no-op from now on
 			const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, context, true);
+			excutable.resolve(serverOptions);
 			if (requireSyntaxServer) {
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions);

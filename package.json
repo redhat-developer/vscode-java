@@ -1947,6 +1947,25 @@
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
         }
       ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscode-java-container",
+          "title": "Java",
+          "icon": "icons/icon128.png"
+        }
+      ]
+    },
+    "views": {
+      "vscode-java-container": [
+        {
+          "type": "webview",
+          "id": "vscode-java-dashboard",
+          "name": "Dashboard",
+          "icon": "icons/icons128.png"
+        }
+      ]
     }
   },
   "scripts": {
