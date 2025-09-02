@@ -10,6 +10,7 @@
 		"node_modules",
 		"server",
 		".vscode-test",
-		"src/webview"
+		"src/webview",
+		"test/resources/projects"
 	]
 }

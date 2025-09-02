@@ -4,6 +4,7 @@
 		"moduleResolution": "node",
 		"outDir": "out",
 		"sourceMap": true,
+		"skipLibCheck": true,
 		"plugins": [
 			{
 				"name": "eslint"

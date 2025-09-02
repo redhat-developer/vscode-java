@@ -1937,6 +1937,25 @@
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
         }
       ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscode-java-container",
+          "title": "Java",
+          "icon": "icons/icon128.png"
+        }
+      ]
+    },
+    "views": {
+      "vscode-java-container": [
+        {
+          "type": "webview",
+          "id": "vscode-java-dashboard",
+          "name": "Dashboard",
+          "icon": "icons/icons128.png"
+        }
+      ]
     }
   },
   "scripts": {
@@ -1946,7 +1965,7 @@
     "pretest": "npm run compile",
     "test": "node ./out/test/runtest.js",
     "build-server": "./node_modules/.bin/gulp build_server",
-    "build": "./node_modules/.bin/gulp build_or_download",
+    "build": "node_modules\\.bin\\gulp build_or_download",
     "fast-build-server": "./node_modules/.bin/gulp dev_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
     "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
