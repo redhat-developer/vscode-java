@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.45.0 (September 4th, 2025)
+ * performance - Delay registration of resource/element listeners. See [JLS#3510](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3510).
+ * bug fix - Path expansion is not working for the `sources` field in `referencedLibraries`. See [JLS#3495](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3495).
+ * bug fix - Send LSP server version with `InitializeResult`. See [JLS#3484](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3484).
+ * bug fix - Update the decompiler header for FernFlower. See [JLS#3512](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3512).
+ * bug fix - Remove unused options for completion & incomplete classpath severity. See [JLS#3506](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3506).
+
 ## 1.44.0 (July 31st, 2025)
  * performance - Improve startup with (optional) Java Application Class-Data Sharing. See [#4067](https://github.com/redhat-developer/vscode-java/pull/4067).
  * enhancement - Add code actions for creating method in base type. See [#4064](https://github.com/redhat-developer/vscode-java/issues/4064).
