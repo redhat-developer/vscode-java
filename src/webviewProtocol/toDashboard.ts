@@ -1,3 +1,4 @@
+import { Diagnostic } from "vscode";
 import { ToWebviewMessageType, WebviewMessage } from "./common";
 
 export type ToDashboardMessageType = ToWebviewMessageType;
@@ -10,13 +11,22 @@ export interface JVM {
     path: string;
 }
 
-export interface InitializeMessage extends ToDashboardMessage {
-	type: "initialize";
-    jvms: JVM[];
-	lombokEnabled: boolean;
+export interface DashboardState {
+	jvms?: JVM[];
+	workspacePath?: string;
+	lombokEnabled?: boolean;
+	activeLombokPath?: string | undefined;
+	diagnosticInfo?: DiagnosticInfo;
 }
 
-export interface SettingChangedMessage extends ToDashboardMessage {
-	type: "settingsChanged";
-	lombokEnabled: boolean;
+export interface DiagnosticInfo {
+	readonly mavenUserSettings: string;
+	readonly mavenGlobalSettings: string;
+	readonly activeImporters: string[];
+	readonly gradleUserHome: string;
+	readonly gradleJavaHome: string;
+}
+
+export interface UpdateMessage extends ToDashboardMessage, DashboardState {
+	type: "update";
 }

@@ -30,6 +30,12 @@ let isLombokCommandInitialized: boolean = false;
 let isExtensionLombok: boolean = false;		// whether use extension's Lombok or not
 let projectLombokPath: string = undefined;	// the project's Lombok classpath
 
+export namespace Lombok {
+
+	export function getActiveLombokPath(): string | undefined {
+		return activeLombokPath;
+	}
+}
 export function isLombokSupportEnabled(): boolean {
 	return vscode.workspace.getConfiguration().get("java.jdt.ls.lombokSupport.enabled");
 }
