@@ -9,6 +9,7 @@ import * as semver from 'semver';
 import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
 	IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern,
 	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn,
+	Webview,
 	WebviewView, WebviewViewResolveContext, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { Executable, LanguageClient } from 'vscode-languageclient/node';
@@ -43,7 +44,7 @@ import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib/node';
 import { Deferred } from './promiseUtil';
-import { getWebviewContent } from './dashboard/dashboard';
+import { Dashboard } from './dashboard/dashboard';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -129,20 +130,11 @@ export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): Ma
 }
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
-	console.log('registering webview provider');
-	context.subscriptions.push(window.registerWebviewViewProvider('vscode-java-dashboard', {
-		resolveWebviewView: async function (webviewView: WebviewView, webviewContext: WebviewViewResolveContext, token: CancellationToken): Promise<void> {
-
-			webviewView.webview.options = {
-						enableScripts: true,
-						enableCommandUris: true,
-						localResourceRoots: [context.extensionUri]
-					};
-
-			webviewView.webview.html = await getWebviewContent(webviewView.webview, context.extensionUri);
-		}
-	}));
-	console.log('registered webview provider');
+	storagePath = context.storagePath;
+	if (!storagePath) {
+		storagePath = getTempWorkspace();
+	}
+	Dashboard.initialize(context);
 
 	await loadSupportedJreNames(context);
 	context.subscriptions.push(commands.registerCommand(Commands.FILESEXPLORER_ONPASTE, async () => {
@@ -161,16 +153,13 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.notCoveredExecution.md`)), 'Not Covered Maven Plugin Execution', "", context);
 	}));
 
-	storagePath = context.storagePath;
 	context.subscriptions.push(commands.registerCommand(Commands.METADATA_FILES_GENERATION, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `_java.metadataFilesGeneration.md`)), 'Metadata Files Generation', "", context);
 	}));
 	context.subscriptions.push(commands.registerCommand(Commands.LEARN_MORE_ABOUT_CLEAN_UPS, async () => {
 		markdownPreviewProvider.show(context.asAbsolutePath(path.join('document', `${Commands.LEARN_MORE_ABOUT_CLEAN_UPS}.md`)), 'Java Clean Ups', "java-clean-ups", context);
 	}));
-	if (!storagePath) {
-		storagePath = getTempWorkspace();
-	}
+
 	const workspacePath = path.resolve(`${storagePath}/jdt_ws`);
 	clientLogFile = path.join(storagePath, 'client.log');
 	const cleanWorkspaceExists = fs.existsSync(path.join(workspacePath, cleanWorkspaceFileName));
@@ -915,18 +904,22 @@ async function cleanSharedIndexes(context: ExtensionContext) {
 }
 
 function openServerLogFile(storagePath, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
-	const workspacePath = getWorkspacePath(storagePath);
+	const workspacePath = computeWorkspacePath(storagePath);
 	const serverLogFile = path.join(workspacePath, '.metadata', '.log');
 	return openLogFile(serverLogFile, 'Could not open Java Language Server log file', column);
 }
 
-function getWorkspacePath(storagePath: any) {
+function computeWorkspacePath(storagePath: any) {
 	return path.join(storagePath, apiManager.getApiInstance().serverMode === ServerMode.lightWeight ? 'ss_ws' : 'jdt_ws');
+}
+
+export function getWorkspacePath() {
+	return computeWorkspacePath(storagePath);
 }
 
 function openRollingServerLogFile(storagePath, filename, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
 	return new Promise((resolve) => {
-		const workspacePath = getWorkspacePath(storagePath);
+		const workspacePath = computeWorkspacePath(storagePath);
 		const dirname = path.join(workspacePath, '.metadata');
 
 		// find out the newest one

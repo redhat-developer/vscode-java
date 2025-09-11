@@ -3,4 +3,4 @@ export interface WebviewMessage<T> {
 }
 
 export type FromWebviewMessageType = "webviewReady";
-export type ToWebviewMessageType = "initialize" | "settingsChanged";
+export type ToWebviewMessageType = "update";

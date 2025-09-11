@@ -1753,7 +1753,21 @@
         "command": "java.action.showExtendedOutline",
         "title": "%java.action.showExtendedOutline%",
         "category": "Java"
-      }
+      },
+			{
+				"command": "java.dashboard.refresh",
+				"category": "Java",
+				"title": "Refresh",
+        "icon": "$(refresh)",
+        "when": "java:dashboard == true"
+      },
+      {
+        "command": "java.dashboard.dumpState",
+        "category": "Java",
+        "title": "Dump State",
+        "icon": "$(json)",
+        "when": "java:dashboard == true"
+			}		
     ],
     "keybindings": [
       {
@@ -1929,6 +1943,16 @@
           "command": "java.action.showSubtypeHierarchy",
           "group": "navigation@1",
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
+        },
+				{
+					"command": "java.dashboard.refresh",
+					"group": "navigation",
+					"when": "view == java.dashboard"
+				},
+        {
+          "command": "java.dashboard.dumpState",
+          "group": "navigation",
+          "when": "view == java.dashboard"
         }
       ],
       "view/item/context": [
@@ -1939,22 +1963,13 @@
         }
       ]
     },
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "vscode-java-container",
-          "title": "Java",
-          "icon": "icons/icon128.png"
-        }
-      ]
-    },
     "views": {
-      "vscode-java-container": [
+      "explorer": [
         {
           "type": "webview",
-          "id": "vscode-java-dashboard",
-          "name": "Dashboard",
-          "icon": "icons/icons128.png"
+          "id": "java.dashboard",
+          "name": "Java Dashboard",
+          "icon": "icons/java-svgrepo-com.svg"
         }
       ]
     }
