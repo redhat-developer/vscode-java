@@ -366,6 +366,10 @@ export namespace Commands {
      */
     export const SHOW_EXTEND_OUTLINE = 'java.action.showExtendedOutline';
 
+	/**
+     * Get diagnostic info command in jdt.ls
+     */
+    export const GET_DIAGNOSTIC_INFO = 'java.getDiagnosticInfo';
 }
 
 /**
