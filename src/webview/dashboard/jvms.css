@@ -1,0 +1,22 @@
+.jvm-table {
+	text-align: left;
+	width: 100%;
+	border-collapse: collapse;
+	border: 1px solid var(--vscode-panel-border);
+}
+
+.jvm-table td{
+	border-left: 1px solid var(--vscode-panel-border);
+}
+
+.jvm-table th{
+	border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.jvm-table th>td {
+	background-color: var(--vscode-sideBarSectionHeader-background);
+}
+
+.jvm-table tbody tr.odd {
+	background-color: var(--vscode-tree-tableOddRowsBackground);
+}
