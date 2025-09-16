@@ -374,7 +374,7 @@ export namespace Commands {
 	/**
      * Get diagnostic info command in jdt.ls
      */
-    export const GET_DIAGNOSTIC_INFO = 'java.getDiagnosticInfo';
+    export const GET_TROUBLESHOOTING_INFO = 'java.getTroubleshootingInfo';
 }
 
 /**

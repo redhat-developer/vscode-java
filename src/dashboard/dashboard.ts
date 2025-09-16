@@ -92,7 +92,7 @@ function getWebviewContent(webview: vscode.Webview, context: vscode.ExtensionCon
 }
 async function refreshLSInfo(webview: vscode.Webview): Promise<void> {
 	try {
-		vscode.commands.executeCommand<DiagnosticInfo>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_DIAGNOSTIC_INFO).then(info => {
+		vscode.commands.executeCommand<DiagnosticInfo>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_TROUBLESHOOTING_INFO).then(info => {
 			currentState.diagnosticInfo = info;
 			const msg: UpdateMessage = {
 				type: "update",
