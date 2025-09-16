@@ -91,7 +91,7 @@ export class Dashboard extends React.Component<AppProps, State> {
 				<div>Java Home: {this.state.diagnosticInfo?.gradleJavaHome || 'undefined'} <a href={openSettingsLink('java.import.gradle.java.home')}>configure...</a></div>
 				<h3>Registered Project Importers</h3>
 				{this.state.diagnosticInfo?.activeImporters.map((clazz, index) => (
-					<div>{clazz}</div>
+					<div key={index}>{clazz}</div>
 				))}
 			</main >
 		);
