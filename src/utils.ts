@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { workspace, WorkspaceConfiguration, commands, Uri, version } from 'vscode';
+import { workspace, WorkspaceConfiguration, commands, Uri, version, ExtensionContext } from 'vscode';
 import { Commands } from './commands';
 import { IJavaRuntime } from 'jdk-utils';
 import { getSupportedJreNames, listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
@@ -20,6 +20,11 @@ export function isPreferenceOverridden(section: string): boolean {
 			config.inspect(section).workspaceLanguageValue !== undefined ||
 			config.inspect(section).globalValue !== undefined ||
 			config.inspect(section).globalLanguageValue !== undefined;
+}
+
+export function cleanJavaLSConfiguration(context: ExtensionContext) {
+	const globalStoragePath = context.globalStorageUri?.fsPath; // .../Code/User/globalStorage/redhat.java
+	deleteDirectory(globalStoragePath);
 }
 
 export function deleteDirectory(dir) {
