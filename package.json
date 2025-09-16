@@ -1752,7 +1752,21 @@
         "command": "java.action.showExtendedOutline",
         "title": "%java.action.showExtendedOutline%",
         "category": "Java"
-      }
+      },
+			{
+				"command": "java.dashboard.refresh",
+				"category": "Java",
+				"title": "Refresh",
+        "icon": "$(refresh)",
+        "when": "java:dashboard == true"
+      },
+      {
+        "command": "java.dashboard.dumpState",
+        "category": "Java",
+        "title": "Dump State",
+        "icon": "$(json)",
+        "when": "java:dashboard == true"
+			}		
     ],
     "keybindings": [
       {
@@ -1928,6 +1942,16 @@
           "command": "java.action.showSubtypeHierarchy",
           "group": "navigation@1",
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
+        },
+				{
+					"command": "java.dashboard.refresh",
+					"group": "navigation",
+					"when": "view == java.dashboard"
+				},
+        {
+          "command": "java.dashboard.dumpState",
+          "group": "navigation",
+          "when": "view == java.dashboard"
         }
       ],
       "view/item/context": [
@@ -1935,6 +1959,16 @@
           "command": "java.action.changeBaseType",
           "group": "1",
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "type": "webview",
+          "id": "java.dashboard",
+          "name": "Java Dashboard",
+          "icon": "icons/java-svgrepo-com.svg"
         }
       ]
     }
@@ -1946,7 +1980,7 @@
     "pretest": "npm run compile",
     "test": "node ./out/test/runtest.js",
     "build-server": "./node_modules/.bin/gulp build_server",
-    "build": "./node_modules/.bin/gulp build_or_download",
+    "build": "node_modules\\.bin\\gulp build_or_download",
     "fast-build-server": "./node_modules/.bin/gulp dev_server",
     "watch-server": "./node_modules/.bin/gulp watch_server",
     "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
