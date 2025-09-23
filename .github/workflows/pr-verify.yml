@@ -18,7 +18,7 @@ jobs:
       - name: Set Up Java
         uses: actions/setup-java@v4
         with:
-          java-version: '24'
+          java-version: '21'
           distribution: 'temurin'
       - run: npm install -g typescript "@vscode/vsce"
       - run: wget http://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
