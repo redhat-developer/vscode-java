@@ -947,7 +947,8 @@
                     "JavaSE-21",
                     "JavaSE-22",
                     "JavaSE-23",
-                    "JavaSE-24"
+                    "JavaSE-24",
+                    "JavaSE-25"
                   ],
                   "description": "Java Execution Environment name. Must be unique."
                 },
