@@ -202,7 +202,8 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				documentSelector: [
 					{ scheme: 'file', language: 'java' },
 					{ scheme: 'jdt', language: 'java' },
-					{ scheme: 'untitled', language: 'java' }
+					{ scheme: 'untitled', language: 'java' },
+					{ scheme: 'vscode-notebook-cell', language: 'java' }
 				],
 				synchronize: {
 					configurationSection: ['java', 'editor.insertSpaces', 'editor.tabSize', "files.associations"],
@@ -233,6 +234,11 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						advancedUpgradeGradleSupport: true,
 						executeClientCommandSupport: true,
 						snippetEditSupport: true,
+						nonStandardJavaFormatting : {
+							schemes: ["vscode-notebook-cell"],
+							extensions: ["jsh", "jshell", "ipynb"],
+							getContentCallback: Commands.GET_VISIBLE_EDITOR_CONTENT,
+						}
 					},
 					triggerFiles,
 				},
@@ -510,6 +516,20 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			}));
 
 			context.subscriptions.push(onConfigurationChange(workspacePath, context));
+
+			context.subscriptions.push(commands.registerCommand(Commands.GET_VISIBLE_EDITOR_CONTENT, (uri: string) => {
+				for (const editor of window.visibleTextEditors) {
+					if (editor.document.uri.toString() === uri) {
+						return editor.document.getText();
+					}
+				}
+				const editor = window.activeTextEditor;
+				if (editor) {
+					return editor.document.getText();
+				} else {
+					return null;
+				}
+			}));
 
 			registerRestartJavaLanguageServerCommand(context);
 
