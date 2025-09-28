@@ -366,6 +366,11 @@ export namespace Commands {
      */
     export const SHOW_EXTEND_OUTLINE = 'java.action.showExtendedOutline';
 
+    /**
+    * Get the content of the currently visible editor.
+    */
+    export const GET_VISIBLE_EDITOR_CONTENT = '_java.getVisibleEditorContent';
+
 }
 
 /**
