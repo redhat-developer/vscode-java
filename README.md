@@ -48,6 +48,7 @@ Features
 * Diagnostic tags
 * Call Hierarchy
 * Type Hierarchy
+* Inlay Hints
 
 To launch and debug your Java programs, it's recommended you install *[Java Debug Extension for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-debug)*.
 
@@ -257,6 +258,9 @@ The following settings are supported:
 * `java.completion.engine`: [Experimental] Select code completion engine. Defaults to `ecj`.
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
 * `java.jdt.ls.appcds.enabled` : [Experimental] Enable Java AppCDS (Application Class Data Sharing) for improvements to extension activation. When set to `auto`, AppCDS will be enabled in Visual Studio Code - Insiders, and for pre-release versions.
+
+New in 1.46.0
+* `java.inlayHints.variableTypes.enabled`: Enable/disable inlay hints for implicit variable types.
 
 Semantic Highlighting
 ===============
