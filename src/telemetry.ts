@@ -61,6 +61,7 @@ export namespace Telemetry {
 			"java.completion.collapseCompletionItems", "java.completion.guessMethodArguments",
 			"java.cleanup.actionsOnSave", "java.completion.postfix.enabled",
 			"java.sharedIndexes.enabled", "java.inlayHints.parameterNames.enabled",
+			"java.inlayHints.variableTypes.enabled",
 			"java.server.launchMode", "java.autobuild.enabled"
 		];
 		// settings where we only record their existence

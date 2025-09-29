@@ -1510,6 +1510,12 @@
             "scope": "window",
             "order": 90
           },
+          "java.inlayHints.variableTypes.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable/disable inlay hints for implicit variable types:\n```java\n\nvar foo /* :Path */ = Path.of(\"foo\");\n \n```",
+            "scope": "window"
+          },
           "java.search.scope": {
             "type": "string",
             "enum": [
