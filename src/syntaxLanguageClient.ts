@@ -8,13 +8,14 @@ import { ClientErrorHandler } from "./clientErrorHandler";
 import { ClientStatus } from "./extension.api";
 import { logger } from "./log";
 import { OutputInfoCollector } from "./outputInfoCollector";
-import { StatusNotification } from "./protocol";
+import { ExecuteClientCommandRequest, StatusNotification } from "./protocol";
 import { RequirementsData } from "./requirements";
 import { ServerMode } from "./settings";
 import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import { getJavaConfig } from "./utils";
 import { DEBUG } from "./javaServerStarter";
 import { TracingLanguageClient } from "./TracingLanguageClient";
+import { commands } from "vscode";
 
 const extensionName = "Language Support for Java (Syntax Server)";
 
@@ -89,6 +90,9 @@ export class SyntaxLanguageClient {
 				if (apiManager.getApiInstance().serverMode === ServerMode.lightWeight) {
 					apiManager.fireDidServerModeChange(ServerMode.lightWeight);
 				}
+			});
+			this.languageClient.onRequest(ExecuteClientCommandRequest.type, (params) => {
+				return commands.executeCommand(params.command, ...params.arguments);
 			});
 		}
 	}
