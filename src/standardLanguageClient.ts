@@ -360,6 +360,7 @@ export class StandardLanguageClient {
 					return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
 				}
 			}
+			return Telemetry.sendTelemetry(e.name, e.properties);
 		});
 
 		context.subscriptions.push(commands.registerCommand(GRADLE_CHECKSUM, (wrapper: string, sha256: string) => {
