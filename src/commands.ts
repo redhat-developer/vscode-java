@@ -372,7 +372,7 @@ export namespace Commands {
     export const GET_VISIBLE_EDITOR_CONTENT = '_java.getVisibleEditorContent';
 
 	/**
-     * Get diagnostic info command in jdt.ls
+     * Get troubleshooting info command in jdt.ls
      */
     export const GET_TROUBLESHOOTING_INFO = 'java.getTroubleshootingInfo';
 }

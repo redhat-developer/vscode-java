@@ -1767,7 +1767,13 @@
         "title": "Dump State",
         "icon": "$(json)",
         "when": "java:dashboard == true"
-			}		
+			},
+      {
+        "command": "java.dashboard.open",
+        "category": "Java",
+        "title": "Open Java Dashboard",
+        "icon": "$(dashboard)"
+      }
     ],
     "keybindings": [
       {
@@ -1820,7 +1826,20 @@
           "group": "1_javaactions@2"
         }
       ],
+      "editor/title": [
+        {
+					"command": "java.dashboard.refresh",
+					"group": "navigation",
+					"when": "webviewId  == java.dashboard"
+				},
+        {
+          "command": "java.dashboard.dumpState",
+          "group": "navigation",
+          "when": "webviewId  == java.dashboard"
+        }
+      ],
       "editor/context": [
+        
         {
           "command": "java.project.updateSourceAttachment.command",
           "when": "editorReadonly && editorLangId == java",
@@ -1943,16 +1962,6 @@
           "command": "java.action.showSubtypeHierarchy",
           "group": "navigation@1",
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
-        },
-				{
-					"command": "java.dashboard.refresh",
-					"group": "navigation",
-					"when": "view == java.dashboard"
-				},
-        {
-          "command": "java.dashboard.dumpState",
-          "group": "navigation",
-          "when": "view == java.dashboard"
         }
       ],
       "view/item/context": [
@@ -1960,16 +1969,6 @@
           "command": "java.action.changeBaseType",
           "group": "1",
           "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
-        }
-      ]
-    },
-    "views": {
-      "explorer": [
-        {
-          "type": "webview",
-          "id": "java.dashboard",
-          "name": "Java Dashboard",
-          "icon": "icons/java-svgrepo-com.svg"
         }
       ]
     }
