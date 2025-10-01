@@ -1,5 +1,22 @@
 # Change Log
 
+## 1.46.0 (October 2nd, 2025)
+ * performance - Cleaning workspace should also delete configuration folder. See [#4157](https://github.com/redhat-developer/vscode-java/issues/4157).
+ * performance - Improve Null Analysis by reducing & deferring expensive calls. See [JLS#3531](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3531).
+ * enhancement - Support Java 25. See [#4170](https://github.com/redhat-developer/vscode-java/pull/4170), [#4185](https://github.com/redhat-developer/vscode-java/pull/4185), [#4172](https://github.com/redhat-developer/vscode-java/pull/4172).
+ * enhancement - Support fuzzy camel case search for workspace symbols. See [JLS#3513](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3513).
+ * enhancement - Enable formatting Java in Jupyter Notebook. See [#4163](https://github.com/redhat-developer/vscode-java/issues/4163).
+ * enhancement - Add inlay hints for implicit variable types. See [#4031](https://github.com/redhat-developer/vscode-java/issues/4031).
+ * bug fix - Fix Android Support with recent AGP versions. See [#3682](https://github.com/redhat-developer/vscode-java/issues/3682).
+ * bug fix - Ensure Gradle 9.1.0 requires JDK >= 25. See [JLS#3540](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3540).
+ * bug fix - Eable `workspace/executeCommand` in the Syntax language client. See [#4187](https://github.com/redhat-developer/vscode-java/pull/4187).
+ * bug fix - Add missing KO NLS keys and refine translations. See [#4183](https://github.com/redhat-developer/vscode-java/pull/4183).
+ * bug fix - Show decompiled source when opening `.class` file on remote workspace. See [#4114](https://github.com/redhat-developer/vscode-java/issues/4114).
+ * dependencies - Bump brace-expansion from 1.1.11 to 1.1.12. See [#4150](https://github.com/redhat-developer/vscode-java/pull/4150).
+ * dependencies - Use the Eclipse 4.37 platform release repository. See [JLS#3526](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3526).
+ * dependencies - Update M2E 2.9.0 to 2.9.1. See [JLS#3520](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3520).
+ * build - Do not reference path when invoking `gulp`. See [#4158](https://github.com/redhat-developer/vscode-java/issues/4158).
+
 ## 1.45.0 (September 4th, 2025)
  * performance - Delay registration of resource/element listeners. See [JLS#3510](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3510).
  * bug fix - Path expansion is not working for the `sources` field in `referencedLibraries`. See [JLS#3495](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3495).
