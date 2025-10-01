@@ -68,9 +68,12 @@ export class Dashboard extends React.Component<AppProps, State> {
 		const args = [ {
 			path: this.state.workspacePath
 		}];
-
 		return (
 			<main>
+				<div className="toolbar" >
+					<a href={`command:java.dashboard.refresh`} className="toolbarItem" tabIndex={-1}><i className="codicon codicon-refresh" title="Refresh"></i></a>
+					<a href={`command:java.dashboard.dumpState`} className="toolbarItem" tabIndex={-1}><i className="codicon codicon-json" title="Dump State"></i></a>
+				</div>
 				<h3>Workspace</h3>
 				<div>Path: {this.state.workspacePath || 'undefined'}</div>
 				<div><a href={`command:java.dashboard.revealFileInOS?${encodeURIComponent(JSON.stringify(args))}`}>Reveal</a></div>
@@ -79,8 +82,10 @@ export class Dashboard extends React.Component<AppProps, State> {
 				<a href={openSettingsLink('java.configuration.runtimes')}>configure...</a>
 				<br />
 				<h3>Lombok Support</h3>
-				<div><span>enabled</span><input type="checkbox" readOnly={true} checked={this.state.lombokEnabled}/>
-				<a href = {openSettingsLink('java.jdt.ls.lombokSupport.enabled')}>configure...</a>
+				<div>
+					<span>enabled</span>
+					<span className={this.state.lombokEnabled ? 'codicon codicon-pass' : 'codicon codicon-circle-slash'} style={{verticalAlign: 'middle', margin: '4px'}} title="Enabled"></span>
+					<a href = {openSettingsLink('java.jdt.ls.lombokSupport.enabled')}>configure...</a>
 				</div>
 				<div>Using Lombok at: {this.state.activeLombokPath || ''}</div>
 				<h3>Maven</h3>

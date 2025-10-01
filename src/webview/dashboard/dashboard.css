@@ -1,0 +1,12 @@
+.toolbar {
+    margin: 8px;
+	width: 100%;
+	display: flex;
+	flex-flow: row nowrap;
+	gap: 4px;
+	justify-content: flex-end;
+}
+
+.toolbarItem {
+    color: var(--vscode-sideBarSectionHeader-foreground);
+}
