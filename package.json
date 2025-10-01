@@ -65,6 +65,9 @@
         "selector": [
           {
             "filenamePattern": "file:/**/*.class"
+          },
+          {
+            "filenamePattern": "vscode-remote:/**/*.class"
           }
         ]
       }
