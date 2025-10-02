@@ -163,7 +163,7 @@ export namespace Dashboard {
 
 		context.subscriptions.push(vscode.commands.registerCommand(Commands.OPEN_JAVA_DASHBOARD, async () => {
 			if (!dashboardPanel) {
-				webviewPanel = vscode.window.createWebviewPanel('java.dashboard', 'Dashboard', vscode.ViewColumn.Active, {
+				webviewPanel = vscode.window.createWebviewPanel('java.dashboard', 'Java Dashboard', vscode.ViewColumn.Active, {
 					enableScripts: true,
 					enableCommandUris: true,
 					retainContextWhenHidden: true,
