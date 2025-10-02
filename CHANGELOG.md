@@ -4,6 +4,7 @@
  * performance - Cleaning workspace should also delete configuration folder. See [#4157](https://github.com/redhat-developer/vscode-java/issues/4157).
  * performance - Improve Null Analysis by reducing & deferring expensive calls. See [JLS#3531](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3531).
  * enhancement - Support Java 25. See [#4170](https://github.com/redhat-developer/vscode-java/pull/4170), [#4185](https://github.com/redhat-developer/vscode-java/pull/4185), [#4172](https://github.com/redhat-developer/vscode-java/pull/4172).
+ * enhancement - Add a "Java Dashboard" view that presents information for troubleshooting. See [#4128](https://github.com/redhat-developer/vscode-java/issues/4128).
  * enhancement - Support fuzzy camel case search for workspace symbols. See [JLS#3513](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3513).
  * enhancement - Enable formatting Java in Jupyter Notebook. See [#4163](https://github.com/redhat-developer/vscode-java/issues/4163).
  * enhancement - Add inlay hints for implicit variable types. See [#4031](https://github.com/redhat-developer/vscode-java/issues/4031).
