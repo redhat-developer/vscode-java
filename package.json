@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.46.0",
+  "version": "1.47.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -1763,10 +1763,10 @@
         "title": "%java.action.showExtendedOutline%",
         "category": "Java"
       },
-			{
-				"command": "java.dashboard.refresh",
-				"category": "Java",
-				"title": "Refresh",
+      {
+        "command": "java.dashboard.refresh",
+        "category": "Java",
+        "title": "Refresh",
         "icon": "$(refresh)",
         "when": "java:dashboard == true"
       },
@@ -1776,7 +1776,7 @@
         "title": "Dump State",
         "icon": "$(json)",
         "when": "java:dashboard == true"
-			},
+      },
       {
         "command": "java.dashboard.open",
         "category": "Java",
@@ -1837,10 +1837,10 @@
       ],
       "editor/title": [
         {
-					"command": "java.dashboard.refresh",
-					"group": "navigation",
-					"when": "webviewId  == java.dashboard"
-				},
+          "command": "java.dashboard.refresh",
+          "group": "navigation",
+          "when": "webviewId  == java.dashboard"
+        },
         {
           "command": "java.dashboard.dumpState",
           "group": "navigation",
@@ -1848,7 +1848,6 @@
         }
       ],
       "editor/context": [
-        
         {
           "command": "java.project.updateSourceAttachment.command",
           "when": "editorReadonly && editorLangId == java",
