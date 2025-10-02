@@ -375,6 +375,11 @@ export namespace Commands {
      * Get troubleshooting info command in jdt.ls
      */
     export const GET_TROUBLESHOOTING_INFO = 'java.getTroubleshootingInfo';
+
+	/**
+	 * Open Java Dashboard
+	 */
+	export const OPEN_JAVA_DASHBOARD = 'java.dashboard.open';
 }
 
 /**
