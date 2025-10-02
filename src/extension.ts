@@ -39,6 +39,7 @@ import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './
 import { pasteFile } from './pasteAction';
 import { ServerStatusKind } from './serverStatus';
 import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib/node';
+import { JavaRuntimes } from './javaRuntimes';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -114,6 +115,7 @@ export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): Ma
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
 	await loadSupportedJreNames(context);
+	await JavaRuntimes.initialize(context);
 	context.subscriptions.push(commands.registerCommand(Commands.FILESEXPLORER_ONPASTE, async () => {
 		const originalClipboard = await env.clipboard.readText();
 		// Hack in order to get path to selected folder if applicable (see https://github.com/microsoft/vscode/issues/3553#issuecomment-1098562676)

@@ -1762,6 +1762,11 @@
         "command": "java.action.showExtendedOutline",
         "title": "%java.action.showExtendedOutline%",
         "category": "Java"
+      }, 
+      {
+        "command": "java.runtimes.add",
+        "title": "%java.runtimes.add%",
+        "category": "Java"
       }
     ],
     "keybindings": [
