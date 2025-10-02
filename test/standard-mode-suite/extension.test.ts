@@ -128,7 +128,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.FILESEXPLORER_ONPASTE,
 				Commands.RESOLVE_PASTED_TEXT,
 				Commands.CHANGE_JAVA_SEARCH_SCOPE,
-				"java.dashboard.open"
+				Commands.OPEN_JAVA_DASHBOARD
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
