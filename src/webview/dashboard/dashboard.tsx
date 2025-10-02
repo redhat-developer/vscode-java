@@ -75,7 +75,7 @@ export class Dashboard extends React.Component<AppProps, State> {
 					<a href={`command:java.dashboard.dumpState`} className="toolbarItem" tabIndex={-1}><i className="codicon codicon-json" title="Dump State"></i></a>
 				</div>
 				<h3>Workspace</h3>
-				<div>Path: {this.state.workspacePath || 'undefined'}</div>
+				<div>Language Server Workspace: {this.state.workspacePath || 'undefined'}</div>
 				<div><a href={`command:java.dashboard.revealFileInOS?${encodeURIComponent(JSON.stringify(args))}`}>Reveal</a></div>
 				<h3>Detected Java Installations</h3>
 				<Jvms jvms={this.state.jvms}></Jvms>
