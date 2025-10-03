@@ -110,27 +110,23 @@ class DashboardPanel {
 	}
 
 	private getWebviewContent(): string {
-		const scriptUri = getUri(this.webView, this.context.extensionUri, [
-			"dist",
-			"dashboard.js",
-		]);
-
-		const nonce = getNonce();
-		const codiconsUri = this.webView.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'));
+		const scriptUri = getUri(this.webView, this.context.extensionUri, "dist", "dashboard.js");
+		const styleUri = getUri(this.webView, this.context.extensionUri, "dist", "dashboard.css");
 
 		return /* html*/ `
 	  <!DOCTYPE html>
 	  <html lang="en">
 		<head>
 		  <meta charset="utf-8">
+		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${this.webView.cspSource}; font-src ${this.webView.cspSource} data:; style-src ${this.webView.cspSource};">
 		  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
 		  <meta name="theme-color" content="#000000">
-		  <link href="${codiconsUri}" rel="stylesheet" />
 		  <title>Dashboard</title>
+		  <link href="${styleUri}" rel="stylesheet">
 		</head>
 		<body>
 		  <div id="root"></div>
-		  <script nonce="${nonce}" src="${scriptUri}"></script>
+		  <script src="${scriptUri}"></script>
 		</body>
 	  </html>
 	`;

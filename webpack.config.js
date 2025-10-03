@@ -53,6 +53,8 @@ const config = {
 	},
 }
 
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 const configChangeSignature = {
 	name: 'changeSignature',
 	mode: 'none',
@@ -70,7 +72,7 @@ const configChangeSignature = {
 		}, {
 			test: /\.(css)$/,
 			use: [{
-				loader: 'style-loader'
+				loader: MiniCssExtractPlugin.loader,
 			}, {
 				loader: 'css-loader'
 			}]
@@ -86,6 +88,9 @@ const configChangeSignature = {
 		devtoolModuleFilenameTemplate: "../[resource-path]"
 	},
 	plugins: [
+		new MiniCssExtractPlugin({
+			filename: 'changeSignature.css'
+		}),
 		new webpack.ProvidePlugin({
 			process: 'process/browser',
 		}),
@@ -113,7 +118,7 @@ const configDashboard = {
 		}, {
 			test: /\.(css)$/,
 			use: [{
-				loader: 'style-loader'
+				loader: MiniCssExtractPlugin.loader,
 			}, {
 				loader: 'css-loader'
 			}]
@@ -129,6 +134,9 @@ const configDashboard = {
 		devtoolModuleFilenameTemplate: "../[resource-path]"
 	},
 	plugins: [
+		new MiniCssExtractPlugin({
+			filename: 'dashboard.css'
+		}),
 		new webpack.ProvidePlugin({
 			process: 'process/browser',
 		}),

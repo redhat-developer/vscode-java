@@ -1,3 +1,5 @@
+@import "../../../node_modules/@vscode/codicons/dist/codicon.css";
+
 .toolbar {
     margin: 8px;
 	width: 100%;

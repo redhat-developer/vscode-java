@@ -108,26 +108,24 @@ export class ChangeSignaturePanel {
 	}
 
 	private getWebviewContent(webview: Webview, extensionUri: Uri) {
-
-		const scriptUri = getUri(webview, extensionUri, [
-			"dist",
-			"changeSignature.js",
-		]);
-
-		const nonce = getNonce();
+		const scriptUri = getUri(webview, extensionUri, "dist", "changeSignature.js");
+		const styleUri = getUri(webview, extensionUri, "dist", "changeSignature.css");
 
 		return /* html*/ `
       <!DOCTYPE html>
       <html lang="en">
         <head>
           <meta charset="utf-8">
+		  <!-- We need the 'unsafe-inline' because of webview UI toolkit setting style attributes -->
+		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${webview.cspSource}; font-src ${webview.cspSource} data:; style-src ${webview.cspSource} 'unsafe-inline';">
           <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
           <meta name="theme-color" content="#000000">
           <title>Change Signature</title>
+		  <link rel = "stylesheet" href="${styleUri}">
         </head>
         <body>
           <div id="root"></div>
-          <script nonce="${nonce}" src="${scriptUri}"></script>
+          <script src="${scriptUri}"></script>
         </body>
       </html>
     `;
