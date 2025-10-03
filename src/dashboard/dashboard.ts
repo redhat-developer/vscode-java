@@ -5,6 +5,8 @@ import { getComputedJavaConfig, getWorkspacePath } from '../extension';
 import { isLombokSupportEnabled, Lombok } from '../lombokSupport';
 import { DashboardState, DiagnosticInfo, JVM, UpdateMessage } from '../webviewProtocol/toDashboard';
 import { getNonce, getUri } from '../webviewUtils';
+import { Uri } from 'vscode';
+import * as path from 'path';
 
 const currentState: DashboardState = {
 };
@@ -163,8 +165,9 @@ export namespace Dashboard {
 					enableScripts: true,
 					enableCommandUris: true,
 					retainContextWhenHidden: true,
-					localResourceRoots: [context.extensionUri]
+					localResourceRoots: [context.extensionUri],
 				});
+				webviewPanel.iconPath = Uri.file(path.join(context.extensionPath, 'icons', 'icon128.png'));
 				dashboardPanel = new DashboardPanel(webviewPanel.webview, context);
 
 				webviewPanel.onDidDispose(() => {
