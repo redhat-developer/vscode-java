@@ -3,48 +3,47 @@
 import * as chokidar from 'chokidar';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
+import { glob } from 'glob';
 import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
-import { CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
-	IndentAction, InputBoxOptions, languages, Location, MarkdownString, QuickPickItemKind, Range, RelativePattern,
-	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn,
-	Webview,
-	WebviewView, WebviewViewResolveContext, window, workspace, WorkspaceConfiguration, WorkspaceEdit } from 'vscode';
+import {
+	CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
+	IndentAction, InputBoxOptions, languages, Location, MarkdownString, RelativePattern,
+	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration
+} from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
 import { Executable, LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
+import { BuildFileSelector, cleanupWorkspaceState, PICKED_BUILD_FILES } from './buildFilesSelector';
 import { ClientErrorHandler } from './clientErrorHandler';
-import { Commands, CommandTitle } from './commands';
+import { Commands } from './commands';
+import { Dashboard } from './dashboard/dashboard';
+import { getMessage } from './errorUtils';
 import { ClientStatus, ExtensionAPI, TraceEvent } from './extension.api';
 import * as fileEventHandler from './fileEventHandler';
+import { JavaClassEditorProvider } from './javaClassEditor';
 import { getSharedIndexCache, HEAP_DUMP_LOCATION, prepareExecutable, removeEquinoxFragmentOnDarwinX64, startedFromSources } from './javaServerStarter';
+import { loadSupportedJreNames } from './jdkUtils';
 import { initializeLogFile, logger } from './log';
 import { cleanupLombokCache } from "./lombokSupport";
 import { markdownPreviewProvider } from "./markdownPreviewProvider";
 import { OutputInfoCollector } from './outputInfoCollector';
+import { pasteFile } from './pasteAction';
 import { collectJavaExtensions, getBundlesToReload, getShortcuts, IJavaShortcut, isContributedPartUpdated } from './plugin';
+import { Deferred } from './promiseUtil';
 import { fixJdtSchemeHoverLinks, registerClientProviders } from './providerDispatcher';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
+import { ServerStatusKind } from './serverStatus';
 import { serverStatusBarProvider, ShortcutQuickPickItem } from './serverStatusBarProvider';
-import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getJavaServerMode, handleTextDocumentChanges, getImportMode, onConfigurationChange, ServerMode, ImportMode } from './settings';
+import { activationProgressNotification } from "./serverTaskPresenter";
+import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getImportMode, getJavaServerMode, handleTextDocumentChanges, ImportMode, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
-import { JavaClassEditorProvider } from './javaClassEditor';
 import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
-import { convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, hasBuildToolConflicts, resolveActualCause, getVersion, cleanJavaLSConfiguration } from './utils';
-import glob = require('glob');
 import { Telemetry } from './telemetry';
-import { getMessage } from './errorUtils';
-import { activationProgressNotification } from "./serverTaskPresenter";
-import { loadSupportedJreNames } from './jdkUtils';
-import { BuildFileSelector, PICKED_BUILD_FILES, cleanupWorkspaceState } from './buildFilesSelector';
-import { pasteFile } from './pasteAction';
-import { ServerStatusKind } from './serverStatus';
-import { TelemetryService } from '@redhat-developer/vscode-redhat-telemetry/lib/node';
-import { Deferred } from './promiseUtil';
-import { Dashboard } from './dashboard/dashboard';
+import { cleanJavaLSConfiguration, convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, getVersion, hasBuildToolConflicts, resolveActualCause } from './utils';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -917,52 +916,51 @@ export function getWorkspacePath() {
 	return computeWorkspacePath(storagePath);
 }
 
-function openRollingServerLogFile(storagePath, filename, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
-	return new Promise((resolve) => {
-		const workspacePath = computeWorkspacePath(storagePath);
-		const dirname = path.join(workspacePath, '.metadata');
+async function openRollingServerLogFile(storagePath, filename, column: ViewColumn = ViewColumn.Active): Promise<boolean> {
+	const workspacePath = computeWorkspacePath(storagePath);
+	const dirname = path.join(workspacePath, '.metadata');
 
+	try {
 		// find out the newest one
-		glob(`${filename}-*`, { cwd: dirname }, (err, files) => {
-			if (!err && files.length > 0) {
-				files.sort();
+		const files = await glob(`${filename}-*`, { cwd: dirname });
+		if (files.length > 0) {
+			files.sort();
 
-				const logFile = path.join(dirname, files[files.length - 1]);
-				openLogFile(logFile, `Could not open Java Language Server log file ${filename}`, column).then((result) => resolve(result));
-			} else {
-				resolve(false);
-			}
-		});
-	});
+			const logFile = path.join(dirname, files[files.length - 1]);
+			return await openLogFile(logFile, `Could not open Java Language Server log file ${filename}`, column);
+		}
+	} catch (err) {
+		console.error("Error opening rolling server log file", err);
+	}
+	return false;
 }
 
-function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Active): Thenable<boolean> {
-	return new Promise((resolve) => {
-		const filename = path.basename(logFile);
-		const dirname = path.dirname(logFile);
+async function openClientLogFile(logFile: string, column: ViewColumn = ViewColumn.Active): Promise<boolean> {
+	const filename = path.basename(logFile);
+	const dirname = path.dirname(logFile);
 
+	try {
 		// find out the newest one
-		glob(`${filename}.*`, { cwd: dirname }, (err, files) => {
-			if (!err && files.length > 0) {
-				files.sort((a, b) => {
-					const dateA = a.slice(11, 21), dateB = b.slice(11, 21);
-					if (dateA === dateB) {
-						if (a.length > 22 && b.length > 22) {
-							const extA = a.slice(22), extB = b.slice(22);
-							return parseInt(extA) - parseInt(extB);
-						} else {
-							return a.length - b.length;
-						}
-					} else {
-						return dateA < dateB ? -1 : 1;
+		const files = await glob(`${filename}.*`, { cwd: dirname });
+		if (files.length > 0) {
+			files.sort((a, b) => {
+				const dateA = a.slice(11, 21), dateB = b.slice(11, 21);
+				if (dateA === dateB) {
+					if (a.length > 22 && b.length > 22) {
+						const extA = a.slice(22), extB = b.slice(22);
+						return parseInt(extA) - parseInt(extB);
 					}
-				});
-				logFile = path.join(dirname, files[files.length - 1]);
-			}
+					return a.length - b.length;
+				}
+				return dateA < dateB ? -1 : 1;
+			});
+			logFile = path.join(dirname, files[files.length - 1]);
+		}
 
-			openLogFile(logFile, 'Could not open Java extension log file', column).then((result) => resolve(result));
-		});
-	});
+	} catch (err) {
+		console.error("Error opening client log file", err);
+	}
+	return await openLogFile(logFile, 'Could not open Java extension log file', column);
 }
 
 async function openLogs() {
@@ -1214,7 +1212,8 @@ async function cleanJavaWorkspaceStorage() {
 
 	// find all folders of the form "redhat.java/jdt_ws/" and delete "redhat.java/"
 	if (fs.existsSync(wsRoot)) {
-		new glob.Glob(`${wsRoot}/**/jdt_ws`, (_err, matches) => {
+		try {
+			const matches = await glob(`${wsRoot}/**/jdt_ws`);
 			for (const javaWSCache of matches) {
 				const entry = path.dirname(javaWSCache);
 				const entryModTime = fs.statSync(entry).mtimeMs;
@@ -1223,7 +1222,9 @@ async function cleanJavaWorkspaceStorage() {
 					deleteDirectory(entry);
 				}
 			}
-		});
+		} catch (err) {
+			logger.error('Error cleaning workspace storage:', err);
+		}
 	}
 }
 

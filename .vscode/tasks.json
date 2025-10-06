@@ -18,19 +18,19 @@
 			}
 		},
 		{
-			"type": "gulp",
-			"label": "cleanTestFolder",
-			"task": "clean_test_folder"
+			"type": "npm",
+			"script": "clean-test-folder",
+			"label": "cleanTestFolder"
 		},
 		{
-			"type": "gulp",
-			"label": "generateStandardTestFolder",
-			"task": "generate_standard_test_folder"
+			"type": "npm",
+			"script": "generate-standard-test-folder",
+			"label": "generateStandardTestFolder"
 		},
 		{
-			"type": "gulp",
-			"label": "generateLightweightTestFolder",
-			"task": "generate_lightweight_test_folder"
+			"type": "npm",
+			"script": "generate-lightweight-test-folder",
+			"label": "generateLightweightTestFolder"
 		},
 		{
 			"label": "prepareStandardTest",

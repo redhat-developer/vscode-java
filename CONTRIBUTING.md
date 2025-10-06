@@ -57,7 +57,7 @@ The following will be a start to finish guide to get the entire language server 
 5. (**\*Optional**) Build a platform specific JRE:
 
 	```bash
-	$ npx gulp download_jre
+	$ npm run download-jre
 	```
 	You can also use the options `--target` and `--javaVersion` to build the specified JRE version for the specified target architecture.
 
@@ -94,7 +94,7 @@ This will build and place the binaries under the `server` folder. Alternately yo
 
 ```bash
 $ cd ../vscode-java
-$ ./node_modules/.bin/gulp download_server
+$ npm run download-server
 ```
 ### Setting up the JDT Language Server
 Below are the details about how to set up the JDT Language Server in different IDEs. **Notice**: You only need set up it once in any of your preferred IDE.
