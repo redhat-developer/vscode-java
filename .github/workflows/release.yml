@@ -122,21 +122,21 @@ jobs:
           xvfb-run --auto-servernum npm run test --silent
         continue-on-error: true
       - name: Clean tests
-        run: npx gulp clean_test_folder
+        run: npm run clean-test-folder
       - name: Prepare Lombok Support
         if: false
         run: |
-          npx gulp download_lombok
+          npm run download-lombok
       - name: Prepare Pre-Release
         if: ${{ github.event_name == 'schedule' || inputs.publishPreRelease == 'true' }}
         run: |
-          npx gulp prepare_pre_release
+          npm run prepare-pre-release
           echo "publishPreReleaseFlag=--pre-release" >> $GITHUB_ENV
       - name: Package vscode-java
         run: |
           platforms=("win32-x64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
           for platform in ${platforms[@]}; do
-            npx gulp download_jre --target ${platform} --javaVersion 21
+            npm run download-jre -- --target ${platform} --javaVersion 21
             vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           done
           rm -rf jre/

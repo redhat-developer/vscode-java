@@ -12,24 +12,32 @@
 
 import * as path from 'path';
 import * as Mocha from 'mocha';
-import * as glob from 'glob';
+import { glob } from 'glob';
 
-export function run(testsRoot: string): Promise<void> {
+export async function run(testsRoot: string): Promise<void> {
 	const mocha = new Mocha({
 		ui: 'tdd',
 		useColors: true,
 		timeout: 1 * 60 * 1000, /* ms*/
 	});
 
-	return new Promise((c, e) => {
-		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
-			if (err) {
-				return e(err);
+	try {
+		const files = await glob('**/**.test.js', { cwd: testsRoot });
+		// make sure publicApi.test.ts is added last
+		files.sort((a, b) => {
+			if (a === 'publicApi.test.ts') {
+				return 1;
 			}
+			return -1;
+		});
+		// Add files to the test suite
+		files.forEach(f => {
+			const filePath = path.resolve(testsRoot, f);
+			console.log("Adding file", filePath);
+			mocha.addFile(filePath);
+		});
 
-			// Add files to the test suite
-			files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
-
+		return new Promise((c, e) => {
 			try {
 				// Run the mocha test
 				mocha.run(failures => {
@@ -43,5 +51,7 @@ export function run(testsRoot: string): Promise<void> {
 				e(err);
 			}
 		});
-	});
+	} catch (err) {
+		throw err;
+	}
 }

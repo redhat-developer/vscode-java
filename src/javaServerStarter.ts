@@ -1,7 +1,7 @@
 
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import * as glob from 'glob';
+import { globSync } from 'glob';
 import * as net from 'net';
 import * as os from 'os';
 import * as path from 'path';
@@ -12,7 +12,6 @@ import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 import { RequirementsData } from './requirements';
 import { IS_WORKSPACE_VMARGS_ALLOWED, getJavaEncoding, getJavaagentFlag, getKey, isInWorkspaceFolder } from './settings';
 import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp, getVersion, getVSCodeVariablesMap } from './utils';
-import { log } from 'console';
 
 // eslint-disable-next-line no-var
 declare var v8debug;
@@ -256,7 +255,7 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 	}
 
 	const serverHome: string = process.env.JDT_LS_PATH || path.resolve(__dirname, '../server');
-	const launchersFound: Array<string> = glob.sync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: serverHome });
+	const launchersFound: Array<string> = globSync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: serverHome });
 	if (launchersFound.length) {
 		params.push('-jar'); params.push(path.resolve(serverHome, launchersFound[0]));
 	} else {
@@ -392,7 +391,7 @@ export function parseVMargs(params: any[], vmargsLine: string) {
 export function removeEquinoxFragmentOnDarwinX64(context: ExtensionContext) {
 	// https://github.com/redhat-developer/vscode-java/issues/3484
 	const extensionPath = context.extensionPath;
-	const matches = new glob.GlobSync(`${extensionPath}/server/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64*.jar`).found;
+	const matches = globSync(`${extensionPath}/server/plugins/org.eclipse.equinox.launcher.cocoa.macosx.x86_64*.jar`);
 	for (const fragment of matches) {
 		fse.removeSync(fragment);
 		logger.info(`Removing Equinox launcher fragment : ${fragment}`);
