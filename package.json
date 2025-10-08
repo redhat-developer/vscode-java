@@ -1519,6 +1519,12 @@
             "markdownDescription": "Enable/disable inlay hints for implicit variable types:\n```java\n\nvar foo /* :Path */ = Path.of(\"foo\");\n \n```",
             "scope": "window"
           },
+          "java.inlayHints.parameterTypes.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable/disable inlay hints for (lambda) parameter types:\n```java\n\nList.of(1, 2, 3, 4).filter(/*Integer */ n -> n % 2 == 0).toList();\n \n```",
+            "scope": "window"
+          },
           "java.search.scope": {
             "type": "string",
             "enum": [

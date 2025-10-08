@@ -62,8 +62,10 @@ export namespace Telemetry {
 			"java.cleanup.actionsOnSave", "java.completion.postfix.enabled",
 			"java.sharedIndexes.enabled", "java.inlayHints.parameterNames.enabled",
 			"java.inlayHints.variableTypes.enabled",
+			"java.inlayHints.parameterTypes.enabled",
 			"java.server.launchMode", "java.autobuild.enabled"
 		];
+
 		// settings where we only record their existence
 		const SETTINGS_CUSTOM = [
 			"java.settings.url", "java.format.settings.url"

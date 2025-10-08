@@ -214,6 +214,7 @@ The following settings are supported:
 * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
 * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
 * `java.inlayHints.parameterNames.enabled`: Enable/disable inlay hints for parameter names. Supported values are: `none`(disable parameter name hints), `literals`(Enable parameter name hints only for literal arguments) and `all`(Enable parameter name hints for literal and non-literal arguments). Defaults to `literals`.
+* `java.inlayHints.parameterTypes.enabled`: Enable/disable inlay hints for (lambda) parameter types. Defaults to `false`.
 * `java.compile.nullAnalysis.nonnull`: Specify the Nonnull annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
 * `java.compile.nullAnalysis.nullable`: Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
 * `java.compile.nullAnalysis.nonnullbydefault`: Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in your project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`.
@@ -259,8 +260,8 @@ The following settings are supported:
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
 * `java.jdt.ls.appcds.enabled` : [Experimental] Enable Java AppCDS (Application Class Data Sharing) for improvements to extension activation. When set to `auto`, AppCDS will be enabled in Visual Studio Code - Insiders, and for pre-release versions.
 
-New in 1.46.0
-* `java.inlayHints.variableTypes.enabled`: Enable/disable inlay hints for implicit variable types.
+New in 1.47.0
+* `java.inlayHints.parameterTypes.enabled`: Enable/disable inlay hints for (lambda) parameter types. Defaults to `false`.
 
 Semantic Highlighting
 ===============
