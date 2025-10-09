@@ -422,9 +422,9 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			// the promise is resolved
 			// no need to pass `resolve` into any code past this point,
 			// since `resolve` is a no-op from now on
-			const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, context, true);
-			excutable.resolve(serverOptions);
 			if (requireSyntaxServer) {
+				const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, context, true);
+				excutable.resolve(serverOptions);
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
 					syntaxClient.initialize(requirements, clientOptions);
 				} else {
