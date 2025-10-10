@@ -1503,6 +1503,13 @@
             "scope": "window",
             "order": 80
           },
+          "java.inlayHints.parameterNames.suppressWhenSameNameNumbered": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Suppress parameter name hints on arguments following the same-name numbered pattern.",
+            "scope": "window",
+            "order": 81
+          },
           "java.inlayHints.parameterNames.exclusions": {
             "type": "array",
             "items": {
