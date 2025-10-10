@@ -4,7 +4,7 @@ import { VSCodeButton, VSCodeTextField, VSCodeDropdown, VSCodeOption, VSCodeChec
 import "./App.css";
 import React from "react";
 import { vscode } from "../vscodeApiWrapper";
-import _ from "lodash";
+import cloneDeep from "lodash/cloneDeep";
 
 type State = UIState & Metadata;
 
@@ -132,8 +132,8 @@ export class App extends React.Component<{}, State> {
 				accessType: this.initialMetadata.accessType,
 				methodName: this.initialMetadata.methodName,
 				returnType: this.initialMetadata.returnType,
-				parameters: _.cloneDeep(this.initialMetadata.parameters),
-				exceptions: _.cloneDeep(this.initialMetadata.exceptions),
+				parameters: cloneDeep(this.initialMetadata.parameters),
+				exceptions: cloneDeep(this.initialMetadata.exceptions),
 				focusRow: -1,
 				editParameterRow: -1,
 				editExceptionRow: -1,
@@ -354,8 +354,8 @@ export class App extends React.Component<{}, State> {
 				accessType: this.initialMetadata.accessType,
 				methodName: this.initialMetadata.methodName,
 				returnType: this.initialMetadata.returnType,
-				parameters: _.cloneDeep(this.initialMetadata.parameters),
-				exceptions: _.cloneDeep(this.initialMetadata.exceptions),
+				parameters: cloneDeep(this.initialMetadata.parameters),
+				exceptions: cloneDeep(this.initialMetadata.exceptions),
 			});
 		}
 	};

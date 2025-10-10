@@ -2,10 +2,12 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { extensions } from 'vscode';
 import { Commands } from '../../src/commands';
+import { getJavaConfiguration } from '../../src/utils';
 
 suite('Java Language Extension - LightWeight', () => {
 
 	suiteSetup(async function() {
+		getJavaConfiguration().update('server.launchMode', 'LightWeight');
 		await extensions.getExtension('redhat.java').activate();
 	});
 
