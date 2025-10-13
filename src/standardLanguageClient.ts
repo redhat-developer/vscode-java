@@ -34,7 +34,7 @@ import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./sta
 import { TracingLanguageClient } from './TracingLanguageClient';
 import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
 import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
-import { getAllJavaProjects, getAllProjects, getJavaConfiguration } from "./utils";
+import { getAllJavaProjects, getAllProjects, getJavaConfiguration, isPrereleaseOrInsiderVersion } from "./utils";
 import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
 import { registerDocumentValidationListener } from './diagnostic';
@@ -355,7 +355,7 @@ export class StandardLanguageClient {
 					}
 				}
 
-				if (tags.length > 0) {
+				if (tags.length > 0 || DEBUG || isPrereleaseOrInsiderVersion(context)) {
 					e.properties['tags'] = tags;
 					return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
 				}

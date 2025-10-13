@@ -11,8 +11,7 @@ import { logger } from './log';
 import { addLombokParam, isLombokSupportEnabled } from './lombokSupport';
 import { RequirementsData } from './requirements';
 import { IS_WORKSPACE_VMARGS_ALLOWED, getJavaEncoding, getJavaagentFlag, getKey, isInWorkspaceFolder } from './settings';
-import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp, getVersion, getVSCodeVariablesMap } from './utils';
-
+import { deleteDirectory, ensureExists, getJavaConfiguration, getTimestamp, getVersion, getVSCodeVariablesMap, isInsiderEditor, isPrereleaseOrInsiderVersion } from './utils';
 // eslint-disable-next-line no-var
 declare var v8debug;
 export const DEBUG = (typeof v8debug === 'object') || startedInDebugMode();
@@ -237,12 +236,10 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 		}
 
 		const hasJDWP = params.find((param: string) => param.includes('jdwp')) !== undefined;
-		const isInsider: boolean = version.includes("insider");
 		const extVersion = getVersion(context.extensionPath);
-		const isPreReleaseVersion = /^\d+\.\d+\.\d{10}/.test(extVersion);
 		const globalStoragePath = path.resolve(context.globalStorageUri?.fsPath, extVersion); // .../Code/User/globalStorage/redhat.java/1.42.0/
 		const appCDSMode = workspace.getConfiguration().get('java.jdt.ls.appcds.enabled');
-		const useAppCDS = (appCDSMode === 'on') || (appCDSMode === 'auto' && (isInsider || isPreReleaseVersion));
+		const useAppCDS = (appCDSMode === 'on') || (appCDSMode === 'auto' && (isPrereleaseOrInsiderVersion(context)));
 
 		ensureExists(globalStoragePath);
 		const sharedArchiveLocation = path.join(globalStoragePath, "jdtls.jsa");
@@ -290,7 +287,7 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 function resolveIndexCache(context: ExtensionContext) {
 	let enabled: string = getJavaConfiguration().get("sharedIndexes.enabled");
 	if (enabled === "auto") {
-		enabled = version.includes("insider") ? "on" : "off";
+		enabled = isInsiderEditor() ? "on" : "off";
 	}
 
 	if (enabled !== "on") {
