@@ -234,7 +234,7 @@ export async function getJavaConfig(javaHome: string) {
 	javaConfig.format.tabSize = editorConfig.get('tabSize');
 	const filesConfig = workspace.getConfiguration('files');
 	javaConfig.associations = filesConfig.get('associations');
-	const isInsider: boolean = version.includes("insider");
+	const isInsider: boolean = isInsiderEditor();
 	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
 	switch (androidSupport) {
 		case "auto":
@@ -361,4 +361,33 @@ export function getVSCodeVariablesMap(): any {
 	const res = {};
 	keys.forEach(key => res[key] = vscodeVariables(`\${${key}}`));
 	return res;
+}
+
+/**
+ * Check if the extension version is a pre-release version or running an insider editor.
+ * @param context The extension context or extension path
+ * @returns true if the version is a pre-release version or running an insider editor
+ */
+export function isPrereleaseOrInsiderVersion(context: ExtensionContext | string): boolean {
+	return  isInsiderEditor() || isPreReleaseVersion(context);
+}
+
+/**
+ * Check if the extension version is a pre-release version.
+ * Pre-release versions follow the pattern: major.minor.timestamp (e.g., 1.47.1234567890)
+ * @param context The extension context or extension path
+ * @returns true if the version is a pre-release version
+ */
+export function isPreReleaseVersion(context: ExtensionContext | string): boolean {
+	const extensionPath = typeof context === 'string' ? context : context.extensionPath;
+	const extVersion = getVersion(extensionPath);
+	return /^\d+\.\d+\.\d{10}/.test(extVersion);
+}
+
+/**
+ * Check if the editor is an insider release.
+ * @returns true if the editor is an insider release
+ */
+export function isInsiderEditor(): boolean {
+	return version.includes("insider");
 }
