@@ -55,40 +55,4 @@ export namespace Telemetry {
 		};
 		return telemetryManager.send(event);
 	}
-
-	function getJavaSettingsForTelemetry(config: WorkspaceConfiguration) {
-		// settings whose values we can record
-		const SETTINGS_BASIC = [
-			"java.quickfix.showAt", "java.symbols.includeSourceMethodDeclarations",
-			"java.completion.collapseCompletionItems", "java.completion.guessMethodArguments",
-			"java.cleanup.actionsOnSave", "java.completion.postfix.enabled",
-			"java.sharedIndexes.enabled", "java.inlayHints.parameterNames.enabled",
-			"java.inlayHints.parameterNames.suppressWhenSameNameNumbered",
-			"java.inlayHints.variableTypes.enabled",
-			"java.inlayHints.parameterTypes.enabled",
-			"java.server.launchMode", "java.autobuild.enabled"
-		];
-
-		// settings where we only record their existence
-		const SETTINGS_CUSTOM = [
-			"java.settings.url", "java.format.settings.url"
-		];
-
-		let value: any;
-		const properties = {};
-
-		for (const key of SETTINGS_CUSTOM) {
-			if (config.get(key)) {
-				properties[key] = true;
-			}
-		}
-		for (const key of SETTINGS_BASIC) {
-			value = config.get(key);
-			if (value !== undefined) {
-				properties[key] = value;
-			}
-		}
-
-		return properties;
-	}
 }

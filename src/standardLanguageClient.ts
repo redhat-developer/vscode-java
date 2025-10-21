@@ -343,8 +343,12 @@ export class StandardLanguageClient {
 				"java.completion.collapseCompletionItems", "java.completion.guessMethodArguments",
 				"java.cleanup.actionsOnSave", "java.completion.postfix.enabled",
 				"java.sharedIndexes.enabled", "java.inlayHints.parameterNames.enabled",
+				"java.inlayHints.parameterNames.suppressWhenSameNameNumbered",
+				"java.inlayHints.variableTypes.enabled",
+				"java.inlayHints.parameterTypes.enabled",
 				"java.server.launchMode", "java.autobuild.enabled"
 			];
+
 			// settings where we only record their existence
 			const SETTINGS_CUSTOM = [
 				"java.settings.url", "java.format.settings.url"
@@ -374,7 +378,7 @@ export class StandardLanguageClient {
 				const javaSettings = getJavaSettingsForTelemetry(workspace.getConfiguration());
 
 				const properties= { ...e.properties, ...javaSettings };
-				await Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, );
+				await Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, properties);
 			} else if (e.name === Telemetry.LS_ERROR) {
 				const tags = [];
 				const exception: string = e?.properties.exception;
