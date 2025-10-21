@@ -394,8 +394,6 @@ export class StandardLanguageClient {
 					e.properties['tags'] = tags;
 					await Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
 				}
-			} else if (e.name === Telemetry.IMPORT_PROJECT) {
-				await Telemetry.sendTelemetry(Telemetry.IMPORT_PROJECT, e.properties);
 			}
 		});
 
