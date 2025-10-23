@@ -11,7 +11,6 @@ export namespace Telemetry {
 	export const COMPLETION_EVENT = "textCompletion";
 	export const SERVER_INITIALIZED_EVT = "java.workspace.initialized";
 	export const LS_ERROR = "java.ls.error";
-	export const IMPORT_PROJECT = "java.workspace.importProject";
 
 	let telemetryManager: TelemetryService = null;
 	let workspaceHash;
@@ -44,7 +43,6 @@ export namespace Telemetry {
 	 * @throws Error if the telemetry service has not been started yet
 	 */
 	export async function sendTelemetry(eventName: string, data?: object): Promise<void> {
-		console.log(`Sending telemetry event: ${eventName} with data: ${JSON.stringify(data)}`);
 		if (!telemetryManager) {
 			throw new Error("The telemetry service for vscode-java has not been started yet");
 		}
