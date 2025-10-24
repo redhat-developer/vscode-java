@@ -2,8 +2,8 @@
 
 import * as net from 'net';
 import * as path from 'path';
-import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace } from "vscode";
-import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, ClientCapabilities, FeatureState } from "vscode-languageclient";
+import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from "vscode";
+import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, ClientCapabilities, FeatureState, TelemetryEventNotification } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -336,10 +336,49 @@ export class StandardLanguageClient {
 			return result;
 		});
 
+		function getJavaSettingsForTelemetry(config: WorkspaceConfiguration) {
+			// settings whose values we can record
+			const SETTINGS_BASIC = [
+				"java.quickfix.showAt", "java.symbols.includeSourceMethodDeclarations",
+				"java.completion.collapseCompletionItems", "java.completion.guessMethodArguments",
+				"java.cleanup.actionsOnSave", "java.completion.postfix.enabled",
+				"java.sharedIndexes.enabled", "java.inlayHints.parameterNames.enabled",
+				"java.inlayHints.parameterNames.suppressWhenSameNameNumbered",
+				"java.inlayHints.variableTypes.enabled",
+				"java.inlayHints.parameterTypes.enabled",
+				"java.server.launchMode", "java.autobuild.enabled"
+			];
+
+			// settings where we only record their existence
+			const SETTINGS_CUSTOM = [
+				"java.settings.url", "java.format.settings.url"
+			];
+
+			let value: any;
+			const properties = {};
+
+			for (const key of SETTINGS_CUSTOM) {
+				if (config.get(key)) {
+					properties[key] = true;
+				}
+			}
+			for (const key of SETTINGS_BASIC) {
+				value = config.get(key);
+				if (value !== undefined) {
+					properties[key] = value;
+				}
+			}
+
+			return properties;
+		}
+
 		this.languageClient.onTelemetry(async (e: TelemetryEvent) => {
 			apiManager.fireTraceEvent(e);
 			if (e.name === Telemetry.SERVER_INITIALIZED_EVT) {
-				return Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, e.properties);
+				const javaSettings = getJavaSettingsForTelemetry(workspace.getConfiguration());
+
+				const properties= { ...e.properties, ...javaSettings };
+				await Telemetry.sendTelemetry(Telemetry.STARTUP_EVT, properties);
 			} else if (e.name === Telemetry.LS_ERROR) {
 				const tags = [];
 				const exception: string = e?.properties.exception;
@@ -357,7 +396,7 @@ export class StandardLanguageClient {
 
 				if (tags.length > 0 || DEBUG || isPrereleaseOrInsiderVersion(context)) {
 					e.properties['tags'] = tags;
-					return Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
+					await Telemetry.sendTelemetry(Telemetry.LS_ERROR, e.properties);
 				}
 			}
 		});
