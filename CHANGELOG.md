@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.47.0 (October 30th, 2025)
+ * enhancement - Add inlay hints for lambda parameter types and option to suppress for same-name numbered parameters. See [#4203](https://github.com/redhat-developer/vscode-java/pull/4203), [#4208](https://github.com/redhat-developer/vscode-java/pull/4208).
+ * enhancement - Improve detection and setup of `sourcePath` for Android support. See [JLS#3490](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3490).
+ * enhancement - Disable unused lambda parameter warning by default. See [#4216](https://github.com/redhat-developer/vscode-java/issues/4216).
+ * bug fix - Resolve poor formatting issues in Jupyter notebooks. See [#4207](https://github.com/redhat-developer/vscode-java/issues/4207).
+ * bug fix - Fix failure in "Create method" quick assist with parameterized arguments. See [#4138](https://github.com/redhat-developer/vscode-java/issues/4138).
+ * bug fix - Prevent incorrect postfix completions on import statements. See [#3364](https://github.com/redhat-developer/vscode-java/issues/3364).
+ * bug fix - Fix multiple `NullPointerException` reported by telemetry. See [JLS#3570](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3570).
+ * bug fix - Fix "Resource leak" false positives. See [#1349](https://github.com/redhat-developer/vscode-java/issues/1349).
+ * bug fix - Update flags for `javac` compiler support. See [#4198](https://github.com/redhat-developer/vscode-java/pull/4198).
+ * bug fix - Revert change that ignored null unchecked conversion warnings by default. See [JLS#3472](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3472).
+ * bug fix - Only call `prepareExecutable` for syntax server when needed. See [#4202](https://github.com/redhat-developer/vscode-java/issues/4202).
+ * bug fix - Allow partial configuration updates for `workspace/didChangeConfiguration`. See [JLS#3108](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3108).
+ * bug fix - Add CSP for "Change Signature" & "Java Dashboard" webviews. See [#4193](https://github.com/redhat-developer/vscode-java/issues/4193).
+ * buf fix - Report all errors for pre-releases or when running in Insiders. See [#4210](https://github.com/redhat-developer/vscode-java/pull/4210).
+ * bug fix - Provide more comprehensive error telemetry, and include workspace identifier. See [JLS#3566](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3566), [#4175](https://github.com/redhat-developer/vscode-java/issues/4175).
+ * dependency - Bump `vscode-redhat-telemetry` to 0.9.2. See [#4195](https://github.com/redhat-developer/vscode-java/pull/4195).
+ * dependency - Update target platform to Eclipse 2025-09 (4.37) release. See [JLS#3530](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3530).
+ * build - Remove `gulp` and other vulnerable dependencies. See [#4199](https://github.com/redhat-developer/vscode-java/pull/4199).
+
 ## 1.46.0 (October 2nd, 2025)
  * performance - Cleaning workspace should also delete configuration folder. See [#4157](https://github.com/redhat-developer/vscode-java/issues/4157).
  * performance - Improve Null Analysis by reducing & deferring expensive calls. See [JLS#3531](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3531).
