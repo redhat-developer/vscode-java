@@ -260,9 +260,6 @@ The following settings are supported:
 * `java.references.includeDeclarations`: Include declarations when finding references. Defaults to `true`
 * `java.jdt.ls.appcds.enabled` : [Experimental] Enable Java AppCDS (Application Class Data Sharing) for improvements to extension activation. When set to `auto`, AppCDS will be enabled in Visual Studio Code - Insiders, and for pre-release versions.
 
-New in 1.47.0
-* `java.inlayHints.parameterTypes.enabled`: Enable/disable inlay hints for (lambda) parameter types. Defaults to `false`.
-
 Semantic Highlighting
 ===============
 [Semantic Highlighting](https://github.com/redhat-developer/vscode-java/wiki/Semantic-Highlighting) fixes numerous syntax highlighting issues with the default Java Textmate grammar. However, you might experience a few minor issues, particularly a delay when it kicks in, as it needs to be computed by the Java Language server, when opening a new file or when typing. Semantic highlighting can be disabled for all languages using the `editor.semanticHighlighting.enabled` setting, or for Java only using [language-specific editor settings](https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings).
