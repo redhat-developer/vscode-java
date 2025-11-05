@@ -42,6 +42,10 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         let javaHome = javaPreferences.javaHome;
         let javaVersion: number = 0;
         const REQUIRED_JDK_VERSION = ('on' === getJavaConfiguration().get('jdt.ls.javac.enabled'))?25:21;
+        if (toolingJreVersion < REQUIRED_JDK_VERSION) { // embedded tooling JRE doesn't meet requirement
+            toolingJre = null;
+            toolingJreVersion = 0;
+        }
         if (javaHome) {
             const source = `${preferenceName} variable defined in ${env.appName} settings`;
             javaHome = expandHomeDir(javaHome);
@@ -79,10 +83,12 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
             const validJdks = javaRuntimes.filter(r => r.version.major >= REQUIRED_JDK_VERSION);
             if (validJdks.length > 0) {
                 sortJdksBySource(validJdks);
-                javaHome = validJdks[0].homedir;
-                javaVersion = validJdks[0].version.major;
-                toolingJre = javaHome;
-                toolingJreVersion = javaVersion;
+                toolingJre = validJdks[0].homedir;
+                toolingJreVersion = validJdks[0].version.major;
+                if (!javaHome) { // keep javaHome if set even if it is an older JDK version
+                    javaHome = toolingJre;
+                    javaVersion = toolingJreVersion;
+                }
             }
         } else { // pick a default project JDK/JRE
             /**
