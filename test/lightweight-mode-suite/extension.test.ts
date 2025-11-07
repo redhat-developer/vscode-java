@@ -30,7 +30,7 @@ suite('Java Language Extension - LightWeight', () => {
 				Commands.FILESEXPLORER_ONPASTE,
 				Commands.CHANGE_JAVA_SEARCH_SCOPE,
 				Commands.OPEN_JAVA_DASHBOARD,
-				"java.runtimes.add"
+				Commands.ADD_JAVA_RUNTIME
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
 				return JAVA_COMMANDS.indexOf(value)>=0 || value.startsWith('java.');
