@@ -6,6 +6,7 @@ import { downloadServer, buildServer, buildOrDownload, devServer, watchServer } 
 import { generateStandardTestFolder, generateLightweightTestFolder, cleanTestFolder } from './test.mjs';
 import { preparePreRelease } from './release.mjs';
 import { repoCheck, repoFix } from './repo.mjs';
+import { pathToFileURL } from 'url';
 
 async function main() {
     const command = process.argv[2];
@@ -120,7 +121,7 @@ Examples:
     }
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.url === pathToFileURL(process.argv[1]).toString()) {
     main().catch(console.error);
 }
 
