@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as semver from 'semver';
 import {
 	CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
-	IndentAction, InputBoxOptions, languages, Location, MarkdownString, RelativePattern,
+	InputBoxOptions, Location, MarkdownString, RelativePattern,
 	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration
 } from 'vscode';
 import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
@@ -170,8 +170,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	initializeLogFile(clientLogFile);
 
 	Telemetry.startTelemetry(context);
-
-	enableJavadocSymbols();
 
 	registerOutOfMemoryDetection(storagePath);
 
@@ -816,52 +814,6 @@ export async function getActiveLanguageClient(): Promise<LanguageClient | undefi
 	return languageClient;
 }
 
-function enableJavadocSymbols() {
-	// Let's enable Javadoc symbols autocompletion, shamelessly copied from MIT licensed code at
-	// https://github.com/Microsoft/vscode/blob/9d611d4dfd5a4a101b5201b8c9e21af97f06e7a7/extensions/typescript/src/typescriptMain.ts#L186
-	languages.setLanguageConfiguration('java', {
-		indentationRules: {
-			// ^(.*\*/)?\s*\}.*$
-			decreaseIndentPattern: /^(.*\*\/)?\s*\}.*$/,
-			// ^.*\{[^}"']*$
-			increaseIndentPattern: /^.*\{[^}"']*$/
-		},
-		wordPattern: /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g,
-		onEnterRules: [
-			{
-				// e.g. /** | */ or /* | */
-				beforeText: /^\s*\/\*\*?(?!\/)([^\*]|\*(?!\/))*$/,
-				afterText: /^\s*\*\/$/,
-				action: { indentAction: IndentAction.IndentOutdent, appendText: ' * ' }
-			},
-			{
-				// e.g. /** ...|
-				beforeText: /^\s*\/\*\*(?!\/)([^\*]|\*(?!\/))*$/,
-				action: { indentAction: IndentAction.None, appendText: ' * ' }
-			},
-			{
-				// e.g.  * ...|
-				beforeText: /^(\t|(\ \ ))*\ \*(\ ([^\*]|\*(?!\/))*)?$/,
-				action: { indentAction: IndentAction.None, appendText: '* ' }
-			},
-			{
-				// e.g.  */|
-				beforeText: /^(\t|(\ \ ))*\ \*\/\s*$/,
-				action: { indentAction: IndentAction.None, removeText: 1 }
-			},
-			{
-				// e.g.  *-----*/|
-				beforeText: /^(\t|(\ \ ))*\ \*[^/]*\*\/\s*$/,
-				action: { indentAction: IndentAction.None, removeText: 1 }
-			},
-			{
-				// e.g. /// ...| (Markdown javadoc)
-				beforeText: /^\s*\/\/\/(.*)?$/,
-				action: { indentAction: IndentAction.None, appendText: '/// ' }
-			}
-		]
-	});
-}
 
 export function getTempWorkspace() {
 	return path.resolve(os.tmpdir(), `vscodesws_${makeRandomHexString(5)}`);
