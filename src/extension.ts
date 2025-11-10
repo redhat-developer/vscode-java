@@ -44,6 +44,7 @@ import { StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { Telemetry } from './telemetry';
 import { cleanJavaLSConfiguration, convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, getVersion, hasBuildToolConflicts, resolveActualCause } from './utils';
+import { JavaRuntimes } from './javaRuntimes';
 
 const syntaxClient: SyntaxLanguageClient = new SyntaxLanguageClient();
 const standardClient: StandardLanguageClient = new StandardLanguageClient();
@@ -136,6 +137,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	Dashboard.initialize(context);
 
 	await loadSupportedJreNames(context);
+	await JavaRuntimes.initialize(context);
 	context.subscriptions.push(commands.registerCommand(Commands.FILESEXPLORER_ONPASTE, async () => {
 		const originalClipboard = await env.clipboard.readText();
 		// Hack in order to get path to selected folder if applicable (see https://github.com/microsoft/vscode/issues/3553#issuecomment-1098562676)

@@ -930,9 +930,6 @@
                 "name": {
                   "type": "string",
                   "enum": [
-                    "J2SE-1.5",
-                    "JavaSE-1.6",
-                    "JavaSE-1.7",
                     "JavaSE-1.8",
                     "JavaSE-9",
                     "JavaSE-10",
@@ -1794,6 +1791,11 @@
         "category": "Java",
         "title": "Open Java Dashboard",
         "icon": "$(dashboard)"
+      }, 
+      {
+        "command": "java.runtimes.add",
+        "title": "%java.runtimes.add%",
+        "category": "Java"
       }
     ],
     "keybindings": [

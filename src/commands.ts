@@ -380,6 +380,11 @@ export namespace Commands {
 	 * Open Java Dashboard
 	 */
 	export const OPEN_JAVA_DASHBOARD = 'java.dashboard.open';
+
+    /**
+     * Add Java Runtime
+     */
+    export const ADD_JAVA_RUNTIME = 'java.runtimes.add';
 }
 
 /**
