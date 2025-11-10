@@ -67,22 +67,30 @@ function getExtensionLombokPath(context: ExtensionContext): string {
 	return path.join(context.asAbsolutePath("lombok"), files[0]);
 }
 
-function lombokPath2Version(lombokPath: string): string {
-	const lombokVersion = lombokJarRegex.exec(lombokPath)[0].split('.jar')[0];
+function lombokPath2Version(lombokPath: string): string | undefined {
+	const match = lombokJarRegex.exec(lombokPath);
+	if (!match) {
+		return undefined;
+	}
+	const lombokVersion = match[0].split('.jar')[0];
 	return lombokVersion;
 }
 
-function lombokPath2VersionNumber(lombokPath: string): string {
-	const lombokVersionNumber = lombokPath2Version(lombokPath).split('-')[1];
+function lombokPath2VersionNumber(lombokPath: string): string | undefined {
+	const lombokVersion = lombokPath2Version(lombokPath);
+	if (!lombokVersion) {
+		return undefined;
+	}
+	const lombokVersionNumber = lombokVersion.split('-')[1];
 	return lombokVersionNumber;
 }
 
-export function getLombokVersion(): string {
-	return lombokPath2Version(activeLombokPath);
+export function getLombokVersion(): string | undefined {
+	return lombokPath2VersionNumber(activeLombokPath);
 }
 
-function isCompatibleLombokVersion(currentVersion: string): boolean {
-	return semver.gte(currentVersion, compatibleVersion);
+function isCompatibleLombokVersion(currentVersion: string | undefined): boolean {
+	return currentVersion && semver.gte(currentVersion, compatibleVersion);
 }
 
 export function addLombokParam(context: ExtensionContext, params: string[]) {
@@ -102,12 +110,14 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 	isExtensionLombok = true;
 	let lombokJarPath: string = context.workspaceState.get(JAVA_LOMBOK_PATH);
 	if (lombokJarPath && fse.existsSync(lombokJarPath)) {
-		if (isCompatibleLombokVersion(lombokPath2VersionNumber(lombokJarPath))) {
+		const lombokVersion = lombokPath2VersionNumber(lombokJarPath);
+		if (lombokVersion && isCompatibleLombokVersion(lombokVersion)) {
 			isExtensionLombok = false;
 		}
 		else {
 			cleanupLombokCache(context);
-			logger.warn(`The project's Lombok version ${lombokPath2VersionNumber(lombokJarPath)} is not supported, Falling back to the built-in Lombok version ${lombokPath2VersionNumber(getExtensionLombokPath(context))}`);
+			const extensionLombokVersion = lombokPath2VersionNumber(getExtensionLombokPath(context));
+			logger.warn(`The project's Lombok version ${lombokVersion || 'unknown'} is not supported, Falling back to the built-in Lombok version ${extensionLombokVersion || 'unknown'}`);
 		}
 	}
 	if (isExtensionLombok) {
@@ -197,11 +207,11 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 		const lombokPathItems = [
 			{
 				label: isExtensionLombok? extensionItemLabelCheck : extensionItemLabel,
-				description: lombokPath2Version(extensionLombokPath)
+				description: `Lombok ${lombokPath2VersionNumber(extensionLombokPath) || 'unknown'}`
 			},
 			{
 				label: isExtensionLombok? projectItemLabel : projectItemLabelCheck,
-				description: lombokPath2Version(projectLombokPath),
+				description: `Lombok ${lombokPath2VersionNumber(projectLombokPath) || 'unknown'}`,
 				detail: projectLombokPath
 			}
 		];
@@ -222,7 +232,7 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 			if (isExtensionLombok) {
 				const projectLombokVersion = lombokPath2VersionNumber(projectLombokPath);
 				if (!isCompatibleLombokVersion(projectLombokVersion)) {
-					const msg = `The project's Lombok version ${projectLombokVersion} is not supported. Falling back to the built-in Lombok version in the extension.`;
+					const msg = `The project's Lombok version ${projectLombokVersion || 'unknown'} is not supported. Falling back to the built-in Lombok version in the extension.`;
 					window.showWarningMessage(msg);
 					return;
 				}
@@ -250,17 +260,17 @@ export function registerLombokConfigureCommand(context: ExtensionContext) {
 }
 
 export namespace LombokVersionItemFactory {
-	export function create(text: string): vscode.LanguageStatusItem {
+	export function create(version: string): vscode.LanguageStatusItem {
 		const item = vscode.languages.createLanguageStatusItem("javaLombokVersionItem", languageServerDocumentSelector);
 		item.severity = vscode.LanguageStatusSeverity?.Information;
 		item.name = "Lombok Version";
-		item.text = text;
+		update(item, version);
 		item.command = getLombokChangeCommand();
 		return item;
 	}
 
-	export function update(item: any, text: string): void {
-		item.text = text;
+	export function update(item: any, version: string | undefined): void {
+		item.text = `Lombok ${version || 'unknown'}`;
 	}
 
 	function getLombokChangeCommand(): vscode.Command {
