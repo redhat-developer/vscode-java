@@ -37,16 +37,22 @@ export namespace JavaRuntimes {
                 if (runtime) {
                     const config = vscode.workspace.getConfiguration('java.configuration').get('runtimes');
                     if (Array.isArray(config)) {
-                        const candidates = getSupportedJreNames().filter(name => !config.some(r => r.name === name) && compatible(runtime, name));
+                        const candidates = getSupportedJreNames().filter(name => compatible(runtime, name)).reverse();
                         if (candidates.length > 0) {
                             const name = await vscode.window.showQuickPick(candidates, {
                                 title: 'Select Java Runtime',
                             });
                             if (name) {
-                                config.push({
+                                const newConfig = {
                                     name: name,
                                     path: directory[0].fsPath,
-                                });
+                                };
+                                const index = config.findIndex(r => r.name === name);
+                                if (index >= 0) {
+                                    config[index] = newConfig;
+                                } else {
+                                    config.push(newConfig);
+                                }
                                 vscode.workspace.getConfiguration('java.configuration').update('runtimes', config, vscode.ConfigurationTarget.Global);
                                 vscode.window.showInformationMessage(`JDK Directory ${directory[0].fsPath} added`);
                             }
