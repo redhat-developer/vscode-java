@@ -25,14 +25,21 @@ export namespace Telemetry {
 		if (!!telemetryManager) {
 			throw new Error("The telemetry service for vscode-java has already been started");
 		}
-		workspaceHash = cyrb53(workspace.workspaceFolders.map(f => f.uri.toString()).join('|'));
+		workspaceHash = computeWorkspaceHash();
 		workspace.onDidChangeWorkspaceFolders(() => {
-			workspaceHash = cyrb53(workspace.workspaceFolders.map(f => f.uri.toString()).join('|'));
+			workspaceHash = computeWorkspaceHash();
 		});
 		const redhatService = await getRedHatService(context);
 		const telemService = await redhatService.getTelemetryService();
 		telemetryManager = telemService;
 		return telemService;
+	}
+
+	function computeWorkspaceHash(): number {
+		if (!workspace.workspaceFolders?.length) {
+			return 0;
+		}
+		return cyrb53(workspace.workspaceFolders.map(f => f.uri.toString()).join('|'));
 	}
 
 	/**
