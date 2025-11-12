@@ -859,7 +859,8 @@
             "default": [
               "javax.annotation.Nonnull",
               "org.eclipse.jdt.annotation.NonNull",
-              "org.springframework.lang.NonNull"
+              "org.springframework.lang.NonNull",
+              "org.jspecify.annotations.NonNull"
             ],
             "markdownDescription": "Specify the Nonnull annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
             "scope": "window"
@@ -869,7 +870,8 @@
             "default": [
               "javax.annotation.Nullable",
               "org.eclipse.jdt.annotation.Nullable",
-              "org.springframework.lang.Nullable"
+              "org.springframework.lang.Nullable",
+              "org.jspecify.annotations.Nullable"
             ],
             "markdownDescription": "Specify the Nullable annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
             "scope": "window"
@@ -879,7 +881,8 @@
             "default": [
               "javax.annotation.ParametersAreNonnullByDefault",
               "org.eclipse.jdt.annotation.NonNullByDefault",
-              "org.springframework.lang.NonNullApi"
+              "org.springframework.lang.NonNullApi",
+              "org.jspecify.annotations.NullMarked"
             ],
             "markdownDescription": "Specify the NonNullByDefault annotation types to be used for null analysis. If more than one annotation is specified, then the topmost annotation will be used first if it exists in project dependencies. This setting will be ignored if `java.compile.nullAnalysis.mode` is set to `disabled`",
             "scope": "window"
