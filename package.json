@@ -2060,7 +2060,7 @@
     "expand-home-dir": "^0.0.3",
     "fmtr": "^1.1.2",
     "fs-extra": "^8.1.0",
-    "glob": "^11.0.3",
+    "glob": "^11.1.0",
     "htmlparser2": "6.0.1",
     "jdk-utils": "^0.6.0",
     "react": "^17.0.2",
