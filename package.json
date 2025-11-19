@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.48.0",
+  "version": "1.49.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -1794,7 +1794,7 @@
         "category": "Java",
         "title": "Open Java Dashboard",
         "icon": "$(dashboard)"
-      }, 
+      },
       {
         "command": "java.runtimes.add",
         "title": "%java.runtimes.add%",
