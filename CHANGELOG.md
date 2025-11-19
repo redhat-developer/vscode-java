@@ -1,5 +1,26 @@
 # Change Log
 
+## 1.49.0 (November 19th, 2025)
+ * performance - Avoid unnecessary Maven project rebuild when the window is reloaded. See [#4250](https://github.com/redhat-developer/vscode-java/issues/4250).
+ * performance - Prevent unnecessary Maven project rebuild when configuring test classpath flag. See [JLS#3590](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3590).
+ * enhancement - Add JSpecify annotations for null analysis. See [#4249](https://github.com/redhat-developer/vscode-java/pull/4249).
+ * enhancement - Improve code completion type for annotation attributes (now using `Field` kind). See [#3242](https://github.com/redhat-developer/vscode-java/issues/3242).
+ * enhancement - Use discovered, compatible JDK, if embedded JDK does not meet requirements. See [#4226](https://github.com/redhat-developer/vscode-java/issues/4226).
+ * enhancement - Command to add a JVM install. See [#4161](https://github.com/redhat-developer/vscode-java/issues/4161).
+ * bug fix - 1.48.0 only contains the universal version. See [4256](https://github.com/redhat-developer/vscode-java/issues/4256).
+ * bug fix - Fix indentation rules when a line is moved. See [#692](https://github.com/redhat-developer/vscode-java/issues/692).
+ * bug fix - Inner classes are now correctly shown/decompiled via Fernflower. See [JLS#2815](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2815).
+ * bug fix - Ensure accurate 'build finished' status by waiting for all background processes. See [#4230](https://github.com/redhat-developer/vscode-java/issues/4230).
+ * bug fix - Fix discrepency in annotation processing, between full and incremental builds. See [#2117](https://github.com/redhat-developer/vscode-java/issues/2117).
+ * bug fix - Suppress incorrect error logging related to content providers and decompiler checks. See [#3178](https://github.com/redhat-developer/vscode-java/issues/3178).
+ * bug fix - Ensure we correctly parse the Lombok version. See [#2765](https://github.com/redhat-developer/vscode-java/issues/2765).
+ * bug fix - Safeguard workspace hash computation in telemetry service. See [#4246](https://github.com/redhat-developer/vscode-java/pull/4246).
+ * dependencies - Bump glob to 11.1.0. See [#4255](https://github.com/redhat-developer/vscode-java/pull/4255).
+ * dependencies - Bump js-yaml from 4.1.0 to 4.1.1. See [#4252](https://github.com/redhat-developer/vscode-java/pull/4252).
+ * dependencies - Bump tar from 7.5.1 to 7.5.2. See [#4224](https://github.com/redhat-developer/vscode-java/pull/4224).
+ * dependencies - Bump org.apache.commons:commons-lang3 from 3.5 to 3.18.0 in /test/resources/projects/maven/salut-java11. See [#4243](https://github.com/redhat-developer/vscode-java/pull/4243).
+ * build - Fix `npm run build` on Windows. See [#4244](https://github.com/redhat-developer/vscode-java/issues/4244).
+
 ## 1.47.0 (October 30th, 2025)
  * enhancement - Add inlay hints for lambda parameter types and option to suppress for same-name numbered parameters. See [#4203](https://github.com/redhat-developer/vscode-java/pull/4203), [#4208](https://github.com/redhat-developer/vscode-java/pull/4208).
  * enhancement - Improve detection and setup of `sourcePath` for Android support. See [JLS#3490](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3490).
