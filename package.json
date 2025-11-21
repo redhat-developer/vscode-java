@@ -1424,6 +1424,13 @@
         "title": "Code Navigation",
         "order": 120,
         "properties": {
+          "java.hover.javadoc.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable displaying Javadoc on hover.",
+            "scope": "window",
+            "order": 5
+          },
           "java.referencesCodeLens.enabled": {
             "type": "boolean",
             "default": false,
