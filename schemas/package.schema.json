@@ -1,6 +1,5 @@
 {
 	"$schema": "http://json-schema.org/draft-04/schema#",
-	"title": "Java Language server contributions to package.json",
 	"type": "object",
 	"properties": {
 		"contributes": {
