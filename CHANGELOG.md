@@ -1,5 +1,16 @@
 # Change Log
 
+## 1.50.0 (November 26th, 2025)
+ * enhancement - Add preference to disable returning Javadoc on hover. See [#1420](https://github.com/redhat-developer/vscode-java/issues/1420).
+ * enhancement - Adopt quick fixes for the following problems. See [JLS#3609](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3609).
+	- `UnusedMethodDeclaredThrownException`,
+	- `InvalidOperator`,
+	- `RedundantSpecificationOfTypeArguments`
+ * enhancement - Refresh codelens when updating preferences. See [JLS#3047](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3047).
+ * bug fix - Do not define title in package.json schema as it is shown in tooltip for all package.json files. See [#4268](https://github.com/redhat-developer/vscode-java/issues/4268).
+ * bug fix - Temporary rollback of junit bundles to fix JUnit 6 support. See [#4260](https://github.com/redhat-developer/vscode-java/issues/4260).
+ * bug fix - Fixed NPE thrown when computing Code Actions on invalid code. See [JLS#3602](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3602).
+
 ## 1.49.0 (November 19th, 2025)
  * performance - Avoid unnecessary Maven project rebuild when the window is reloaded. See [#4250](https://github.com/redhat-developer/vscode-java/issues/4250).
  * performance - Prevent unnecessary Maven project rebuild when configuring test classpath flag. See [JLS#3590](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3590).
