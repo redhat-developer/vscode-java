@@ -97,13 +97,22 @@ export function addLombokParam(context: ExtensionContext, params: string[]) {
 	// Exclude user setting Lombok agent parameter
 	const reg = /-javaagent:.*[\\|/]lombok.*\.jar/;
 	const deleteIndex = [];
+	let hasIndexer = false;
 	for (let i = 0; i < params.length; i++) {
 		if (reg.test(params[i])) {
 			deleteIndex.push(i);
 		}
+		hasIndexer = params[i] === "-DSourceIndexer.DOM_BASED_INDEXER=true";
 	}
 	for (let i = deleteIndex.length - 1; i >= 0; i--) {
 		params.splice(deleteIndex[i], 1);
+	}
+	// https://github.com/redhat-developer/vscode-java/issues/3875
+	// Lombok agent doesn't need to be configured if
+	// java.jdt.ls.javac.enabled=on; java.completion.engine=dom; -DSourceIndexer.DOM_BASED_INDEXER=true
+	if (hasIndexer && "on" === vscode.workspace.getConfiguration().get("java.jdt.ls.javac.enabled")
+		&& "dom" === vscode.workspace.getConfiguration().get("java.completion.engine")) {
+		return;
 	}
 	// add -javaagent arg to support Lombok.
 	// use the extension's Lombok version by default.
