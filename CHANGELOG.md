@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.51.0 (December 16th, 2025)
+## 1.51.0 (December 17th, 2025)
  * enhancement - Add a quickfix to replace a deprecated field with one referenced in the docs. See [JLS#3626](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3626).
  * enhancement - Add a quickfix for "type safety warning" to infer type arguments. See [JLS#626](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/626).
  * bug fix - "Generate constructor" feature can now be used when the type has no fields. See [#4154](https://github.com/redhat-developer/vscode-java/issues/4154).
