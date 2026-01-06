@@ -1,13 +1,17 @@
 # Change Log
 
-## 1.51.0 (TBD January 2026)
+## 1.51.0 (January 6th, 2026)
  * enhancement - Add a quickfix to replace a deprecated field with one referenced in the docs. See [JLS#3626](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3626).
  * enhancement - Add a quickfix for "type safety warning" to infer type arguments. See [JLS#626](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/626).
  * bug fix - "Generate constructor" feature can now be used when the type has no fields. See [#4154](https://github.com/redhat-developer/vscode-java/issues/4154).
  * bug fix - When viewing Javadoc through hover, any Javadoc with `{@literal}` tags now has proper newlines. See [#3758](https://github.com/redhat-developer/vscode-java/issues/3758).
- * bug fix - Handle  and tags placed in `{@literal}` properly in Javadoc hover. See [#1838](https://github.com/redhat-developer/vscode-java/issues/1838).
+ * bug fix - Handle tags placed in `{@literal}` properly in Javadoc hover. See [#1838](https://github.com/redhat-developer/vscode-java/issues/1838).
  * bug fix - Fix how tables are displayed in Javadoc hover. See [#2465](https://github.com/redhat-developer/vscode-java/issues/2465).
- * bug fix - Fix a bug in the quickfix that replaces a deprecated method with one refrenced in the docs. See [JLS#3638](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3638).
+ * bug fix - Fix a bug in the quickfix that replaces a deprecated method with one referenced in the docs. See [JLS#3638](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3638).
+ * bug fix - Fix Move method refactoring causing syntax errors due to calling private fields. See [#3604](https://github.com/redhat-developer/vscode-java/issues/3604)
+ * bug fix - Fix Move method refactoring causing syntax errors due to dependency on internal classes. See [#3607](https://github.com/redhat-developer/vscode-java/issues/3607)
+ * bug fix - Fix formatting breaking fenced blocks in Markdown javadoc [4209](https://github.com/redhat-developer/vscode-java/issues/4209).
+ * bug fix - Ensure importers with the same order number are not dropped. See [JLS#3658](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3658).
  * dependencies - Address vulnerability in version of jsoup being used. See [#3859](https://github.com/redhat-developer/vscode-java/issues/3859).
 
 ## 1.50.0 (November 26th, 2025)
