@@ -399,6 +399,13 @@
             "scope": "window",
             "order": 80
           },
+          "java.jdt.ls.aspectjSupport.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Specify whether to enable `io.freefair.aspectj` plugin in Gradle projects. Defaults to `false`.",
+            "scope": "window",
+            "order": 80
+          },
           "java.jdt.ls.androidSupport.enabled": {
             "type": "string",
             "enum": [
