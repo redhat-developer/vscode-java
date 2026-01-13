@@ -74,17 +74,10 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 			return null;
 		}
 
-		// Skip paste handling for single line copies from the same document to avoid unwanted escaping
-		// in string literals when copying lines
-		const isSingleLineCopy = !insertText.includes('\n') && !insertText.includes('\r');
+		const editorData = dataTransfer.get("vscode-editor-data")?.value;
+		const isSingleLineCopy = Boolean(editorData && JSON.parse(editorData).isFromEmptySelection);
 		const isFromSameDocument = this.copiedContent === insertText && this.copiedDocumentUri === document.uri.toString();
 		if (isSingleLineCopy && isFromSameDocument) {
-			return undefined; // Let VS Code handle this normally
-		}
-
-		// Skip paste handling when pasting content that contains quotes to avoid unwanted escaping
-		// This is a broader check than the above to handle cases where content is modified or from different documents
-		if (insertText.includes('"')) {
 			return undefined; // Let VS Code handle this normally
 		}
 
