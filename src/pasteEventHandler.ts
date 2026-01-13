@@ -55,6 +55,7 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 		this.languageClient = languageClient;
 	}
 
+
 	async prepareDocumentPaste?(document: TextDocument, _ranges: readonly Range[], dataTransfer: DataTransfer, _token: CancellationToken): Promise<void> {
 		const copiedContent: string = await dataTransfer.get(TEXT_MIMETYPE).asString();
 		if (copiedContent) {
@@ -71,6 +72,20 @@ class PasteEditProvider implements DocumentPasteEditProvider {
 		// don't try to provide for multi character inserts; the implementation will get messy and the feature won't be that helpful
 		if (!insertText || (!!token && token.isCancellationRequested) || ranges.length !== 1) {
 			return null;
+		}
+
+		// Skip paste handling for single line copies from the same document to avoid unwanted escaping
+		// in string literals when copying lines
+		const isSingleLineCopy = !insertText.includes('\n') && !insertText.includes('\r');
+		const isFromSameDocument = this.copiedContent === insertText && this.copiedDocumentUri === document.uri.toString();
+		if (isSingleLineCopy && isFromSameDocument) {
+			return undefined; // Let VS Code handle this normally
+		}
+
+		// Skip paste handling when pasting content that contains quotes to avoid unwanted escaping
+		// This is a broader check than the above to handle cases where content is modified or from different documents
+		if (insertText.includes('"')) {
+			return undefined; // Let VS Code handle this normally
 		}
 
 		const range = ranges[0];
