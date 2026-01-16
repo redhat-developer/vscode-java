@@ -14,6 +14,12 @@ import { apiManager } from './apiManager';
 
 let serverReady: boolean = false;
 
+const BRACE_POSITION_KEY = "org.eclipse.jdt.core.formatter.brace_position_for_type_declaration";
+const END_OF_LINE = "end_of_line";
+const NEXT_LINE = "next_line";
+const NEXT_LINE_SHIFTED = "next_line_shifted";
+
+
 export function setServerStatus(ready: boolean) {
     serverReady = ready;
 }
@@ -76,6 +82,14 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
     // the event source, a workaround is to wait 100ms and let WorkspaceEdit
     // to take effect first, then check if the workingcopy is filled with content.
     const timeout = setTimeout(async() => {
+        const editorConfig = workspace.getConfiguration('editor');
+        const insertSpaces = editorConfig.get<boolean>('insertSpaces', true);
+        const tabSize = editorConfig.get<number>('tabSize', 4);
+        const indent = insertSpaces ? ' '.repeat(tabSize) : '\t';
+
+        const projectSetting: {} = await commands.executeCommand<{}>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GET_PROJECT_SETTINGS, emptyFiles[0].toString(), [BRACE_POSITION_KEY]);
+        projectSetting[BRACE_POSITION_KEY] = projectSetting[BRACE_POSITION_KEY] || END_OF_LINE;
+
         const formatNumber = (num => num > 9 ? String(num) : `0${num}`);
         for (let i = 0; i < emptyFiles.length; i++) {
             if (textDocuments[i].getText()) {
@@ -126,16 +140,37 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
                         snippets.push(stringInterpolate(template, context));
                     }
                 }
-
+                let declaration: string;
                 if (isModuleInfo) {
-                    snippets.push(`module \${1:name} {`);
+                    declaration = `module \${1:name}`;
                 } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
-                    snippets.push(`public \${1|class,interface,enum,abstract class,@interface|} ${typeName} {`);
+                    declaration = `public \${1|class,interface,enum,abstract class,@interface|} ${typeName}`;
                 } else {
-                    snippets.push(`public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|} {`);
+                    declaration = `public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|}`;
                 }
-                snippets.push("\t${0}");
-                snippets.push("}");
+                let bracePosition = projectSetting[BRACE_POSITION_KEY];
+                if (bracePosition !== END_OF_LINE && bracePosition !== NEXT_LINE && bracePosition !== NEXT_LINE_SHIFTED) {
+                    bracePosition = END_OF_LINE;
+                }
+
+                let body = `${indent}\${0}`;
+                if (bracePosition === END_OF_LINE) {
+                    snippets.push(`${declaration} {`);
+                } else if (bracePosition === NEXT_LINE) {
+                    snippets.push(`${declaration}`);
+                    snippets.push("{");
+                } else if (bracePosition === NEXT_LINE_SHIFTED) {
+                    snippets.push(declaration);
+                    snippets.push(`${indent}{`);
+                    body = `${indent}${body}`;
+                }
+                snippets.push(body);
+                if (bracePosition === NEXT_LINE_SHIFTED) {
+                    snippets.push(`${indent}}`);
+                } else {
+                    snippets.push("}");
+                }
+
                 snippets.push("");
             }
             const textEditor = await window.showTextDocument(textDocuments[i]);
