@@ -265,6 +265,8 @@ The following settings are supported:
 New in 1.53.0
 * `java.templates.newFile.enabled` : Enable/disable automatic generation of class body and package declaration when creating a new Java file. Set to `false` to create empty Java files. Defaults to `true`.
 * `java.updateImportsOnPaste.enabled` : Enable/disable auto organize imports when pasting code. Defaults to `true`.
+* `java.jdt.ls.kotlinSupport.enabled`: [Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.
+* `java.jdt.ls.groovySupport.enabled`: [Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.
 
 Semantic Highlighting
 ===============
