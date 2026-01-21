@@ -406,6 +406,20 @@
             "scope": "window",
             "order": 80
           },
+          "java.jdt.ls.kotlinSupport.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "[Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.",
+            "scope": "window",
+            "order": 80
+          },
+          "java.jdt.ls.groovySupport.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "[Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.",
+            "scope": "window",
+            "order": 80
+          },
           "java.jdt.ls.androidSupport.enabled": {
             "type": "string",
             "enum": [
