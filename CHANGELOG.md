@@ -1,5 +1,19 @@
 # Change Log
 
+## 1.52.0 (January 29th, 2026)
+ * enhancement - Add library info on hover. See [#3872](https://github.com/redhat-developer/vscode-java/issues/3872).
+ * enhancement - Support AspectJ in Gradle projects. See [#4304](https://github.com/redhat-developer/vscode-java/pull/4304).
+ * enhancement - Enable more quick-fixes from upstream JDT. See [JLS#3660](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3660).
+ * bug fix - Fix wrong type mismatch errors. See [JLS#3691](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3691).
+ * bug fix - Fix incorrect Markdown hover rendering for inline `{@link}`/`{@linkplain}` member references. See [JLS#3655](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3655).
+ * bug fix - Watch `java.settings.url` file modifications. See [JLS#3679](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3679).
+ * bug fix - Don't create unnecessary new lines when pasting text including literal `\n`. See [#4305](https://github.com/redhat-developer/vscode-java/issues/4305), [#4306](https://github.com/redhat-developer/vscode-java/pull/4306).
+ * bug fix - Automatic source discovery fails for jars not built with Maven. See [#4301](https://github.com/redhat-developer/vscode-java/issues/4301).
+ * bug fix - Fix Javadoc braces rendering in hover. See [#1291](https://github.com/redhat-developer/vscode-java/issues/1291).
+ * dependencies - Bump tar from 7.5.2 to 7.5.4. See [#4311](https://github.com/redhat-developer/vscode-java/pull/4311), [#4315](https://github.com/redhat-developer/vscode-java/pull/4315).
+ * dependencies - Bump lodash from 4.17.21 to 4.17.23. See [#4316](https://github.com/redhat-developer/vscode-java/pull/4316).
+ * build - Upgrade GitHub Actions to version 5. See [#4296](https://github.com/redhat-developer/vscode-java/pull/4296).
+
 ## 1.51.0 (January 6th, 2026)
  * enhancement - Add a quickfix to replace a deprecated field with one referenced in the docs. See [JLS#3626](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3626).
  * enhancement - Add a quickfix for "type safety warning" to infer type arguments. See [JLS#626](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/626).
