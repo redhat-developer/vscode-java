@@ -83,12 +83,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-      - name: Build JDT-LS
-        if: "${{ inputs.JDT_LS_VERSION == '' }}"
-        run: |
-          ./mvnw clean verify -B -U -DskipTests -Pserver-distro
-          mkdir ../staging
-          cp org.eclipse.jdt.ls.product/distro/jdt-language-server-*.tar.gz ../staging
       - name: Check Out VS Code Java
         uses: actions/checkout@v5
       - name: Set Up NodeJS
@@ -97,32 +91,9 @@ jobs:
           node-version: '20'
       - name: Install NodeJS dependencies
         run: npm install -g typescript "@vscode/vsce" "ovsx"
-      - name: Download JDT-LS Release
-        if: "${{ inputs.JDT_LS_VERSION != '' }}"
-        run: |
-          version=`echo ${{ inputs.JDT_LS_VERSION }} | cut -d- -f1`
-          curl -LO https://download.eclipse.org/jdtls/milestones/${version}/jdt-language-server-${{ inputs.JDT_LS_VERSION }}.tar.gz
       - name: Build vscode-java
         run: |
           npm install
-      - name: Prepare JDT-LS
-        run: |
-          rm -rf ./out
-          mkdir server/
-          if [ -e jdt-language-server-*.tar.gz ]; then
-            tar -xf jdt-language-server-*.tar.gz -C server/
-          else
-            tar -xf ../staging/jdt-language-server-*.tar.gz -C server/
-          fi
-          echo "EXT_VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
-      - name: Test vscode-java
-        env:
-          SKIP_COMMANDS_TEST: true
-        run: |
-          xvfb-run --auto-servernum npm run test --silent
-        continue-on-error: true
-      - name: Clean tests
-        run: npm run clean-test-folder
       - name: Prepare Lombok Support
         if: false
         run: |
@@ -136,10 +107,8 @@ jobs:
         run: |
           platforms=("win32-x64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
           for platform in ${platforms[@]}; do
-            npm run download-jre -- --target ${platform} --javaVersion 21
             vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           done
-          rm -rf jre/
           vsce package ${{ env.publishPreReleaseFlag }} -o vscode-java-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           ls -lash *.vsix
       - name: Upload VSIX Artifacts
@@ -170,25 +139,17 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: '20'
-      - name: Install dependencies
-        run: |
-          npm install -g typescript "@vscode/vsce" "ovsx"
       - name: Download VSIX & JDT-LS
         uses: actions/download-artifact@v5
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Publish to VS Code Marketplace
         if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' || inputs.publishPreRelease == 'true' }}
         run: |
           for platformVsix in vscode-java/java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
-            vsce publish --skip-duplicate -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+            ls ${platformVsix}
           done
-          vsce publish --skip-duplicate -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
-      - name: Publish to OpenVSX Registry
-        if: ${{ github.event_name == 'schedule' || inputs.publishToOVSX == 'true' || inputs.publishPreRelease == 'true' }}
-        run: |
-          for platformVsix in vscode-java/java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
-            ovsx publish --skip-duplicate -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
-          done
-          ovsx publish --skip-duplicate -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }}  --packagePath vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
+          ls vscode-java/vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
       - name: Delete saved artifact
         if: always()
         uses: geekyeggo/delete-artifact@e46cfb9575865f907c2beb2e4170b5f4c7d77c52
