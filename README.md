@@ -222,6 +222,8 @@ The following settings are supported:
 * `java.codeAction.sortMembers.avoidVolatileChanges`: Reordering of fields, enum constants, and initializers can result in semantic and runtime changes due to different initialization and persistence order. This setting prevents this from occurring. Defaults to `true`.
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
 * `java.jdt.ls.aspectjSupport.enabled`: Specify whether to enable `io.freefair.aspectj` plugin in Gradle projects. Defaults to `false`.
+* `java.jdt.ls.kotlinSupport.enabled`: [Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.
+* `java.jdt.ls.groovySupport.enabled`: [Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 * `java.completion.postfix.enabled`: Enable/disable postfix completion support. Defaults to `true`.
 * `java.completion.chain.enabled`: Enable/disable chain completion support. Defaults to `false`.
