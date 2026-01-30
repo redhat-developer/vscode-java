@@ -14,6 +14,7 @@ export function registerCommands(languageClient: LanguageClient, context: Extens
 }
 
 export async function registerOrganizeImportsOnPasteCommand(): Promise<void> {
+
 	const clipboardText: string = await env.clipboard.readText();
 	const editor: TextEditor = window.activeTextEditor;
 	const documentText: string = editor.document.getText();
@@ -40,6 +41,10 @@ export async function registerOrganizeImportsOnPasteCommand(): Promise<void> {
 
 	action.then((wasApplied) => {
 		if (wasApplied && editor.document.languageId === "java") {
+			const updateImportsOnPasteEnabled = workspace.getConfiguration().get<boolean>("java.updateImportsOnPaste.enabled", true);
+			if (!updateImportsOnPasteEnabled) {
+				return;
+			}
 			const fileURI = editor.document.uri.toString();
 			const hasText: boolean = documentText !== null && /\S/.test(documentText);
 			if (hasText) {
