@@ -14,7 +14,7 @@ Provides Java &trade; language support via
 Quick Start
 ============
 1. Install the Extension
-2. On the following platforms, the extension should activate without any setup : `win32-x64`, `darwin-x64`, `darwin-arm64`, `linux-x64`, `linux-arm64`.\
+2. On the following platforms, the extension should activate without any setup : `win32-x64`, `win32-arm64`, `darwin-x64`, `darwin-arm64`, `linux-x64`, `linux-arm64`.\
 If on another platform, or using the "universal" version, you can [set](#setting-the-jdk) a _Java_ Development Kit. It must be Java 21 or above.
 3. Optionally, download and install a Java Development Kit for your project (Java 1.8 or above is supported). See [Project JDKs](#project-jdks) for more details
 4. Extension is activated when you first access a Java file
@@ -57,7 +57,7 @@ See the [changelog](CHANGELOG.md) for the latest release. You might also find us
 Setting the JDK
 ===============
 ## Java Tooling JDK
-Now that Java extension will publish platform specific versions, it will embed a JRE for supported platforms such as `win32-x64`, `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`. The embedded JRE is used to launch the Language Server for Java. Users are only responsible for configuring [Project JDKs](#project-jdks) to compile your Java projects.
+Now that Java extension will publish platform specific versions, it will embed a JRE for supported platforms such as `win32-x64`, `win32-arm64`, `linux-x64`, `linux-arm64`, `darwin-x64`, `darwin-arm64`. The embedded JRE is used to launch the Language Server for Java. Users are only responsible for configuring [Project JDKs](#project-jdks) to compile your Java projects.
 
 The following part is only kept for the universal version without embedded JRE.
 

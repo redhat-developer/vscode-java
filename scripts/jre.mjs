@@ -15,7 +15,8 @@ const platformMapping = {
     "linux-x64": "linux-x86_64",
     "darwin-arm64": "macosx-aarch64",
     "darwin-x64": "macosx-x86_64",
-    "win32-x64": "win32-x86_64"
+    "win32-x64": "win32-x86_64",
+    "win32-arm64": "win32-aarch64"
 };
 
 
