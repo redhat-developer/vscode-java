@@ -1387,6 +1387,13 @@
             "scope": "window",
             "order": 20
           },
+          "java.updateImportsOnPaste.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable auto organize imports when pasting code",
+            "scope": "window",
+            "order": 25
+          },
           "java.sources.organizeImports.starThreshold": {
             "type": "integer",
             "description": "Specifies the number of imports added before a star-import declaration is used.",
