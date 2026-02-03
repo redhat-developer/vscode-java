@@ -134,13 +134,16 @@ jobs:
           echo "publishPreReleaseFlag=--pre-release" >> $GITHUB_ENV
       - name: Package vscode-java
         run: |
+          # Compile JavaScript once for the universal VSIX (webpack is platform-independent)
+          vsce package ${{ env.publishPreReleaseFlag }} -o vscode-java-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+
+          # Package for each platform (only downloads JDK and creates VSIX, no recompilation)
           platforms=("win32-x64" "win32-arm64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
           for platform in ${platforms[@]}; do
             npm run download-jre -- --target ${platform} --javaVersion 21
-            vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+            SKIP_WEBPACK=true vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           done
-          rm -rf jre/
-          vsce package ${{ env.publishPreReleaseFlag }} -o vscode-java-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+
           ls -lash *.vsix
       - name: Upload VSIX Artifacts
         uses: actions/upload-artifact@v5
