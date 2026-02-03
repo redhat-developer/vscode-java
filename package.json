@@ -2020,7 +2020,7 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "webpack --mode production",
+    "vscode:prepublish": "node scripts/prepublish.mjs",
     "compile": "tsc -p ./&webpack --mode development",
     "watch": "webpack --mode development --watch",
     "pretest": "npm run compile",
