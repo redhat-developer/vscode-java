@@ -1191,6 +1191,13 @@
         "title": "Code Generation",
         "order": 100,
         "properties": {
+          "java.templates.newFile.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Enable/disable automatic generation of class body and package declaration when creating a new Java file. Set to `false` to create empty Java files. Defaults to `true`.",
+            "scope": "window",
+            "order": 5
+          },
           "java.templates.fileHeader": {
             "type": "array",
             "markdownDescription": "Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",

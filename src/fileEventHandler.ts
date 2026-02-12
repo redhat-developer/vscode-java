@@ -47,6 +47,9 @@ export function registerFileEventHandlers(client: LanguageClient, context: Exten
 }
 
 async function handleNewJavaFiles(e: FileCreateEvent) {
+    if (!getJavaConfiguration().get<boolean>('templates.newFile.enabled', true)) {
+        return;
+    }
     const emptyFiles: Uri[] = [];
     const textDocuments: TextDocument[] = [];
     for (const uri of e.files) {

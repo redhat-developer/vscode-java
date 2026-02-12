@@ -263,6 +263,7 @@ The following settings are supported:
 * `java.hover.javadoc.enabled` : Enable/disable displaying Javadoc on hover. Defaults to `true`.
 
 New in 1.53.0
+* `java.templates.newFile.enabled` : Enable/disable automatic generation of class body and package declaration when creating a new Java file. Set to `false` to create empty Java files. Defaults to `true`.
 * `java.updateImportsOnPaste.enabled` : Enable/disable auto organize imports when pasting code. Defaults to `true`.
 
 Semantic Highlighting
