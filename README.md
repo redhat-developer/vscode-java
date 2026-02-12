@@ -267,6 +267,7 @@ New in 1.53.0
 * `java.updateImportsOnPaste.enabled` : Enable/disable auto organize imports when pasting code. Defaults to `true`.
 * `java.jdt.ls.kotlinSupport.enabled`: [Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.
 * `java.jdt.ls.groovySupport.enabled`: [Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.
+* `java.symbols.includeGeneratedCode` : Include generated code (e.g. Lombok getters, setters, constructors) in document outline/symbols. Defaults to `false`.
 
 Semantic Highlighting
 ===============
