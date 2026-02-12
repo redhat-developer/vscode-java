@@ -1521,6 +1521,13 @@
             "scope": "window",
             "order": 60
           },
+          "java.symbols.includeGeneratedCode": {
+            "type": "boolean",
+            "markdownDescription": "Include generated code (e.g. Lombok getters, setters, constructors) in document outline/symbols.",
+            "default": false,
+            "scope": "window",
+            "order": 65
+          },
           "java.typeHierarchy.lazyLoad": {
             "type": "boolean",
             "default": false,
