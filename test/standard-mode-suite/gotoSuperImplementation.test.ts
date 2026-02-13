@@ -26,6 +26,6 @@ suite('Goto Super Implementation', () => {
 
 		await commands.executeCommand(Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND);
 
-		assert.equal(path.basename(window.activeTextEditor.document.fileName), "Object.class");
+		assert.equal(path.basename(window.activeTextEditor.document.fileName), "Object.java");
 	});
 });
