@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 🧪 Issue about running unit tests
+    url: https://github.com/microsoft/vscode-java-test/issues/new
+    about: If your problem is about running or debugging unit tests, open an issue in the Test Runner for Java extension.
+  - name: 🏃‍♂️ Issue about running or debugging application code
+    url: https://github.com/microsoft/vscode-java-debug/issues/new
+    about: If your problem is about running or debugging Java application code, open an issue in the Debugger for Java extension.
