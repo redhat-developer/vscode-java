@@ -1,5 +1,29 @@
 # Change Log
 
+## 1.53.0 (February 26th, 2026)
+ * enhancement - Kotlin imports into Java file are unresolved. See [#531](https://github.com/redhat-developer/vscode-java/issues/531).
+ * enhancement - After opening the Kotlin class of a downloaded Maven dependency source, show `.kt` file instead of `.class`. See [#4297](https://github.com/redhat-developer/vscode-java/issues/4297).
+ * enhancement - Disable automatic imports on paste. See [#4325](https://github.com/redhat-developer/vscode-java/issues/4325).
+ * enhancement - Option to turn off automatic creation of class body when creating a new Java file. See [#2652](https://github.com/redhat-developer/vscode-java/issues/2652).
+ * enhancement - Update Eclipse formatter template to version 23. See [#4344](https://github.com/redhat-developer/vscode-java/pull/4344).
+ * enhancement - Set `o.e.j.core.compiler.problem.forbiddenReference=ignore` by default. See [JLS#3720](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3720).
+ * enhancement - Add setting to show generated code in document symbols. See [4084](https://github.com/redhat-developer/vscode-java/issues/4084).
+ * enhancement - Provide a Windows ARM64 build. See [#4324](https://github.com/redhat-developer/vscode-java/issues/4324).
+ * enhancement - Log server version+commit on startup. See [JLS#3689](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3689).
+ * bug fix - Suggestion issue for Variable Arity Parameters. See [#4267](https://github.com/redhat-developer/vscode-java/issues/4267).
+ * bug fix - Annotations + generics + explicit receiver fail to compile. See [#3744](https://github.com/redhat-developer/vscode-java/issues/3744).
+ * bug fix - Autocompletion not working in `@interface` class. See [#3533](https://github.com/redhat-developer/vscode-java/issues/3533).
+ * bug fix - Deprecate `java.saveActions.organizeImports` setting. See [#2207](https://github.com/redhat-developer/vscode-java/issues/2207) and [#659](https://github.com/redhat-developer/vscode-java/issues/659).
+ * bug fix - Fix code completion in JEP 512: Compact Source Files with static variables. See [JLS#3680](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3680).
+ * bug fix - JEP 511: module completion now shows documentation. See [JLS#3710](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3710).
+ * dependencies - Update Fernflower to 253.29346.240, fetched via the target platform. See [JLS#3667](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3667).
+ * dependencies - Bump tar from 7.5.4 to 7.5.7. See [#4322](https://github.com/redhat-developer/vscode-java/pull/4322).
+ * dependencies - Bump webpack from 5.94.0 to 5.105.0. See [#4332](https://github.com/redhat-developer/vscode-java/pull/4332).
+ * dependencies - Bump @isaacs/brace-expansion from 5.0.0 to 5.0.1. See [#4331](https://github.com/redhat-developer/vscode-java/pull/4331).
+ * dependencies - Bump tar from 7.5.7 to 7.5.8. See [#4343](https://github.com/redhat-developer/vscode-java/pull/4343).
+ * build - Avoid calling webpack for each platform build. See [#4330](https://github.com/redhat-developer/vscode-java/pull/4330).
+ * build - New issue templates. See [#4339](https://github.com/redhat-developer/vscode-java/pull/4339).
+
 ## 1.52.0 (January 29th, 2026)
  * enhancement - Add library info on hover. See [#3872](https://github.com/redhat-developer/vscode-java/issues/3872).
  * enhancement - Support AspectJ in Gradle projects. See [#4304](https://github.com/redhat-developer/vscode-java/pull/4304).
