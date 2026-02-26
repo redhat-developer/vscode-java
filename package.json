@@ -1581,6 +1581,12 @@
             "markdownDescription": "Enable/disable inlay hints for (lambda) parameter types:\n```java\n\nList.of(1, 2, 3, 4).filter(/*Integer */ n -> n % 2 == 0).toList();\n \n```",
             "scope": "window"
           },
+          "java.inlayHints.formatParameters.enabled": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Enable/disable inlay hints for format specifiers in format strings (e.g. `String.format()`, `String.formatted()`, `PrintStream.printf()`). Shows which argument corresponds to each format specifier.",
+            "scope": "window"
+          },
           "java.search.scope": {
             "type": "string",
             "enum": [

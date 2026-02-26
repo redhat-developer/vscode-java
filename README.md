@@ -185,6 +185,7 @@ The following settings are supported:
   Default launch mode is `Hybrid`. Legacy mode is `Standard`
 * `java.sources.organizeImports.starThreshold`: Specifies the number of imports added before a star-import declaration is used, default is 99.
 * `java.sources.organizeImports.staticStarThreshold`: Specifies the number of static imports added before a star-import declaration is used, default is 99.
+* `java.updateImportsOnPaste.enabled` : Enable/disable auto organize imports when pasting code. Defaults to `true`.
 * `java.imports.gradle.wrapper.checksums`: Defines allowed/disallowed SHA-256 checksums of Gradle Wrappers.
 * `java.project.importOnFirstTimeStartup`: Specifies whether to import the Java projects, when opening the folder in Hybrid mode for the first time. Supported values are `disabled` (never imports), `interactive` (asks to import or not), `automatic` (always imports). Default to `automatic`.
 * `java.project.importHint`: Enable/disable the server-mode switch information, when Java projects import is skipped on startup. Defaults to `true`.
@@ -192,6 +193,7 @@ The following settings are supported:
 * `java.project.resourceFilters`: Excludes files and folders from being refreshed by the Java Language Server, which can improve the overall performance. For example, ["node_modules","\.git"] will exclude all files and folders named 'node_modules' or '.git'. Pattern expressions must be compatible with `java.util.regex.Pattern`. Defaults to ["node_modules","\.git"].
 * `java.templates.fileHeader`: Specifies the file header comment for new Java file. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
 * `java.templates.typeComment`: Specifies the type comment for new Java type. Supports configuring multi-line comments with an array of strings, and using ${variable} to reference the [predefined variables](https://github.com/redhat-developer/vscode-java/wiki/Predefined-Variables-for-Java-Template-Snippets).
+* `java.templates.newFile.enabled` : Enable/disable automatic generation of class body and package declaration when creating a new Java file. Set to `false` to create empty Java files. Defaults to `true`.
 * `java.references.includeAccessors`: Include getter, setter and builder/constructor when finding references. Default to true.
 * `java.configuration.maven.globalSettings` : Path to Maven's global settings.xml.
 * `java.configuration.maven.lifecycleMappings` : Path to Maven's lifecycle mappings xml.
@@ -210,6 +212,7 @@ The following settings are supported:
   - `all`: Generate 'final' modifier for all new declarations
 * `java.settings.url` : Specifies the url or file path to the workspace Java settings. See [Setting Global Preferences](https://github.com/redhat-developer/vscode-java/wiki/Settings-Global-Preferences)
 * `java.symbols.includeSourceMethodDeclarations` : Include method declarations from source files in symbol search. Defaults to `false`.
+* `java.symbols.includeGeneratedCode` : Include generated code (e.g. Lombok getters, setters, constructors) in document outline/symbols. Defaults to `false`.
 * `java.quickfix.showAt` : Show quickfixes at the problem or line level.
 * `java.configuration.workspaceCacheLimit` : The number of days (if enabled) to keep unused workspace cache data. Beyond this limit, cached workspace data may be removed.
 * `java.import.generatesMetadataFilesAtProjectRoot` : Specify whether the project metadata files(.project, .classpath, .factorypath, .settings/) will be generated at the project root. Defaults to `false`.
@@ -223,6 +226,8 @@ The following settings are supported:
 * `java.jdt.ls.protobufSupport.enabled`: Specify whether to automatically add Protobuf output source directories to the classpath. **Note:** Only works for Gradle `com.google.protobuf` plugin `0.8.4` or higher. Defaults to `true`.
 * `java.jdt.ls.aspectjSupport.enabled`: Specify whether to enable `io.freefair.aspectj` plugin in Gradle projects. Defaults to `false`.
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
+* `java.jdt.ls.kotlinSupport.enabled`: [Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.
+* `java.jdt.ls.groovySupport.enabled`: [Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.
 * `java.completion.postfix.enabled`: Enable/disable postfix completion support. Defaults to `true`.
 * `java.completion.chain.enabled`: Enable/disable chain completion support. Defaults to `false`.
 * `java.completion.matchCase`: Specify whether to match case for code completion. Defaults to `firstLetter`.
@@ -262,12 +267,8 @@ The following settings are supported:
 * `java.jdt.ls.appcds.enabled` : [Experimental] Enable Java AppCDS (Application Class Data Sharing) for improvements to extension activation. When set to `auto`, AppCDS will be enabled in Visual Studio Code - Insiders, and for pre-release versions.
 * `java.hover.javadoc.enabled` : Enable/disable displaying Javadoc on hover. Defaults to `true`.
 
-New in 1.53.0
-* `java.templates.newFile.enabled` : Enable/disable automatic generation of class body and package declaration when creating a new Java file. Set to `false` to create empty Java files. Defaults to `true`.
-* `java.updateImportsOnPaste.enabled` : Enable/disable auto organize imports when pasting code. Defaults to `true`.
-* `java.jdt.ls.kotlinSupport.enabled`: [Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.
-* `java.jdt.ls.groovySupport.enabled`: [Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.
-* `java.symbols.includeGeneratedCode` : Include generated code (e.g. Lombok getters, setters, constructors) in document outline/symbols. Defaults to `false`.
+New in 1.54.0
+* `java.inlayHints.formatParameters.enabled`: Enable/disable inlay hints for format specifiers in format strings (e.g. `String.format()`, `String.formatted()`, `PrintStream.printf()`). Shows which argument corresponds to each format specifier. Defaults to `false`.
 
 Semantic Highlighting
 ===============
