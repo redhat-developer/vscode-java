@@ -346,6 +346,7 @@ export class StandardLanguageClient {
 				"java.inlayHints.parameterNames.suppressWhenSameNameNumbered",
 				"java.inlayHints.variableTypes.enabled",
 				"java.inlayHints.parameterTypes.enabled",
+				"java.inlayHints.formatParameters.enabled",
 				"java.server.launchMode", "java.autobuild.enabled"
 			];
 
