@@ -2093,7 +2093,7 @@
     "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
-    "@vscode/test-electron": "^2.3.8",
+    "@vscode/test-electron": "^2.5.2",
     "css-loader": "^6.7.3",
     "eslint": "^8.13.0",
     "eslint-webpack-plugin": "^3.2.0",
