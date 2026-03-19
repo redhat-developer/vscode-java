@@ -234,6 +234,7 @@ The following settings are supported:
 * `java.jdt.ls.androidSupport.enabled`: [Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders. **Note:** Only works for Android Gradle Plugin `3.2.0` or higher. Defaults to `auto`.
 * `java.jdt.ls.kotlinSupport.enabled`: [Experimental] Specify whether to enable `org.jetbrains.kotlin.jvm` plugin in Gradle projects. Defaults to `true`.
 * `java.jdt.ls.groovySupport.enabled`: [Experimental] Specify whether to enable `groovy` plugin in Gradle projects. Defaults to `true`.
+* `java.jdt.ls.scalaSupport.enabled`: [Experimental] Specify whether to enable `scala` plugin in Gradle projects. Defaults to `true`.
 * `java.completion.postfix.enabled`: Enable/disable postfix completion support. Defaults to `true`.
 * `java.completion.chain.enabled`: Enable/disable chain completion support. Defaults to `false`.
 * `java.completion.matchCase`: Specify whether to match case for code completion. Defaults to `firstLetter`.

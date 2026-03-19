@@ -413,6 +413,13 @@
             "scope": "window",
             "order": 80
           },
+          "java.jdt.ls.scalaSupport.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "[Experimental] Specify whether to enable `scala` plugin in Gradle projects. Defaults to `true`.",
+            "scope": "window",
+            "order": 80
+          },
           "java.jdt.ls.groovySupport.enabled": {
             "type": "boolean",
             "default": true,
