@@ -22,6 +22,7 @@ class ApiManager {
     private traceEventEmitter: Emitter<any> = new Emitter<any>();
     private sourceInvalidatedEventEmitter: Emitter<SourceInvalidatedEvent> = new Emitter<SourceInvalidatedEvent>();
     private serverReadyPromiseResolve: (result: boolean) => void;
+    private serverRunningPromiseResolve: (result: boolean) => void;
 
     public initialize(requirements: RequirementsData, serverMode: ServerMode): void {
         // if it's manual import mode, set the server mode to lightweight, so that the
@@ -57,6 +58,13 @@ class ApiManager {
             return serverReadyPromise;
         };
 
+        const serverRunningPromise: Promise<boolean> = new Promise<boolean>((resolve) => {
+            this.serverRunningPromiseResolve = resolve;
+        });
+        const serverRunning = async () => {
+            return serverRunningPromise;
+        };
+
         this.api = {
             apiVersion: extensionApiVersion,
             javaRequirement: requirements,
@@ -73,6 +81,7 @@ class ApiManager {
             onDidProjectsImport,
             onDidProjectsDelete,
             serverReady,
+            serverRunning,
             onWillRequestStart,
             onDidRequestEnd,
             trackEvent: traceEvent,
@@ -122,6 +131,10 @@ class ApiManager {
 
     public resolveServerReadyPromise(): void {
         this.serverReadyPromiseResolve(true);
+    }
+
+    public resolveServerRunningPromise(): void {
+        this.serverRunningPromiseResolve?.(true);
     }
 }
 
