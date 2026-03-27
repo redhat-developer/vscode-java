@@ -121,6 +121,9 @@ export class StandardLanguageClient {
 	public registerLanguageClientActions(context: ExtensionContext, hasImported: boolean, jdtEventEmitter: EventEmitter<Uri>) {
 		activationProgressNotification.showProgress();
 		this.languageClient.onNotification(StatusNotification.type, (report) => {
+			// Resolve serverRunning on the first status notification from the server,
+			// indicating the server process is alive and can accept requests.
+			apiManager.resolveServerRunningPromise();
 			switch (report.type) {
 				case 'ServiceReady':
 					apiManager.updateServerMode(ServerMode.standard);

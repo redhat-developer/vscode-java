@@ -111,7 +111,7 @@ export interface SourceInvalidatedEvent {
 	affectedEditorDocuments?: Uri[];
 }
 
-export const extensionApiVersion = '0.13';
+export const extensionApiVersion = '0.14';
 
 export interface ExtensionAPI {
 	readonly apiVersion: string;
@@ -166,6 +166,14 @@ export interface ExtensionAPI {
 	 * @since extension version 1.7.0
 	 */
 	readonly serverReady: () => Promise<boolean>;
+
+	/**
+	 * A promise that will be resolved when the language server process is running
+	 * and can accept requests, even if project imports have not yet completed.
+	 * This allows extensions to start querying for projects incrementally during import.
+	 * @since API version 0.14
+	 */
+	readonly serverRunning?: () => Promise<boolean>;
 
 	/**
 	 * An event that's fired when a request is about to send to language server.
