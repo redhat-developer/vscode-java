@@ -284,6 +284,8 @@ export async function getJavaConfig(javaHome: string) {
 		javaConfig.implementationCodeLens = deprecatedImplementations ? "types" : "none";
 	}
 
+	javaConfig.import.gradle.java.home = resolvePathVariables(javaConfig.import.gradle.java.home);
+
 	return javaConfig;
 }
 
@@ -361,6 +363,18 @@ export function getVSCodeVariablesMap(): any {
 	const res = {};
 	keys.forEach(key => res[key] = vscodeVariables(`\${${key}}`));
 	return res;
+}
+
+export function resolvePathVariables(pathStr: string): string {
+	if (!pathStr) {
+		return pathStr;
+	}
+	const requiresWorkspace = pathStr.includes('${workspaceFolder}') ||
+		pathStr.includes('${workspaceFolderBasename}');
+	if (requiresWorkspace && !workspace.workspaceFolders?.length) {
+		return pathStr;
+	}
+	return vscodeVariables(pathStr);
 }
 
 /**
