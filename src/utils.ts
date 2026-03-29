@@ -369,11 +369,6 @@ export function resolvePathVariables(pathStr: string): string {
 	if (!pathStr) {
 		return pathStr;
 	}
-	const requiresWorkspace = pathStr.includes('${workspaceFolder}') ||
-		pathStr.includes('${workspaceFolderBasename}');
-	if (requiresWorkspace && !workspace.workspaceFolders?.length) {
-		return pathStr;
-	}
 	return vscodeVariables(pathStr);
 }
 
