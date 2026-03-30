@@ -346,7 +346,11 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 										for (const edit of docChange.edits) {
 											if ("snippet" in edit) {
 												documentUris.push(Uri.parse(docChange.textDocument.uri).toString());
-												const snippet = new SnippetTextEdit(client.protocol2CodeConverter.asRange((edit as any).range), new SnippetString((edit as any).snippet.value));
+												const snippetValue = (edit as any).snippet.value;
+												const snippet = new SnippetTextEdit(
+													client.protocol2CodeConverter.asRange((edit as any).range),
+                                                    new SnippetString(escapeSnippetLiterals(snippetValue))
+												);
 												if (semver.gte(version, '1.98.0')) {
 													snippet["keepWhitespace"] = true;
 												}
@@ -1266,4 +1270,10 @@ function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
 				break;
 		}
 	}));
+}
+
+function escapeSnippetLiterals(value: string): string {
+    return value
+        .replace(/\\/g, '\\\\')       // Escape backslashes
+        .replace(/\$(?!\{)/g, '\\$'); // Escape $ only if NOT followed by {
 }
