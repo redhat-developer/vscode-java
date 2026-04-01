@@ -1270,6 +1270,13 @@ function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
 				break;
 		}
 	}));
+    context.subscriptions.push(commands.registerCommand(Commands.RESTART_INTELLISENSE_FOR_ACTIVE_FILE, async () => {
+        const editor = window.activeTextEditor;
+        if (!editor || editor.document.languageId !== "java") {
+            return;
+        }
+        await commands.executeCommand(Commands.RESTART_LANGUAGE_SERVER);
+    }));
 }
 
 function escapeSnippetLiterals(value: string): string {

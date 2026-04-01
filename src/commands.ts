@@ -284,6 +284,7 @@ export namespace Commands {
      * Command to restart the language server.
      */
 	export const RESTART_LANGUAGE_SERVER = 'java.server.restart';
+    export const RESTART_INTELLISENSE_FOR_ACTIVE_FILE = 'java.runtime.restartIntellisense';
 
     export const LEARN_MORE_ABOUT_REFACTORING = '_java.learnMoreAboutRefactorings';
 

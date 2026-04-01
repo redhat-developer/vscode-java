@@ -1814,6 +1814,11 @@
         "category": "Java"
       },
       {
+        "command": "java.runtime.restartIntellisense",
+        "title": "Restart IntelliSense for Active File",
+        "category": "Java"
+      },
+      {
         "command": "java.action.filesExplorerPasteAction",
         "title": "%java.action.filesExplorerPasteAction%",
         "category": "Java"
@@ -1941,6 +1946,11 @@
           "command": "java.action.showTypeHierarchy",
           "when": "javaLSReady && editorTextFocus && editorLangId == java",
           "group": "0_navigation@3"
+        },
+        {
+          "command": "java.runtime.restartIntellisense",
+          "when": "editorTextFocus && editorLangId == java",
+          "group": "navigation@91"
         }
       ],
       "commandPalette": [
