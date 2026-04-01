@@ -140,7 +140,7 @@ jobs:
           # Package for each platform (only downloads JDK and creates VSIX, no recompilation)
           platforms=("win32-x64" "win32-arm64" "linux-x64" "linux-arm64" "darwin-x64" "darwin-arm64")
           for platform in ${platforms[@]}; do
-            npm run download-jre -- --target ${platform} --javaVersion 21
+            npm run download-jre -- --target ${platform} --javaVersion 25
             SKIP_WEBPACK=true vsce package ${{ env.publishPreReleaseFlag }} --target ${platform} -o java-${platform}-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
           done
 
