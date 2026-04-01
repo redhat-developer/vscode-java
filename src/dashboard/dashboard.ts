@@ -35,20 +35,10 @@ class DashboardPanel {
 		}));
 		this.setWebviewMessageListener();
 		this.webView.html = this.getWebviewContent();
-		this.disposables.push(vscode.commands.registerCommand('java.dashboard.refresh', async () => {
-			this.refreshLSInfo();
-		}));
+		
 
 		this.disposables.push(vscode.commands.registerCommand('java.dashboard.revealFileInOS', async (arg: { path: string }) => {
 			await vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(arg.path));
-		}));
-
-		this.disposables.push(vscode.commands.registerCommand('java.dashboard.dumpState', async () => {
-			const doc = await vscode.workspace.openTextDocument({
-				language: 'json',
-				content: JSON.stringify(currentState, null, 2)
-			});
-			vscode.window.showTextDocument(doc);
 		}));
 	}
 
@@ -134,7 +124,7 @@ class DashboardPanel {
 	`;
 	}
 
-	private async refreshLSInfo(): Promise<void> {
+	public async refreshLSInfo(): Promise<void> {
 		if (!this.webView) {
 			return;
 		}
@@ -154,32 +144,49 @@ class DashboardPanel {
 }
 
 export namespace Dashboard {
-	export function initialize(context: vscode.ExtensionContext): void {
-		console.log('registering dashboard webview provider');
-		let dashboardPanel: DashboardPanel;
-		let webviewPanel: vscode.WebviewPanel;
+    export function initialize(context: vscode.ExtensionContext): void {
+        console.log('registering dashboard webview provider');
+        
+        let dashboardPanel: DashboardPanel | undefined = undefined;
+        let webviewPanel: vscode.WebviewPanel | undefined = undefined;
 
-		context.subscriptions.push(vscode.commands.registerCommand(Commands.OPEN_JAVA_DASHBOARD, async () => {
-			if (!dashboardPanel) {
-				webviewPanel = vscode.window.createWebviewPanel('java.dashboard', 'Java Dashboard', vscode.ViewColumn.Active, {
-					enableScripts: true,
-					enableCommandUris: true,
-					retainContextWhenHidden: true,
-					localResourceRoots: [context.extensionUri],
-				});
-				webviewPanel.iconPath = Uri.file(path.join(context.extensionPath, 'icons', 'icon128.png'));
-				dashboardPanel = new DashboardPanel(webviewPanel.webview, context);
+        context.subscriptions.push(vscode.commands.registerCommand('java.dashboard.refresh', async () => {
+            await vscode.commands.executeCommand(Commands.OPEN_JAVA_DASHBOARD);
+            if (dashboardPanel) {
+                await dashboardPanel.refreshLSInfo();
+            }
+        }));
 
-				webviewPanel.onDidDispose(() => {
-					dashboardPanel.dispose();
-					dashboardPanel = undefined;
-					webviewPanel = undefined;
-					vscode.commands.executeCommand('setContext', 'java:dashboard', false);
-				}, undefined, context.subscriptions);
-			} else {
-				webviewPanel.reveal();
-			}
-		}));
-		console.log('registered dashboard webview provider');
-	}
+        context.subscriptions.push(vscode.commands.registerCommand('java.dashboard.dumpState', async () => {
+            const doc = await vscode.workspace.openTextDocument({
+                language: 'json',
+                content: JSON.stringify(currentState, null, 2)
+            });
+            vscode.window.showTextDocument(doc);
+        }));
+
+        context.subscriptions.push(vscode.commands.registerCommand(Commands.OPEN_JAVA_DASHBOARD, async () => {
+            if (!dashboardPanel || !webviewPanel) {
+                webviewPanel = vscode.window.createWebviewPanel('java.dashboard', 'Java Dashboard', vscode.ViewColumn.Active, {
+                    enableScripts: true,
+                    enableCommandUris: true,
+                    retainContextWhenHidden: true,
+                    localResourceRoots: [context.extensionUri],
+                });
+                
+                webviewPanel.iconPath = Uri.file(path.join(context.extensionPath, 'icons', 'icon128.png'));
+                dashboardPanel = new DashboardPanel(webviewPanel.webview, context);
+
+                webviewPanel.onDidDispose(() => {
+                    dashboardPanel?.dispose(); 
+                    dashboardPanel = undefined;
+                    webviewPanel = undefined;
+                    vscode.commands.executeCommand('setContext', 'java:dashboard', false);
+                }, undefined, context.subscriptions);
+            } else {
+                webviewPanel.reveal();
+            }
+        }));
+        console.log('registered dashboard webview provider');
+    }
 }
