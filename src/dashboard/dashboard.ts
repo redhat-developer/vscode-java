@@ -35,7 +35,7 @@ class DashboardPanel {
 		}));
 		this.setWebviewMessageListener();
 		this.webView.html = this.getWebviewContent();
-		
+
 
 		this.disposables.push(vscode.commands.registerCommand('java.dashboard.revealFileInOS', async (arg: { path: string }) => {
 			await vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(arg.path));
@@ -146,7 +146,7 @@ class DashboardPanel {
 export namespace Dashboard {
     export function initialize(context: vscode.ExtensionContext): void {
         console.log('registering dashboard webview provider');
-        
+
         let dashboardPanel: DashboardPanel | undefined = undefined;
         let webviewPanel: vscode.WebviewPanel | undefined = undefined;
 
@@ -173,12 +173,12 @@ export namespace Dashboard {
                     retainContextWhenHidden: true,
                     localResourceRoots: [context.extensionUri],
                 });
-                
+
                 webviewPanel.iconPath = Uri.file(path.join(context.extensionPath, 'icons', 'icon128.png'));
                 dashboardPanel = new DashboardPanel(webviewPanel.webview, context);
 
                 webviewPanel.onDidDispose(() => {
-                    dashboardPanel?.dispose(); 
+                    dashboardPanel?.dispose();
                     dashboardPanel = undefined;
                     webviewPanel = undefined;
                     vscode.commands.executeCommand('setContext', 'java:dashboard', false);
