@@ -125,8 +125,8 @@ export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): Ma
 		return `${group1}${uri})`;
 	});
 
-	// Normalize excessive whitespace in large Javadoc content to help 
-	// large hovers render more completely within VS Code's limits.
+	// Normalize excessive whitespace in large Javadoc content
+	// so large hover popups render more compactly.
 	content = content
 		.replace(/[ \t]{2,}/g, ' ')  // Collapse multiple spaces/tabs to a single space
 		.replace(/\n{3,}/g, '\n\n') // Collapse 3 or more newlines to exactly 2
