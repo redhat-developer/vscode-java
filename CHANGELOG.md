@@ -1,5 +1,23 @@
 # Change Log
 
+## 1.54.0 (April 8th, 2026)
+ * enhancement - Add `serverRunning()` API (v0.14) for progressive loading. See [#4372](https://github.com/redhat-developer/vscode-java/pull/4372).
+ * enhancement - Add JDK 26. See [#4367](https://github.com/redhat-developer/vscode-java/pull/4367).
+ * enhancement - Add inlay hints for format parameters. See [#4350](https://github.com/redhat-developer/vscode-java/issues/4350).
+ * enhancement - Support Scala in Gradle projects. See [#4358](https://github.com/redhat-developer/vscode-java/issues/4358).
+ * enhancement - Progressive project import notifications for tree view. See [JLS#3744](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3744).
+ * enhancement - Add Null Annotation quick-fixes from JDT to jdt.ls. See [JLS#3727](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3727).
+ * enhancement - Remove the first blank line from generated classes created in the default package. See [JLS#3725](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3725).
+ * enhancement - Add quick-assist to convert a class to a record. See [JLS#3723](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3723).
+ * enhancement - Enable change compiler compliance quick-fixes. See [JLS#3743](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3743).
+ * bug fix - Regression in 1.53.0: Gradle import stuck at 70% with Groovy support enabled in custom multi-project settings plugin layout. See [#4360](https://github.com/redhat-developer/vscode-java/issues/4360).
+ * bug fix - Navigating to a Kotlin class now opens the sources instead of the decompiled code. See [#4345](https://github.com/redhat-developer/vscode-java/issues/4345).
+ * bug fix - Quick fix "Add throws declaration" removes backslashes and qute fragments. See [#4314](https://github.com/redhat-developer/vscode-java/issues/4314).
+ * bug fix - Constructor code completion is broken in certain situations. See [#2336](https://github.com/redhat-developer/vscode-java/issues/2336).
+ * dependencies - bump brace-expansion from 1.1.12 to 1.1.13. See [#4373](https://github.com/redhat-developer/vscode-java/pull/4373).
+ * dependencies - bump picomatch. See [#4370](https://github.com/redhat-developer/vscode-java/pull/4370).
+ * dependencies - bump @tootallnate/once and @vscode/test-electron. See [#4355](https://github.com/redhat-developer/vscode-java/pull/4355).
+
 ## 1.53.0 (February 26th, 2026)
  * enhancement - Kotlin imports into Java file are unresolved. See [#531](https://github.com/redhat-developer/vscode-java/issues/531).
  * enhancement - After opening the Kotlin class of a downloaded Maven dependency source, show `.kt` file instead of `.class`. See [#4297](https://github.com/redhat-developer/vscode-java/issues/4297).
