@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.54.0 (April 13th, 2026)
+## 1.54.0 (April 15th, 2026)
  * enhancement - Add `serverRunning()` API (v0.14) for progressive loading. See [#4372](https://github.com/redhat-developer/vscode-java/pull/4372).
  * enhancement - Add JDK 26. See [#4367](https://github.com/redhat-developer/vscode-java/pull/4367).
  * enhancement - Add inlay hints for format parameters. See [#4350](https://github.com/redhat-developer/vscode-java/issues/4350).
