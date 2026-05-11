@@ -26,6 +26,7 @@ suite('Java Language Extension - LightWeight', () => {
 				Commands.SWITCH_SERVER_MODE,
 				Commands.OPEN_FILE,
 				Commands.CLEAN_SHARED_INDEXES,
+				Commands.RESTART_INTELLISENSE_FOR_ACTIVE_FILE,
 				Commands.RESTART_LANGUAGE_SERVER,
 				Commands.FILESEXPLORER_ONPASTE,
 				Commands.CHANGE_JAVA_SEARCH_SCOPE,
