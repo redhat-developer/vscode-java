@@ -1436,9 +1436,6 @@
 					"include": "#storage-modifiers"
 				},
 				{
-					"include": "#generics"
-				},
-				{
 					"include": "#comments"
 				},
 				{
