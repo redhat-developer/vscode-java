@@ -8,7 +8,7 @@ suite('Java Language Extension - LightWeight', () => {
 
 	suiteSetup(async function() {
 		getJavaConfiguration().update('server.launchMode', 'LightWeight');
-		await extensions.getExtension('redhat.java').activate();
+		await extensions.getExtension('redhat.java')!.activate();
 	});
 
 	test('should register syntax-only java commands', () => {
@@ -30,6 +30,8 @@ suite('Java Language Extension - LightWeight', () => {
 				Commands.FILESEXPLORER_ONPASTE,
 				Commands.CHANGE_JAVA_SEARCH_SCOPE,
 				Commands.OPEN_JAVA_DASHBOARD,
+				'java.dashboard.dumpState',
+                'java.dashboard.refresh',
 				Commands.ADD_JAVA_RUNTIME
 			].sort();
 			const foundJavaCommands = commands.filter((value) => {
