@@ -1442,23 +1442,13 @@
 					"include": "#comments"
 				},
 				{
-					"begin": "(record)\\s+([\\w$]+)(<[\\w$]+>)?(\\()",
+					"begin": "(record)\\s+([\\w$]+)",
 					"beginCaptures": {
 						"1": {
 							"name": "storage.modifier.java"
 						},
 						"2": {
 							"name": "entity.name.type.record.java"
-						},
-						"3": {
-							"patterns": [
-								{
-									"include": "#generics"
-								}
-							]
-						},
-						"4": {
-							"name": "punctuation.definition.parameters.begin.bracket.round.java"
 						}
 					},
 					"end": "\\)",
@@ -1470,7 +1460,21 @@
 					"name": "meta.record.identifier.java",
 					"patterns": [
 						{
-							"include": "#code"
+							"include": "#generics"
+						},
+						{
+							"begin": "\\(",
+							"beginCaptures": {
+								"0": {
+									"name": "punctuation.definition.parameters.begin.bracket.round.java"
+								}
+							},
+							"end": "(?=\\))",
+							"patterns": [
+								{
+									"include": "#code"
+								}
+							]
 						}
 					]
 				},
