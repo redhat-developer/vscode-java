@@ -182,6 +182,9 @@
           "annotation": [
             "storage.type.annotation.java"
           ],
+          "decorator": [
+            "storage.type.annotation.java"
+          ],
           "annotationMember": [
             "entity.name.annotationMember.java",
             "constant.other.key.java"
