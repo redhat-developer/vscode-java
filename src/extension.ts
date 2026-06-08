@@ -120,11 +120,19 @@ const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\
  * @returns the documentation with fixed links
  */
 export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): MarkdownString {
-	const newContent: string = oldDocumentation.value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
+	let content: string = oldDocumentation.value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
 		const uri = `command:${Commands.OPEN_FILE}?${encodeURI(JSON.stringify([encodeURIComponent(group2)]))}`;
 		return `${group1}${uri})`;
 	});
-	const mdString = new MarkdownString(newContent);
+
+	// Normalize excessive whitespace in large Javadoc content
+	// so large hover popups render more compactly.
+	content = content
+		.replace(/[ \t]{2,}/g, ' ')  // Collapse multiple spaces/tabs to a single space
+		.replace(/\n{3,}/g, '\n\n') // Collapse 3 or more newlines to exactly 2
+		.trim();
+
+	const mdString = new MarkdownString(content);
 	mdString.isTrusted = true;
 	return mdString;
 }
