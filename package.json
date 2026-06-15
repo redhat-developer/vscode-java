@@ -1866,6 +1866,11 @@
         "command": "java.runtimes.add",
         "title": "%java.runtimes.add%",
         "category": "Java"
+      },
+      {
+         "command": "java.action.copyFullyQualifiedName",
+         "title": "%java.action.copyFullyQualifiedName%",
+         "category": "Java"
       }
     ],
     "keybindings": [
@@ -1951,6 +1956,11 @@
           "command": "java.action.showTypeHierarchy",
           "when": "javaLSReady && editorTextFocus && editorLangId == java",
           "group": "0_navigation@3"
+        },
+        {
+          "command": "java.action.copyFullyQualifiedName",
+          "when": "javaLSReady && editorTextFocus && editorLangId == java",
+          "group": "1_javaactions"
         }
       ],
       "commandPalette": [

@@ -558,6 +558,33 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}
 			}));
 
+			context.subscriptions.push(commands.registerCommand(Commands.COPY_FULLY_QUALIFIED_NAME, async () => {
+				const editor = window.activeTextEditor;
+				if (!editor || editor.document.languageId !== 'java') {
+					return;
+				}
+
+				const params = {
+					textDocument: {
+						uri: editor.document.uri.toString()
+					},
+					position: {
+						line: editor.selection.active.line,
+						character: editor.selection.active.character
+					}
+				};
+
+				const fullyQualifiedName = await commands.executeCommand<string>(
+					Commands.EXECUTE_WORKSPACE_COMMAND,
+					Commands.GET_FULLY_QUALIFIED_NAME,
+					JSON.stringify(params)
+				);
+
+				if (fullyQualifiedName) {
+					await env.clipboard.writeText(fullyQualifiedName);
+					window.showInformationMessage(`Copied: ${fullyQualifiedName}`);
+				}
+			}));
 			registerRestartJavaLanguageServerCommand(context);
 
 			/**
