@@ -110,6 +110,7 @@ function getHeapDumpFolderFromSettings(): string {
 }
 
 const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\\\))|([^)]))+))\)/g;
+const EXISTING_COMMAND_PATTERN: RegExp = /\[([^\]]+)\]\(command:[^)]+\)/g;
 
 /**
  * Replace `jdt://` links in the documentation with links that execute the VS Code command required to open the referenced file.
@@ -120,7 +121,11 @@ const REPLACE_JDT_LINKS_PATTERN: RegExp = /(\[(?:[^\]])+\]\()(jdt:\/\/(?:(?:(?:\
  * @returns the documentation with fixed links
  */
 export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): MarkdownString {
-	const newContent: string = oldDocumentation.value.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
+	// sanitize existing command: links
+	const sanitizedContent = oldDocumentation.value.replace(EXISTING_COMMAND_PATTERN, (_substring, group1: string, group2) => {
+		return group1;
+	});
+	const newContent: string = sanitizedContent.replace(REPLACE_JDT_LINKS_PATTERN, (_substring, group1, group2) => {
 		const uri = `command:${Commands.OPEN_FILE}?${encodeURI(JSON.stringify([encodeURIComponent(group2)]))}`;
 		return `${group1}${uri})`;
 	});
