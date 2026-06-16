@@ -582,7 +582,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 
 				if (fullyQualifiedName) {
 					await env.clipboard.writeText(fullyQualifiedName);
-					window.showInformationMessage(`Copied: ${fullyQualifiedName}`);
 				}
 			}));
 			registerRestartJavaLanguageServerCommand(context);

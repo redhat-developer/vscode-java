@@ -130,7 +130,7 @@ suite('Java Language Extension - Standard', () => {
 				Commands.CHANGE_JAVA_SEARCH_SCOPE,
 				Commands.COPY_FULLY_QUALIFIED_NAME,
 				Commands.GET_FULLY_QUALIFIED_NAME,
-				"java.getTroubleshootingInfo",
+				Commands.GET_TROUBLESHOOTING_INFO,
 				Commands.OPEN_JAVA_DASHBOARD,
 				Commands.ADD_JAVA_RUNTIME
 			].sort();
