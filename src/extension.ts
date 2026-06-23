@@ -195,7 +195,11 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 		}
 	}
 
-	return requirements.resolveRequirements(context).catch(error => {
+	let requirementsData: requirements.RequirementsData;
+
+	try {
+		requirementsData = await requirements.resolveRequirements(context);
+	} catch (error) {
 		// show error
 		window.showErrorMessage(error.message, error.label).then((selection) => {
 			if (error.label && error.label === selection && error.command) {
@@ -204,9 +208,8 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 		});
 		// rethrow to disrupt the chain.
 		throw error;
-	}).then(async (requirements) => {
+	}
 		const triggerFiles = await getTriggerFiles();
-		return new Promise<ExtensionAPI>(async (resolve) => {
 			const syntaxServerWorkspacePath = path.resolve(`${storagePath}/ss_ws`);
 
 			let serverMode = getJavaServerMode();
@@ -217,10 +220,10 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			commands.executeCommand('setContext', 'java:serverMode', serverMode);
 			const isDebugModeByClientPort = !!process.env['SYNTAXLS_CLIENT_PORT'] || !!process.env['JDTLS_CLIENT_PORT'];
 			const requireSyntaxServer = (serverMode !== ServerMode.standard) && (!isDebugModeByClientPort || !!process.env['SYNTAXLS_CLIENT_PORT']);
-			let requireStandardServer = (serverMode !== ServerMode.lightWeight) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
+			const requireStandardServer = (serverMode !== ServerMode.lightWeight) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
 			let initFailureReported: boolean = false;
 
-			const javaConfig = await getJavaConfig(requirements.java_home);
+			const javaConfig = await getJavaConfig(requirementsData.java_home);
 			javaConfigDeferred.resolve(javaConfig);
 
 			// Options to control the language client
@@ -274,7 +277,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 						didChangeConfiguration: async () => {
 							await standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 								settings: {
-									java: await getJavaConfig(requirements.java_home),
+									java: await getJavaConfig(requirementsData.java_home),
 								}
 							});
 						}
@@ -424,13 +427,35 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				outputChannelName: extensionName
 			};
 
-			apiManager.initialize(requirements, serverMode);
+			apiManager.initialize(requirementsData, serverMode);
 			registerCodeCompletionTelemetryListener();
-			resolve(apiManager.getApiInstance());
-			// the promise is resolved
-			// no need to pass `resolve` into any code past this point,
-			// since `resolve` is a no-op from now on
-			if (requireSyntaxServer) {
+			void postExtensionStartInit(
+				context,
+				requirementsData,
+				clientOptions,
+				workspacePath,
+				syntaxServerWorkspacePath,
+				serverMode,
+				requireSyntaxServer,
+				requireStandardServer,
+				cleanWorkspaceExists
+			);
+
+			return apiManager.getApiInstance();
+}
+
+async function postExtensionStartInit(
+	context: ExtensionContext,
+	requirements: requirements.RequirementsData,
+	clientOptions: LanguageClientOptions,
+	workspacePath: string,
+	syntaxServerWorkspacePath: string,
+	serverMode: ServerMode,
+	requireSyntaxServer: boolean,
+	requireStandardServer: boolean,
+	cleanWorkspaceExists: boolean
+): Promise<void> {
+	if (requireSyntaxServer) {
 				const serverOptions = prepareExecutable(requirements, syntaxServerWorkspacePath, context, true);
 				excutable.resolve(serverOptions);
 				if (process.env['SYNTAXLS_CLIENT_PORT']) {
@@ -699,10 +724,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				}));
 			}
 			context.subscriptions.push(workspace.onDidChangeTextDocument(event => handleTextDocumentChanges(event.document, event.contentChanges)));
-		});
-	});
 }
-
 async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, triggeredByCommand: boolean = false) {
 	if (standardClient.getClientStatus() !== ClientStatus.uninitialized) {
 		return;
