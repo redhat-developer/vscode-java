@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.55.0 (June 24, 2026)
+ * enhancement - Use standard `decorator` instead of `annotation` token type for highlighting Java annotation. See [#4421](https://github.com/redhat-developer/vscode-java/pull/4421).
+ * enhancement - Add right click menu item to copy the fully qualified name of the identifier under the cursor. See [#374](https://github.com/redhat-developer/vscode-java/issues/374).
+ * enhancement - Add regenerate hashCode()/equals() method quick-fix. See [JLS#3764](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3764).
+ * enhancement - Add type annotation quick-fixes. See [JLS#3759](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3759).
+ * enhancement - Add Java 26 to Gradle/Java Compatibility Matrix. See [JLS#3757](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3757).
+ * enhancement - Add new quick-fixes (type argument and modifier related). See [JLS#3756](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3756).
+ * enhancement - Add varargs-related quick-fixes. See [JLS#3754](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3754).
+ * enhancement - Add new null annotation quick-fixes from upstream JDT. See [JLS#3752](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3752).
+ * enhancement - Add support for vscode path variables for settings url settings. See [JLS#2529](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2529).
+ * bug fix - Sanitize existing command links from hover Javadocs. See [#4429](https://github.com/redhat-developer/vscode-java/pull/4429).
+ * bug fix - Maven projects 5 folders deep were not loaded as Java projects. See [#4364](https://github.com/redhat-developer/vscode-java/issues/4364).
+ * bug fix - Prevent Javadoc entries with tables from being truncated in the hover documentation. See [#4219](https://github.com/redhat-developer/vscode-java/issues/4219).
+ * bug fix - Keep LSP initialize() resilient when m2e is not yet available. See [#3469](https://github.com/redhat-developer/vscode-java/issues/3469).
+ * bug fix - If the specified type comment template is empty, use the default. See [JLS#3816](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3816).
+ * bug fix - Prevent setter generation for record components. See [#JLS3812](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3812).
+ * bug fix - JDTLS batch file fails when located in a folder path with spaces. See [JLS#3783](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3783).
+ * bug fix - Completion of annotation properties proposes invalid choices. See [JLS#3604](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3604).
+ * bug fix - Do not offer override/implement actions for annotation types. See [JLS#3814](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3814).
+
 ## 1.54.0 (April 15th, 2026)
  * enhancement - Add `serverRunning()` API (v0.14) for progressive loading. See [#4372](https://github.com/redhat-developer/vscode-java/pull/4372).
  * enhancement - Add JDK 26. See [#4367](https://github.com/redhat-developer/vscode-java/pull/4367).

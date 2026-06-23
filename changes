@@ -1,0 +1,7 @@
+Fetching issues from https://api.github.com/repos/redhat-developer/vscode-java/issues?state=closed&milestone=154&page=1
+ * enhancement - Fix #3210: map decorator token to annotation scope. See [#4421](https://github.com/redhat-developer/vscode-java/pull/4421).
+ * enhancement - Add feature: copy fully qualified name . See [#374](https://github.com/redhat-developer/vscode-java/issues/374).
+ * bug fix - Sanitize existing command links from hover Javadocs. See [#4429](https://github.com/redhat-developer/vscode-java/pull/4429).
+ * bug fix - Maven project 5 folders deap are not loaded as java projects. See [#4364](https://github.com/redhat-developer/vscode-java/issues/4364).
+ * bug fix - Very long Javadoc is truncated on hover. See [#4219](https://github.com/redhat-developer/vscode-java/issues/4219).
+ * bug fix - Failed to initialize language server due to "Internal error. Caused by: NPE: Cannot invoke 'o.e.m.c.e.IMaven.getSettings()' because the return value of 'o.e.m.c.MavenPlugin.getMaven()' is null". See [#3469](https://github.com/redhat-developer/vscode-java/issues/3469).
