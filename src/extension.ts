@@ -1305,6 +1305,6 @@ function registerRestartJavaLanguageServerCommand(context: ExtensionContext) {
 
 function escapeSnippetLiterals(value: string): string {
     return value
-        .replace(/\\/g, '\\\\')       // Escape backslashes
+        .replace(/\\(?!,)/g, '\\\\')       // Escape backslashes, but preserve escaped commas
         .replace(/\$(?!\{)/g, '\\$'); // Escape $ only if NOT followed by {
 }
