@@ -211,7 +211,13 @@ export function fixJdtSchemeHoverLinks(hover: Hover): Hover {
 	const newContents: (MarkedString | MarkdownString)[] = [];
 	for (const content of hover.contents) {
 		if (content instanceof MarkdownString) {
-			newContents.push(fixJdtLinksInDocumentation(content));
+			// Skip our own trusted contributed commands (e.g. "Go to Super Implementation");
+			// only sanitize untrusted server-provided Javadoc.
+			if (content.isTrusted) {
+				newContents.push(content);
+			} else {
+				newContents.push(fixJdtLinksInDocumentation(content));
+			}
 		} else {
 			newContents.push(content);
 		}
