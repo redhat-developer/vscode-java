@@ -1485,6 +1485,13 @@
             "scope": "window",
             "order": 10
           },
+          "java.referencesCodeLens.includeFields": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable the references code lens for fields.",
+            "scope": "window",
+            "order": 15
+          },
           "java.implementationCodeLens": {
             "type": "string",
             "enum": [
