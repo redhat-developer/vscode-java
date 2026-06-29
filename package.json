@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.55.0",
+  "version": "1.56.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -1868,9 +1868,9 @@
         "category": "Java"
       },
       {
-         "command": "java.action.copyFullyQualifiedName",
-         "title": "%java.action.copyFullyQualifiedName%",
-         "category": "Java"
+        "command": "java.action.copyFullyQualifiedName",
+        "title": "%java.action.copyFullyQualifiedName%",
+        "category": "Java"
       }
     ],
     "keybindings": [
