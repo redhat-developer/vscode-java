@@ -120,7 +120,7 @@ export class StandardLanguageClient {
 
 	public registerLanguageClientActions(context: ExtensionContext, hasImported: boolean, jdtEventEmitter: EventEmitter<Uri>) {
 		activationProgressNotification.showProgress();
-		this.languageClient.onNotification(StatusNotification.type, (report) => {
+		this.languageClient.onNotification(StatusNotification.type, async (report) => {
 			// Resolve serverRunning on the first status notification from the server,
 			// indicating the server process is alive and can accept requests.
 			apiManager.resolveServerRunningPromise();
@@ -152,6 +152,13 @@ export class StandardLanguageClient {
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
 					registerDocumentValidationListener(context, this.languageClient);
+					try {
+						const projectUris = await getAllJavaProjects();
+						const projectPaths = projectUris.map((uriString) => Uri.parse(uriString).fsPath.replace(/[\\/]$/, ''));
+						await commands.executeCommand('setContext', 'java.projects', projectPaths);
+					} catch (error) {
+						logger.error(error);
+					}
 					commands.executeCommand('setContext', 'javaLSReady', true);
 					break;
 				case 'Started':
