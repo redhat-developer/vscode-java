@@ -110,6 +110,19 @@ main {
 	background-color: var(--vscode-input-background);
 }
 
+.parameter-input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	outline: none;
+	background-color: transparent;
+	color: var(--vscode-input-foreground);
+	font-family: inherit;
+	font-size: inherit;
+}
+
 .parameter-cell-edit-button {
 	padding: 0;
 	border: 0;

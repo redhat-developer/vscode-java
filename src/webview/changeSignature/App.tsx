@@ -175,11 +175,13 @@ export class App extends React.Component<{}, State> {
 				editParameterRow: selectedRowNumber,
 				editExceptionRow: -1,
 				focusRow: -1,
+			}, () => {
+				const elementToSelect = document.getElementById(`parameterType-${selectedRowNumber}`) as HTMLInputElement | null;
+				if (elementToSelect) {
+					elementToSelect.focus();
+					elementToSelect.select();
+				}
 			});
-			const elementToSelect = document.getElementById(`parameterType-${selectedRowNumber}`);
-			if (elementToSelect) {
-				elementToSelect.focus();
-			}
 		} else if (id.startsWith("editException")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -189,11 +191,13 @@ export class App extends React.Component<{}, State> {
 				editParameterRow: -1,
 				editExceptionRow: selectedRowNumber,
 				focusRow: -1,
+			}, () => {
+				const elementToSelect = document.getElementById(`exceptionType-${selectedRowNumber}`) as HTMLInputElement | null;
+				if (elementToSelect) {
+					elementToSelect.focus();
+					elementToSelect.select();
+				}
 			});
-			const elementToSelect = document.getElementById(`exceptionType-${selectedRowNumber}`);
-			if (elementToSelect) {
-				elementToSelect.focus();
-			}
 		} else if (id.startsWith("upParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -253,20 +257,20 @@ export class App extends React.Component<{}, State> {
 			if (selectedRowNumber === undefined) {
 				return;
 			}
-			const parameterType = document.getElementById(`parameterType-${selectedRowNumber}`);
-			const parameterName = document.getElementById(`parameterName-${selectedRowNumber}`);
-			const parameterDefault = this.isDefaultValueEditable(selectedRowNumber) ? document.getElementById(`parameterDefault-${selectedRowNumber}`) : undefined;
+			const parameterType = document.getElementById(`parameterType-${selectedRowNumber}`) as HTMLInputElement | null;
+			const parameterName = document.getElementById(`parameterName-${selectedRowNumber}`) as HTMLInputElement | null;
+			const parameterDefault = this.isDefaultValueEditable(selectedRowNumber) ? document.getElementById(`parameterDefault-${selectedRowNumber}`) as HTMLInputElement | null : undefined;
 			this.setState({
 				parameters: this.state.parameters.map((e, i) => {
 					if (i === selectedRowNumber) {
-						if (parameterType?.outerText) {
-							e.type = parameterType.outerText;
+						if (parameterType?.value) {
+							e.type = parameterType.value;
 						}
-						if (parameterName?.outerText) {
-							e.name = parameterName.outerText;
+						if (parameterName?.value) {
+							e.name = parameterName.value;
 						}
-						if (parameterDefault?.outerText) {
-							e.defaultValue = parameterDefault.outerText;
+						if (parameterDefault?.value) {
+							e.defaultValue = parameterDefault.value;
 						}
 					}
 					return e;
@@ -280,20 +284,6 @@ export class App extends React.Component<{}, State> {
 			if (selectedRowNumber === undefined) {
 				return;
 			}
-			const parameterType = document.getElementById(`parameterType-${selectedRowNumber}`);
-			if (parameterType) {
-				parameterType.textContent = this.state.parameters[selectedRowNumber].type;
-			}
-			const parameterName = document.getElementById(`parameterName-${selectedRowNumber}`);
-			if (parameterName) {
-				parameterName.textContent = this.state.parameters[selectedRowNumber].name;
-			}
-			if (this.isDefaultValueEditable(selectedRowNumber)) {
-				const parameterDefault = document.getElementById(`parameterDefault-${selectedRowNumber}`);
-				if (parameterDefault) {
-					parameterDefault.textContent = this.state.parameters[selectedRowNumber].defaultValue;
-				}
-			}
 			this.setState({
 				editParameterRow: -1,
 				editExceptionRow: -1,
@@ -304,12 +294,12 @@ export class App extends React.Component<{}, State> {
 			if (selectedRowNumber === undefined) {
 				return;
 			}
-			const exceptionType = document.getElementById(`exceptionType-${selectedRowNumber}`);
+			const exceptionType = document.getElementById(`exceptionType-${selectedRowNumber}`) as HTMLInputElement | null;
 			this.setState({
 				exceptions: this.state.exceptions.map((e, i) => {
 					if (i === selectedRowNumber) {
-						if (exceptionType?.outerText) {
-							e.type = exceptionType.outerText;
+						if (exceptionType?.value) {
+							e.type = exceptionType.value;
 						}
 					}
 					return e;
@@ -322,10 +312,6 @@ export class App extends React.Component<{}, State> {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
 				return;
-			}
-			const exceptionType = document.getElementById(`exceptionType-${selectedRowNumber}`);
-			if (exceptionType) {
-				exceptionType.textContent = this.state.exceptions[selectedRowNumber].type;
 			}
 			this.setState({
 				editParameterRow: -1,
@@ -431,11 +417,28 @@ export class App extends React.Component<{}, State> {
 		return this.isDefaultValueEditable(row) ? this.state.parameters[row].defaultValue : "-";
 	};
 
+	/**
+	 * Render a data grid cell whose value can be edited. When editing, a real
+	 * <input> control is rendered as slotted content of the cell so that the
+	 * typed text is visibly rendered and read back reliably. This avoids relying
+	 * on `contentEditable` directly on the (deprecated) webview-ui-toolkit
+	 * `vscode-data-grid-cell`, whose shadow-DOM slot does not render text nodes
+	 * placed on the host (see redhat-developer/vscode-java#4417).
+	 */
+	renderEditableCell = (id: string, value: string, editing: boolean, editable: boolean, gridColumn: string) => {
+		return <VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${editing ? "parameter-cell-edit" : "parameter-cell"}`} gridColumn={gridColumn}>
+			{editable
+				? <input id={id} className={"parameter-input"} defaultValue={value} spellCheck={false} autoComplete={"off"} />
+				: <span id={id}>{value}</span>}
+		</VSCodeDataGridCell>;
+	};
+
 	generateParameterDataGridRow = (row: number) => {
+		const editing = row === this.state.editParameterRow;
 		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`parameterRow-${row}`} key={`parameterRow-${row}`}>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterType-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.parameters[row].type}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterName-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"2"}>{this.state.parameters[row].name}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterDefault-${row}`} contentEditable={row === this.state.editParameterRow && this.isDefaultValueEditable(row) ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"3"}>{this.getDefaultValue(row)}</VSCodeDataGridCell>
+			{this.renderEditableCell(`parameterType-${row}`, this.state.parameters[row].type, editing, editing, "1")}
+			{this.renderEditableCell(`parameterName-${row}`, this.state.parameters[row].name, editing, editing, "2")}
+			{this.renderEditableCell(`parameterDefault-${row}`, this.getDefaultValue(row), editing, editing && this.isDefaultValueEditable(row), "3")}
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`parameterButton-${row}`} gridColumn={"4"}>
 				{row === this.state.editParameterRow ?
 					<div className="table-buttons-edit">
@@ -461,8 +464,9 @@ export class App extends React.Component<{}, State> {
 	};
 
 	generateExceptionDataGridRow = (row: number) => {
+		const editing = row === this.state.editExceptionRow;
 		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`} key={`exceptionRow-${row}`}>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
+			{this.renderEditableCell(`exceptionType-${row}`, this.state.exceptions[row].type, editing, editing, "1")}
 			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
 				{row === this.state.editExceptionRow ?
 					<div className="table-buttons-edit">
