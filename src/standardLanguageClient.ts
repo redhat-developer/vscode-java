@@ -4,7 +4,7 @@ import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from "vscode";
 import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, ClientCapabilities, FeatureState, TelemetryEventNotification } from "vscode-languageclient";
-import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
+import { LanguageClient, ServerOptions, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
 import { javaRefactorKinds, RefactorDocumentProvider } from "./codeActionProvider";
@@ -42,6 +42,7 @@ import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 import { ClientCodeActionProvider } from './clientCodeActionProvider';
 import { BuildFileSelector } from './buildFilesSelector';
 import { extendedOutlineQuickPick } from "./outline/extendedOutlineQuickPick";
+import { startWithStdioFallback } from './standardLanguageClientStart';
 
 const extensionName = 'Language Support for Java';
 const GRADLE_CHECKSUM = "gradle/checksum/prompt";
@@ -50,6 +51,7 @@ const USE_JAVA = "Use Java ";
 const AS_GRADLE_JVM = " as Gradle JVM";
 const UPGRADE_GRADLE = "Upgrade Gradle to ";
 const GRADLE_IMPORT_JVM = "java.import.gradle.java.home";
+const PIPE_START_TIMEOUT_MS = 30000;
 export const JAVA_SELECTOR: DocumentSelector = [
 	{ scheme: "file", language: "java", pattern: "**/*.java" },
 	{ scheme: "jdt", language: "java", pattern: "**/*.class" },
@@ -59,6 +61,8 @@ export const JAVA_SELECTOR: DocumentSelector = [
 export class StandardLanguageClient {
 
 	private languageClient: LanguageClient;
+	private serverOptions: ServerOptions;
+	private clientOptions: LanguageClientOptions;
 	private status: ClientStatus = ClientStatus.uninitialized;
 
 	public async initialize(context: ExtensionContext, requirements: RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, jdtEventEmitter: EventEmitter<Uri>): Promise<void> {
@@ -85,7 +89,7 @@ export class StandardLanguageClient {
 			}
 		});
 
-		let serverOptions;
+		let serverOptions: ServerOptions;
 		const port = process.env['JDTLS_SERVER_PORT'];
 		if (!port) {
 			const lsPort = process.env['JDTLS_CLIENT_PORT'];
@@ -105,17 +109,24 @@ export class StandardLanguageClient {
 			// used during development
 			serverOptions = awaitServerConnection.bind(null, port);
 		}
+		this.serverOptions = serverOptions;
+		this.clientOptions = clientOptions;
 
 		// Create the language client and start the client.
-		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
-		this.languageClient.registerFeature(new DisableWillRenameFeature());
+		this.languageClient = this.createLanguageClient(serverOptions, clientOptions);
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
-		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
+		fileEventHandler.registerFileEventHandlers(() => this.languageClient, context);
 
 		collectBuildFilePattern(extensions.all);
 
 		this.status = ClientStatus.initialized;
+	}
+
+	private createLanguageClient(serverOptions: ServerOptions, clientOptions: LanguageClientOptions): LanguageClient {
+		const languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
+		languageClient.registerFeature(new DisableWillRenameFeature());
+		return languageClient;
 	}
 
 	public registerLanguageClientActions(context: ExtensionContext, hasImported: boolean, jdtEventEmitter: EventEmitter<Uri>) {
@@ -770,7 +781,16 @@ export class StandardLanguageClient {
 	public start(): Promise<void> {
 		if (this.languageClient && this.status === ClientStatus.initialized) {
 			this.status = ClientStatus.starting;
-			return this.languageClient.start();
+			return startWithStdioFallback({
+				languageClient: this.languageClient,
+				serverOptions: this.serverOptions,
+				createLanguageClient: (serverOptions) => this.createLanguageClient(serverOptions, this.clientOptions),
+				pipeStartTimeout: PIPE_START_TIMEOUT_MS,
+				onFallback: (error) => logger.warn(`Falling back to 'stdio' (from 'pipe') because starting the pipe transport failed: ${error}`),
+			}).then(result => {
+				this.languageClient = result.client;
+				this.serverOptions = result.serverOptions;
+			});
 		}
 	}
 
