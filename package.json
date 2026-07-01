@@ -1921,12 +1921,12 @@
           "group": "1_javaactions"
         },
         {
-          "when": "explorerResourceIsFolder&&javaLSReady&&resourcePath in java.projects",
+          "when": "explorerResourceIsFolder&&javaLSReady",
           "command": "java.project.addToSourcePath.command",
           "group": "1_javaactions@1"
         },
         {
-          "when": "explorerResourceIsFolder&&javaLSReady&&resourcePath in java.projects",
+          "when": "explorerResourceIsFolder&&javaLSReady",
           "command": "java.project.removeFromSourcePath.command",
           "group": "1_javaactions@2"
         }

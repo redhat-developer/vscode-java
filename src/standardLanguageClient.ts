@@ -149,17 +149,17 @@ export class StandardLanguageClient {
 					apiManager.getApiInstance().onDidClasspathUpdate((projectUri: Uri) => {
 						checkLombokDependency(context, projectUri);
 					});
+					apiManager.getApiInstance().onDidProjectsImport(() => {
+						updateJavaProjectsContext();
+					});
+					apiManager.getApiInstance().onDidProjectsDelete(() => {
+						updateJavaProjectsContext();
+					});
 					// Disable the client-side snippet provider since LS is ready.
 					snippetCompletionProvider.dispose();
 					registerDocumentValidationListener(context, this.languageClient);
-					try {
-						const projectUris = await getAllJavaProjects();
-						const projectPaths = projectUris.map((uriString) => Uri.parse(uriString).fsPath.replace(/[\\/]$/, ''));
-						await commands.executeCommand('setContext', 'java.projects', projectPaths);
-					} catch (error) {
-						logger.error(error);
-					}
 					commands.executeCommand('setContext', 'javaLSReady', true);
+					updateJavaProjectsContext();
 					break;
 				case 'Started':
 					this.status = ClientStatus.started;
@@ -849,6 +849,15 @@ export class StandardLanguageClient {
 			affectedEditorDocuments: affectedDocumentUris,
 		});
 	}
+}
+
+function updateJavaProjectsContext(): void {
+	getAllJavaProjects().then((projectUris) => {
+		const projectPaths = projectUris.map((uriString) => Uri.parse(uriString).fsPath.replace(/[\\/]$/, ''));
+		commands.executeCommand('setContext', 'java.projects', projectPaths);
+	}).catch((error) => {
+		logger.error(error);
+	});
 }
 
 async function showImportFinishNotification(context: ExtensionContext) {
