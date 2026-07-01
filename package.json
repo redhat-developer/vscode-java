@@ -2132,7 +2132,6 @@
     "@redhat-developer/vscode-extension-proposals": "0.0.23",
     "@redhat-developer/vscode-redhat-telemetry": "0.10.2",
     "@vscode/codicons": "^0.0.32",
-    "@vscode/webview-ui-toolkit": "1.2.2",
     "chokidar": "^3.5.3",
     "expand-home-dir": "^0.0.3",
     "fmtr": "^1.1.2",
