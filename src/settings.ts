@@ -5,7 +5,7 @@ import * as path from 'path';
 import { commands, ConfigurationTarget, env, ExtensionContext, Position, Range, Selection, SnippetString, TextDocument, Uri, window, workspace, WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 import { Commands } from './commands';
 import { cleanupLombokCache } from './lombokSupport';
-import { ensureExists, getJavaConfiguration } from './utils';
+import { ensureExists, getJavaConfiguration, resolvePathVariables } from './utils';
 import { apiManager } from './apiManager';
 import { isActive, setActive, smartSemicolonDetection } from './smartSemicolonDetection';
 import { BuildFileSelector, IMPORT_METHOD, PICKED_BUILD_FILES } from './buildFilesSelector';
@@ -242,7 +242,7 @@ export async function checkJavaPreferences(context: ExtensionContext): Promise<{
 	}
 
 	return {
-		javaHome,
+		javaHome: resolvePathVariables(javaHome),
 		preference
 	};
 }
