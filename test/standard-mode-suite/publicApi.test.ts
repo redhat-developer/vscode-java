@@ -69,6 +69,14 @@ suite('Public APIs - Standard', () => {
 
 	test('getProjectSettings should work', async function () {
 		const api: ExtensionAPI = extensions.getExtension('redhat.java').exports;
+
+		await new Promise<void>((resolve) => {
+			api.onDidProjectsImport(() => {
+				resolve();
+			});
+			commands.executeCommand(Commands.IMPORT_PROJECTS_CMD);
+		});
+
 		const projectSetting: {} = await api.getProjectSettings(
 			Uri.file(constants.projectFsPath).toString(),
 			['org.eclipse.jdt.core.compiler.compliance', 'org.eclipse.jdt.core.compiler.source'],
