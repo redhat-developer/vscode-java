@@ -52,6 +52,7 @@ const jdtEventEmitter = new EventEmitter<Uri>();
 const extensionName = 'Language Support for Java';
 let storagePath: string;
 let clientLogFile: string;
+let standardServerStart: Promise<LanguageClient | undefined> | undefined;
 
 const excutable=  new Deferred<Executable>();
 
@@ -444,6 +445,17 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	return apiManager.getApiInstance();
 }
 
+async function getStandardLanguageClient(): Promise<LanguageClient | undefined> {
+	try {
+		if (standardServerStart) {
+			return await standardServerStart;
+		}
+	} catch (error) {
+		logger.error(`Failed to initialize the Java language client: ${getMessage(error)}`);
+	}
+	return standardClient.getClient();
+}
+
 async function postExtensionStartInit(
 	context: ExtensionContext,
 	requirements: requirements.RequirementsData,
@@ -469,28 +481,14 @@ async function postExtensionStartInit(
 		serverStatusBarProvider.showLightWeightStatus();
 	}
 
-	context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, (command, ...rest) => {
-		const api: ExtensionAPI = apiManager.getApiInstance();
-		if (api.serverMode === ServerMode.lightWeight) {
-			console.warn(`The command: ${command} is not supported in LightWeight mode. See: https://github.com/redhat-developer/vscode-java/issues/1480`);
-			return;
+	apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
+		if (event === ServerMode.standard) {
+			syntaxClient.stop();
+			fileEventHandler.setServerStatus(true);
+			languageStatusBarProvider.initialize(context);
 		}
-		let token: CancellationToken;
-		let commandArgs: any[] = rest;
-		if (rest && rest.length && CancellationToken.is(rest[rest.length - 1])) {
-			token = rest[rest.length - 1];
-			commandArgs = rest.slice(0, rest.length - 1);
-		}
-		const params: ExecuteCommandParams = {
-			command,
-			arguments: commandArgs
-		};
-		if (token) {
-			return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params, token);
-		} else {
-			return standardClient.getClient().sendRequest(ExecuteCommandRequest.type, params);
-		}
-	}));
+		commands.executeCommand('setContext', 'java:serverMode', event);
+	});
 
 	if (cleanWorkspaceExists) {
 		const data = {};
@@ -506,6 +504,56 @@ async function postExtensionStartInit(
 		}
 		await Telemetry.sendTelemetry(Commands.CLEAN_WORKSPACE, data);
 	}
+
+	if (serverMode === ServerMode.hybrid && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
+		const config = getJavaConfiguration();
+		const importOnStartupSection: string = "project.importOnFirstTimeStartup";
+		const importOnStartup = config.get(importOnStartupSection);
+		if (importOnStartup === "disabled" ||
+			env.uiKind === UIKind.Web && env.appName.includes("Visual Studio Code")) {
+			apiManager.getApiInstance().serverMode = ServerMode.lightWeight;
+			apiManager.fireDidServerModeChange(ServerMode.lightWeight);
+			requireStandardServer = false;
+		} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
+			apiManager.getApiInstance().serverMode = ServerMode.lightWeight;
+			apiManager.fireDidServerModeChange(ServerMode.lightWeight);
+			requireStandardServer = await promptUserForStandardServer(config);
+		} else {
+			requireStandardServer = true;
+		}
+	}
+
+	if (requireStandardServer) {
+		void startStandardServer(context, requirements, clientOptions, workspacePath);
+	}
+
+	context.subscriptions.push(commands.registerCommand(Commands.EXECUTE_WORKSPACE_COMMAND, async (command, ...rest) => {
+		const api: ExtensionAPI = apiManager.getApiInstance();
+		if (api.serverMode === ServerMode.lightWeight) {
+			console.warn(`The command: ${command} is not supported in LightWeight mode. See: https://github.com/redhat-developer/vscode-java/issues/1480`);
+			return;
+		}
+		let token: CancellationToken;
+		let commandArgs: any[] = rest;
+		if (rest && rest.length && CancellationToken.is(rest[rest.length - 1])) {
+			token = rest[rest.length - 1];
+			commandArgs = rest.slice(0, rest.length - 1);
+		}
+		const params: ExecuteCommandParams = {
+			command,
+			arguments: commandArgs
+		};
+		const client: LanguageClient | undefined = await getStandardLanguageClient();
+		if (!client) {
+			console.warn(`Cannot execute Java workspace command '${command}' because the Java language client is not initialized`);
+			return;
+		}
+		if (token) {
+			return client.sendRequest(ExecuteCommandRequest.type, params, token);
+		} else {
+			return client.sendRequest(ExecuteCommandRequest.type, params);
+		}
+	}));
 
 	// Register commands here to make it available even when the language client fails
 	context.subscriptions.push(commands.registerCommand(Commands.OPEN_STATUS_SHORTCUT, async (status: string) => {
@@ -672,37 +720,6 @@ async function postExtensionStartInit(
 
 	registerClientProviders(context, { contentProviderEvent: jdtEventEmitter.event });
 
-	apiManager.getApiInstance().onDidServerModeChange((event: ServerMode) => {
-		if (event === ServerMode.standard) {
-			syntaxClient.stop();
-			fileEventHandler.setServerStatus(true);
-			languageStatusBarProvider.initialize(context);
-		}
-		commands.executeCommand('setContext', 'java:serverMode', event);
-	});
-
-	if (serverMode === ServerMode.hybrid && !await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"))) {
-		const config = getJavaConfiguration();
-		const importOnStartupSection: string = "project.importOnFirstTimeStartup";
-		const importOnStartup = config.get(importOnStartupSection);
-		if (importOnStartup === "disabled" ||
-			env.uiKind === UIKind.Web && env.appName.includes("Visual Studio Code")) {
-			apiManager.getApiInstance().serverMode = ServerMode.lightWeight;
-			apiManager.fireDidServerModeChange(ServerMode.lightWeight);
-			requireStandardServer = false;
-		} else if (importOnStartup === "interactive" && await workspaceContainsBuildFiles()) {
-			apiManager.getApiInstance().serverMode = ServerMode.lightWeight;
-			apiManager.fireDidServerModeChange(ServerMode.lightWeight);
-			requireStandardServer = await promptUserForStandardServer(config);
-		} else {
-			requireStandardServer = true;
-		}
-	}
-
-	if (requireStandardServer) {
-		await startStandardServer(context, requirements, clientOptions, workspacePath);
-	}
-
 	const onDidGrantWorkspaceTrust = (workspace as any).onDidGrantWorkspaceTrust;
 	if (onDidGrantWorkspaceTrust !== undefined) { // keep compatibility for old engines < 1.56.0
 		context.subscriptions.push(onDidGrantWorkspaceTrust(() => {
@@ -725,16 +742,34 @@ async function postExtensionStartInit(
 	}
 	context.subscriptions.push(workspace.onDidChangeTextDocument(event => handleTextDocumentChanges(event.document, event.contentChanges)));
 }
-async function startStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, triggeredByCommand: boolean = false) {
-	if (standardClient.getClientStatus() !== ClientStatus.uninitialized) {
-		return;
+async function startStandardServer(
+	context: ExtensionContext,
+	requirements: requirements.RequirementsData,
+	clientOptions: LanguageClientOptions,
+	workspacePath: string,
+	triggeredByCommand: boolean = false
+): Promise<LanguageClient | undefined> {
+	if (standardServerStart) {
+		const client = await standardServerStart;
+		if (client || !triggeredByCommand) {
+			return client;
+		}
 	}
+	if (standardClient.getClientStatus() !== ClientStatus.uninitialized) {
+		return standardClient.getClient();
+	}
+	standardServerStart = doStartStandardServer(context, requirements, clientOptions, workspacePath, triggeredByCommand).finally(() => {
+		standardServerStart = undefined;
+	});
+	return standardServerStart;
+}
 
+async function doStartStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, triggeredByCommand: boolean = false): Promise<LanguageClient | undefined> {
 	const selector: BuildFileSelector = new BuildFileSelector(context, []);
 	const importMode: ImportMode = await getImportMode(context, selector);
 	if (importMode === ImportMode.automatic) {
 		if (!await ensureNoBuildToolConflicts(context, clientOptions)) {
-			return;
+			return undefined;
 		}
 	} else {
 		const buildFiles: string[] = [];
@@ -749,7 +784,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		if (buildFiles.length === 0) {
 			commands.executeCommand('setContext', 'java:serverMode', ServerMode.lightWeight);
 			serverStatusBarProvider.showNotImportedStatus();
-			return;
+			return undefined;
 		}
 		clientOptions.initializationOptions.projectConfigurations = buildFiles;
 	}
@@ -764,6 +799,7 @@ async function startStandardServer(context: ExtensionContext, requirements: requ
 		standardClient.registerLanguageClientActions(context, await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins")), jdtEventEmitter);
 	});
 	serverStatusBarProvider.setBusy("Activating...");
+	return standardClient.getClient();
 }
 
 async function workspaceContainsBuildFiles(): Promise<boolean> {
