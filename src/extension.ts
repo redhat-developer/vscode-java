@@ -555,7 +555,6 @@ async function postExtensionStartInit(
 		}
 	}));
 
-	// Register commands here to make it available even when the language client fails
 	context.subscriptions.push(commands.registerCommand(Commands.OPEN_STATUS_SHORTCUT, async (status: string) => {
 		const items: ShortcutQuickPickItem[] = [];
 		if (status === ServerStatusKind.error || status === ServerStatusKind.warning) {
