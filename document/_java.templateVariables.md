@@ -13,3 +13,7 @@ Below are the predefined variables you could use in the template settings such a
 - `${day}` - current day of the month
 - `${hour}` - current hour
 - `${minute}` - current minute
+- `${todo}` - the configured task tag (e.g. "TODO")
+- `${enclosing_method}` - name of the method being implemented or overridden
+- `${body_statement}` - the generated body statement (e.g. a call to the overridden `super` method)
+- `${exception_var}` - name of the caught exception variable
