@@ -1326,6 +1326,11 @@
             "default": false,
             "scope": "window"
           },
+		  "java.codeGeneration.generateCommentsInMarkdown": {
+		    "type": "boolean",
+		    "description": "Generate Javadoc comments in Markdown style (requires source compliance >= 23).",
+		    "default": false
+		  },
           "java.codeGeneration.toString.template": {
             "type": "string",
             "description": "The template for generating the toString method.",

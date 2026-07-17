@@ -169,6 +169,7 @@ The following settings are supported:
 * `java.codeGeneration.hashCodeEquals.useJava7Objects`: Use Objects.hash and Objects.equals when generating the hashCode and equals methods. This setting only applies to Java 7 and higher. Defaults to `false`.
 * `java.codeGeneration.useBlocks`: Use blocks in 'if' statements when generating the methods. Defaults to `false`.
 * `java.codeGeneration.generateComments`: Generate method comments when generating the methods. Defaults to `false`.
+* `java.codeGeneration.generateCommentsInMarkdown`: Generate Javadoc comments in Markdown style when generating methods, constructors, and types. Requires source compliance >= 23. Defaults to false.
 * `java.codeGeneration.toString.template`: The template for generating the toString method. Defaults to `${object.className} [${member.name()}=${member.value}, ${otherMembers}]`.
 * `java.codeGeneration.toString.codeStyle`: The code style for generating the toString method. Defaults to `STRING_CONCATENATION`.
 * `java.codeGeneration.toString.skipNullValues`: Skip null values when generating the toString method. Defaults to `false`.
