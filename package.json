@@ -2122,7 +2122,7 @@
     "build": "node scripts/index.mjs build-or-download",
     "fast-build-server": "node scripts/index.mjs dev-server",
     "watch-server": "node scripts/index.mjs watch-server",
-    "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
+    "eslint": "eslint .",
     "repo:check": "node scripts/index.mjs repo-check",
     "repo:fix": "node scripts/index.mjs repo-fix",
     "clean-jre": "node scripts/index.mjs clean-jre",
@@ -2135,6 +2135,7 @@
     "prepare-pre-release": "node scripts/index.mjs prepare-pre-release"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/fs-extra": "^8.0.0",
     "@types/glob": "5.0.30",
     "@types/lodash.findindex": "^4.6.6",
@@ -2148,12 +2149,11 @@
     "@types/vscode-webview": "^1.57.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@typescript-eslint/parser": "^5.18.0",
     "@vscode/test-electron": "^2.5.2",
     "css-loader": "^6.7.3",
-    "eslint": "^8.13.0",
-    "eslint-webpack-plugin": "^3.2.0",
+    "eslint": "^10.7.0",
+    "eslint-webpack-plugin": "^6.0.0",
+    "globals": "^17.7.0",
     "lodash.findindex": "^4.6.0",
     "mini-css-extract-plugin": "^2.9.4",
     "minimist": ">=1.2.6",
@@ -2162,8 +2162,9 @@
     "tar": "^7.5.11",
     "ts-loader": "^9.4.2",
     "typescript": "^4.6.4",
+    "typescript-eslint": "^8.65.0",
     "webpack": "^5.105.0",
-    "webpack-cli": "^4.6.0"
+    "webpack-cli": "^7.2.1"
   },
   "dependencies": {
     "@redhat-developer/vscode-extension-proposals": "0.0.23",
