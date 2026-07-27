@@ -42,7 +42,7 @@ const SHARED_ARCHIVE_FILE_LOC= '-XX:SharedArchiveFile=';
 export function prepareExecutable(requirements: RequirementsData, workspacePath, context: ExtensionContext, isSyntaxServer: boolean): Executable {
 	const executable: Executable = Object.create(null);
 	const options: ExecutableOptions = Object.create(null);
-	options.env = Object.assign({ syntaxserver: isSyntaxServer }, process.env, getVSCodeVariablesMap());
+	options.env = Object.assign({ syntaxserver: isSyntaxServer }, process.env, getVSCodeVariablesMap(), getUnicodeLocaleEnv());
 	if (os.platform() === 'win32') {
 		const vmargs = getJavaConfiguration().get('jdt.ls.vmargs', '');
 		const watchParentProcess = '-DwatchParentProcess=false';
@@ -73,6 +73,61 @@ export function prepareExecutable(requirements: RequirementsData, workspacePath,
 	logger.info(`Starting Java server with: ${executable.command} ${executable.args?.join(' ')}`);
 	return executable;
 }
+
+/**
+ * Environment variables that select the JVM's file name charset on POSIX systems, in the precedence
+ * order POSIX defines for the `LC_CTYPE` category. The JVM reads them through `setlocale(LC_ALL, "")`
+ * followed by `ParseLocale(LC_CTYPE, ...)` in `unix/native/libjava/java_props_md.c`.
+ */
+export const LOCALE_ENV_VARS: string[] = ['LC_ALL', 'LC_CTYPE', 'LANG'];
+
+/** Locales under which the JVM falls back to ASCII and cannot represent non-ASCII file names. */
+const ASCII_LOCALES: string[] = ['C', 'POSIX', 'C.ASCII'];
+
+export const UTF8_LOCALE: string = 'C.UTF-8';
+
+/**
+ * On POSIX systems the JVM decodes and encodes file names with `sun.jnu.encoding`, which it derives
+ * from the process locale at startup. `-Dsun.jnu.encoding=...` is silently ignored, so neither
+ * `java.jdt.ls.vmargs` nor `-Dfile.encoding` can influence it.
+ *
+ * Containers and services routinely start with an unset or `C`/`POSIX` locale, which makes the JVM
+ * fall back to ASCII. Every workspace file whose name contains non-ASCII characters is then decoded
+ * into U+FFFD by `JNU_NewStringPlatform` and can no longer be encoded back by `UnixPath.encode`,
+ * which throws `InvalidPathException: Malformed input or input contains unmappable characters` and
+ * aborts the whole workspace initialization.
+ * See https://github.com/microsoft/vscode-java-dependency/issues/1041
+ *
+ * Only the unset/`C`/`POSIX` cases are overridden, so a deliberately configured non-UTF-8 locale
+ * (e.g. `zh_CN.GBK`, matching file names actually stored in that encoding) is left untouched. When
+ * the locale has to be corrected, only the `LC_CTYPE` category is set, so message/number/time
+ * formatting keeps following the environment.
+ */
+export function getUnicodeLocaleEnv(): { [key: string]: string } {
+	// Windows is unaffected and does not read these variables: the JVM derives sun.jnu.encoding from
+	// GetACP() there, and file names never go through a charset because WinNTFileSystem hands the
+	// UTF-16 WIN32_FIND_DATAW.cFileName straight to NewString and WindowsPath copies the Java String
+	// into the native buffer verbatim. Injecting POSIX locale variables would only leak into the
+	// child processes JDT LS spawns.
+	if (os.platform() === 'win32') {
+		return {};
+	}
+	const locale = LOCALE_ENV_VARS.map(name => process.env[name]).find(value => !!value);
+	if (locale && !ASCII_LOCALES.includes(locale)) {
+		return {};
+	}
+	logger.info(`Locale '${locale ?? '<unset>'}' cannot represent non-ASCII file names, starting JDT LS with ${UTF8_LOCALE}`);
+	const env: { [key: string]: string } = {};
+	if (process.env.LC_ALL) {
+		// LC_ALL overrides every other category, so it has to be replaced when it is the one selecting ASCII.
+		env.LC_ALL = UTF8_LOCALE;
+	} else {
+		// LC_CTYPE is the only category that selects the charset, so leave the others alone.
+		env.LC_CTYPE = UTF8_LOCALE;
+	}
+	return env;
+}
+
 export function awaitServerConnection(port): Thenable<StreamInfo> {
 	const addr = parseInt(port);
 	return new Promise((res, rej) => {
