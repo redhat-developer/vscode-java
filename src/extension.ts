@@ -701,7 +701,7 @@ async function postExtensionStartInit(
 	});
 
 	context.subscriptions.push(commands.registerCommand(Commands.CHANGE_JAVA_SEARCH_SCOPE, async () => {
-		const selection = await window.showQuickPick(["all", "main"], {
+		const selection = await window.showQuickPick(["all", "main", "projectOnly"], {
 			canPickMany: false,
 			placeHolder: `Current: ${workspace.getConfiguration().get("java.search.scope")}`,
 		});
