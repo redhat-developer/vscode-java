@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-underscore-dangle */
-
 import fs from 'fs-extra';
 import path from 'path';
 import { execSync } from 'child_process';
