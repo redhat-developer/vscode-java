@@ -14,7 +14,6 @@ export class TracingLanguageClient extends LanguageClient {
 
 	constructor(id: string, name: string, serverOptions: ServerOptions, clientOptions: LanguageClientOptions, forceDebug?: boolean) {
 		super(id, name, serverOptions, clientOptions, forceDebug);
-		this.registerProposedFeatures();
 		this.isSyntaxServer = name?.includes("Syntax Server");
 	}
 
