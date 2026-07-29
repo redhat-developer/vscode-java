@@ -424,7 +424,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				return true;
 			}
 		},
-		outputChannel: requireStandardServer ? window.createOutputChannel(extensionName, { log: true }) : undefined,
+		outputChannel: requireStandardServer ? new OutputInfoCollector(extensionName) : undefined,
 		outputChannelName: extensionName
 	};
 
