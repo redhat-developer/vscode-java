@@ -1,11 +1,28 @@
-import { OutputChannel, window, ViewColumn } from "vscode";
+import { Event, LogLevel, LogOutputChannel, ViewColumn, window } from "vscode";
 import { logger } from "./log";
 
-export class OutputInfoCollector implements OutputChannel {
-	private channel: OutputChannel = null;
+export class OutputInfoCollector implements LogOutputChannel {
+	private channel: LogOutputChannel = null;
 
 	constructor(public name: string) {
-		this.channel = window.createOutputChannel(this.name);
+		this.channel = window.createOutputChannel(this.name, { log:true });
+	}
+	get logLevel(): LogLevel { return this.channel.logLevel; }
+	get onDidChangeLogLevel(): Event<LogLevel> { return this.channel.onDidChangeLogLevel; };
+	trace(message: string, ...args: any[]): void {
+		this.channel.trace(message, args);
+	}
+	debug(message: string, ...args: any[]): void {
+		this.channel.debug(message, args);
+	}
+	info(message: string, ...args: any[]): void {
+		this.channel.info(message, args);
+	}
+	warn(message: string, ...args: any[]): void {
+		this.channel.warn(message, args);
+	}
+	error(error: string | Error, ...args: any[]): void {
+		this.channel.error(error, args);
 	}
 
 	append(value: string): void {
