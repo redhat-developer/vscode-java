@@ -1644,11 +1644,13 @@
             "type": "string",
             "enum": [
               "all",
-              "main"
+              "main",
+              "projectOnly"
             ],
             "enumDescriptions": [
               "Search on all classpath entries including reference libraries and projects.",
-              "All classpath entries excluding test classpath entries."
+              "All classpath entries excluding test classpath entries.",
+              "Only search sources, tests, and referenced projects, excluding the JDK and referenced libraries from the search."
             ],
             "default": "all",
             "markdownDescription": "Specifies the scope which must be used for search operation like \n - Find Reference\n - Call Hierarchy\n - Workspace Symbols",
