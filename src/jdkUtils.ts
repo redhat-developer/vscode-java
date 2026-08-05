@@ -60,7 +60,7 @@ export async function listJdks(force?: boolean): Promise<IJavaRuntime[]> {
  * 4. Others
  */
 export function sortJdksBySource(jdks: IJavaRuntime[]) {
-	const rankedJdks = jdks as Array<IJavaRuntime & { rank: number }>;
+	const rankedJdks = jdks as Array<IJavaRuntime & { rank?: number }>;
 	const env: string[] = ["JDK_HOME", "JAVA_HOME", "PATH"];
 	const jdkManagers: string[] = ["SDKMAN", "jEnv", "jabba", "asdf"];
 	for (const jdk of rankedJdks) {
@@ -72,7 +72,7 @@ export function sortJdksBySource(jdks: IJavaRuntime[]) {
 			}
 		}
 
-		if (jdk.rank) {
+		if (typeof jdk.rank === "number") {
 			continue;
 		}
 
