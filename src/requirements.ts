@@ -2,13 +2,13 @@
 
 import * as expandHomeDir from 'expand-home-dir';
 import * as fse from 'fs-extra';
-import { getRuntime, getSources, JAVAC_FILENAME, JAVA_FILENAME } from 'jdk-utils';
+import { getRuntime, getSources, JAVA_FILENAME, JAVAC_FILENAME } from 'jdk-utils';
 import * as path from 'path';
 import { env, ExtensionContext, Uri, window, workspace } from 'vscode';
 import { Commands } from './commands';
+import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 import { logger } from './log';
 import { checkJavaPreferences } from './settings';
-import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
 import { getJavaConfiguration } from './utils';
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -41,7 +41,7 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         const preferenceName = javaPreferences.preference;
         let javaHome = javaPreferences.javaHome;
         let javaVersion: number = 0;
-        const REQUIRED_JDK_VERSION = ('on' === getJavaConfiguration().get('jdt.ls.javac.enabled'))?25:21;
+        const REQUIRED_JDK_VERSION = ('on' === getJavaConfiguration().get('jdt.ls.javac.enabled')) ? 26 : 21;
         if (toolingJreVersion < REQUIRED_JDK_VERSION) { // embedded tooling JRE doesn't meet requirement
             toolingJre = null;
             toolingJreVersion = 0;
