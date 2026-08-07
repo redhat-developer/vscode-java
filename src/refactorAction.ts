@@ -6,7 +6,7 @@ import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri,
 import { FormattingOptions, WorkspaceEdit, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest, GetChangeSignatureInfoRequest, ChangeSignatureInfo } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest, GetChangeSignatureInfoRequest, ChangeSignatureInfo, MoveParams } from './protocol';
 import { ChangeSignaturePanel } from './refactoring/changeSignaturePanel';
 import { getExtractInterfaceArguments, revealExtractedInterface } from './refactoring/extractInterface';
 
@@ -252,6 +252,32 @@ async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: R
     }
 }
 
+async function requestMoveWithConfirmation(languageClient: LanguageClient, moveParams: MoveParams): Promise<RefactorWorkspaceEdit | undefined> {
+    let refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, moveParams);
+    if (!refactorEdit?.canContinue || !refactorEdit.confirmationToken) {
+        await applyRefactorEdit(languageClient, refactorEdit);
+        return refactorEdit;
+    }
+
+    const continueAction = 'Continue';
+    const detail = 'Review the details below before continuing:\n\n' + refactorEdit.errorMessage;
+    const selection = await window.showWarningMessage(
+        'This refactoring may change program behavior. Continue anyway?',
+        { modal: true, detail },
+        continueAction,
+    );
+    if (selection !== continueAction) {
+        return undefined;
+    }
+
+    refactorEdit = await languageClient.sendRequest(MoveRequest.type, {
+        ...moveParams,
+        confirmationToken: refactorEdit.confirmationToken,
+    });
+    await applyRefactorEdit(languageClient, refactorEdit);
+    return refactorEdit;
+}
+
 async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
     if (!hasCommonParent(fileUris)) {
         window.showErrorMessage("Moving files from different directories are not supported. Please make sure they are from the same directory.");
@@ -417,13 +443,12 @@ async function moveInstanceMethod(languageClient: LanguageClient, params: CodeAc
         return;
     }
 
-    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+    await requestMoveWithConfirmation(languageClient, {
         moveKind: 'moveInstanceMethod',
         sourceUris: [ params.textDocument.uri ],
         params,
         destination: selected.destination,
     });
-    await applyRefactorEdit(languageClient, refactorEdit);
 }
 
 async function moveStaticMember(languageClient: LanguageClient, params: CodeActionParams, commandInfo: any) {
