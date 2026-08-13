@@ -254,7 +254,7 @@ async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: R
 
 async function requestMoveWithConfirmation(languageClient: LanguageClient, moveParams: MoveParams): Promise<RefactorWorkspaceEdit | undefined> {
     let refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, moveParams);
-    if (!refactorEdit?.canContinue || !refactorEdit.confirmationToken) {
+    if (!refactorEdit?.confirmationToken) {
         await applyRefactorEdit(languageClient, refactorEdit);
         return refactorEdit;
     }

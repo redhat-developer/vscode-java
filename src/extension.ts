@@ -255,6 +255,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 				advancedExtractRefactoringSupport: true,
 				inferSelectionSupport: ["extractMethod", "extractVariable", "extractField"],
 				moveRefactoringSupport: true,
+				moveRefactoringConfirmationSupport: true,
 				clientHoverProvider: true,
 				clientDocumentSymbolProvider: true,
 				gradleChecksumWrapperPromptSupport: true,

@@ -353,7 +353,6 @@ export interface RefactorWorkspaceEdit {
     edit?: WorkspaceEdit;
     command?: Command;
     errorMessage?: string;
-    canContinue?: boolean;
     confirmationToken?: string;
 }
 
