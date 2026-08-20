@@ -1,6 +1,6 @@
 'use strict';
 
-import * as expandHomeDir from 'expand-home-dir';
+import expandHomeDir from 'expand-home-dir';
 import * as fse from 'fs-extra';
 import { getRuntime, getSources, JAVAC_FILENAME, JAVA_FILENAME } from 'jdk-utils';
 import * as path from 'path';

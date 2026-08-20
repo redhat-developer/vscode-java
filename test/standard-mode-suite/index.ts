@@ -11,7 +11,7 @@
 // a possible error to the callback or null if none.
 
 import * as path from 'path';
-import * as Mocha from 'mocha';
+import Mocha from 'mocha';
 import { glob } from 'glob';
 
 export async function run(testsRoot: string): Promise<void> {
