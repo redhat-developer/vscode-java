@@ -1,14 +1,23 @@
 {
 	"compilerOptions": {
-		"target": "es6",
-		"moduleResolution": "node",
+
+		"target": "es2020",
+		"module": "nodenext",
+		"moduleResolution": "bundler",
+
 		"outDir": "out",
 		"sourceMap": true,
 		"skipLibCheck": true,
+		"strictFunctionTypes": false,
+		"strictNullChecks": false,
+		"noImplicitAny": false,
+		"noImplicitThis": false,
+		"useUnknownInCatchVariables": false,
 		"plugins": [
 			{
 				"name": "eslint"
 			}
 		],
-	}
+		"types": ["node", "vscode", "mocha"]
+	},
 }

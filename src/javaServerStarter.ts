@@ -128,7 +128,7 @@ export function getUnicodeLocaleEnv(): { [key: string]: string } {
 	return env;
 }
 
-export function awaitServerConnection(port): Thenable<StreamInfo> {
+export function awaitServerConnection(port): Promise<StreamInfo> {
 	const addr = parseInt(port);
 	return new Promise((res, rej) => {
 		const server = net.createServer(stream => {
