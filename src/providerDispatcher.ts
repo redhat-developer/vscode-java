@@ -25,16 +25,13 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 	const symbolProvider = createDocumentSymbolProvider();
 	context.subscriptions.push(languages.registerDocumentSymbolProvider('java', symbolProvider));
 
-	const jdtProvider = createJDTContentProvider(options);
-	context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', jdtProvider));
-
 	const classProvider = createClassContentProvider(options);
 	context.subscriptions.push(workspace.registerTextDocumentContentProvider('class', classProvider));
 
 	overwriteWorkspaceSymbolProvider(context);
 
 	return {
-		handles: [hoverProvider, symbolProvider, jdtProvider, classProvider]
+		handles: [hoverProvider, symbolProvider, classProvider]
 	};
 }
 

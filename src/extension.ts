@@ -284,13 +284,6 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 					});
 				}
 			},
-			resolveCompletionItem: async (item, token, next): Promise<CompletionItem> => {
-				const completionItem = await next(item, token);
-				if (completionItem?.documentation instanceof MarkdownString) {
-					completionItem.documentation = fixJdtLinksInDocumentation(completionItem.documentation);
-				}
-				return completionItem;
-			},
 			// https://github.com/redhat-developer/vscode-java/issues/2130
 			// include all diagnostics for the current line in the CodeActionContext params for the performance reason
 			provideCodeActions: async (document, range, context, token, next) => {
