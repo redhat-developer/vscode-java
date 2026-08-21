@@ -1436,59 +1436,64 @@
 					"include": "#storage-modifiers"
 				},
 				{
-					"include": "#generics"
-				},
-				{
 					"include": "#comments"
 				},
 				{
-					"begin": "(record)\\s+([\\w$]+)(<[\\w$]+>)?(\\()",
+					"begin": "(record)\\s+([\\w$]+)",
 					"beginCaptures": {
 						"1": {
 							"name": "storage.modifier.java"
 						},
 						"2": {
 							"name": "entity.name.type.record.java"
-						},
-						"3": {
-							"patterns": [
-								{
-									"include": "#generics"
-								}
-							]
-						},
-						"4": {
-							"name": "punctuation.definition.parameters.begin.bracket.round.java"
 						}
 					},
-					"end": "\\)",
-					"endCaptures": {
-						"0": {
-							"name": "punctuation.definition.parameters.end.bracket.round.java"
-						}
-					},
-					"name": "meta.record.identifier.java",
+					"end": "(?=\\{)",
+					"name": "meta.record.header.java",
 					"patterns": [
 						{
-							"include": "#code"
-						}
-					]
-				},
-				{
-					"begin": "(implements)\\s",
-					"beginCaptures": {
-						"1": {
-							"name": "storage.modifier.implements.java"
-						}
-					},
-					"end": "(?=\\s*\\{)",
-					"name": "meta.definition.class.implemented.interfaces.java",
-					"patterns": [
-						{
-							"include": "#object-types-inherited"
+							"include": "#generics"
 						},
 						{
 							"include": "#comments"
+						},
+						{
+							"begin": "\\(",
+							"beginCaptures": {
+								"0": {
+									"name": "punctuation.definition.parameters.begin.bracket.round.java"
+								}
+							},
+							"end": "\\)",
+							"endCaptures": {
+								"0": {
+									"name": "punctuation.definition.parameters.end.bracket.round.java"
+								}
+							},
+							"name": "meta.record.parameters.java",
+							"patterns": [
+								{
+									"include": "#code"
+								}
+							]
+						},
+						{
+							"begin": "(implements)\\s",
+							"beginCaptures": {
+								"1": {
+									"name": "storage.modifier.implements.java"
+								}
+							},
+							"end": "(?=\\s*\\{)",
+							"name": "meta.definition.class.implemented.interfaces.java",
+							"patterns": [
+								{
+									"include": "#object-types-inherited"
+								},
+								{
+									"include": "#comments"
+								}
+							]
 						}
 					]
 				},
