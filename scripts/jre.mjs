@@ -7,7 +7,7 @@ import { downloadFile, getScriptDir, extractTarGz, handleError, setupMainExecuti
 
 const dirname = getScriptDir();
 
-const LATEST_JRE = 21;
+const LATEST_JRE = 25;
 
 const platformMapping = {
     "linux-arm64": "linux-aarch64",
