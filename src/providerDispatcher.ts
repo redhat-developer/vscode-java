@@ -1,6 +1,6 @@
 'use strict';
 
-import { CancellationToken, commands, DocumentSymbol, DocumentSymbolProvider, Event, ExtensionContext, Hover, HoverProvider, languages, MarkdownString, MarkedString, Position, Range, SymbolInformation, SymbolKind, TextDocument, TextDocumentContentProvider, Uri, workspace, WorkspaceSymbolProvider } from "vscode";
+import { CancellationToken, commands, DocumentSymbol, DocumentSymbolProvider, Event, ExtensionContext, Hover, HoverProvider, languages, MarkdownString, MarkedString, Position, Range, SymbolInformation, SymbolKind, TextDocument, TextDocumentContentProvider, Uri, workspace, WorkspaceSymbolProvider, Disposable, FileStat, FileSystemError, FileSystemProvider, FileType } from "vscode";
 import { DocumentSymbol as clientDocumentSymbol, DocumentSymbolRequest, HoverRequest, SymbolInformation as clientSymbolInformation, WorkspaceSymbolRequest } from "vscode-languageclient";
 import { LanguageClient } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
@@ -25,8 +25,8 @@ export function registerClientProviders(context: ExtensionContext, options: Prov
 	const symbolProvider = createDocumentSymbolProvider();
 	context.subscriptions.push(languages.registerDocumentSymbolProvider('java', symbolProvider));
 
-	const jdtProvider = createJDTContentProvider(options);
-	context.subscriptions.push(workspace.registerTextDocumentContentProvider('jdt', jdtProvider));
+	const jdtProvider = createJDTFileSystemProvider();
+	context.subscriptions.push(workspace.registerFileSystemProvider('jdt', jdtProvider, { isCaseSensitive: true, isReadonly: true }));
 
 	const classProvider = createClassContentProvider(options);
 	context.subscriptions.push(workspace.registerTextDocumentContentProvider('class', classProvider));
@@ -67,20 +67,31 @@ export class ClientHoverProvider implements HoverProvider {
 	}
 }
 
-function createJDTContentProvider(options: ProviderOptions): TextDocumentContentProvider {
-	return <TextDocumentContentProvider>{
-		onDidChange: options.contentProviderEvent,
-		provideTextDocumentContent: async (uri: Uri, token: CancellationToken): Promise<string> => {
-			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+async function getJDTContent(uri: Uri): Promise<string> {
+	const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+	if (!languageClient) {
+		return '';
+	}
+	return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }).then((v: string): string => v || '');
+}
 
-			if (!languageClient) {
-				return '';
-			}
-
-			return languageClient.sendRequest(ClassFileContentsRequest.type, { uri: uri.toString() }, token).then((v: string): string => {
-				return v || '';
-			});
-		}
+function createJDTFileSystemProvider(): FileSystemProvider {
+	return {
+		onDidChangeFile: () => new Disposable(() => { }),
+		watch: () => new Disposable(() => { }),
+		stat: async (uri: Uri): Promise<FileStat> => {
+			const content = await getJDTContent(uri);
+			return { type: FileType.File, ctime: 0, mtime: 0, size: Buffer.byteLength(content, 'utf8') };
+		},
+		readDirectory: () => { throw FileSystemError.FileNotADirectory(); },
+		createDirectory: () => { throw FileSystemError.NoPermissions(); },
+		readFile: async (uri: Uri): Promise<Uint8Array> => {
+			const content = await getJDTContent(uri);
+			return Buffer.from(content, 'utf8');
+		},
+		writeFile: () => { throw FileSystemError.NoPermissions(); },
+		delete: () => { throw FileSystemError.NoPermissions(); },
+		rename: () => { throw FileSystemError.NoPermissions(); },
 	};
 }
 
