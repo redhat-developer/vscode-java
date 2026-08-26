@@ -1338,6 +1338,15 @@
             "description": "Generate Javadoc comments in Markdown style (requires source compliance >= 23).",
             "default": false
           },
+          "java.classpath.variables": {
+            "type": "array",
+            "description": "Set of classpath variable strings of the form: \"name=path\" that are used to resolve classpath entries.",
+            "items": {
+              "type":"string",
+              "pattern": "[a-zA-Z_$][a-zA-Z0-9_$]*=.*"
+            },
+            "scope": "window"
+          },
           "java.codeGeneration.toString.template": {
             "type": "string",
             "description": "The template for generating the toString method.",
