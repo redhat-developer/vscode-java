@@ -124,6 +124,7 @@ The following settings are supported:
 * `java.home` : **Deprecated, please use 'java.jdt.ls.java.home' instead.** Absolute path to JDK home folder used to launch the Java Language Server. Requires VS Code restart.
 * `java.jdt.ls.lombokSupport.enabled`: Whether to enable lombok support. Defaults to `true`.
 * `java.jdt.ls.vmargs` : Extra VM arguments used to launch the Java Language Server. Requires VS Code restart.
+* `java.jdt.ls.mavenProjectCacheSize`: Specifies the size of the in-memory Maven project cache to use. Increasing the project cache size will help load multi-module projects and monorepos faster, but will result in a significant increase in memory usage.
 * `java.errors.incompleteClasspath.severity` : Specifies the severity of the message when the classpath is incomplete for a Java file. Supported values are `ignore`, `info`, `warning`, `error`.
 * `java.trace.server` : Traces the communication between VS Code and the Java language server.
 * `java.configuration.updateBuildConfiguration` : Specifies how modifications on build files update the Java classpath/configuration. Supported values are `disabled` (nothing happens), `interactive` (asks about updating on every modification), `automatic` (updating is automatically triggered).

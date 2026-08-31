@@ -257,6 +257,12 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 	} else {
 		vmargs = '';
 	}
+	if (vmargs.indexOf('-Dm2e.project.cache.size') < 0) {
+		const mavenProjectCacheSize = workspace.getConfiguration().get('java.jdt.ls.mavenProjectCacheSize');
+		if (mavenProjectCacheSize !== undefined && Number(mavenProjectCacheSize) > 0) {
+			params.push(`-Dm2e.project.cache.size=${mavenProjectCacheSize}`);
+		}
+	}
 	if (vmargs.indexOf('-DDetectVMInstallationsJob.disabled=') < 0) {
 		params.push('-DDetectVMInstallationsJob.disabled=true');
 	}

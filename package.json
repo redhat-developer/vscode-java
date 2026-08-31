@@ -341,6 +341,16 @@
             "scope": "machine-overridable",
             "order": 20
           },
+          "java.jdt.ls.mavenProjectCacheSize": {
+            "type": [
+              "integer"
+            ],
+            "minimum": 1,
+            "default": 50,
+            "description": "Specifies the size of the in-memory Maven project cache to use. Increasing the project cache size will help load multi-module projects and monorepos faster, but will result in a significant increase in memory usage.",
+            "scope": "machine-overridable",
+            "order": 20
+          },
           "java.server.launchMode": {
             "type": "string",
             "enum": [
