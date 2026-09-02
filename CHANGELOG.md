@@ -1,5 +1,46 @@
 # Change Log
 
+## 1.56.0 (September 3, 2026)
+ * enhancement - Add a setting to specify the Maven project cache size. See [#4493](https://github.com/redhat-developer/vscode-java/pull/4493).
+ * enhancement - Add setting to set Eclipse classpath variables (i.e. `kind="var"`). See [#4490](https://github.com/redhat-developer/vscode-java/pull/4490).
+ * enhancement - Add "projectOnly" scope to `java.search.scope` setting to exclude JDK and library references. See [#4477](https://github.com/redhat-developer/vscode-java/pull/4477).
+ * enhancement - Support generating Javadoc comments as Markdown. See [#4465](https://github.com/redhat-developer/vscode-java/pull/4465).
+ * enhancement - Auto-insert space after keyword autocompletion (e.g., public, static, void). See [#4401](https://github.com/redhat-developer/vscode-java/issues/4401).
+ * enhancement - Hide certain context menu items when right clicking folders that aren't Java projects. See [#4167](https://github.com/redhat-developer/vscode-java/issues/4167).
+ * enhancement - Add a CodeLens for fields that shows references to the field. See [#3881](https://github.com/redhat-developer/vscode-java/issues/3881).
+ * enhancement - Add setting to make new classes package-private instead of public. See [#3870](https://github.com/redhat-developer/vscode-java/issues/3870).
+ * enhancement - Add settings to customize the TODO comment in generated stubs. See [#2963](https://github.com/redhat-developer/vscode-java/issues/2963).
+ * enhancement - Add a confirmation dialog for when a non-fatal error is encountered during the move instance method refactoring. See [#4460](https://github.com/redhat-developer/vscode-java/issues/4460).
+ * enhancement - "Create record" quick fix now infers record components from constructor call arguments. See [JLS#3856](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3856).
+ * enhancement - Add a quickfix to add or update field access modifiers. See [JLS#3863](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3863).
+ * enhancement - Add snippet completion to declare an enum type. See [JLS#3871](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3871).
+ * enhancement - Replace the custom `java/classFileContents` request with the standard `workspace/textDocumentContent` request from LSP 3.18. See [JLS#3852](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3852).
+ * enhancement - Add quickfix to rename a variable declared in a lambda that's name clashes with a variable declared outside the lambda. See [JLS#3824](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3824).
+ * performance - Batch DigestStore serialization during Maven/Gradle project import. See [JLS#3839](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3839).
+ * bug fix - Java Projects view creates duplicate project entries when multiple projects from different locations are opened in one workspace. See [#4478](https://github.com/redhat-developer/vscode-java/issues/4478).
+ * bug fix - Start JDT LS with a UTF-8 locale when the environment selects ASCII. See [#4473](https://github.com/redhat-developer/vscode-java/pull/4473).
+ * bug fix - The "Go to super implementation" link when hovering methods isn't a clickable link. See [#4438](https://github.com/redhat-developer/vscode-java/issues/4438).
+ * bug fix - Fall back to standard IO communication with the language server if socket creation fails. See [#4433](https://github.com/redhat-developer/vscode-java/issues/4433).
+ * bug fix - Address visual bugs in the "Change Method Signature" view by migrating off the deprecated vscode UI component library. See [#4417](https://github.com/redhat-developer/vscode-java/issues/4417).
+ * bug fix - Fix syntax highlighting for generic records. See [#4412](https://github.com/redhat-developer/vscode-java/pull/4412).
+ * bug fix - Create local variable quick fix is broken for types with multiple generic arguments. See [#3874](https://github.com/redhat-developer/vscode-java/issues/3874).
+ * bug fix - Fix race condition when executing Java workspace commands during standard server startup. See [#2481](https://github.com/redhat-developer/vscode-java/issues/2481).
+ * bug fix - Do not offer "Make Static" action for default interface methods. See [JLS#3853](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3853).
+ * bug fix - Override `JLSFile.childInfos()` to include redirected metadata files. See [JLS#3844](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3844).
+ * bug fix - Suppress 'Assign parameter to field' proposal for record constructors. See [JLS#3842](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3842).
+ * bug fix - Fix Scala Gradle classpath pollution. See [JLS#3815](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3815).
+ * bug fix - Ensure that `maven.multiModuleProjectDirectory` system property is set, which fixes Maven projects that use it. See [JLS#3760](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3760).
+ * bug fix - Fix how the `@inheritDoc` tag is rendered in Javadoc hovers based on Markdown Javadoc. See [JLS#3696](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3696).
+ * bug fix - Fix how the `@value` tag is rendered in Javadoc hovers based on Markdown Javadoc. See [JLS#3695](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3695).
+ * bug fix - Fix how method and constructor references are rendered in Javadoc hovers based on Markdown Javadoc. See [JLS#3690](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3690).
+ * bug fix - Fix how the `@code` tag is rendered in Javadoc hovers based on Markdown Javadoc. See [JLS#3672](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3672).
+ * bug fix - Properly support dynamic registration of the type hierarchy capability. See [JLS#3769](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3769).
+ * build - Refactor `activate()`. See [#4434](https://github.com/redhat-developer/vscode-java/pull/4434).
+ * build - Upgrade to TypeScript 6. See [#4486](https://github.com/redhat-developer/vscode-java/issues/4486).
+ * build - Update language client to 10.1.0. See [#4476](https://github.com/redhat-developer/vscode-java/pull/4476).
+ * build - Update to eslint 10. See [#4469](https://github.com/redhat-developer/vscode-java/issues/4469).
+ * build - Fix conflict detection. See [#4446](https://github.com/redhat-developer/vscode-java/pull/4446).
+
 ## 1.55.0 (June 24, 2026)
  * enhancement - Use standard `decorator` instead of `annotation` token type for highlighting Java annotation. See [#4421](https://github.com/redhat-developer/vscode-java/pull/4421).
  * enhancement - Add right click menu item to copy the fully qualified name of the identifier under the cursor. See [#374](https://github.com/redhat-developer/vscode-java/issues/374).
