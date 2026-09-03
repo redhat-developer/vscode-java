@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.56.0",
+  "version": "1.57.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -1352,7 +1352,7 @@
             "type": "array",
             "description": "Set of classpath variable strings of the form: \"name=path\" that are used to resolve classpath entries.",
             "items": {
-              "type":"string",
+              "type": "string",
               "pattern": "[a-zA-Z_$][a-zA-Z0-9_$]*=.*"
             },
             "scope": "window"
