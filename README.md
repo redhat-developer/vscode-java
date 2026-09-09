@@ -78,20 +78,18 @@ If you need to compile your projects against a different JDK version, it's recom
     "path": "/path/to/jdk-8",
   },
   {
-    "name": "JavaSE-11",
-    "path": "/path/to/jdk-11",
+    "name": "JavaSE-17",
+    "path": "/path/to/jdk-17",
   },
   {
     "name": "JavaSE-25",
     "path": "/path/to/jdk-25",
     "default": true
   },
-  ,
   {
     "name": "JavaSE-26",
-    "path": "/path/to/jdk-26",
-    "default": true
-  },
+    "path": "/path/to/jdk-26"
+  }
 ]
 ```
 The default runtime will be used when you open standalone Java files.
