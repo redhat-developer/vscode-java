@@ -13,7 +13,6 @@ import * as stringInterpolate from 'fmtr';
 import { apiManager } from './apiManager';
 
 let serverReady: boolean = false;
-type LanguageClientProvider = LanguageClient | (() => LanguageClient);
 
 const BRACE_POSITION_KEY = "org.eclipse.jdt.core.formatter.brace_position_for_type_declaration";
 const END_OF_LINE = "end_of_line";
@@ -25,7 +24,7 @@ export function setServerStatus(ready: boolean) {
     serverReady = ready;
 }
 
-export function registerFileEventHandlers(client: LanguageClientProvider, context: ExtensionContext) {
+export function registerFileEventHandlers(client: LanguageClient, context: ExtensionContext) {
     if (workspace.onDidCreateFiles) {// Theia doesn't support workspace.onDidCreateFiles yet
         context.subscriptions.push(workspace.onDidCreateFiles(handleNewJavaFiles));
     }
@@ -191,11 +190,7 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
     }, 100);
 }
 
-function getLanguageClient(client: LanguageClientProvider): LanguageClient {
-    return typeof client === 'function' ? client() : client;
-}
-
-function getWillRenameHandler(client: LanguageClientProvider) {
+function getWillRenameHandler(client: LanguageClient) {
     return function handleWillRenameFiles(e: FileWillRenameEvent): void {
         if (!serverReady) {
             return;
@@ -220,11 +215,10 @@ function getWillRenameHandler(client: LanguageClientProvider) {
                     return;
                 }
 
-                const languageClient = getLanguageClient(client);
-                const edit = await languageClient.sendRequest(WillRenameFiles.type, {
+                const edit = await client.sendRequest(WillRenameFiles.type, {
                     files: javaRenameEvents
                 });
-                resolve(await languageClient.protocol2CodeConverter.asWorkspaceEdit(edit));
+                resolve(await client.protocol2CodeConverter.asWorkspaceEdit(edit));
             } catch (ex) {
                 reject(ex);
             }
