@@ -24,7 +24,7 @@ Features
 =========
 ![ screencast ](https://raw.githubusercontent.com/redhat-developer/vscode-java/main/images/vscode-java.0.0.1.gif)
 
-* Supports code from Java 1.8 to Java 26
+* Supports code from Java 1.8 to Java 27
 * Maven pom.xml project support
 * Gradle project support (with experimental Android project import support)
 * Standalone Java files support
@@ -86,10 +86,14 @@ If you need to compile your projects against a different JDK version, it's recom
     "path": "/path/to/jdk-25",
     "default": true
   },
-  ,
   {
     "name": "JavaSE-26",
     "path": "/path/to/jdk-26",
+    "default": true
+  },
+  {
+    "name": "JavaSE-27",
+    "path": "/path/to/jdk-27",
     "default": true
   },
 ]
