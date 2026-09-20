@@ -18,20 +18,23 @@ export interface ProviderHandle {
 	handles: any[];
 }
 
-export function registerClientProviders(context: ExtensionContext, options: ProviderOptions): ProviderHandle {
+export function registerClassContentProvider(context: ExtensionContext, options: ProviderOptions): TextDocumentContentProvider {
+	const classProvider = createClassContentProvider(options);
+	context.subscriptions.push(workspace.registerTextDocumentContentProvider('class', classProvider));
+	return classProvider;
+}
+
+export function registerClientProviders(context: ExtensionContext): ProviderHandle {
 	const hoverProvider = new ClientHoverProvider();
 	context.subscriptions.push(languages.registerHoverProvider('java', hoverProvider));
 
 	const symbolProvider = createDocumentSymbolProvider();
 	context.subscriptions.push(languages.registerDocumentSymbolProvider('java', symbolProvider));
 
-	const classProvider = createClassContentProvider(options);
-	context.subscriptions.push(workspace.registerTextDocumentContentProvider('class', classProvider));
-
 	overwriteWorkspaceSymbolProvider(context);
 
 	return {
-		handles: [hoverProvider, symbolProvider, classProvider]
+		handles: [hoverProvider, symbolProvider]
 	};
 }
 
