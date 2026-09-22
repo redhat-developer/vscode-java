@@ -88,7 +88,11 @@ function createClassContentProvider(options: ProviderOptions): TextDocumentConte
 	return <TextDocumentContentProvider>{
 		onDidChange: options.contentProviderEvent,
 		provideTextDocumentContent: async (uri: Uri, token: CancellationToken): Promise<string> => {
-			const languageClient: LanguageClient | undefined = await getActiveLanguageClient();
+			// The provider can be invoked while editors are being restored, before the
+			// extension has finished initializing. Wait for the language client instead
+			// of failing, so the restored editor resolves once the server is up.
+			// See https://github.com/redhat-developer/vscode-java/issues/4406
+			const languageClient: LanguageClient | undefined = await waitForActiveLanguageClient(token);
 
 			if (!languageClient) {
 				return '';
@@ -103,6 +107,22 @@ function createClassContentProvider(options: ProviderOptions): TextDocumentConte
 			}
 		}
 	};
+}
+
+async function waitForActiveLanguageClient(token: CancellationToken): Promise<LanguageClient | undefined> {
+	while (!token.isCancellationRequested) {
+		try {
+			const languageClient = await getActiveLanguageClient();
+			if (languageClient) {
+				return languageClient;
+			}
+		} catch (error) {
+			// The extension has not finished initializing yet (apiManager is not
+			// initialized); keep waiting for it instead of throwing.
+		}
+		await new Promise(resolve => setTimeout(resolve, 250));
+	}
+	return undefined;
 }
 
 function createDocumentSymbolProvider(): DocumentSymbolProvider {
