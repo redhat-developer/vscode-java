@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.57.0 (September 22, 2026)
+ * enhancement - Support Java 27. See [#4507](https://github.com/redhat-developer/vscode-java/pull/4507), [JLS#3890](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3890).
+
 ## 1.56.0 (September 3, 2026)
  * enhancement - Add a setting to specify the Maven project cache size. See [#4493](https://github.com/redhat-developer/vscode-java/pull/4493).
  * enhancement - Add setting to set Eclipse classpath variables (i.e. `kind="var"`). See [#4490](https://github.com/redhat-developer/vscode-java/pull/4490).
