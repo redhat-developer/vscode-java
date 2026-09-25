@@ -15,7 +15,7 @@ Quick Start
 ============
 1. Install the Extension
 2. On the following platforms, the extension should activate without any setup : `win32-x64`, `win32-arm64`, `darwin-x64`, `darwin-arm64`, `linux-x64`, `linux-arm64`.\
-If on another platform, or using the "universal" version, you can [set](#setting-the-jdk) a _Java_ Development Kit. It must be Java 21 or above.
+If on another platform, or using the "universal" version, you can [set](#setting-the-jdk) a _Java_ Development Kit. It must be Java 25 or above.
 3. Optionally, download and install a Java Development Kit for your project (Java 1.8 or above is supported). See [Project JDKs](#project-jdks) for more details
 4. Extension is activated when you first access a Java file
     * Recognizes projects with *Maven* or *Gradle* build files in the directory hierarchy.
@@ -61,7 +61,7 @@ Now that Java extension will publish platform specific versions, it will embed a
 
 The following part is only kept for the universal version without embedded JRE.
 
->The tooling JDK will be used to launch the Language Server for Java. And by default, will also be used to compile your projects. Java 21 is the minimum required version.\
+>The tooling JDK will be used to launch the Language Server for Java. And by default, will also be used to compile your projects. Java 25 is the minimum required version.\
 \
 The path to the Java Development Kit can be specified by the `java.jdt.ls.java.home` setting in VS Code settings (workspace/user settings). If not specified, it is searched in the following order until a JDK meets current minimum requirement.
 >- the `JDK_HOME` environment variable

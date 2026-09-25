@@ -9,7 +9,6 @@ import { Commands } from './commands';
 import { logger } from './log';
 import { checkJavaPreferences } from './settings';
 import { listJdks, sortJdksBySource, sortJdksByVersion } from './jdkUtils';
-import { getJavaConfiguration } from './utils';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 export interface RequirementsData {
@@ -41,7 +40,7 @@ export async function resolveRequirements(context: ExtensionContext): Promise<Re
         const preferenceName = javaPreferences.preference;
         let javaHome = javaPreferences.javaHome;
         let javaVersion: number = 0;
-        const REQUIRED_JDK_VERSION = ('on' === getJavaConfiguration().get('jdt.ls.javac.enabled'))?25:21;
+        const REQUIRED_JDK_VERSION = 25;
         if (toolingJreVersion < REQUIRED_JDK_VERSION) { // embedded tooling JRE doesn't meet requirement
             toolingJre = null;
             toolingJreVersion = 0;

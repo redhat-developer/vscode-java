@@ -113,7 +113,7 @@ Commands:
     repo-fix                            Fix package-lock.json registry references
 
 Examples:
-  node scripts/index.js download-jre --target darwin-x64 --javaVersion 21
+  node scripts/index.js download-jre --target darwin-x64 --javaVersion 25
   node scripts/index.js build-or-download
   node scripts/index.js watch-server
             `);
