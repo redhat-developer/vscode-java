@@ -220,7 +220,7 @@ function getDirectoriesByBuildFile(inclusions: string[], exclusions: string[], f
 
 const detectJdksAtStart: boolean = getJavaConfiguration().get<boolean>('configuration.detectJdksAtStart');
 
-export async function getJavaConfig(javaHome: string) {
+export async function getJavaConfig(javaHome: string, skipAutoDetection?: boolean) {
 	const origConfig = getJavaConfiguration();
 	const javaConfig = JSON.parse(JSON.stringify(origConfig));
 	javaConfig.home = javaHome;
@@ -274,7 +274,7 @@ export async function getJavaConfig(javaHome: string) {
 	}
 
 	javaConfig.telemetry = { enabled: workspace.getConfiguration('redhat.telemetry').get('enabled', false) };
-	if (detectJdksAtStart) {
+	if (detectJdksAtStart && !skipAutoDetection) {
 		const userConfiguredJREs: any[] = javaConfig.configuration.runtimes;
 		javaConfig.configuration.runtimes = await addAutoDetectedJdks(userConfiguredJREs);
 	}
@@ -344,14 +344,8 @@ export function resolveActualCause(callstack: any): any {
 	return callstack;
 }
 
-export function getVersion(extensionPath: string): string {
-	const packagePath = path.resolve(extensionPath, "package.json");
-	const packageFile = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
-	if (packageFile) {
-		return packageFile.version;
-	}
-
-	return '0.0.0';
+export function getVersion(context: ExtensionContext): string {
+	return context.extension.packageJSON?.version || '0.0.0';
 }
 
 export function getVSCodeVariablesMap(): any {
@@ -368,19 +362,18 @@ export function getVSCodeVariablesMap(): any {
  * @param context The extension context or extension path
  * @returns true if the version is a pre-release version or running an insider editor
  */
-export function isPrereleaseOrInsiderVersion(context: ExtensionContext | string): boolean {
+export function isPrereleaseOrInsiderVersion(context: ExtensionContext): boolean {
 	return  isInsiderEditor() || isPreReleaseVersion(context);
 }
 
 /**
  * Check if the extension version is a pre-release version.
  * Pre-release versions follow the pattern: major.minor.timestamp (e.g., 1.47.1234567890)
- * @param context The extension context or extension path
+ * @param context The extension context
  * @returns true if the version is a pre-release version
  */
-export function isPreReleaseVersion(context: ExtensionContext | string): boolean {
-	const extensionPath = typeof context === 'string' ? context : context.extensionPath;
-	const extVersion = getVersion(extensionPath);
+export function isPreReleaseVersion(context: ExtensionContext): boolean {
+	const extVersion = getVersion(context);
 	return /^\d+\.\d+\.\d{10}/.test(extVersion);
 }
 

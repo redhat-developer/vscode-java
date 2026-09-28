@@ -224,7 +224,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	const requireStandardServer = (serverMode !== ServerMode.lightWeight) && (!isDebugModeByClientPort || !!process.env['JDTLS_CLIENT_PORT']);
 	let initFailureReported: boolean = false;
 
-	const javaConfig = await getJavaConfig(requirementsData.java_home);
+	const javaConfig = await getJavaConfig(requirementsData.java_home, true);
 	javaConfigDeferred.resolve(javaConfig);
 
 	// Options to control the language client
@@ -790,6 +790,12 @@ async function doStartStandardServer(context: ExtensionContext, requirements: re
 	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter);
 	standardClient.start().then(async () => {
 		standardClient.registerLanguageClientActions(context, await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins")), jdtEventEmitter);
+		// Send auto-detected JDKs after server startup to avoid blocking initialization
+		standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
+			settings: {
+				java: await getJavaConfig(requirements.java_home),
+			}
+		});
 	});
 	serverStatusBarProvider.setBusy("Activating...");
 	return standardClient.getClient();
@@ -1269,7 +1275,7 @@ async function cleanJavaWorkspaceStorage() {
 }
 
 async function cleanOldGlobalStorage(context: ExtensionContext) {
-	const currentVersion = getVersion(context.extensionPath);
+	const currentVersion = getVersion(context);
 	const globalStoragePath = context.globalStorageUri?.fsPath; // .../Code/User/globalStorage/redhat.java
 
 	ensureExists(globalStoragePath);

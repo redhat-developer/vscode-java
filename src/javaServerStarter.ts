@@ -297,7 +297,7 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 		}
 
 		const hasJDWP = params.find((param: string) => param.includes('jdwp')) !== undefined;
-		const extVersion = getVersion(context.extensionPath);
+		const extVersion = getVersion(context);
 		const globalStoragePath = path.resolve(context.globalStorageUri?.fsPath, extVersion); // .../Code/User/globalStorage/redhat.java/1.42.0/
 		const appCDSMode = workspace.getConfiguration().get('java.jdt.ls.appcds.enabled');
 		const useAppCDS = (appCDSMode === 'on') || (appCDSMode === 'auto' && (isPrereleaseOrInsiderVersion(context)));
@@ -396,7 +396,7 @@ export function getSharedIndexCache(context: ExtensionContext): string {
 
 function resolveConfiguration(context, configDir) {
 	ensureExists(context.globalStoragePath);
-	const version = getVersion(context.extensionPath);
+	const version = getVersion(context);
 	let configuration = path.resolve(context.globalStoragePath, version);
 	ensureExists(configuration);
 	configuration = path.resolve(configuration, configDir);

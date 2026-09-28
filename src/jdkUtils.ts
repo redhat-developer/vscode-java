@@ -3,7 +3,7 @@
 import { existsSync } from 'fs';
 import { IJavaRuntime, findRuntimes, getSources } from 'jdk-utils';
 import { join } from 'path';
-import { ExtensionContext, Uri, workspace } from 'vscode';
+import { ExtensionContext } from 'vscode';
 
 let cachedJdks: IJavaRuntime[];
 let cachedJreNames: string[];
@@ -14,8 +14,7 @@ export async function loadSupportedJreNames(context: ExtensionContext): Promise<
 }
 
 async function getContributesConfiguration(context: ExtensionContext, configId: string): Promise<any> {
-	const buffer = await workspace.fs.readFile(Uri.file(context.asAbsolutePath("package.json")));
-	const packageJson = JSON.parse(buffer.toString());
+	const packageJson = context.extension.packageJSON;
 	/**
 	 * contributes.configuration can either be a single object,
 	 * representing a single category of settings, or an array
