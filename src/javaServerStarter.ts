@@ -304,7 +304,7 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 
 		ensureExists(globalStoragePath);
 		const sharedArchiveLocation = path.join(globalStoragePath, "jdtls.jsa");
-		if (useAppCDS && vmargs.indexOf(SHARED_ARCHIVE_FILE_LOC) < 0 && !hasJDWP) {
+		if (useAppCDS && vmargs.indexOf(SHARED_ARCHIVE_FILE_LOC) < 0 && !hasJDWP && requirements.tooling_jre_version < 26) {
 			params.push(UNLOCK_DIAGNOSTIC_VM_OPTIONS);
 			params.push(ALLOW_ARCHIVING_WITH_JAVA_AGENT); // required due to use of '-javaagent'
 			params.push(AUTO_CREATE_SHARED_ARCHIVE);
