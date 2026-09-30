@@ -164,6 +164,20 @@ export function getJavaEncoding(): string {
 	return javaEncoding;
 }
 
+function resolveRuntimePathByName(nameOrPath: string | undefined): string | undefined {
+    if (!nameOrPath) {
+        return nameOrPath;
+    }
+    const runtimes = workspace.getConfiguration('java').get<Array<{ name: string; path: string }>>('configuration.runtimes');
+    if (Array.isArray(runtimes)) {
+        const matched = runtimes.find(r => r && r.name === nameOrPath);
+        if (matched && matched.path) {
+            return matched.path;
+        }
+    }
+    return nameOrPath;
+}
+
 export async function checkJavaPreferences(context: ExtensionContext): Promise<{javaHome?: string; preference: string}> {
 	const allow = 'Allow';
 	const disallow = 'Disallow';
@@ -173,6 +187,7 @@ export async function checkJavaPreferences(context: ExtensionContext): Promise<{
 	if (isVerified) {
 		javaHome = getJavaConfiguration().get('jdt.ls.java.home');
 	}
+	javaHome = resolveRuntimePathByName(javaHome);
 	const key = getKey(IS_WORKSPACE_JLS_JDK_ALLOWED, context.storagePath, javaHome);
 	const globalState = context.globalState;
 	if (!isVerified) {
@@ -189,7 +204,7 @@ export async function checkJavaPreferences(context: ExtensionContext): Promise<{
 			isVerified = globalState.get(key);
 		}
 		if (!isVerified) { // java.jdt.ls.java.home from workspace settings is disallowed.
-			javaHome = workspace.getConfiguration().inspect<string>('java.jdt.ls.java.home').globalValue;
+			javaHome = resolveRuntimePathByName(workspace.getConfiguration().inspect<string>('java.jdt.ls.java.home').globalValue);
 		}
 	}
 
