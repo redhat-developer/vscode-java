@@ -29,7 +29,22 @@ export class JavaClassEditorProvider implements vscode.CustomReadonlyEditorProvi
 			enableScripts: true,
 			localResourceRoots: [Uri.joinPath(Uri.parse(this.context.extensionPath), 'webview-resources')]
 		};
-		const classUri = Uri.parse((document.uri.toString()).replace(/^file/, "class"));
+		const uriString = document.uri?.toString();
+        let targetUri: Uri;
+
+        if (!uriString) {
+            targetUri = document.uri; // Fallback safety for null/undefined URIs
+        } else {
+            const fileUri = Uri.parse(uriString.replace(/^class/, "file"));
+            try {
+                // Attempt to open as a standard text document first
+                await vscode.workspace.openTextDocument(fileUri);
+                targetUri = fileUri;
+            } catch {
+                // Fallback to the 'class' scheme if the file document can't be opened
+                targetUri = Uri.parse(uriString.replace(/^file/, "class"));
+            }
+        }
 		const styleUri = Uri.file(
 			path.join(this.context.extensionPath, 'webview-resources', 'button.css')
 		);
@@ -52,7 +67,7 @@ export class JavaClassEditorProvider implements vscode.CustomReadonlyEditorProvi
 			switch (message.command) {
 				case 'decompiled':
 					webviewPanel.dispose();
-					window.showTextDocument(classUri, { preview: false });
+					window.showTextDocument(targetUri, { preview: false });
 					return;
 			}
 		}, undefined, this.context.subscriptions);
