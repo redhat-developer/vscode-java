@@ -9,7 +9,7 @@
  * enhancement - Show a progress report on the client side when executing delegate commands. See [JLS#1186](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1186).
  * enhancement - Per-parameter signature help documentation. See [JLS#1291](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1291).
  * bug fix - JDT.LS fails to start with "Unrecognized VM option 'AllowArchivingWithJavaAgent'". See [#4511](https://github.com/redhat-developer/vscode-java/issues/4511).
- * bug fix - Typo in the wiki page https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes. See [#4509](https://github.com/redhat-developer/vscode-java/issues/4509).
+ * documentation - Fix typo in the wiki page https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes. See [#4509](https://github.com/redhat-developer/vscode-java/issues/4509).
  * bug fix - JDT LS re-initializes every ~20s and spawns a Gradle daemon each time. See [#4501](https://github.com/redhat-developer/vscode-java/issues/4501).
  * bug fix - "Sort Member: Avoid Volatile Changes" sorts alphabetically. See [#3990](https://github.com/redhat-developer/vscode-java/issues/3990).
  * bug fix - Allow parsing maps in `JSONUtility`. See [JLS#3900](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3900).
