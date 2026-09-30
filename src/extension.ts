@@ -32,7 +32,7 @@ import { OutputInfoCollector } from './outputInfoCollector';
 import { pasteFile } from './pasteAction';
 import { collectJavaExtensions, getBundlesToReload, getShortcuts, IJavaShortcut, isContributedPartUpdated } from './plugin';
 import { Deferred } from './promiseUtil';
-import { fixJdtSchemeHoverLinks, registerClientProviders } from './providerDispatcher';
+import { fixJdtSchemeHoverLinks, registerClassContentProvider, registerClientProviders } from './providerDispatcher';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
 import { ServerStatusKind } from './serverStatus';
@@ -136,6 +136,12 @@ export function fixJdtLinksInDocumentation(oldDocumentation: MarkdownString): Ma
 }
 
 export async function activate(context: ExtensionContext): Promise<ExtensionAPI> {
+	// Register the 'class' scheme content provider synchronously during activation,
+	// before any asynchronous work, so that class file editors can be restored
+	// across window restarts.
+	// See the issue https://github.com/redhat-developer/vscode-java/issues/4406
+	registerClassContentProvider(context, { contentProviderEvent: jdtEventEmitter.event });
+
 	storagePath = context.storagePath;
 	if (!storagePath) {
 		storagePath = getTempWorkspace();
@@ -711,7 +717,7 @@ async function postExtensionStartInit(
 	const classEditorProviderRegistration = window.registerCustomEditorProvider(JavaClassEditorProvider.viewType, new JavaClassEditorProvider(context));
 	context.subscriptions.push(classEditorProviderRegistration);
 
-	registerClientProviders(context, { contentProviderEvent: jdtEventEmitter.event });
+	registerClientProviders(context);
 
 	const onDidGrantWorkspaceTrust = (workspace as any).onDidGrantWorkspaceTrust;
 	if (onDidGrantWorkspaceTrust !== undefined) { // keep compatibility for old engines < 1.56.0
