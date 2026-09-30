@@ -1,5 +1,26 @@
 # Change Log
 
+## 1.57.0 (October 1, 2026)
+ * enhancement - Optimize startup time. See [#4514](https://github.com/redhat-developer/vscode-java/pull/4514).
+ * enhancement - Project manager should warn when two projects share the same groupId and artifactId. See [#4491](https://github.com/redhat-developer/vscode-java/issues/4491).
+ * enhancement - Upgrade the bundled JDK version to 25 LTS. See [#4439](https://github.com/redhat-developer/vscode-java/issues/4439), [#4353](https://github.com/redhat-developer/vscode-java/issues/4353).
+ * enhancement - Support Java 27. See [JLS#3889](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3889).
+ * enhancement - Make decompiler cache size configurable via system property `jdt.ls.decompiler.cacheSize`. See [JLS#3875](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3875).
+ * enhancement - Show a progress report on the client side when executing delegate commands. See [JLS#1186](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1186).
+ * enhancement - Per-parameter signature help documentation. See [JLS#1291](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/1291).
+ * bug fix - JDT.LS fails to start with "Unrecognized VM option 'AllowArchivingWithJavaAgent'". See [#4511](https://github.com/redhat-developer/vscode-java/issues/4511).
+ * bug fix - Typo in the wiki page https://github.com/redhat-developer/vscode-java/wiki/JDK-Requirements#java.configuration.runtimes. See [#4509](https://github.com/redhat-developer/vscode-java/issues/4509).
+ * bug fix - JDT LS re-initializes every ~20s and spawns a Gradle daemon each time. See [#4501](https://github.com/redhat-developer/vscode-java/issues/4501).
+ * bug fix - "Sort Member: Avoid Volatile Changes" sorts alphabetically. See [#3990](https://github.com/redhat-developer/vscode-java/issues/3990).
+ * bug fix - Allow parsing maps in `JSONUtility`. See [JLS#3900](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3900).
+ * bug fix - Fix regression in handing `{@index }` Javadoc. See [JLS#3878](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3878).
+ * bug fix - Fix overlapping edits in postfix completions. See [JLS#3861](https://github.com/eclipse-jdtls/eclipse.jdt.ls/pull/3861).
+ * bug fix - Having a project with preview enabled but not set to the latest Java version silently fails to build. See [JLS#3846](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3846).
+ * bug fix - JEP 511: Hovering over java.xml module import displays java.xml.crypto Javadoc. See [JLS#3709](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3709).
+ * bug fix - Early log messages are not filtered. See [JLS#3541](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3541).
+ * bug fix - Outgoing call hierarchies sometimes duplicate the results. See [JLS#3193](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3193).
+ * bug fix - Incorrect Javadoc rendering when inline @ tokens appear in block tags. See [JLS#3631](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3631).
+
 ## 1.56.0 (September 3, 2026)
  * enhancement - Add a setting to specify the Maven project cache size. See [#4493](https://github.com/redhat-developer/vscode-java/pull/4493).
  * enhancement - Add setting to set Eclipse classpath variables (i.e. `kind="var"`). See [#4490](https://github.com/redhat-developer/vscode-java/pull/4490).
