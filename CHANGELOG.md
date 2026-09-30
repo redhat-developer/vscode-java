@@ -1,7 +1,7 @@
 # Change Log
 
 ## 1.57.0 (October 1, 2026)
- * enhancement - Optimize startup time. See [#4514](https://github.com/redhat-developer/vscode-java/pull/4514).
+ * performance - Optimize startup time. See [#4514](https://github.com/redhat-developer/vscode-java/pull/4514).
  * enhancement - Project manager should warn when two projects share the same groupId and artifactId. See [#4491](https://github.com/redhat-developer/vscode-java/issues/4491).
  * enhancement - Upgrade the bundled JDK version to 25 LTS. See [#4439](https://github.com/redhat-developer/vscode-java/issues/4439), [#4353](https://github.com/redhat-developer/vscode-java/issues/4353).
  * enhancement - Support Java 27. See [JLS#3889](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3889).
