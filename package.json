@@ -503,6 +503,21 @@
         "title": "Project Import/Update",
         "order": 20,
         "properties": {
+          "java.import.mode": {
+            "type": "string",
+            "enum": [
+              "full",
+              "ondemand"
+            ],
+            "enumDescriptions": [
+              "All projects are imported at startup.",
+              "Projects are imported lazily when a file is opened."
+            ],
+            "default": "full",
+            "markdownDescription": "Controls how projects are imported into the workspace.\n- `full`: all projects are discovered and imported at startup (default). Safe and well-tested, but slow for large workspaces.\n- `ondemand`: projects are imported lazily when the user first opens a file belonging to that module. This drastically reduces startup time and memory usage for large multi-module workspaces (e.g. Quarkus with 1300+ modules).",
+            "scope": "window",
+            "order": 5
+          },
           "java.import.projectSelection": {
             "type": "string",
             "enum": [
