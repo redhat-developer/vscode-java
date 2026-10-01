@@ -758,28 +758,34 @@ async function startStandardServer(
 }
 
 async function doStartStandardServer(context: ExtensionContext, requirements: requirements.RequirementsData, clientOptions: LanguageClientOptions, workspacePath: string, triggeredByCommand: boolean = false): Promise<LanguageClient | undefined> {
-	const selector: BuildFileSelector = new BuildFileSelector(context, []);
-	const importMode: ImportMode = await getImportMode(context, selector);
-	if (importMode === ImportMode.automatic) {
-		if (!await ensureNoBuildToolConflicts(context, clientOptions)) {
-			return undefined;
-		}
-	} else {
-		const buildFiles: string[] = [];
-		if (importMode === ImportMode.manual) {
-			const cache = context.workspaceState.get<string[]>(PICKED_BUILD_FILES);
-			if (cache === undefined || cache.length === 0 && triggeredByCommand) {
-				buildFiles.push(...await selector.selectBuildFiles() || []);
-			} else {
-				buildFiles.push(...cache);
+	// In on-demand mode, the build tool is determined by the file being opened
+	// (each importer tries its own build file lookup), so no upfront project
+	// selection or build tool conflict prompt is needed.
+	const javaImportMode = getJavaConfiguration().get<string>("import.mode", "full");
+	if (javaImportMode !== "ondemand") {
+		const selector: BuildFileSelector = new BuildFileSelector(context, []);
+		const importMode: ImportMode = await getImportMode(context, selector);
+		if (importMode === ImportMode.automatic) {
+			if (!await ensureNoBuildToolConflicts(context, clientOptions)) {
+				return undefined;
 			}
+		} else {
+			const buildFiles: string[] = [];
+			if (importMode === ImportMode.manual) {
+				const cache = context.workspaceState.get<string[]>(PICKED_BUILD_FILES);
+				if (cache === undefined || cache.length === 0 && triggeredByCommand) {
+					buildFiles.push(...await selector.selectBuildFiles() || []);
+				} else {
+					buildFiles.push(...cache);
+				}
+			}
+			if (buildFiles.length === 0) {
+				commands.executeCommand('setContext', 'java:serverMode', ServerMode.lightWeight);
+				serverStatusBarProvider.showNotImportedStatus();
+				return undefined;
+			}
+			clientOptions.initializationOptions.projectConfigurations = buildFiles;
 		}
-		if (buildFiles.length === 0) {
-			commands.executeCommand('setContext', 'java:serverMode', ServerMode.lightWeight);
-			serverStatusBarProvider.showNotImportedStatus();
-			return undefined;
-		}
-		clientOptions.initializationOptions.projectConfigurations = buildFiles;
 	}
 
 	if (apiManager.getApiInstance().serverMode === ServerMode.lightWeight) {
@@ -789,7 +795,13 @@ async function doStartStandardServer(context: ExtensionContext, requirements: re
 	}
 	await standardClient.initialize(context, requirements, clientOptions, workspacePath, jdtEventEmitter);
 	standardClient.start().then(async () => {
-		standardClient.registerLanguageClientActions(context, await fse.pathExists(path.join(workspacePath, ".metadata", ".plugins")), jdtEventEmitter);
+		// Register handlers immediately (no await before) so they are ready
+		// when the server sends synchronizeBundles and ServiceReady right after 'initialized'.
+		// In on-demand mode with no Java file open, zero projects are loaded at startup,
+		// so the server reaches synchronizeBundles so fast that an await here would cause
+		// the ExecuteClientCommandRequest handler to not be registered in time.
+		const hasImportedPromise = fse.pathExists(path.join(workspacePath, ".metadata", ".plugins"));
+		standardClient.registerLanguageClientActions(context, hasImportedPromise, jdtEventEmitter);
 		// Send auto-detected JDKs after server startup to avoid blocking initialization
 		standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
 			settings: {
