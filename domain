@@ -1,0 +1,129 @@
+{
+    "git.autofetch": "all",
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "gitlens.ai.model": "azure:gpt-5.6-luna",
+    "gitlens.graph.details.location": "auto",
+    "gitlens.gitCommands.skipConfirmations": [
+        "fetch:command",
+        "switch:command",
+        "push:command",
+        "pull:command"
+    ],
+    "gitlens.views.scm.grouped.hiddenViews": {
+        "commits": true,
+        "worktrees": true,
+        "branches": true,
+        "remotes": true,
+        "stashes": true,
+        "tags": true,
+        "contributors": false,
+        "repositories": true,
+        "fileHistory": false,
+        "launchpad": false,
+        "searchAndCompare": false
+    },
+    "gitlens.views.scm.grouped.views": {
+        "commits": false,
+        "branches": false,
+        "remotes": false,
+        "stashes": false,
+        "tags": false,
+        "worktrees": false,
+        "contributors": false,
+        "fileHistory": false,
+        "repositories": false,
+        "searchAndCompare": false,
+        "launchpad": false
+    },
+    "githubPullRequests.pullBranch": "never",
+    "workbench.colorCustomizations": {},
+    "redhat.telemetry.enabled": true,
+    "gitlens.views.scm.grouped.default": "launchpad",
+    "containers.containerClient": "com.microsoft.visualstudio.containers.docker",
+    "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.dockercompose",
+    "yaml.disableSchemaDetection": [
+        "**/.github/workflows/*.yml",
+        "**/.github/workflows/*.yaml",
+        "**/.gitea/workflows/*.yml",
+        "**/.gitea/workflows/*.yaml",
+        "**/.forgejo/workflows/*.yml",
+        "**/.forgejo/workflows/*.yaml"
+    ],
+    "vscode-edge-devtools.browserFlavor": "Canary",
+    "vscode-edge-devtools.port": 3000,
+    "vscode-edge-devtools.showWorkers": true,
+    "terminal.explorerKind": "both",
+    "terminal.external.linuxExec": "",
+    "terminal.external.osxExec": "",
+    "terminal.external.windowsExec": "C:\\Windows",
+    "terminal.integrated.accessibleViewFocusOnCommandExecution": true,
+    "terminal.integrated.allowedLinkSchemes": [
+        "http",
+        "https",
+        "file"
+    ],
+    "terminal.integrated.fastScrollSensitivity": 4,
+    "terminal.integrated.suggest.windowsExecutableExtensions": {
+
+    },
+    "docker.extension.enableComposeLanguageServer": false,
+    "vscode-edge-devtools.defaultEntrypoint": "",
+    "editor.defaultFormatter": "sourcery.sourcery",
+    "notebook.defaultFormatter": "traBpUkciP.wolf",
+    "git.ignoreRebaseWarning": true,
+    "python.analysis.useDefaultExcludes": false,
+    "python.analysis.exclude": [
+        "'"
+    ],
+    "settingsSync.ignoredExtensions": [
+        "swiftlang.swift-vscode",
+        "alokverma20s.apple-container"
+    ],
+    "sentinel.hasCheckedCLI": true,
+    "containers.contexts.description": [
+        "Description",
+        "DockerEndpoint",
+        "Name"
+    ],
+    "vscode-edge-devtools.webRoot": "'",
+    "vscode-edge-devtools.sourceMapPathOverrides": {
+        
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "webpack://*": "${webRoot}/*",
+        "meteor://💻app/*": "${webRoot}/*"
+    },
+    "sentinel.board": "esp8266:esp8266:nodemcu",
+    "sentinel.port": "/dev/tty.Bluetooth-Incoming-Port",
+    "security.promptForLocalFileProtocolHandling": false,
+    "mssql.connectionGroups": [
+        {
+            "name": "ROOT",
+            "id": "ROOT"
+        }
+    ],
+    "window.confirmSaveUntitledWorkspace": false,
+    "flowlogic.fullChipErase": false,
+    "remote.tunnels.access.preventSleep": true,
+    "sourcery.codeLens": false,
+    "projectManager.git.baseFolders": [
+        "..."
+    ],
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "gitlens.views.commits.showStashes": true,
+    "gitlens.views.formats.files.label": "${working  }${filesystem}",
+    "gitlens.views.formats.commits.description": "${author, }${ayoOryour}",
+    "gitlens.views.commits.showBranchComparison": false,
+    "gitlens.views.commits.files.threshold": 6,
+    "gitlens.remotes": [
+        {
+            "type": "Bitbucket",
+            "domain": "bitbucket.com"
+        }
+    ]
+}
