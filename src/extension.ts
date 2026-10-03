@@ -178,6 +178,14 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 	Telemetry.startTelemetry(context);
 
 	registerOutOfMemoryDetection(storagePath);
+import { workspace, extensions, ExtensionContext, window, StatusBarAlignment, commands, ViewColumn, Uri, CancellationToken, TextDocumentContentProvider, TextEditor, WorkspaceConfiguration, languages, IndentAction, ProgressLocation, Progress } from 'vscode';
+import { ExecuteCommandParams, ExecuteCommandRequest, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, ServerOptions, Position as LSPosition, Location as LSLocation, StreamInfo } from 'vscode-languageclient';
+import { collectionJavaExtensions } from './plugin';
+import { prepareExecutable, awaitServerConnection } from './javaServerStarter';
+import * as requirements from './requirements';
+import { Commands } from './commands';
+import { StatusNotification, ClassFileContentsRequest, ProjectConfigurationUpdateRequest, MessageType, ActionableNotification, FeatureStatus, ActionableMessage, CompileWorkspaceRequest, CompileWorkspaceStatus, ProgressReportNotification, ExecuteClientCommandRequest } from './protocol';
+import * as net from 'net';
 
 	cleanJavaWorkspaceStorage();
 
@@ -226,6 +234,30 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 
 	const javaConfig = await getJavaConfig(requirementsData.java_home, true);
 	javaConfigDeferred.resolve(javaConfig);
+				oldConfig = getJavaConfiguration();
+				let serverOptions;
+				let port = process.env['SERVER_PORT'];
+				if (!port) {
+					let lsPort = process.env['JDTLS_CLIENT_PORT'];
+					if (!lsPort) {
+						serverOptions = prepareExecutable(requirements, workspacePath, getJavaConfiguration());
+					} else {
+						let connectionInfo = {
+							port: lsPort
+						};
+						serverOptions = () => {
+							let socket = net.connect(connectionInfo);
+							let result: StreamInfo = {
+								writer: socket,
+								reader: socket
+							};
+							return Promise.resolve(result);
+						};
+					}
+				} else {
+					// used during development
+					serverOptions = awaitServerConnection.bind(null, port);
+				}
 
 	// Options to control the language client
 	const clientOptions: LanguageClientOptions = {
