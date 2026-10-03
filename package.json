@@ -23,6 +23,8 @@
     },
     "virtualWorkspaces": false
   },
+  "preview": true,
+  "enableProposedApi": true,
   "engines": {
     "vscode": "^1.77.0"
   },
