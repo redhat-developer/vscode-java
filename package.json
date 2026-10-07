@@ -2118,6 +2118,14 @@
         {
           "command": "java.action.doCleanup",
           "when": "false"
+        },
+        {
+          "command": "java.dashboard.refresh",
+          "when": "false"
+        },
+        {
+          "command": "java.dashboard.dumpState",
+          "when": "false"
         }
       ],
       "view/title": [
