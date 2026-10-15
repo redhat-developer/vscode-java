@@ -19,10 +19,10 @@ vscode-java has opt-in telemetry collection, provided by [vscode-redhat-telemetr
  * Errors relating to running the language server, such as the message & stacktrace
  * Whether there is a mismatch between the project's requested source level, and the JDK used for the project (e.g. true)
  * Information about the following settings. In the case of settings that store a well defined value (e.g. path, url or string), we simply collect whether the setting has been set.
-   * `java.settings.url`, `java.format.settings.url`, `java.quickfix.showAt`, `java.symbols.includeSourceMethodDeclarations`, `java.completion.collapseCompletionItems`, `java.completion.guessMethodArguments`, `java.completion.postfix.enabled`, `java.cleanup.actionsOnSave`, `java.sharedIndexes.enabled`, `java.inlayHints.parameterNames.enabled`, `java.inlayHints.parameterNames.suppressWhenSameNameNumbered`, `java.inlayHints.variableTypes.enabled`, `java.inlayHints.parameterTypes.enabled`, `java.server.launchMode`, `java.autobuild.enabled`, `java.jdt.ls.javac.enabled`
+   * `java.settings.url`, `java.format.settings.url`, `java.quickfix.showAt`, `java.symbols.includeSourceMethodDeclarations`, `java.completion.collapseCompletionItems`, `java.completion.guessMethodArguments`, `java.completion.postfix.enabled`, `java.cleanup.actionsOnSave`, `java.sharedIndexes.enabled`, `java.inlayHints.parameterNames.enabled`, `java.inlayHints.parameterNames.suppressWhenSameNameNumbered`, `java.inlayHints.variableTypes.enabled`, `java.inlayHints.parameterTypes.enabled`, `java.server.launchMode`, `java.autobuild.enabled`
  * The extension name and the choice made when a recommendation to install a third-party extension is proposed
  * The name of Java commands being manually executed, and any resulting errors
- * The number of results (e.g. 20), whether an error occurred (e.g. false), engine type (e.g. 'ecj', 'dom') and duration (in milliseconds) when code assist is activated
+ * The number of results (e.g. 20), whether an error occurred (e.g. false), and duration (in milliseconds) when code assist is activated
  * Whether the language server ran out of memory and the maximum allocated memory at which that occurred (e.g. 200m)
 
 ## What's included in the general telemetry data
