@@ -1306,7 +1306,6 @@ export function registerCodeCompletionTelemetryListener() {
 				resultLength: traceEvent.resultLength || 0,
 				error: !!traceEvent.error,
 				fromSyntaxServer: !!traceEvent.fromSyntaxServer,
-				engine: getJavaConfiguration().get('completion.engine'),
 			};
 			return Telemetry.sendTelemetry(Telemetry.COMPLETION_EVENT, props);
 		}
