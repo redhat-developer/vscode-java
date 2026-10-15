@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.58.0 (October 19, 2026)
+ * bug fix - False positive "Flexible Constructor Bodies" errors appear when Lombok is enabled. See [#4521](https://github.com/redhat-developer/vscode-java/issues/4521), [JLS#3930](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3930).
+ * bug fix - `src/main/resources` excluded from classpath for Gradle subprojects with generated source directories. See [#4393](https://github.com/redhat-developer/vscode-java/issues/4393).
+ * bug fix - command 'java.dashboard.refresh' not found. See [#4381](https://github.com/redhat-developer/vscode-java/issues/4381).
+ * bug fix - Incoming call hierarchies sometimes duplicate the results. See [JLS#3904](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/3904).
+ * bug fix - Failed to get source path when the project is not contained in root. See [JLS#2982](https://github.com/eclipse-jdtls/eclipse.jdt.ls/issues/2982).
+
 ## 1.57.0 (October 1, 2026)
  * performance - Optimize startup time. See [#4514](https://github.com/redhat-developer/vscode-java/pull/4514).
  * enhancement - Project manager should warn when two projects share the same groupId and artifactId. See [#4491](https://github.com/redhat-developer/vscode-java/issues/4491).
