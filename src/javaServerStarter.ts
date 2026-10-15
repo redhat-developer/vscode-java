@@ -172,61 +172,6 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 				'java.base/sun.nio.fs=ALL-UNNAMED'
 				);
 
-	const javacEnabled = 'on' === getJavaConfiguration().get('jdt.ls.javac.enabled');
-	if (javacEnabled) {
-		// Javac flags
-		params.push(
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.javadoc/jdk.javadoc.internal.doclets.formats.html.taglets.snippet=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.javadoc/jdk.javadoc.internal.doclets.formats.html.taglets=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.platform=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.compiler/com.sun.tools.javac.resources=ALL-UNNAMED',
-			'--add-opens',
-			'java.base/sun.nio.ch=ALL-UNNAMED',
-			'--add-opens',
-			'jdk.zipfs/jdk.nio.zipfs=ALL-UNNAMED',
-			'--add-opens',
-			'java.compiler/javax.tools=ALL-UNNAMED',
-			'--add-opens',
-			'java.base/java.nio.channels=ALL-UNNAMED',
-			'-DICompilationUnitResolver=org.eclipse.jdt.core.dom.JavacCompilationUnitResolver',
-			'-DAbstractImageBuilder.compilerFactory=org.eclipse.jdt.internal.javac.JavacCompilerFactory',
-			'-DCompilationUnit.DOM_BASED_OPERATIONS=true',
-			'-DSourceIndexer.DOM_BASED_INDEXER=true',
-			'-DMatchLocator.DOM_BASED_MATCH=true',
-			'-DIJavaSearchDelegate=org.eclipse.jdt.internal.core.search.DOMJavaSearchDelegate',
-		);
-
-		if('dom' === getJavaConfiguration().get('completion.engine')){
-			params.push('-DCompilationUnit.codeComplete.DOM_BASED_OPERATIONS=true');
-		};
-	}
-
 	params.push('-Declipse.application=org.eclipse.jdt.ls.core.id1',
 				'-Dosgi.bundles.defaultStartLevel=4',
 				'-Declipse.product=org.eclipse.jdt.ls.core.product');
