@@ -118,7 +118,7 @@ export class StandardLanguageClient {
 		this.status = ClientStatus.initialized;
 	}
 
-	public registerLanguageClientActions(context: ExtensionContext, hasImported: boolean, jdtEventEmitter: EventEmitter<Uri>) {
+	public registerLanguageClientActions(context: ExtensionContext, hasImportedPromise: Promise<boolean>, jdtEventEmitter: EventEmitter<Uri>) {
 		activationProgressNotification.showProgress();
 		this.languageClient.onNotification(StatusNotification.type, async (report) => {
 			// Resolve serverRunning on the first status notification from the server,
@@ -142,6 +142,7 @@ export class StandardLanguageClient {
 						logger.error(error);
 					}
 					activationProgressNotification.hide();
+					const hasImported = await hasImportedPromise;
 					if (!hasImported) {
 						showImportFinishNotification(context);
 					}

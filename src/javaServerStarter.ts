@@ -266,6 +266,16 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 	if (vmargs.indexOf('-DDetectVMInstallationsJob.disabled=') < 0) {
 		params.push('-DDetectVMInstallationsJob.disabled=true');
 	}
+	// Pass import mode as JVM arg so JDT-LS can read it early in plugin startup,
+	// before LSP initializationOptions are available. This allows skipping
+	// waitForProjectRegistryRefreshJob in on-demand mode to avoid refreshing
+	// stale projects from a previous crashed session.
+	if (vmargs.indexOf('-Djdt.ls.importMode=') < 0) {
+		const importMode = getJavaConfiguration().get<string>('import.mode', 'full');
+		if (importMode !== 'full') {
+			params.push(`-Djdt.ls.importMode=${importMode}`);
+		}
+	}
 	const encodingKey = '-Dfile.encoding=';
 	if (vmargs.indexOf(encodingKey) < 0) {
 		params.push(encodingKey + getJavaEncoding());
