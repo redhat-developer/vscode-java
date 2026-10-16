@@ -2,8 +2,9 @@
 
 import * as assert from 'assert';
 import { getJavaConfiguration, getBuildFilePatterns, getInclusionPatternsFromNegatedExclusion, getExclusionGlob, convertToGlob } from '../../src/utils';
+import { IJavaRuntime } from 'jdk-utils';
 import { WorkspaceConfiguration } from 'vscode';
-import { listJdks } from '../../src/jdkUtils';
+import { listJdks, sortJdksBySource } from '../../src/jdkUtils';
 import { platform } from 'os';
 
 let exclusion: string[];
@@ -117,6 +118,28 @@ suite('Utils Test', () => {
 	test('convertToGlob() - has base patterns', async function () {
 		const result: string = convertToGlob(["**/pom.xml"], ["**/node_modules/test/**"]);
 		assert.equal(result, "{**/node_modules/test/**/**/pom.xml}");
+	});
+
+	test('sortJdksBySource() - ranks JDK_HOME before lower-priority sources', () => {
+		const jdks: IJavaRuntime[] = [
+			{ homedir: "java-home", isJavaHomeEnv: true },
+			{ homedir: "path", isInPathEnv: true },
+			{ homedir: "sdkman", isFromSDKMAN: true },
+			{ homedir: "common" },
+			{ homedir: "gradle", isFromGradle: true },
+			{ homedir: "jdk-home", isJdkHomeEnv: true },
+		];
+
+		sortJdksBySource(jdks);
+
+		assert.deepEqual(jdks.map(jdk => jdk.homedir), [
+			"jdk-home",
+			"java-home",
+			"path",
+			"sdkman",
+			"common",
+			"gradle",
+		]);
 	});
 
 	test('listJdks() - no /usr as Java home on macOS', async function () {
