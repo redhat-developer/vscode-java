@@ -7,23 +7,23 @@ vscode-java has opt-in telemetry collection, provided by [vscode-redhat-telemetr
  * vscode-java emits telemetry events when the extension starts and stops,
    which contain the common data mentioned on the
    [vscode-redhat-telemetry page](https://github.com/redhat-developer/vscode-redhat-telemetry/blob/main/USAGE_DATA.md#common-data).
- * The name of the build tool used to import a project (eg. Maven, Gradle, Invisible (project), etc.)
+ * The name of the build tool used to import a project (e.g. Maven, Gradle, Invisible (project), etc.)
  * The total number of Java projects within the workspace
- * The lowest and highest Java compiler source level used (eg. 11 & 17)
- * Whether the project(s) are being imported for the first time (eg. true)
+ * The lowest and highest Java compiler source level used (e.g. 11 & 17)
+ * Whether the project(s) are being imported for the first time (e.g. true)
  * The elapsed time (in milliseconds) at which the language server initialized the workspace project(s), declared as ready for requests, and completed building the project(s)
  * The number of libraries that were indexed after project initialization
  * The total size (in bytes) of libraries that were indexed after project initialization
  * The number of error markers on the project(s)
  * The number of unresolved imports within the project(s)
  * Errors relating to running the language server, such as the message & stacktrace
- * Whether there is a mismatch between the project's requested source level, and the JDK used for the project (eg. true)
- * Information about the following settings. In the case of settings that store a well defined value (eg. path/url/string), we simply collect whether the setting has been set.
+ * Whether there is a mismatch between the project's requested source level, and the JDK used for the project (e.g. true)
+ * Information about the following settings. In the case of settings that store a well defined value (e.g. path, url or string), we simply collect whether the setting has been set.
    * `java.settings.url`, `java.format.settings.url`, `java.quickfix.showAt`, `java.symbols.includeSourceMethodDeclarations`, `java.completion.collapseCompletionItems`, `java.completion.guessMethodArguments`, `java.completion.postfix.enabled`, `java.cleanup.actionsOnSave`, `java.sharedIndexes.enabled`, `java.inlayHints.parameterNames.enabled`, `java.inlayHints.parameterNames.suppressWhenSameNameNumbered`, `java.inlayHints.variableTypes.enabled`, `java.inlayHints.parameterTypes.enabled`, `java.server.launchMode`, `java.autobuild.enabled`, `java.jdt.ls.javac.enabled`
- * The extension name and the choice made when a recommendation to install a 3rd party extension is proposed
+ * The extension name and the choice made when a recommendation to install a third-party extension is proposed
  * The name of Java commands being manually executed, and any resulting errors
- * The number of results (eg. 20), whether an error occurred (eg. false), engine type (eg. 'ecj', 'dom') and duration (in milliseconds) when code assist is activated
- * Whether the language server ran out of memory and the maximum allocated memory at which that occurred (eg. 200m)
+ * The number of results (e.g. 20), whether an error occurred (e.g. false), engine type (e.g. 'ecj', 'dom') and duration (in milliseconds) when code assist is activated
+ * Whether the language server ran out of memory and the maximum allocated memory at which that occurred (e.g. 200m)
 
 ## What's included in the general telemetry data
 
