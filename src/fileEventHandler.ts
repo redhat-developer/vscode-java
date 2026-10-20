@@ -9,7 +9,7 @@ import { Commands } from './commands';
 import { WillRenameFiles } from './protocol';
 import { getJavaConfiguration } from './utils';
 import { userInfo } from 'os';
-import * as stringInterpolate from 'fmtr';
+import stringInterpolate from 'fmtr';
 import { apiManager } from './apiManager';
 
 let serverReady: boolean = false;
