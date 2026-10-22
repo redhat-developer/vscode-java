@@ -124,7 +124,6 @@ jobs:
       - name: Clean tests
         run: npm run clean-test-folder
       - name: Prepare Lombok Support
-        if: false
         run: |
           npm run download-lombok
       - name: Prepare Pre-Release
