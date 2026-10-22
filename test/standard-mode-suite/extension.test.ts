@@ -1,4 +1,4 @@
-import * as assert from 'assert';
+import assert from 'assert';
 import * as fs from 'fs';
 import * as path from 'path';
 import { env } from 'process';
@@ -7,6 +7,7 @@ import { Commands } from '../../src/commands';
 import * as java from '../../src/javaServerStarter';
 import * as plugin from '../../src/plugin';
 import * as requirements from '../../src/requirements';
+import { escapeSnippetLiterals } from '../../src/extension';
 
 suite('Java Language Extension - Standard', () => {
 
@@ -128,6 +129,9 @@ suite('Java Language Extension - Standard', () => {
 				Commands.FILESEXPLORER_ONPASTE,
 				Commands.RESOLVE_PASTED_TEXT,
 				Commands.CHANGE_JAVA_SEARCH_SCOPE,
+				Commands.COPY_FULLY_QUALIFIED_NAME,
+				Commands.GET_FULLY_QUALIFIED_NAME,
+				Commands.GET_TROUBLESHOOTING_INFO,
 				Commands.OPEN_JAVA_DASHBOARD,
 				Commands.ADD_JAVA_RUNTIME
 			].sort();
@@ -229,5 +233,11 @@ suite('Java Language Extension - Standard', () => {
 		// deprecated flags
 		assert(java.hasDebugFlag(['foo', '--debug=1234']));
 		assert(java.hasDebugFlag(['foo', '--debug-brk=1234']));
+	});
+
+	test('should preserve escaped commas in code action snippets', () => {
+		const snippet = '${1|HashMap<Integer\\,Integer>,Map<Integer\\,Integer>|} ${2:x} = new HashMap<Integer, Integer>();';
+
+		assert.equal(escapeSnippetLiterals(snippet), snippet);
 	});
 });

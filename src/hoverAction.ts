@@ -74,7 +74,7 @@ class JavaHoverProvider implements HoverProvider {
         }
 
         const contributed = new MarkdownString(contributedCommands.map((command) => this.convertCommandToMarkdown(command)).join(' | '));
-        contributed.isTrusted = true;
+        contributed.isTrusted = { enabledCommands: contributedCommands.map((command) => command.command) };
         let contents: MarkdownString[] = [ contributed ];
         let range;
         if (serverHover && serverHover.contents) {

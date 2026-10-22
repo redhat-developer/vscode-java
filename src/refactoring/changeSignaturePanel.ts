@@ -116,8 +116,8 @@ export class ChangeSignaturePanel {
       <html lang="en">
         <head>
           <meta charset="utf-8">
-		  <!-- We need the 'unsafe-inline' because of webview UI toolkit setting style attributes -->
-		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${webview.cspSource}; font-src ${webview.cspSource} data:; style-src ${webview.cspSource} 'unsafe-inline';">
+		  <!-- CSS is bundled to a file and loaded via <link>; the codicon font is a data: URL covered by font-src -->
+		  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${webview.cspSource}; font-src ${webview.cspSource} data:; style-src ${webview.cspSource};">
           <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
           <meta name="theme-color" content="#000000">
           <title>Change Signature</title>

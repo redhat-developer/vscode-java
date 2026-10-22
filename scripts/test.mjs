@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable @typescript-eslint/naming-convention */
 
 import fs from 'fs-extra';
 import path from 'path';

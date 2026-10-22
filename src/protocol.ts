@@ -350,9 +350,10 @@ export interface RenamePosition {
 }
 
 export interface RefactorWorkspaceEdit {
-    edit: WorkspaceEdit;
+    edit?: WorkspaceEdit;
     command?: Command;
     errorMessage?: string;
+    confirmationToken?: string;
 }
 
 export interface GetRefactorEditParams {
@@ -411,6 +412,7 @@ export interface MoveParams {
     params: CodeActionParams;
     destination?: any;
     updateReferences?: boolean;
+    confirmationToken?: string;
 }
 
 export interface MoveDestinationsResponse {

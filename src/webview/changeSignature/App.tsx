@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/prefer-for-of */
-import { VSCodeButton, VSCodeTextField, VSCodeDropdown, VSCodeOption, VSCodeCheckbox, VSCodePanels, VSCodePanelTab, VSCodePanelView, VSCodeDataGrid, VSCodeDataGridCell, VSCodeDataGridRow, VSCodeTextArea } from "@vscode/webview-ui-toolkit/react";
 import "./App.css";
 import React from "react";
 import { vscode } from "../vscodeApiWrapper";
@@ -8,10 +7,13 @@ import cloneDeep from "lodash/cloneDeep";
 
 type State = UIState & Metadata;
 
+type ActiveTab = "parameters" | "exceptions";
+
 interface UIState {
 	focusRow: number;
 	editParameterRow: number;
 	editExceptionRow: number;
+	activeTab: ActiveTab;
 }
 
 interface Metadata {
@@ -50,6 +52,7 @@ export class App extends React.Component<{}, State> {
 			focusRow: -1,
 			editParameterRow: -1,
 			editExceptionRow: -1,
+			activeTab: "parameters",
 			methodIdentifier: undefined,
 			isDelegate: false,
 			methodName: undefined,
@@ -91,6 +94,10 @@ export class App extends React.Component<{}, State> {
 			this.setState({
 				methodName: event.target.value
 			});
+		} else if (id === "delegate") {
+			this.setState({
+				isDelegate: event.target.checked
+			});
 		}
 		return;
 	};
@@ -121,7 +128,11 @@ export class App extends React.Component<{}, State> {
 		if (!id) {
 			return;
 		}
-		if (id === "refactor") {
+		if (id === "tab-parameters") {
+			this.setState({ activeTab: "parameters", focusRow: -1 });
+		} else if (id === "tab-exceptions") {
+			this.setState({ activeTab: "exceptions", focusRow: -1 });
+		} else if (id === "refactor") {
 			this.doRefactor(false);
 		} else if (id === "preview") {
 			this.doRefactor(true);
@@ -175,11 +186,13 @@ export class App extends React.Component<{}, State> {
 				editParameterRow: selectedRowNumber,
 				editExceptionRow: -1,
 				focusRow: -1,
+			}, () => {
+				const elementToSelect = document.getElementById(`parameterType-${selectedRowNumber}`) as HTMLInputElement | null;
+				if (elementToSelect) {
+					elementToSelect.focus();
+					elementToSelect.select();
+				}
 			});
-			const elementToSelect = document.getElementById(`parameterType-${selectedRowNumber}`);
-			if (elementToSelect) {
-				elementToSelect.focus();
-			}
 		} else if (id.startsWith("editException")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -189,11 +202,13 @@ export class App extends React.Component<{}, State> {
 				editParameterRow: -1,
 				editExceptionRow: selectedRowNumber,
 				focusRow: -1,
+			}, () => {
+				const elementToSelect = document.getElementById(`exceptionType-${selectedRowNumber}`) as HTMLInputElement | null;
+				if (elementToSelect) {
+					elementToSelect.focus();
+					elementToSelect.select();
+				}
 			});
-			const elementToSelect = document.getElementById(`exceptionType-${selectedRowNumber}`);
-			if (elementToSelect) {
-				elementToSelect.focus();
-			}
 		} else if (id.startsWith("upParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
@@ -244,29 +259,25 @@ export class App extends React.Component<{}, State> {
 					return i !== selectedRowNumber;
 				})
 			});
-		} else if (id === "delegate") {
-			this.setState({
-				isDelegate: event.target.checked
-			});
 		} else if (id.startsWith("confirmParameter")) {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
 				return;
 			}
-			const parameterType = document.getElementById(`parameterType-${selectedRowNumber}`);
-			const parameterName = document.getElementById(`parameterName-${selectedRowNumber}`);
-			const parameterDefault = this.isDefaultValueEditable(selectedRowNumber) ? document.getElementById(`parameterDefault-${selectedRowNumber}`) : undefined;
+			const parameterType = document.getElementById(`parameterType-${selectedRowNumber}`) as HTMLInputElement | null;
+			const parameterName = document.getElementById(`parameterName-${selectedRowNumber}`) as HTMLInputElement | null;
+			const parameterDefault = this.isDefaultValueEditable(selectedRowNumber) ? document.getElementById(`parameterDefault-${selectedRowNumber}`) as HTMLInputElement | null : undefined;
 			this.setState({
 				parameters: this.state.parameters.map((e, i) => {
 					if (i === selectedRowNumber) {
-						if (parameterType?.outerText) {
-							e.type = parameterType.outerText;
+						if (parameterType?.value) {
+							e.type = parameterType.value;
 						}
-						if (parameterName?.outerText) {
-							e.name = parameterName.outerText;
+						if (parameterName?.value) {
+							e.name = parameterName.value;
 						}
-						if (parameterDefault?.outerText) {
-							e.defaultValue = parameterDefault.outerText;
+						if (parameterDefault?.value) {
+							e.defaultValue = parameterDefault.value;
 						}
 					}
 					return e;
@@ -280,20 +291,6 @@ export class App extends React.Component<{}, State> {
 			if (selectedRowNumber === undefined) {
 				return;
 			}
-			const parameterType = document.getElementById(`parameterType-${selectedRowNumber}`);
-			if (parameterType) {
-				parameterType.textContent = this.state.parameters[selectedRowNumber].type;
-			}
-			const parameterName = document.getElementById(`parameterName-${selectedRowNumber}`);
-			if (parameterName) {
-				parameterName.textContent = this.state.parameters[selectedRowNumber].name;
-			}
-			if (this.isDefaultValueEditable(selectedRowNumber)) {
-				const parameterDefault = document.getElementById(`parameterDefault-${selectedRowNumber}`);
-				if (parameterDefault) {
-					parameterDefault.textContent = this.state.parameters[selectedRowNumber].defaultValue;
-				}
-			}
 			this.setState({
 				editParameterRow: -1,
 				editExceptionRow: -1,
@@ -304,12 +301,12 @@ export class App extends React.Component<{}, State> {
 			if (selectedRowNumber === undefined) {
 				return;
 			}
-			const exceptionType = document.getElementById(`exceptionType-${selectedRowNumber}`);
+			const exceptionType = document.getElementById(`exceptionType-${selectedRowNumber}`) as HTMLInputElement | null;
 			this.setState({
 				exceptions: this.state.exceptions.map((e, i) => {
 					if (i === selectedRowNumber) {
-						if (exceptionType?.outerText) {
-							e.type = exceptionType.outerText;
+						if (exceptionType?.value) {
+							e.type = exceptionType.value;
 						}
 					}
 					return e;
@@ -322,10 +319,6 @@ export class App extends React.Component<{}, State> {
 			const selectedRowNumber: number | undefined = this.getSelectedRowNumber(id);
 			if (selectedRowNumber === undefined) {
 				return;
-			}
-			const exceptionType = document.getElementById(`exceptionType-${selectedRowNumber}`);
-			if (exceptionType) {
-				exceptionType.textContent = this.state.exceptions[selectedRowNumber].type;
 			}
 			this.setState({
 				editParameterRow: -1,
@@ -361,7 +354,9 @@ export class App extends React.Component<{}, State> {
 	};
 
 	onMouseEnter = (event: any) => {
-		const id = event.target.id as string;
+		const currentTarget = event.currentTarget as HTMLElement | null;
+		const target = event.target as HTMLElement | null;
+		const id = currentTarget?.id || target?.id || currentTarget?.closest("tr")?.id || target?.closest("tr")?.id || "";
 		if (id.includes("Header")) {
 			this.setState({
 				focusRow: -1
@@ -383,7 +378,6 @@ export class App extends React.Component<{}, State> {
 	};
 
 	componentDidMount(): void {
-		this.setTextAreaCursorStyle();
 		window.addEventListener("message", this.handleMessage);
 		vscode.postMessage({
 			command: "webviewReady"
@@ -410,19 +404,6 @@ export class App extends React.Component<{}, State> {
 			: o1 === o2;
 	};
 
-	/**
-	 * Set the cursor style of the text area to text. Since the text area is
-	 * inside a shadow DOM, we need to add a style element to the shadow DOM.
-	 */
-	setTextAreaCursorStyle(): void {
-		const host = document.getElementById("textArea");
-		if (host?.shadowRoot) {
-			const style = document.createElement('style');
-			style.innerHTML = '.control { cursor: text !important; }';
-			host.shadowRoot.appendChild(style);
-		}
-	}
-
 	isDefaultValueEditable = (row: number) => {
 		return this.state.parameters[row].originalIndex === -1;
 	};
@@ -431,54 +412,69 @@ export class App extends React.Component<{}, State> {
 		return this.isDefaultValueEditable(row) ? this.state.parameters[row].defaultValue : "-";
 	};
 
+	/**
+	 * Render a table cell whose value can be edited. When editing, a real
+	 * <input> control is rendered so that the typed text is visibly rendered
+	 * and read back reliably via its value (see redhat-developer/vscode-java#4417).
+	 */
+	renderEditableCell = (id: string, value: string, editing: boolean, editable: boolean) => {
+		return <td onMouseEnter={this.onMouseEnter} className={`${editing ? "parameter-cell-edit" : "parameter-cell"}`}>
+			{editable
+				? <input id={id} className={"parameter-input"} defaultValue={value} spellCheck={false} autoComplete={"off"} />
+				: <span id={id}>{value}</span>}
+		</td>;
+	};
+
 	generateParameterDataGridRow = (row: number) => {
-		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`parameterRow-${row}`} key={`parameterRow-${row}`}>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterType-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.parameters[row].type}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterName-${row}`} contentEditable={row === this.state.editParameterRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"2"}>{this.state.parameters[row].name}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`parameterDefault-${row}`} contentEditable={row === this.state.editParameterRow && this.isDefaultValueEditable(row) ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"3"}>{this.getDefaultValue(row)}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editParameterRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`parameterButton-${row}`} gridColumn={"4"}>
-				{row === this.state.editParameterRow ?
+		const editing = row === this.state.editParameterRow;
+		return <tr onMouseEnter={this.onMouseEnter} id={`parameterRow-${row}`} key={`parameterRow-${row}`}>
+			{this.renderEditableCell(`parameterType-${row}`, this.state.parameters[row].type, editing, editing)}
+			{this.renderEditableCell(`parameterName-${row}`, this.state.parameters[row].name, editing, editing)}
+			{this.renderEditableCell(`parameterDefault-${row}`, this.getDefaultValue(row), editing, editing && this.isDefaultValueEditable(row))}
+			<td onMouseEnter={this.onMouseEnter} className={`${editing ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`parameterButton-${row}`}>
+				{editing ?
 					<div className="table-buttons-edit">
-						<VSCodeButton className={"table-buttons-edit-ok"} disabled={false} appearance="primary" onClick={this.onClick} id={`confirmParameter-${row}`}>OK</VSCodeButton>
-						<VSCodeButton className={"table-buttons-edit-cancel"} disabled={false} appearance="secondary" onClick={this.onClick} id={`cancelParameter-${row}`}>Cancel</VSCodeButton>
+						<button type={"button"} className={"btn btn-primary table-buttons-edit-ok"} onClick={this.onClick} id={`confirmParameter-${row}`}>OK</button>
+						<button type={"button"} className={"btn btn-secondary table-buttons-edit-cancel"} onClick={this.onClick} id={`cancelParameter-${row}`}>Cancel</button>
 					</div> : row === this.state.focusRow ? <div className="table-buttons">
-						{row === 0 ? <></> : <VSCodeButton appearance="icon">
-							<span className={"codicon codicon-arrow-up"} title={"Up"} onClick={this.onClick} id={`upParameter-${row}`}></span>
-						</VSCodeButton>}
-						{row === this.state.parameters.length - 1 ? <></> : <VSCodeButton appearance="icon">
-							<span className={"codicon codicon-arrow-down"} title={"Down"} onClick={this.onClick} id={`downParameter-${row}`}></span>
-						</VSCodeButton>}
-						<VSCodeButton appearance="icon">
-							<span className={"codicon codicon-edit"} title={"Edit"} onClick={this.onClick} id={`editParameter-${row}`}></span>
-						</VSCodeButton>
-						<VSCodeButton appearance="icon">
-							<span className={"codicon codicon-close"} title={"Remove"} onClick={this.onClick} id={`removeParameter-${row}`}></span>
-						</VSCodeButton>
+						{row === 0 ? <></> : <button type={"button"} className={"btn btn-icon"} title={"Up"} onClick={this.onClick} id={`upParameter-${row}`}>
+							<span className={"codicon codicon-arrow-up"} id={`upParameter-${row}`}></span>
+						</button>}
+						{row === this.state.parameters.length - 1 ? <></> : <button type={"button"} className={"btn btn-icon"} title={"Down"} onClick={this.onClick} id={`downParameter-${row}`}>
+							<span className={"codicon codicon-arrow-down"} id={`downParameter-${row}`}></span>
+						</button>}
+						<button type={"button"} className={"btn btn-icon"} title={"Edit"} onClick={this.onClick} id={`editParameter-${row}`}>
+							<span className={"codicon codicon-edit"} id={`editParameter-${row}`}></span>
+						</button>
+						<button type={"button"} className={"btn btn-icon"} title={"Remove"} onClick={this.onClick} id={`removeParameter-${row}`}>
+							<span className={"codicon codicon-close"} id={`removeParameter-${row}`}></span>
+						</button>
 					</div> : <div onMouseEnter={this.onMouseEnter} className="table-buttons"></div>
 				}
-			</VSCodeDataGridCell>
-		</VSCodeDataGridRow>;
+			</td>
+		</tr>;
 	};
 
 	generateExceptionDataGridRow = (row: number) => {
-		return <VSCodeDataGridRow onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`} key={`exceptionRow-${row}`}>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit" : "parameter-cell"}`} id={`exceptionType-${row}`} contentEditable={row === this.state.editExceptionRow ? "true" : "false"} suppressContentEditableWarning={true} gridColumn={"1"}>{this.state.exceptions[row].type}</VSCodeDataGridCell>
-			<VSCodeDataGridCell onMouseEnter={this.onMouseEnter} className={`${row === this.state.editExceptionRow ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`exceptionButton-${row}`} gridColumn={"2"}>
-				{row === this.state.editExceptionRow ?
+		const editing = row === this.state.editExceptionRow;
+		return <tr onMouseEnter={this.onMouseEnter} id={`exceptionRow-${row}`} key={`exceptionRow-${row}`}>
+			{this.renderEditableCell(`exceptionType-${row}`, this.state.exceptions[row].type, editing, editing)}
+			<td onMouseEnter={this.onMouseEnter} className={`${editing ? "parameter-cell-edit-button" : "parameter-cell-button"}`} id={`exceptionButton-${row}`}>
+				{editing ?
 					<div className="table-buttons-edit">
-						<VSCodeButton className={"table-buttons-edit-ok"} disabled={false} appearance="primary" onClick={this.onClick} id={`confirmException-${row}`}>OK</VSCodeButton>
-						<VSCodeButton className={"table-buttons-edit-cancel"} disabled={false} appearance="secondary" onClick={this.onClick} id={`cancelException-${row}`}>Cancel</VSCodeButton>
+						<button type={"button"} className={"btn btn-primary table-buttons-edit-ok"} onClick={this.onClick} id={`confirmException-${row}`}>OK</button>
+						<button type={"button"} className={"btn btn-secondary table-buttons-edit-cancel"} onClick={this.onClick} id={`cancelException-${row}`}>Cancel</button>
 					</div> : row === this.state.focusRow ? <div className="table-buttons">
-						<VSCodeButton appearance="icon">
-							<span className={"codicon codicon-edit"} title={"Edit"} onClick={this.onClick} id={`editException-${row}`}></span>
-						</VSCodeButton>
-						<VSCodeButton appearance="icon">
-							<span className={"codicon codicon-close"} title={"Remove"} onClick={this.onClick} id={`removeException-${row}`}></span>
-						</VSCodeButton>
+						<button type={"button"} className={"btn btn-icon"} title={"Edit"} onClick={this.onClick} id={`editException-${row}`}>
+							<span className={"codicon codicon-edit"} id={`editException-${row}`}></span>
+						</button>
+						<button type={"button"} className={"btn btn-icon"} title={"Remove"} onClick={this.onClick} id={`removeException-${row}`}>
+							<span className={"codicon codicon-close"} id={`removeException-${row}`}></span>
+						</button>
 					</div> : <div onMouseEnter={this.onMouseEnter} className="table-buttons"></div>
 				}
-			</VSCodeDataGridCell>
-		</VSCodeDataGridRow>;
+			</td>
+		</tr>;
 	};
 
 	render = () => {
@@ -489,76 +485,89 @@ export class App extends React.Component<{}, State> {
 					<div className="flex section-columns">
 						<div className="header-left">
 							<div className="text-title">Access modifier:</div>
-							<VSCodeDropdown className="vsc-dropdown" id={"access-modifier"} onChange={this.onChange} value={this.state.accessType}>
-								<VSCodeOption>public</VSCodeOption>
-								<VSCodeOption>protected</VSCodeOption>
-								<VSCodeOption>package-private</VSCodeOption>
-								<VSCodeOption>private</VSCodeOption>
-							</VSCodeDropdown>
+							<select className="vsc-dropdown" id={"access-modifier"} onChange={this.onChange} value={this.state.accessType ?? "public"}>
+								<option value="public">public</option>
+								<option value="protected">protected</option>
+								<option value="package-private">package-private</option>
+								<option value="private">private</option>
+							</select>
 						</div>
 						<div className="flex-grow header">
 							<div className="text-title">Return type:</div>
-							<VSCodeTextField title={App.TOOLTIP_RETURN_TYPE} value={this.state.returnType} id={"returnType"} onInput={this.onChange}></VSCodeTextField>
+							<input className="vsc-textfield" type="text" title={App.TOOLTIP_RETURN_TYPE} value={this.state.returnType ?? ""} id={"returnType"} onChange={this.onChange}></input>
 						</div>
 						<div className="flex-grow header-right">
 							<div className="text-title">Method name:</div>
-							<VSCodeTextField value={this.state.methodName} id={"methodName"} onInput={this.onChange}></VSCodeTextField>
+							<input className="vsc-textfield" type="text" value={this.state.methodName ?? ""} id={"methodName"} onChange={this.onChange}></input>
 						</div>
 					</div>
 				</div>
-				<VSCodePanels className={"parameters-panel"}>
-					<VSCodePanelTab id="parametersTab">Parameters</VSCodePanelTab>
-					<VSCodePanelTab id="exceptionsTab">Exceptions</VSCodePanelTab>
-					<VSCodePanelView id="parametersView" className={"parameters-view"}>
-						<VSCodeDataGrid onMouseLeave={this.onMouseLeave}>
-							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={"parameterHeader"}>
-								<VSCodeDataGridCell title={App.TOOLTIP_PARAMETER_TYPE} className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderName"} gridColumn={"2"}>Name</VSCodeDataGridCell>
-								<VSCodeDataGridCell title={App.TOOLTIP_PARAMETER_DEFAULT} className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderDefault"} gridColumn={"3"}>Default value</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"parameterHeaderButton"} gridColumn={"4"}></VSCodeDataGridCell>
-							</VSCodeDataGridRow>
-							{
-								(() => {
-									const options: JSX.Element[] = [];
-									for (let row = 0; row < this.state.parameters.length; row++) {
-										options.push(this.generateParameterDataGridRow(row));
-									}
-									return options;
-								})()
-							}
-						</VSCodeDataGrid>
+				<div className={"parameters-panel"}>
+					<div className="tabs" role="tablist">
+						<button type={"button"} role="tab" aria-selected={this.state.activeTab === "parameters"} aria-controls="panel-parameters" className={`tab ${this.state.activeTab === "parameters" ? "tab-active" : ""}`} id="tab-parameters" onClick={this.onClick}>Parameters</button>
+						<button type={"button"} role="tab" aria-selected={this.state.activeTab === "exceptions"} aria-controls="panel-exceptions" className={`tab ${this.state.activeTab === "exceptions" ? "tab-active" : ""}`} id="tab-exceptions" onClick={this.onClick}>Exceptions</button>
+					</div>
+					<div className={"parameters-view"} role="tabpanel" id="panel-parameters" aria-labelledby="tab-parameters" hidden={this.state.activeTab !== "parameters"}>
+						<table className={"parameter-table"} onMouseLeave={this.onMouseLeave}>
+							<thead>
+								<tr className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={"parameterHeader"}>
+									<th title={App.TOOLTIP_PARAMETER_TYPE} className={"parameter-cell-title"} id={"parameterHeaderType"}>Type</th>
+									<th className={"parameter-cell-title"} id={"parameterHeaderName"}>Name</th>
+									<th title={App.TOOLTIP_PARAMETER_DEFAULT} className={"parameter-cell-title"} id={"parameterHeaderDefault"}>Default value</th>
+									<th className={"parameter-cell-title"} id={"parameterHeaderButton"}></th>
+								</tr>
+							</thead>
+							<tbody>
+								{
+									(() => {
+										const options: JSX.Element[] = [];
+										for (let row = 0; row < this.state.parameters.length; row++) {
+											options.push(this.generateParameterDataGridRow(row));
+										}
+										return options;
+									})()
+								}
+							</tbody>
+						</table>
 						<div className={"add-button"}>
-							<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"addParameter"}>Add</VSCodeButton>
+							<button type={"button"} className={"btn btn-primary vsc-button-left"} onClick={this.onClick} id={"addParameter"}>Add</button>
 						</div>
-					</VSCodePanelView>
-					<VSCodePanelView id="exceptionsView" className={"parameters-view"}>
-						<VSCodeDataGrid onMouseLeave={this.onMouseLeave}>
-							<VSCodeDataGridRow className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={`exceptionHeader`}>
-								<VSCodeDataGridCell title={App.TOOLTIP_EXCEPTION_TYPE} className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderType"} gridColumn={"1"}>Type</VSCodeDataGridCell>
-								<VSCodeDataGridCell className={"parameter-cell-title"} cellType={"columnheader"} id={"exceptionHeaderButton"} gridColumn={"2"}></VSCodeDataGridCell>
-							</VSCodeDataGridRow>
-							{
-								(() => {
-									const options: JSX.Element[] = [];
-									for (let row = 0; row < this.state.exceptions.length; row++) {
-										options.push(this.generateExceptionDataGridRow(row));
-									}
-									return options;
-								})()
-							}
-						</VSCodeDataGrid>
+					</div>
+					<div className={"parameters-view"} role="tabpanel" id="panel-exceptions" aria-labelledby="tab-exceptions" hidden={this.state.activeTab !== "exceptions"}>
+						<table className={"parameter-table"} onMouseLeave={this.onMouseLeave}>
+							<thead>
+								<tr className={"parameter-cell-header"} onMouseEnter={this.onMouseEnter} id={"exceptionHeader"}>
+									<th title={App.TOOLTIP_EXCEPTION_TYPE} className={"parameter-cell-title"} id={"exceptionHeaderType"}>Type</th>
+									<th className={"parameter-cell-title"} id={"exceptionHeaderButton"}></th>
+								</tr>
+							</thead>
+							<tbody>
+								{
+									(() => {
+										const options: JSX.Element[] = [];
+										for (let row = 0; row < this.state.exceptions.length; row++) {
+											options.push(this.generateExceptionDataGridRow(row));
+										}
+										return options;
+									})()
+								}
+							</tbody>
+						</table>
 						<div className={"add-button"}>
-							<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"addException"}>Add</VSCodeButton>
+							<button type={"button"} className={"btn btn-primary vsc-button-left"} onClick={this.onClick} id={"addException"}>Add</button>
 						</div>
-					</VSCodePanelView>
-				</VSCodePanels>
+					</div>
+				</div>
 				<div className="text-title-content">Method signature:</div>
-				<VSCodeTextArea className={"preview"} value={this.getPreview()} readOnly={true} id={"textArea"}></VSCodeTextArea>
-				<VSCodeCheckbox id="delegate" className={"delegate"} onClick={this.onClick} checked={this.state.isDelegate}>Keep original method as delegate to changed method</VSCodeCheckbox>
+				<textarea className={"preview"} value={this.getPreview()} readOnly={true} id={"textArea"}></textarea>
+				<label className={"delegate"}>
+					<input type="checkbox" id="delegate" onChange={this.onChange} checked={this.state.isDelegate} />
+					Keep original method as delegate to changed method
+				</label>
 				<div className={"bottom-buttons"}>
-					<VSCodeButton className={"vsc-button-left"} appearance="primary" onClick={this.onClick} id={"refactor"}>Refactor</VSCodeButton>
-					<VSCodeButton className={"vsc-button"} appearance="secondary" onClick={this.onClick} id={"preview"}>Preview</VSCodeButton>
-					<VSCodeButton className={"vsc-button"} appearance="secondary" disabled={this.isUnchanged()} onClick={this.onClick} id={"reset"}>Reset</VSCodeButton>
+					<button type={"button"} className={"btn btn-primary vsc-button-left"} onClick={this.onClick} id={"refactor"}>Refactor</button>
+					<button type={"button"} className={"btn btn-secondary vsc-button"} onClick={this.onClick} id={"preview"}>Preview</button>
+					<button type={"button"} className={"btn btn-secondary vsc-button"} disabled={this.isUnchanged()} onClick={this.onClick} id={"reset"}>Reset</button>
 				</div>
 			</main >
 		);

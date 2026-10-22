@@ -9,7 +9,7 @@ import { Commands } from './commands';
 import { WillRenameFiles } from './protocol';
 import { getJavaConfiguration } from './utils';
 import { userInfo } from 'os';
-import * as stringInterpolate from 'fmtr';
+import stringInterpolate from 'fmtr';
 import { apiManager } from './apiManager';
 
 let serverReady: boolean = false;
@@ -144,12 +144,14 @@ async function handleNewJavaFiles(e: FileCreateEvent) {
                     }
                 }
                 let declaration: string;
+                const preferPackagePrivate = getJavaConfiguration().get<boolean>("templates.preferPackagePrivateVisibility", false);
+                const visibilityPrefix = preferPackagePrivate ? "" : "public ";
                 if (isModuleInfo) {
                     declaration = `module \${1:name}`;
                 } else if (!serverReady || await isVersionLessThan(emptyFiles[i].toString(), 14)) {
-                    declaration = `public \${1|class,interface,enum,abstract class,@interface|} ${typeName}`;
+                    declaration = `${visibilityPrefix}\${1|class,interface,enum,abstract class,@interface|} ${typeName}`;
                 } else {
-                    declaration = `public \${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|}`;
+                    declaration = `${visibilityPrefix}\${1|class ${typeName},interface ${typeName},enum ${typeName},record ${typeName}(),abstract class ${typeName},@interface ${typeName}|}`;
                 }
                 let bracePosition = projectSetting[BRACE_POSITION_KEY];
                 if (bracePosition !== END_OF_LINE && bracePosition !== NEXT_LINE && bracePosition !== NEXT_LINE_SHIFTED) {

@@ -385,6 +385,12 @@ export namespace Commands {
      * Add Java Runtime
      */
     export const ADD_JAVA_RUNTIME = 'java.runtimes.add';
+
+	/**
+     * Copy fully qualified name.
+     */
+	export const COPY_FULLY_QUALIFIED_NAME = 'java.action.copyFullyQualifiedName';
+	export const GET_FULLY_QUALIFIED_NAME = 'java.getFullyQualifiedName';
 }
 
 /**

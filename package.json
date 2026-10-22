@@ -5,7 +5,7 @@
   "author": "Red Hat",
   "icon": "icons/icon128.png",
   "license": "EPL-2.0",
-  "version": "1.54.0",
+  "version": "1.59.0",
   "publisher": "redhat",
   "bugs": "https://github.com/redhat-developer/vscode-java/issues",
   "preview": false,
@@ -182,6 +182,9 @@
           "annotation": [
             "storage.type.annotation.java"
           ],
+          "decorator": [
+            "storage.type.annotation.java"
+          ],
           "annotationMember": [
             "entity.name.annotationMember.java",
             "constant.other.key.java"
@@ -313,7 +316,7 @@
               "null"
             ],
             "default": null,
-            "description": "Specifies the folder path to the JDK (21 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-21.0_5\"",
+            "description": "Specifies the folder path to the JDK (25 or more recent) used to launch the Java Language Server.\nOn Windows, backslashes must be escaped, i.e.\n\"java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-25.0.2\"",
             "scope": "machine-overridable",
             "deprecationMessage": "This setting is deprecated, please use 'java.jdt.ls.java.home' instead.",
             "order": 0
@@ -324,7 +327,7 @@
               "null"
             ],
             "default": null,
-            "description": "Specifies the folder path to the JDK (21 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-21.0_5\"",
+            "description": "Specifies the folder path to the JDK (25 or more recent) used to launch the Java Language Server. This setting will replace the Java extension's embedded JRE to start the Java Language Server. \n\nOn Windows, backslashes must be escaped, i.e.\n\"java.jdt.ls.java.home\":\"C:\\\\Program Files\\\\Java\\\\jdk-25.0.2\"",
             "scope": "machine-overridable",
             "order": 10
           },
@@ -335,6 +338,16 @@
             ],
             "default": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable",
             "description": "Specifies extra VM arguments used to launch the Java Language Server. Eg. use `-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx2G -Xms100m -Xlog:disable` to optimize memory usage with the parallel garbage collector",
+            "scope": "machine-overridable",
+            "order": 20
+          },
+          "java.jdt.ls.mavenProjectCacheSize": {
+            "type": [
+              "integer"
+            ],
+            "minimum": 1,
+            "default": 50,
+            "description": "Specifies the size of the in-memory Maven project cache to use. Increasing the project cache size will help load multi-module projects and monorepos faster, but will result in a significant increase in memory usage.",
             "scope": "machine-overridable",
             "order": 20
           },
@@ -413,6 +426,13 @@
             "scope": "window",
             "order": 80
           },
+          "java.jdt.ls.scalaSupport.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "[Experimental] Specify whether to enable `scala` plugin in Gradle projects. Defaults to `true`.",
+            "scope": "window",
+            "order": 80
+          },
           "java.jdt.ls.groovySupport.enabled": {
             "type": "boolean",
             "default": true,
@@ -431,17 +451,6 @@
             "markdownDescription": "[Experimental] Specify whether to enable Android project importing. When set to `auto`, the Android support will be enabled in Visual Studio Code - Insiders.\n\n**Note:** Only works for Android Gradle Plugin `3.2.0` or higher.",
             "scope": "window",
             "order": 90
-          },
-          "java.jdt.ls.javac.enabled": {
-            "type": "string",
-            "enum": [
-              "on",
-              "off"
-            ],
-            "default": "off",
-            "markdownDescription": "[Experimental] Specify whether to enable Javac-based compilation in the language server. Requires running this extension with Java 25",
-            "scope": "window",
-            "order": 95
           },
           "java.jdt.ls.appcds.enabled": {
             "type": "string",
@@ -483,6 +492,21 @@
         "title": "Project Import/Update",
         "order": 20,
         "properties": {
+          "java.import.mode": {
+            "type": "string",
+            "enum": [
+              "full",
+              "ondemand"
+            ],
+            "enumDescriptions": [
+              "All projects are imported at startup.",
+              "Projects are imported lazily when a file is opened."
+            ],
+            "default": "full",
+            "markdownDescription": "Controls how projects are imported into the workspace.\n- `full`: all projects are discovered and imported at startup (default). Safe and well-tested, but slow for large workspaces.\n- `ondemand`: projects are imported lazily when the user first opens a file belonging to that module. This drastically reduces startup time and memory usage for large multi-module workspaces (e.g. Quarkus with 1300+ modules).",
+            "scope": "window",
+            "order": 5
+          },
           "java.import.projectSelection": {
             "type": "string",
             "enum": [
@@ -972,7 +996,8 @@
                     "JavaSE-23",
                     "JavaSE-24",
                     "JavaSE-25",
-                    "JavaSE-26"
+                    "JavaSE-26",
+                    "JavaSE-27"
                   ],
                   "description": "Java Execution Environment name. Must be unique."
                 },
@@ -1057,21 +1082,6 @@
             "description": "Enable/disable code completion support",
             "scope": "window",
             "order": 10
-          },
-          "java.completion.engine": {
-            "type": "string",
-            "default": "ecj",
-            "description": "[Experimental] Select code completion engine",
-            "scope": "window",
-            "enum": [
-              "ecj",
-              "dom"
-            ],
-            "markdownEnumDescriptions": [
-              "Use ECJ-based code completion engine (default)",
-              "Use (highly experimental) JDT DOM-based code completion engine (requires `java.jdt.ls.javac.enabled` to be `on`)"
-            ],
-            "order": 1000
           },
           "java.completion.postfix.enabled": {
             "type": "boolean",
@@ -1227,6 +1237,43 @@
             "default": [],
             "order": 20
           },
+          "java.templates.methodBody": {
+            "type": "array",
+            "markdownDescription": "Specifies the method body snippet for unimplemented methods (e.g. generated by \"Add unimplemented methods\"). Supports configuring multi-line content with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+            "scope": "window",
+            "default": [
+              "// ${todo} Auto-generated method stub",
+              "throw new UnsupportedOperationException(\"Unimplemented method '${enclosing_method}'\");"
+            ],
+            "order": 30
+          },
+          "java.templates.preferPackagePrivateVisibility": {
+            "type": "boolean",
+            "markdownDescription": "Specifies whether newly created top-level types (class/interface/record) should be package-private instead of public.",
+            "scope": "window",
+            "default": false,
+            "order": 40
+          },
+          "java.templates.methodBodySuper": {
+            "type": "array",
+            "markdownDescription": "Specifies the method body snippet for overridden methods that call `super` (e.g. generated by \"Override/Implement Methods\"). Supports configuring multi-line content with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+            "scope": "window",
+            "default": [
+              "// ${todo} Auto-generated method stub",
+              "${body_statement}"
+            ],
+            "order": 31
+          },
+          "java.templates.catchBody": {
+            "type": "array",
+            "markdownDescription": "Specifies the catch block body snippet (e.g. generated by \"Surround with try/catch\"). Supports configuring multi-line content with an array of strings, and using ${variable} to reference the [predefined variables](command:_java.templateVariables).",
+            "scope": "window",
+            "default": [
+              "// ${todo} Auto-generated catch block",
+              "${exception_var}.printStackTrace();"
+            ],
+            "order": 32
+          },
           "java.codeGeneration.insertionLocation": {
             "type": "string",
             "enum": [
@@ -1284,6 +1331,20 @@
             "type": "boolean",
             "description": "Generate method comments when generating the methods.",
             "default": false,
+            "scope": "window"
+          },
+          "java.codeGeneration.generateCommentsInMarkdown": {
+            "type": "boolean",
+            "description": "Generate Javadoc comments in Markdown style (requires source compliance >= 23).",
+            "default": false
+          },
+          "java.classpath.variables": {
+            "type": "array",
+            "description": "Set of classpath variable strings of the form: \"name=path\" that are used to resolve classpath entries.",
+            "items": {
+              "type": "string",
+              "pattern": "[a-zA-Z_$][a-zA-Z0-9_$]*=.*"
+            },
             "scope": "window"
           },
           "java.codeGeneration.toString.template": {
@@ -1475,6 +1536,13 @@
             "scope": "window",
             "order": 10
           },
+          "java.referencesCodeLens.includeFields": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable/disable the references code lens for fields.",
+            "scope": "window",
+            "order": 15
+          },
           "java.implementationCodeLens": {
             "type": "string",
             "enum": [
@@ -1592,11 +1660,13 @@
             "type": "string",
             "enum": [
               "all",
-              "main"
+              "main",
+              "projectOnly"
             ],
             "enumDescriptions": [
               "Search on all classpath entries including reference libraries and projects.",
-              "All classpath entries excluding test classpath entries."
+              "All classpath entries excluding test classpath entries.",
+              "Only search sources, tests, and referenced projects, excluding the JDK and referenced libraries from the search."
             ],
             "default": "all",
             "markdownDescription": "Specifies the scope which must be used for search operation like \n - Find Reference\n - Call Hierarchy\n - Workspace Symbols",
@@ -1856,6 +1926,11 @@
         "command": "java.runtimes.add",
         "title": "%java.runtimes.add%",
         "category": "Java"
+      },
+      {
+        "command": "java.action.copyFullyQualifiedName",
+        "title": "%java.action.copyFullyQualifiedName%",
+        "category": "Java"
       }
     ],
     "keybindings": [
@@ -1899,12 +1974,12 @@
           "group": "1_javaactions"
         },
         {
-          "when": "explorerResourceIsFolder&&javaLSReady",
+          "when": "explorerResourceIsFolder&&javaLSReady&&resourceDirname in java.projects",
           "command": "java.project.addToSourcePath.command",
           "group": "1_javaactions@1"
         },
         {
-          "when": "explorerResourceIsFolder&&javaLSReady",
+          "when": "explorerResourceIsFolder&&javaLSReady&&resourceDirname in java.projects",
           "command": "java.project.removeFromSourcePath.command",
           "group": "1_javaactions@2"
         }
@@ -1941,6 +2016,11 @@
           "command": "java.action.showTypeHierarchy",
           "when": "javaLSReady && editorTextFocus && editorLangId == java",
           "group": "0_navigation@3"
+        },
+        {
+          "command": "java.action.copyFullyQualifiedName",
+          "when": "javaLSReady && editorTextFocus && editorLangId == java",
+          "group": "1_javaactions"
         }
       ],
       "commandPalette": [
@@ -2027,6 +2107,14 @@
         {
           "command": "java.action.doCleanup",
           "when": "false"
+        },
+        {
+          "command": "java.dashboard.refresh",
+          "when": "false"
+        },
+        {
+          "command": "java.dashboard.dumpState",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -2065,7 +2153,7 @@
     "build": "node scripts/index.mjs build-or-download",
     "fast-build-server": "node scripts/index.mjs dev-server",
     "watch-server": "node scripts/index.mjs watch-server",
-    "eslint": "eslint --ignore-path .eslintignore --ext .js,.ts,.tsx .",
+    "eslint": "eslint .",
     "repo:check": "node scripts/index.mjs repo-check",
     "repo:fix": "node scripts/index.mjs repo-fix",
     "clean-jre": "node scripts/index.mjs clean-jre",
@@ -2078,6 +2166,7 @@
     "prepare-pre-release": "node scripts/index.mjs prepare-pre-release"
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/fs-extra": "^8.0.0",
     "@types/glob": "5.0.30",
     "@types/lodash.findindex": "^4.6.6",
@@ -2091,28 +2180,27 @@
     "@types/vscode-webview": "^1.57.0",
     "@types/winreg": "^1.2.30",
     "@types/winston": "^2.4.4",
-    "@typescript-eslint/eslint-plugin": "^5.18.0",
-    "@typescript-eslint/parser": "^5.18.0",
-    "@vscode/test-electron": "^2.5.2",
+    "@vscode/test-electron": "^3.1.0",
     "css-loader": "^6.7.3",
-    "eslint": "^8.13.0",
-    "eslint-webpack-plugin": "^3.2.0",
+    "eslint": "^10.7.0",
+    "eslint-webpack-plugin": "^6.0.0",
+    "globals": "^17.7.0",
     "lodash.findindex": "^4.6.0",
     "mini-css-extract-plugin": "^2.9.4",
     "minimist": ">=1.2.6",
-    "mocha": "^11.1.0",
+    "mocha": "^12.0.0",
     "sinon": "^14.0.0",
-    "tar": "^7.5.11",
+    "tar": "^7.5.21",
     "ts-loader": "^9.4.2",
-    "typescript": "^4.6.4",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.65.0",
     "webpack": "^5.105.0",
-    "webpack-cli": "^4.6.0"
+    "webpack-cli": "^7.2.1"
   },
   "dependencies": {
     "@redhat-developer/vscode-extension-proposals": "0.0.23",
     "@redhat-developer/vscode-redhat-telemetry": "0.10.2",
     "@vscode/codicons": "^0.0.32",
-    "@vscode/webview-ui-toolkit": "1.2.2",
     "chokidar": "^3.5.3",
     "expand-home-dir": "^0.0.3",
     "fmtr": "^1.1.2",
@@ -2123,14 +2211,11 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "semver": "^7.5.2",
-    "vscode-languageclient": "8.2.0-next.3",
+    "vscode-languageclient": "^10.1.0",
     "vscode-variables": "^1.0.1",
     "winreg-utf8": "^0.1.1",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.7.1"
-  },
-  "overrides": {
-    "vscode-languageserver-protocol": "3.17.6-next.1"
   },
   "segmentWriteKey": "Y7Y5Xk8dKEhVZHTmAkFZkqgdN4d7c4lt",
   "segmentWriteKeyDebug": "BflPll7uuKOCm3y0g7JpfXLVBVFBivDE"

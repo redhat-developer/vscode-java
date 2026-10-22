@@ -138,8 +138,6 @@ function hasJavaConfigChanged(oldConfig: WorkspaceConfiguration, newConfig: Work
 		|| hasConfigKeyChanged('sharedIndexes.location', oldConfig, newConfig)
 		|| hasConfigKeyChanged('transport', oldConfig, newConfig)
 		|| hasConfigKeyChanged('diagnostic.filter', oldConfig, newConfig)
-		|| hasConfigKeyChanged('jdt.ls.javac.enabled', oldConfig, newConfig)
-		|| hasConfigKeyChanged('completion.engine', oldConfig, newConfig)
 		|| hasConfigKeyChanged('jdt.ls.appcds.enabled', oldConfig, newConfig);
 }
 

@@ -4,6 +4,9 @@ main {
 	max-width: 600px;
 	margin-left: auto;
 	margin-right: auto;
+	color: var(--vscode-foreground);
+	font-family: var(--vscode-font-family);
+	font-size: var(--vscode-font-size);
 }
 
 .section {
@@ -13,18 +16,18 @@ main {
 .section-columns {
 	display: flex;
 	width: 100%;
-	padding-left: calc(var(--design-unit) * 1px);
+	padding-left: 4px;
 }
 
 .text-title {
 	margin: 0;
-	height: calc(var(--input-height) * 0.8px);
+	height: 21px;
 }
 
 .text-title-content {
-	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	padding: 0 0 0 4px;
 	margin: 0.5rem 0 0 0;
-	height: calc(var(--input-height) * 0.8px);
+	height: 21px;
 }
 
 .header-left {
@@ -51,6 +54,91 @@ main {
 	box-sizing: border-box;
 }
 
+/* Form controls -------------------------------------------------------- */
+
+.vsc-textfield,
+.vsc-dropdown {
+	box-sizing: border-box;
+	width: 100%;
+	height: 26px;
+	padding: 2px 6px;
+	color: var(--vscode-input-foreground);
+	background-color: var(--vscode-input-background);
+	border: 1px solid var(--vscode-dropdown-border, var(--vscode-input-border, transparent));
+	border-radius: 2px;
+	font-family: inherit;
+	font-size: inherit;
+	outline: none;
+}
+
+.vsc-textfield:focus,
+.vsc-dropdown:focus {
+	border-color: var(--vscode-focusBorder);
+}
+
+.vsc-dropdown {
+	cursor: pointer;
+}
+
+/* Buttons -------------------------------------------------------------- */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	height: 26px;
+	padding: 0 11px;
+	border: 1px solid var(--vscode-button-border, transparent);
+	border-radius: 2px;
+	font-family: inherit;
+	font-size: inherit;
+	cursor: pointer;
+	outline: none;
+}
+
+.btn:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder);
+	outline-offset: 2px;
+}
+
+.btn:disabled {
+	opacity: 0.4;
+	cursor: default;
+}
+
+.btn-primary {
+	color: var(--vscode-button-foreground);
+	background-color: var(--vscode-button-background);
+}
+
+.btn-primary:hover:not(:disabled) {
+	background-color: var(--vscode-button-hoverBackground);
+}
+
+.btn-secondary {
+	color: var(--vscode-button-secondaryForeground);
+	background-color: var(--vscode-button-secondaryBackground);
+}
+
+.btn-secondary:hover:not(:disabled) {
+	background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.btn-icon {
+	height: 22px;
+	width: 22px;
+	padding: 0;
+	color: var(--vscode-icon-foreground);
+	background-color: transparent;
+	border: none;
+	border-radius: 4px;
+}
+
+.btn-icon:hover:not(:disabled) {
+	background-color: var(--vscode-toolbar-hoverBackground);
+}
+
 .vsc-button-left {
 	float: left;
 	margin: 0 0.5rem 0.5rem 0;
@@ -66,80 +154,150 @@ main {
 }
 
 .bottom-buttons {
-	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	padding: 0 0 0 4px;
 	margin: 0.5rem 0 0 0;
+	overflow: hidden;
 }
 
 .preview {
-	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	box-sizing: border-box;
 	margin: 0 0 0.5rem 0;
 	width: 99%;
+	color: var(--vscode-input-foreground);
+	background-color: var(--vscode-input-background);
+	border: 1px solid var(--vscode-input-border, transparent);
+	border-radius: 2px;
+	padding: 4px 6px;
+	font-family: var(--vscode-editor-font-family, monospace);
+	font-size: inherit;
+	resize: vertical;
+	outline: none;
 }
+
+.preview:focus {
+	border-color: var(--vscode-focusBorder);
+}
+
+/* Tabs ----------------------------------------------------------------- */
 
 .parameters-panel {
 	margin: 0;
 	width: calc(99% + 4px);
 }
 
+.tabs {
+	display: flex;
+	border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-editorGroup-border));
+}
+
+.tab {
+	padding: 6px 10px;
+	background-color: transparent;
+	border: none;
+	border-bottom: 1px solid transparent;
+	color: var(--vscode-panelTitle-inactiveForeground, var(--vscode-foreground));
+	font-family: inherit;
+	font-size: inherit;
+	cursor: pointer;
+	outline: none;
+}
+
+.tab:hover {
+	color: var(--vscode-panelTitle-activeForeground, var(--vscode-foreground));
+}
+
+.tab-active {
+	color: var(--vscode-panelTitle-activeForeground, var(--vscode-foreground));
+	border-bottom-color: var(--vscode-panelTitle-activeBorder, var(--vscode-focusBorder));
+}
+
+.tab:focus-visible {
+	outline: 1px solid var(--vscode-focusBorder);
+	outline-offset: -1px;
+}
+
 .parameters-view {
-	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	padding: 0 0 0 4px;
+	display: flex;
 	flex-direction: column;
 }
 
-.parameter-cell {
-	padding-left: 0;
-	pointer-events: none;
+.parameters-view[hidden] {
+	display: none;
+}
+
+/* Table ---------------------------------------------------------------- */
+
+.parameter-table {
+	width: 100%;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+.parameter-table th,
+.parameter-table td {
+	text-align: left;
+	vertical-align: middle;
+	padding: 2px 4px;
+	height: 26px;
+	box-sizing: border-box;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .parameter-cell-title {
-	padding-left: 0;
-}
-
-.parameter-cell-title:focus {
-	border-color: var(--vscode-keybindingTable-headerBackground);
-	background-color: inherit;
-	color: inherit;
+	padding-left: 4px;
+	font-weight: 600;
 }
 
 .parameter-cell-header {
 	background-color: var(--vscode-keybindingTable-headerBackground);
 }
 
+.parameter-cell {
+	padding-left: 4px;
+}
+
 .parameter-cell-edit {
-	padding-left: 0;
+	padding: 0 4px;
 	background-color: var(--vscode-input-background);
 }
 
-.parameter-cell-edit-button {
+.parameter-input {
+	box-sizing: border-box;
+	width: 100%;
+	height: 100%;
 	padding: 0;
 	border: 0;
-	display: flex;
-	justify-content: right;
-	background-color: var(--vscode-input-background);
+	outline: none;
+	background-color: transparent;
+	color: var(--vscode-input-foreground);
+	font-family: inherit;
+	font-size: inherit;
 }
 
+.parameter-cell-edit-button,
 .parameter-cell-button {
 	padding: 0;
 	border: 0;
-	display: flex;
-	justify-content: right;
+	text-align: right;
+	width: 1%;
+	white-space: nowrap;
 }
 
-.parameter-cell-button:focus {
-	background-color: inherit;
-}
-
-.parameter-cell-button:active {
-	background-color: inherit;
+.parameter-cell-edit-button {
+	background-color: var(--vscode-input-background);
 }
 
 .table-buttons {
 	display: inline-flex;
+	justify-content: flex-end;
 }
 
 .table-buttons-edit {
 	display: inline-flex;
-	background-color: var(--vscode-editor-background);
+	justify-content: flex-end;
 }
 
 .table-buttons-edit-ok {
@@ -151,7 +309,18 @@ main {
 	margin: 0;
 }
 
+/* Checkbox ------------------------------------------------------------- */
+
 .delegate {
-	padding: 0 0 0 calc(var(--design-unit) * 1px);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 0 0 4px;
 	margin: 0.5rem 0 0.5rem 0;
+	cursor: pointer;
+}
+
+.delegate input[type="checkbox"] {
+	accent-color: var(--vscode-checkbox-background);
+	cursor: pointer;
 }

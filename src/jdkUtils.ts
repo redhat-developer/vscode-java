@@ -3,7 +3,7 @@
 import { existsSync } from 'fs';
 import { IJavaRuntime, findRuntimes, getSources } from 'jdk-utils';
 import { join } from 'path';
-import { ExtensionContext, Uri, workspace } from 'vscode';
+import { ExtensionContext } from 'vscode';
 
 let cachedJdks: IJavaRuntime[];
 let cachedJreNames: string[];
@@ -14,8 +14,7 @@ export async function loadSupportedJreNames(context: ExtensionContext): Promise<
 }
 
 async function getContributesConfiguration(context: ExtensionContext, configId: string): Promise<any> {
-	const buffer = await workspace.fs.readFile(Uri.file(context.asAbsolutePath("package.json")));
-	const packageJson = JSON.parse(buffer.toString());
+	const packageJson = context.extension.packageJSON;
 	/**
 	 * contributes.configuration can either be a single object,
 	 * representing a single category of settings, or an array
@@ -60,7 +59,7 @@ export async function listJdks(force?: boolean): Promise<IJavaRuntime[]> {
  * 4. Others
  */
 export function sortJdksBySource(jdks: IJavaRuntime[]) {
-	const rankedJdks = jdks as Array<IJavaRuntime & { rank: number }>;
+	const rankedJdks = jdks as Array<IJavaRuntime & { rank?: number }>;
 	const env: string[] = ["JDK_HOME", "JAVA_HOME", "PATH"];
 	const jdkManagers: string[] = ["SDKMAN", "jEnv", "jabba", "asdf"];
 	for (const jdk of rankedJdks) {
@@ -72,7 +71,7 @@ export function sortJdksBySource(jdks: IJavaRuntime[]) {
 			}
 		}
 
-		if (jdk.rank) {
+		if (typeof jdk.rank === "number") {
 			continue;
 		}
 
