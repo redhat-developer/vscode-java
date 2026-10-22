@@ -10,7 +10,7 @@ async function downloadLombok() {
     }
 
     try {
-        const lombokVersion = '1.18.38';
+        const lombokVersion = '1.18.48';
         // The latest lombok version can be found on the website https://projectlombok.org/downloads
         const lombokUrl = `https://projectlombok.org/downloads/lombok-${lombokVersion}.jar`;
 
