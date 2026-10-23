@@ -4,7 +4,8 @@ import { SymbolItemNavigation, SymbolTreeInput, SymbolTreeModel } from "./refere
 import { getActiveLanguageClient } from "../extension";
 import { LanguageClient, Proposed, TypeHierarchySubtypesParams, TypeHierarchySubtypesRequest } from "vscode-languageclient/node";
 import { getRootItem, toCodeTypeHierarchyItem } from "./util";
-import { CancellationToken, commands } from "vscode";
+import { CancellationToken, commands, workspace } from "vscode";
+import { getThemeIcon } from "../themeUtils";
 
 export class TypeHierarchyTreeInput implements SymbolTreeInput<CodeTypeHierarchyItem> {
 	readonly contextValue: string = "javaTypeHierarchy";
@@ -81,10 +82,12 @@ export class TypeHierarchyModel implements SymbolItemNavigation<CodeTypeHierarch
 class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<CodeTypeHierarchyItem> {
 	private readonly emitter = new vscode.EventEmitter<CodeTypeHierarchyItem | undefined>();
 	private readonly modelListener: vscode.Disposable;
+	private readonly lazyLoad: boolean;
 	public readonly onDidChangeTreeData: vscode.Event<CodeTypeHierarchyItem> = this.emitter.event;
 
 	constructor(readonly model: TypeHierarchyModel, readonly client: LanguageClient, readonly token: CancellationToken) {
 		this.modelListener = model.onDidChangeEvent(e => this.emitter.fire(e instanceof CodeTypeHierarchyItem ? e : undefined));
+		this.lazyLoad = workspace.getConfiguration().get("java.typeHierarchy.lazyLoad");
 	}
 
 	dispose(): void {
@@ -99,7 +102,7 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<CodeTypeH
 		const treeItem: vscode.TreeItem = (element === this.model.getBaseItem()) ? new vscode.TreeItem({ label: element.name, highlights: [[0, element.name.length]] }) : new vscode.TreeItem(element.name);
 		treeItem.contextValue = "java-type-item";
 		treeItem.description = element.detail;
-		treeItem.iconPath = TypeHierarchyTreeDataProvider.getThemeIcon(element.kind);
+		treeItem.iconPath = getThemeIcon(element.kind);
 		treeItem.command = (element.uri) ? {
 			command: 'vscode.open',
 			title: 'Open Type Definition Location',
@@ -110,9 +113,15 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<CodeTypeH
 		// workaround: set a specific id to refresh the collapsible state for treeItems, see: https://github.com/microsoft/vscode/issues/114614#issuecomment-763428052
 		treeItem.id = `${element.data["element"]}${Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
 		if (element.children) {
-			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Expanded;
-		} else {
+			treeItem.collapsibleState = (element.children.length === 0) ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Expanded;
+		} else if (this.lazyLoad) {
+			// Don't resolve children up front: accept that leaf nodes will show a disclosure
+			// arrow that collapses to nothing once expanded, in exchange for not issuing a
+			// subtypes request for every visible node just to render the tree.
 			treeItem.collapsibleState = vscode.TreeItemCollapsibleState.Collapsed;
+		} else {
+			element.children = await this.resolveChildren(element);
+			treeItem.collapsibleState = (element.children.length === 0) ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed;
 		}
 		return treeItem;
 	}
@@ -124,6 +133,24 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<CodeTypeH
 		if (element.children) {
 			return element.children;
 		}
+		return this.resolveChildren(element);
+	}
+
+	private async resolveChildren(element: CodeTypeHierarchyItem): Promise<CodeTypeHierarchyItem[]> {
+		if (element.name === "Object" && element.detail === "java.lang") {
+			// Avoid fetching every class in the workspace: java.lang.Object's subtypes are
+			// rarely useful to enumerate and can be prohibitively expensive to resolve.
+			return [{
+				name: "All classes are subtypes of java.lang.Object.",
+				kind: undefined,
+				children: [],
+				detail: undefined,
+				uri: undefined,
+				range: undefined,
+				selectionRange: undefined,
+				data: undefined,
+			} as CodeTypeHierarchyItem];
+		}
 		const params: TypeHierarchySubtypesParams = {
 			item: this.client.code2ProtocolConverter.asTypeHierarchyItem(element),
 		};
@@ -133,18 +160,5 @@ class TypeHierarchyTreeDataProvider implements vscode.TreeDataProvider<CodeTypeH
 			childrenCodeItems.push(toCodeTypeHierarchyItem(this.client, child));
 		}
 		return childrenCodeItems;
-	}
-
-	private static themeIconIds = [
-		'symbol-file', 'symbol-module', 'symbol-namespace', 'symbol-package', 'symbol-class', 'symbol-method',
-		'symbol-property', 'symbol-field', 'symbol-constructor', 'symbol-enum', 'symbol-interface',
-		'symbol-function', 'symbol-variable', 'symbol-constant', 'symbol-string', 'symbol-number', 'symbol-boolean',
-		'symbol-array', 'symbol-object', 'symbol-key', 'symbol-null', 'symbol-enum-member', 'symbol-struct',
-		'symbol-event', 'symbol-operator', 'symbol-type-parameter'
-	];
-
-	private static getThemeIcon(kind: vscode.SymbolKind): vscode.ThemeIcon | undefined {
-		const id = TypeHierarchyTreeDataProvider.themeIconIds[kind];
-		return id ? new vscode.ThemeIcon(id) : undefined;
 	}
 }
