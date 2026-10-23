@@ -4,7 +4,6 @@ import * as net from 'net';
 import * as path from 'path';
 import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, TypeHierarchyItem, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from "vscode";
 import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, ClientCapabilities, FeatureState, TelemetryEventNotification } from "vscode-languageclient";
-import { TypeHierarchyFeature } from 'vscode-languageclient/lib/common/typeHierarchy';
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
 import * as buildPath from './buildpath';
@@ -110,7 +109,6 @@ export class StandardLanguageClient {
 		// Create the language client and start the client.
 		this.languageClient = new TracingLanguageClient('java', extensionName, serverOptions, clientOptions, DEBUG);
 		this.languageClient.registerFeature(new DisableWillRenameFeature());
-		this.languageClient.registerFeature(new TypeHierarchyFeature(this.languageClient));
 
 		this.registerCommandsForStandardServer(context, jdtEventEmitter);
 		fileEventHandler.registerFileEventHandlers(this.languageClient, context);
