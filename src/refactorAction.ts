@@ -337,7 +337,7 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
         fileUris = moveUris;
     }
 
-    const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+    const refactorEdit = await requestMoveWithConfirmation(languageClient, {
         moveKind: 'moveResource',
         sourceUris: fileUris.map(uri => uri.toString()),
         params: null,
@@ -345,7 +345,6 @@ async function moveFile(languageClient: LanguageClient, fileUris: Uri[]) {
         updateReferences: true,
     });
 
-    await applyRefactorEdit(languageClient, refactorEdit);
     if (refactorEdit && refactorEdit.edit) {
         await saveEdit(refactorEdit.edit);
     }
@@ -466,13 +465,12 @@ async function moveStaticMember(languageClient: LanguageClient, params: CodeActi
     const projectName = commandInfo ? commandInfo.projectName : null;
     const picked = await selectTargetClass(languageClient, `Select the new class for the static member ${memberName}.`, projectName, exclude);
     if (picked) {
-        const refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, {
+        await requestMoveWithConfirmation(languageClient, {
             moveKind: 'moveStaticMember',
             sourceUris: [ params.textDocument.uri ],
             params,
             destination: picked,
         });
-        await applyRefactorEdit(languageClient, refactorEdit);
     }
 }
 
@@ -546,9 +544,8 @@ async function moveType(languageClient: LanguageClient, params: CodeActionParams
         return;
     }
 
-    let refactorEdit: RefactorWorkspaceEdit;
     if (picked.kind === 'newFile') {
-        refactorEdit = await languageClient.sendRequest(MoveRequest.type, {
+        await requestMoveWithConfirmation(languageClient, {
             moveKind: 'moveTypeToNewFile',
             sourceUris: [ params.textDocument.uri ],
             params,
@@ -562,7 +559,7 @@ async function moveType(languageClient: LanguageClient, params: CodeActionParams
 
         const picked = await selectTargetClass(languageClient, `Select the new class for the type ${commandInfo.displayName}.`, commandInfo.projectName, exclude);
         if (picked) {
-            refactorEdit = await languageClient.sendRequest(MoveRequest.type, {
+            await requestMoveWithConfirmation(languageClient, {
                 moveKind: 'moveTypeToClass',
                 sourceUris: [ params.textDocument.uri ],
                 params,
@@ -570,6 +567,4 @@ async function moveType(languageClient: LanguageClient, params: CodeActionParams
             });
         }
     }
-
-    await applyRefactorEdit(languageClient, refactorEdit);
 }
