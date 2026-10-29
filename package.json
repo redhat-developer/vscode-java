@@ -1604,13 +1604,6 @@
             "scope": "window",
             "order": 65
           },
-          "java.typeHierarchy.lazyLoad": {
-            "type": "boolean",
-            "default": false,
-            "description": "Enable/disable lazy loading the content in type hierarchy. Lazy loading could save a lot of loading time but every type should be expanded manually to load its content.",
-            "scope": "window",
-            "order": 70
-          },
           "java.inlayHints.parameterNames.enabled": {
             "type": "string",
             "enum": [
@@ -1840,37 +1833,6 @@
         "category": "Java"
       },
       {
-        "command": "java.action.showTypeHierarchy",
-        "title": "%java.action.showTypeHierarchy%",
-        "category": "Java"
-      },
-      {
-        "command": "java.action.showClassHierarchy",
-        "title": "%java.action.showClassHierarchy%",
-        "icon": "$(type-hierarchy)",
-        "enablement": "typeHierarchyDirection != both && typeHierarchySymbolKind != 10",
-        "category": "Java"
-      },
-      {
-        "command": "java.action.showSupertypeHierarchy",
-        "title": "%java.action.showSupertypeHierarchy%",
-        "icon": "$(type-hierarchy-super)",
-        "enablement": "typeHierarchyDirection != parents",
-        "category": "Java"
-      },
-      {
-        "command": "java.action.showSubtypeHierarchy",
-        "title": "%java.action.showSubtypeHierarchy%",
-        "icon": "$(type-hierarchy-sub)",
-        "enablement": "typeHierarchyDirection != children",
-        "category": "Java"
-      },
-      {
-        "command": "java.action.changeBaseType",
-        "title": "%java.action.changeBaseType%",
-        "category": "Java"
-      },
-      {
         "command": "java.project.createModuleInfo.command",
         "title": "%java.project.createModuleInfo.command%",
         "category": "Java"
@@ -2020,11 +1982,6 @@
           "group": "navigation@90"
         },
         {
-          "command": "java.action.showTypeHierarchy",
-          "when": "javaLSReady && editorTextFocus && editorLangId == java",
-          "group": "0_navigation@3"
-        },
-        {
           "command": "java.action.copyFullyQualifiedName",
           "when": "javaLSReady && editorTextFocus && editorLangId == java",
           "group": "1_javaactions"
@@ -2062,26 +2019,6 @@
         {
           "command": "java.project.listSourcePaths.command",
           "when": "javaLSReady"
-        },
-        {
-          "command": "java.action.showTypeHierarchy",
-          "when": "javaLSReady && editorIsOpen"
-        },
-        {
-          "command": "java.action.showClassHierarchy",
-          "when": "false"
-        },
-        {
-          "command": "java.action.showSubtypeHierarchy",
-          "when": "false"
-        },
-        {
-          "command": "java.action.showSupertypeHierarchy",
-          "when": "false"
-        },
-        {
-          "command": "java.action.changeBaseType",
-          "when": "false"
         },
         {
           "command": "java.project.updateSourceAttachment.command",
@@ -2122,30 +2059,6 @@
         {
           "command": "java.dashboard.dumpState",
           "when": "false"
-        }
-      ],
-      "view/title": [
-        {
-          "command": "java.action.showClassHierarchy",
-          "group": "navigation@-1",
-          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && typeHierarchySymbolKind != 10"
-        },
-        {
-          "command": "java.action.showSupertypeHierarchy",
-          "group": "navigation@0",
-          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
-        },
-        {
-          "command": "java.action.showSubtypeHierarchy",
-          "group": "navigation@1",
-          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy"
-        }
-      ],
-      "view/item/context": [
-        {
-          "command": "java.action.changeBaseType",
-          "group": "1",
-          "when": "view == references-view.tree && reference-list.hasResult && reference-list.source == javaTypeHierarchy && viewItem != 'false'"
         }
       ]
     }

@@ -17,11 +17,6 @@
 	"java.project.listSourcePaths": "列出所有 Java 始碼路徑",
 	"java.show.server.task.status": "顯示建置工作狀態",
 	"java.action.navigateToSuperImplementation": "移到父類別中的實作",
-	"java.action.showTypeHierarchy": "顯示型別階層結構",
-	"java.action.showClassHierarchy": "顯示類別階層結構",
-	"java.action.showSupertypeHierarchy": "顯示父類別階層結構",
-	"java.action.showSubtypeHierarchy": "顯示子類別階層結構",
-	"java.action.changeBaseType": "以此型別為基礎",
 	"java.project.createModuleInfo.command": "創建 module-info.java",
 	"java.action.filesExplorerPasteAction": "將剪貼簿文字貼到文件中",
 	"java.action.doCleanup": "執行清理操作"
