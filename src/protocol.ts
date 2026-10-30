@@ -361,6 +361,7 @@ export interface GetRefactorEditParams {
     context: CodeActionParams;
     options: FormattingOptions;
     commandArguments: any[];
+    confirmationToken?: string;
 }
 
 export namespace GetRefactorEditRequest {

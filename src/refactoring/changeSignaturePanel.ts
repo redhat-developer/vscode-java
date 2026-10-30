@@ -1,7 +1,8 @@
 import * as path from "path";
 import { Disposable, Webview, WebviewPanel, window, Uri, ViewColumn, workspace, WorkspaceEdit } from "vscode";
 import { LanguageClient } from "vscode-languageclient/node";
-import { GetRefactorEditRequest, RefactorWorkspaceEdit } from "../protocol";
+import { GetRefactorEditParams, GetRefactorEditRequest } from "../protocol";
+import { requestWithConfirmation } from "./confirmation";
 import { getNonce, getUri } from "../webviewUtils";
 
 interface MethodParameter {
@@ -173,12 +174,18 @@ export class ChangeSignaturePanel {
 	 * @returns true if the refactoring is successful, false otherwise.
 	 */
 	private async doRefactor(methodIdentifier: string, isDelegate: boolean, methodName: string, accessType: string, returnType: string, parameters: MethodParameter[], exceptions: MethodException[], preview: boolean): Promise<boolean> {
-		const clientWorkspaceEdit: RefactorWorkspaceEdit = await this.languageClient.sendRequest(GetRefactorEditRequest.type, {
+		const refactorParams: GetRefactorEditParams = {
 			command: this.command,
 			context: this.params,
 			options: this.formattingOptions,
 			commandArguments: [methodIdentifier, isDelegate, methodName, accessType, returnType, parameters, exceptions, preview]
-		});
+		};
+		const clientWorkspaceEdit = await requestWithConfirmation(refactorParams,
+			params => this.languageClient.sendRequest(GetRefactorEditRequest.type, params));
+		if (clientWorkspaceEdit?.errorMessage) {
+			window.showErrorMessage(clientWorkspaceEdit.errorMessage);
+			return false;
+		}
 		if (clientWorkspaceEdit?.edit) {
 			const codeEdit: WorkspaceEdit = await this.languageClient.protocol2CodeConverter.asWorkspaceEdit(clientWorkspaceEdit.edit);
 			if (codeEdit) {

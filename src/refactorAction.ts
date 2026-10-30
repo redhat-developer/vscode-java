@@ -6,7 +6,8 @@ import { commands, ExtensionContext, Position, QuickPickItem, TextDocument, Uri,
 import { FormattingOptions, WorkspaceEdit, RenameFile, DeleteFile, TextDocumentEdit, CodeActionParams, SymbolInformation } from 'vscode-languageclient';
 import { LanguageClient } from 'vscode-languageclient/node';
 import { Commands as javaCommands } from './commands';
-import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest, GetChangeSignatureInfoRequest, ChangeSignatureInfo, MoveParams } from './protocol';
+import { GetRefactorEditRequest, MoveRequest, RefactorWorkspaceEdit, RenamePosition, GetMoveDestinationsRequest, SearchSymbols, SelectionInfo, InferSelectionRequest, GetChangeSignatureInfoRequest, ChangeSignatureInfo, MoveParams, GetRefactorEditParams } from './protocol';
+import { requestWithConfirmation } from './refactoring/confirmation';
 import { ChangeSignaturePanel } from './refactoring/changeSignaturePanel';
 import { getExtractInterfaceArguments, revealExtractedInterface } from './refactoring/extractInterface';
 
@@ -46,6 +47,9 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
             || command === 'convertVariableToField'
             || command === 'invertVariable'
             || command === 'introduceParameter'
+            || command === 'inlineMethod'
+            || command === 'inlineConstant'
+            || command === 'inlineLocalVariable'
             || command === 'convertAnonymousClassToNestedCommand') {
             const currentEditor = window.activeTextEditor;
             if (!currentEditor || !currentEditor.options) {
@@ -121,16 +125,18 @@ function registerApplyRefactorCommand(languageClient: LanguageClient, context: E
                 return;
             }
 
-            const result: RefactorWorkspaceEdit = await languageClient.sendRequest(GetRefactorEditRequest.type, {
+            const refactorParams: GetRefactorEditParams = {
                 command,
                 context: params,
                 options: formattingOptions,
                 commandArguments,
-            });
+            };
+            const result = await requestWithConfirmation(refactorParams,
+                requestParams => languageClient.sendRequest(GetRefactorEditRequest.type, requestParams));
 
             await applyRefactorEdit(languageClient, result);
 
-            if (command === 'extractInterface') {
+            if (command === 'extractInterface' && result) {
                 await revealExtractedInterface(result);
             }
         } else if (command === 'moveFile') {
@@ -253,27 +259,8 @@ async function applyRefactorEdit(languageClient: LanguageClient, refactorEdit: R
 }
 
 async function requestMoveWithConfirmation(languageClient: LanguageClient, moveParams: MoveParams): Promise<RefactorWorkspaceEdit | undefined> {
-    let refactorEdit: RefactorWorkspaceEdit = await languageClient.sendRequest(MoveRequest.type, moveParams);
-    if (!refactorEdit?.confirmationToken) {
-        await applyRefactorEdit(languageClient, refactorEdit);
-        return refactorEdit;
-    }
-
-    const continueAction = 'Continue';
-    const detail = 'Review the details below before continuing:\n\n' + refactorEdit.errorMessage;
-    const selection = await window.showWarningMessage(
-        'This refactoring may change program behavior. Continue anyway?',
-        { modal: true, detail },
-        continueAction,
-    );
-    if (selection !== continueAction) {
-        return undefined;
-    }
-
-    refactorEdit = await languageClient.sendRequest(MoveRequest.type, {
-        ...moveParams,
-        confirmationToken: refactorEdit.confirmationToken,
-    });
+    const refactorEdit = await requestWithConfirmation(moveParams,
+        requestParams => languageClient.sendRequest(MoveRequest.type, requestParams));
     await applyRefactorEdit(languageClient, refactorEdit);
     return refactorEdit;
 }
