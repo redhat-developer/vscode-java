@@ -229,14 +229,6 @@ export namespace Commands {
      */
     export const NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND = 'java.action.navigateToSuperImplementation';
     /**
-     * Open the given TypeHierarchy Item.
-     */
-    export const OPEN_TYPE_HIERARCHY = 'java.navigate.openTypeHierarchy';
-    /**
-     * Resolve the given TypeHierarchy Item.
-     */
-    export const RESOLVE_TYPE_HIERARCHY = 'java.navigate.resolveTypeHierarchy';
-    /**
      * Show server task status
      */
     export const SHOW_SERVER_TASK_STATUS = 'java.show.server.task.status';
