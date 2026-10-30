@@ -8,7 +8,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as semver from 'semver';
 import {
-	CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
+	CodeAction, CodeActionContext, commands, CompletionItem, ConfigurationTarget, Diagnostic, env, EventEmitter, ExtensionContext, extensions,
 	InputBoxOptions, Location, MarkdownString, RelativePattern,
 	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration
 } from 'vscode';
@@ -325,7 +325,7 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 							result.push(client.protocol2CodeConverter.asCommand(item));
 						}
 						else {
-							result.push(await client.protocol2CodeConverter.asCodeAction(item));
+							result.push(addRevealCommand(client, await client.protocol2CodeConverter.asCodeAction(item), item.edit));
 						}
 					}
 					return result;
@@ -384,9 +384,9 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 								codeAction.edit.set(uri, editList);
 							}
 						}
-						return codeAction;
+						return addRevealCommand(client, codeAction, result.edit);
 					}
-					return await client.protocol2CodeConverter.asCodeAction(result, token);
+					return addRevealCommand(client, await client.protocol2CodeConverter.asCodeAction(result, token), result.edit);
 				}, (error) => {
 					return client.handleFailedRequest(CodeActionResolveRequest.type, token, error, item);
 				});
@@ -1375,4 +1375,39 @@ export function escapeSnippetLiterals(value: string): string {
     return value
         .replace(/\\(?!,)/g, '\\\\')       // Escape backslashes, but preserve escaped commas
         .replace(/\$(?!\{)/g, '\\$'); // Escape $ only if NOT followed by {
+}
+
+/**
+ * VS Code applies the edit of a code action itself and doesn't show the edited file.
+ * Attach a command, which VS Code runs after applying the edit, to reveal the change
+ * when it is made in a document other than the active one.
+ * Any command the action already has is passed along and run first.
+ */
+function addRevealCommand(client: LanguageClient, codeAction: CodeAction, lspEdit: { documentChanges?: any[], changes?: { [uri: string]: any[] } } | undefined): CodeAction {
+	if (lspEdit && codeAction.command?.command !== Commands.REVEAL_EDIT) {
+		// Taken from the raw edit because WorkspaceEdit.entries() doesn't include snippet edits
+		let target: { uri: string, range: any } | undefined;
+		for (const docChange of lspEdit.documentChanges ?? []) {
+			if ("textDocument" in docChange && docChange.edits.length > 0) {
+				target = { uri: docChange.textDocument.uri, range: docChange.edits[0].range };
+				break;
+			}
+		}
+		if (!target) {
+			for (const [uri, edits] of Object.entries(lspEdit.changes ?? {})) {
+				if (edits.length > 0) {
+					target = { uri, range: edits[0].range };
+					break;
+				}
+			}
+		}
+		if (target) {
+			codeAction.command = {
+				title: 'Reveal edit',
+				command: Commands.REVEAL_EDIT,
+				arguments: [Uri.parse(target.uri), client.protocol2CodeConverter.asRange(target.range), codeAction.command],
+			};
+		}
+	}
+	return codeAction;
 }

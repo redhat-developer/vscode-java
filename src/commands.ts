@@ -75,6 +75,11 @@ export namespace Commands {
     export const APPLY_WORKSPACE_EDIT = 'java.apply.workspaceEdit';
 
     /**
+     * Reveal the change made by a code action if it is in a document other than the active one
+     */
+    export const REVEAL_EDIT = 'java.reveal.edit';
+
+    /**
      * Execute Workspace Command
      */
     export const EXECUTE_WORKSPACE_COMMAND = 'java.execute.workspaceCommand';
