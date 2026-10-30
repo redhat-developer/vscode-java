@@ -2,7 +2,7 @@
 
 import * as net from 'net';
 import * as path from 'path';
-import { CancellationToken, CodeActionKind, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, TextEditor, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from "vscode";
+import { CancellationToken, CodeActionKind, Command, commands, ConfigurationTarget, DocumentSelector, EventEmitter, ExtensionContext, extensions, languages, Location, ProgressLocation, Range, TextEditor, TextEditorRevealType, Uri, ViewColumn, window, workspace, WorkspaceConfiguration } from "vscode";
 import { ConfigurationParams, ConfigurationRequest, LanguageClientOptions, Location as LSLocation, MessageType, Position as LSPosition, TextDocumentPositionParams, WorkspaceEdit, StaticFeature, ClientCapabilities, FeatureState, TelemetryEventNotification } from "vscode-languageclient";
 import { LanguageClient, StreamInfo } from "vscode-languageclient/node";
 import { apiManager } from "./apiManager";
@@ -438,8 +438,30 @@ export class StandardLanguageClient {
 
 		context.subscriptions.push(commands.registerCommand(Commands.NULL_ANALYSIS_SET_MODE, (status) => setNullAnalysisStatus(status)));
 
-		context.subscriptions.push(commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, (obj) => {
-			applyWorkspaceEdit(obj, this.languageClient);
+		context.subscriptions.push(commands.registerCommand(Commands.APPLY_WORKSPACE_EDIT, async (obj) => {
+			const activeUri = window.activeTextEditor?.document.uri.toString();
+			await applyWorkspaceEdit(obj, this.languageClient);
+			await revealWorkspaceEdit(obj, this.languageClient, activeUri);
+		}));
+
+		context.subscriptions.push(commands.registerCommand(Commands.REVEAL_EDIT, async (uri: Uri, range: Range, originalCommand?: Command) => {
+			if (originalCommand) {
+				await commands.executeCommand(originalCommand.command, ...(originalCommand.arguments ?? []));
+			}
+			if (window.activeTextEditor?.document.uri.toString() === uri.toString()) {
+				return;
+			}
+			// The edit may still be being applied (e.g. a snippet edit opens the file in the background),
+			// so open the document and retry until its editor is the active one.
+			const document = await workspace.openTextDocument(uri);
+			for (let i = 0; i < 10; i++) {
+				const editor = await window.showTextDocument(document, { preview: false });
+				if (window.activeTextEditor?.document.uri.toString() === uri.toString()) {
+					editor.revealRange(range, TextEditorRevealType.InCenter);
+					return;
+				}
+				await new Promise(resolve => setTimeout(resolve, 100));
+			}
 		}));
 
 		context.subscriptions.push(commands.registerCommand(Commands.NAVIGATE_TO_SUPER_IMPLEMENTATION_COMMAND, async (location: LinkLocation | Uri) => {
@@ -924,6 +946,27 @@ export async function applyWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageC
 		return await workspace.applyEdit(codeEdit);
 	} else {
 		return Promise.resolve(true);
+	}
+}
+
+/**
+ * Reveals the first change of the workspace edit in an editor.
+ * If `onlyIfNotUri` is given, nothing happens when the change is in that document.
+ */
+export async function revealWorkspaceEdit(workspaceEdit: WorkspaceEdit, languageClient: LanguageClient, onlyIfNotUri?: string): Promise<void> {
+	const codeWorkspaceEdit = await languageClient.protocol2CodeConverter.asWorkspaceEdit(workspaceEdit);
+	if (!codeWorkspaceEdit) {
+		return;
+	}
+	for (const [uri, edits] of codeWorkspaceEdit.entries()) {
+		if (edits.length > 0) {
+			if (uri.toString() !== onlyIfNotUri) {
+				// reveal first available change of the workspace edit
+				const editor = await window.showTextDocument(uri);
+				editor.revealRange(edits[0].range, TextEditorRevealType.InCenter);
+			}
+			break;
+		}
 	}
 }
 
