@@ -32,8 +32,6 @@ import { snippetCompletionProvider } from "./snippetCompletionProvider";
 import * as sourceAction from './sourceAction';
 import { askForProjects, projectConfigurationUpdate, upgradeGradle } from "./standardLanguageClientUtils";
 import { TracingLanguageClient } from './TracingLanguageClient';
-import { TypeHierarchyDirection, TypeHierarchyItem } from "./typeHierarchy/protocol";
-import { typeHierarchyTree } from "./typeHierarchy/typeHierarchyTree";
 import { getAllJavaProjects, getAllProjects, getJavaConfiguration, isPrereleaseOrInsiderVersion } from "./utils";
 import { Telemetry } from "./telemetry";
 import { TelemetryEvent } from "@redhat-developer/vscode-redhat-telemetry/lib";
@@ -488,33 +486,6 @@ export class StandardLanguageClient {
 			} else {
 				return showNoLocationFound('No super implementation found');
 			}
-		}));
-
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_TYPE_HIERARCHY, (location: any) => {
-			if (location instanceof Uri) {
-				typeHierarchyTree.setTypeHierarchy(new Location(location, window.activeTextEditor.selection.active), TypeHierarchyDirection.both);
-			} else {
-				if (window.activeTextEditor?.document?.languageId !== "java") {
-					return;
-				}
-				typeHierarchyTree.setTypeHierarchy(new Location(window.activeTextEditor.document.uri, window.activeTextEditor.selection.active), TypeHierarchyDirection.both);
-			}
-		}));
-
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_CLASS_HIERARCHY, () => {
-			typeHierarchyTree.changeDirection(TypeHierarchyDirection.both);
-		}));
-
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUPERTYPE_HIERARCHY, () => {
-			typeHierarchyTree.changeDirection(TypeHierarchyDirection.parents);
-		}));
-
-		context.subscriptions.push(commands.registerCommand(Commands.SHOW_SUBTYPE_HIERARCHY, () => {
-			typeHierarchyTree.changeDirection(TypeHierarchyDirection.children);
-		}));
-
-		context.subscriptions.push(commands.registerCommand(Commands.CHANGE_BASE_TYPE, async (item: TypeHierarchyItem) => {
-			typeHierarchyTree.changeBaseItem(item);
 		}));
 
 		context.subscriptions.push(commands.registerCommand(Commands.BUILD_PROJECT, async (uris: Uri[] | Uri, isFullBuild: boolean, token: CancellationToken) => {
