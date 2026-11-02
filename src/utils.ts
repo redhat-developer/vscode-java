@@ -234,6 +234,15 @@ export async function getJavaConfig(javaHome: string, skipAutoDetection?: boolea
 	javaConfig.format.tabSize = editorConfig.get('tabSize');
 	const filesConfig = workspace.getConfiguration('files');
 	javaConfig.associations = filesConfig.get('associations');
+	javaConfig.import.maven.projectNameTemplateByFolder = {};
+	if (workspace.workspaceFolders && workspace.workspaceFolders.length) {
+		workspace.workspaceFolders.forEach((folder) => {
+			const template = workspace.getConfiguration('java', folder.uri).get<string>('import.maven.projectNameTemplate');
+			if (template) {
+				javaConfig.import.maven.projectNameTemplateByFolder[folder.uri.toString()] = template;
+			}
+		});
+	}
 	const isInsider: boolean = isInsiderEditor();
 	const androidSupport = javaConfig.jdt.ls.androidSupport.enabled;
 	switch (androidSupport) {
