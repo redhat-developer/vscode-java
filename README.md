@@ -100,6 +100,8 @@ If you need to compile your projects against a different JDK version, it's recom
 ```
 The default runtime will be used when you open standalone Java files.
 
+The embedded JRE doesn't include the Java source code (`src.zip`). Without it, generated methods may have parameter names like `arg0`. To get the real names, use `java.configuration.runtimes` to configure a JDK that includes `src.zip`.
+
 Available commands
 ==========================
 The following commands are available:
