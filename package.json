@@ -206,7 +206,8 @@
         "id": "java",
         "extensions": [
           ".java",
-          ".class"
+          ".class",
+          ".jsh"
         ],
         "configuration": "./language-support/java/language-configuration.json"
       },
