@@ -437,6 +437,15 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 		cleanWorkspaceExists
 	);
 
+	// Recommend JBang when working with a single Java file (issue #3111)
+	void showJBangRecommendation(context);
+
+	context.subscriptions.push(workspace.onDidOpenTextDocument(async (document) => {
+		if (document.languageId === 'java') {
+			await showJBangRecommendation(context);
+		}
+	}));
+
 	return apiManager.getApiInstance();
 }
 
@@ -1411,4 +1420,51 @@ function addRevealCommand(client: LanguageClient, codeAction: CodeAction, lspEdi
 		}
 	}
 	return codeAction;
+}
+
+const JBANG_RECOMMENDATION_KEY = 'jbangRecommendationShown';
+const JBANG_EXTENSION_ID = 'jbangdev.jbang-vscode';
+const JBANG_MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=jbangdev.jbang-vscode';
+
+function shouldRecommendJBang(): boolean {
+	// Case 1: No workspace folder (standalone file mode)
+	if (!workspace.workspaceFolders) {
+		return true;
+	}
+	// Case 2: Workspace folder with just a single Java file
+	if (workspace.workspaceFolders.length === 1) {
+		const javaFileCount = workspace.textDocuments.filter(doc => doc.languageId === 'java').length;
+		if (javaFileCount <= 1) {
+			return true;
+		}
+	}
+	return false;
+}
+
+async function showJBangRecommendation(context: ExtensionContext): Promise<void> {
+	const alreadyShown = context.globalState.get<boolean>(JBANG_RECOMMENDATION_KEY, false);
+	if (alreadyShown) {
+		return;
+	}
+
+	if (!shouldRecommendJBang()) {
+		return;
+	}
+
+	const install = 'Install JBang';
+	const maybeLater = 'Maybe Later';
+	const dontShowAgain = "Don't Show Again";
+
+	const choice = await window.showInformationMessage(
+		'You are working with a single Java file. JBang makes it easy to run Java scripts. Would you like to install the JBang extension?',
+		install, maybeLater, dontShowAgain
+	);
+
+	if (choice === install) {
+		await commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(JBANG_MARKETPLACE_URL));
+	}
+
+	if (choice === dontShowAgain || choice === install) {
+		await context.globalState.update(JBANG_RECOMMENDATION_KEY, true);
+	}
 }
