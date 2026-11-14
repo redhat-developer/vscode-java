@@ -1424,7 +1424,6 @@ function addRevealCommand(client: LanguageClient, codeAction: CodeAction, lspEdi
 
 const JBANG_RECOMMENDATION_KEY = 'jbangRecommendationShown';
 const JBANG_EXTENSION_ID = 'jbangdev.jbang-vscode';
-const JBANG_MARKETPLACE_URL = 'https://marketplace.visualstudio.com/items?itemName=jbangdev.jbang-vscode';
 
 function shouldRecommendJBang(): boolean {
 	// Case 1: No workspace folder (standalone file mode)
@@ -1461,7 +1460,7 @@ async function showJBangRecommendation(context: ExtensionContext): Promise<void>
 	);
 
 	if (choice === install) {
-		await commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(JBANG_MARKETPLACE_URL));
+		await commands.executeCommand('workbench.extensions.installExtension', JBANG_EXTENSION_ID);
 	}
 
 	if (choice === dontShowAgain || choice === install) {
