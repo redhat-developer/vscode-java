@@ -12,7 +12,7 @@ import {
 	InputBoxOptions, Location, MarkdownString, RelativePattern,
 	SnippetString, SnippetTextEdit, TextDocument, TextEditorRevealType, UIKind, Uri, version, ViewColumn, window, workspace, WorkspaceConfiguration
 } from 'vscode';
-import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn } from 'vscode-languageclient';
+import { CancellationToken, CodeActionParams, CodeActionRequest, CodeActionResolveRequest, Command, CompletionRequest, DidChangeConfigurationNotification, ExecuteCommandParams, ExecuteCommandRequest, LanguageClientOptions, RevealOutputChannelOn, TextEdit as ProtocolTextEdit } from 'vscode-languageclient';
 import { Executable, LanguageClient } from 'vscode-languageclient/node';
 import { apiManager } from './apiManager';
 import { BuildFileSelector, cleanupWorkspaceState, PICKED_BUILD_FILES } from './buildFilesSelector';
@@ -32,6 +32,7 @@ import { OutputInfoCollector } from './outputInfoCollector';
 import { pasteFile } from './pasteAction';
 import { collectJavaExtensions, getBundlesToReload, getShortcuts, IJavaShortcut, isContributedPartUpdated } from './plugin';
 import { Deferred } from './promiseUtil';
+import { CleanupRequest } from './protocol';
 import { fixJdtSchemeHoverLinks, registerClientProviders } from './providerDispatcher';
 import * as requirements from './requirements';
 import { languageStatusBarProvider } from './runtimeStatusBarProvider';
@@ -40,7 +41,7 @@ import { serverStatusBarProvider, ShortcutQuickPickItem } from './serverStatusBa
 import { activationProgressNotification } from "./serverTaskPresenter";
 import { ACTIVE_BUILD_TOOL_STATE, cleanWorkspaceFileName, getImportMode, getJavaServerMode, handleTextDocumentChanges, ImportMode, onConfigurationChange, ServerMode } from './settings';
 import { snippetCompletionProvider } from './snippetCompletionProvider';
-import { StandardLanguageClient } from './standardLanguageClient';
+import { applyWorkspaceEdit, StandardLanguageClient } from './standardLanguageClient';
 import { SyntaxLanguageClient } from './syntaxLanguageClient';
 import { Telemetry } from './telemetry';
 import { cleanJavaLSConfiguration, convertToGlob, deleteClientLog, deleteDirectory, ensureExists, getBuildFilePatterns, getExclusionGlob, getInclusionPatternsFromNegatedExclusion, getJavaConfig, getJavaConfiguration, getVersion, hasBuildToolConflicts, resolveActualCause } from './utils';
@@ -276,6 +277,42 @@ export async function activate(context: ExtensionContext): Promise<ExtensionAPI>
 			triggerFiles,
 		},
 		middleware: {
+			willSaveWaitUntil: async (event, next) => {
+				const javaConfig = workspace.getConfiguration('java', event.document.uri);
+				const cleanupActions = javaConfig.get<string[]>('cleanup.actions') ?? [];
+				const deprecatedActions = javaConfig.get<string[]>('cleanup.actionsOnSave') ?? [];
+				const effectiveActions = cleanupActions.length > 0 ? cleanupActions : deprecatedActions;
+				if (event.document.uri.scheme !== 'file' || !javaConfig.get<boolean>('saveActions.cleanup', true) || !effectiveActions.includes('organizeImports')) {
+					return next(event);
+				}
+				try {
+					const client = standardClient.getClient();
+					const workspaceEdit = await client.sendRequest(CleanupRequest.type, client.code2ProtocolConverter.asTextDocumentIdentifier(event.document));
+					if (!workspaceEdit) {
+						return next(event);
+					}
+					const sourceUri = event.document.uri.toString();
+					const sourceEdits: ProtocolTextEdit[] = [];
+					const otherChanges: Record<string, ProtocolTextEdit[]> = {};
+					for (const [uri, edits] of Object.entries(workspaceEdit.changes ?? {})) {
+						if (Uri.parse(uri).toString() === sourceUri) {
+							sourceEdits.push(...edits);
+						} else {
+							otherChanges[uri] = edits;
+						}
+					}
+					if (Object.keys(otherChanges).length > 0) {
+						const applied = await applyWorkspaceEdit({ changes: otherChanges }, client);
+						if (!applied) {
+							logger.warn(`Failed to apply cleanup edits outside ${sourceUri}`);
+						}
+					}
+					return (await client.protocol2CodeConverter.asTextEdits(sourceEdits)) ?? [];
+				} catch (error) {
+					logger.error(`Failed to apply multi-file cleanup on save: ${getMessage(error)}`);
+					return next(event);
+				}
+			},
 			workspace: {
 				didChangeConfiguration: async () => {
 					await standardClient.getClient().sendNotification(DidChangeConfigurationNotification.type, {
