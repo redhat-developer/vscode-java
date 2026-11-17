@@ -1699,6 +1699,12 @@
             "description": "Enable/disable smart folding range support. If disabled, it will use the default indentation-based folding range provided by VS Code.",
             "scope": "window"
           },
+          "java.jshell.enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable/disable classpath-aware content assist (completion, diagnostics, hover) for .jsh (JShell script) files. Disabling this does not affect syntax highlighting.",
+            "scope": "window"
+          },
           "java.selectionRange.enabled": {
             "type": "boolean",
             "default": true,
