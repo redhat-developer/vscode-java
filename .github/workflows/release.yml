@@ -94,7 +94,7 @@ jobs:
       - name: Set Up NodeJS
         uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Install NodeJS dependencies
         run: npm install -g typescript "@vscode/vsce" "ovsx"
       - name: Download JDT-LS Release
@@ -167,12 +167,15 @@ jobs:
   release-job:
     environment: ${{ (inputs.publishToMarketPlace == 'true' || inputs.publishToOVSX == 'true') && 'release' || 'pre-release' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: packaging-job
     steps:
       - name: Set Up NodeJS
         uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
       - name: Install dependencies
         run: |
           npm install -g typescript "@vscode/vsce" "ovsx"
@@ -182,16 +185,16 @@ jobs:
         if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' || inputs.publishPreRelease == 'true' }}
         run: |
           for platformVsix in java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
-            vsce publish --skip-duplicate -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+            vsce publish --skip-duplicate --oidc --packagePath ${platformVsix}
           done
-          vsce publish --skip-duplicate -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
+          vsce publish --skip-duplicate --oidc --packagePath vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
       - name: Publish to OpenVSX Registry
         if: ${{ github.event_name == 'schedule' || inputs.publishToOVSX == 'true' || inputs.publishPreRelease == 'true' }}
         run: |
           for platformVsix in java-*-*-${GITHUB_RUN_NUMBER}.vsix; do
-            ovsx publish --skip-duplicate -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath ${platformVsix}
+            ovsx publish --skip-duplicate --trusted-publishing --packagePath ${platformVsix}
           done
-          ovsx publish --skip-duplicate -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }}  --packagePath vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
+          ovsx publish --skip-duplicate --trusted-publishing  --packagePath vscode-java-*-${GITHUB_RUN_NUMBER}.vsix
       - name: Delete saved artifact
         if: always()
         uses: geekyeggo/delete-artifact@e46cfb9575865f907c2beb2e4170b5f4c7d77c52
