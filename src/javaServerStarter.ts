@@ -286,6 +286,8 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 	let configDir = isSyntaxServer ? 'config_ss_win' : 'config_win';
 	if (process.platform === 'darwin') {
 		configDir = isSyntaxServer ? 'config_ss_mac' : 'config_mac';
+		// Equinox's splash updates initialize AppKit even when no splash is shown.
+		params.push('-nosplash');
 	} else if (process.platform === 'linux') {
 		configDir = isSyntaxServer ? 'config_ss_linux' : 'config_linux';
 	}
