@@ -368,6 +368,11 @@ export namespace Commands {
      */
 	export const COPY_FULLY_QUALIFIED_NAME = 'java.action.copyFullyQualifiedName';
 	export const GET_FULLY_QUALIFIED_NAME = 'java.getFullyQualifiedName';
+
+	/**
+	 * Recommend JBang for single Java file usage.
+	 */
+	export const JBANG_RECOMMEND = 'java.jbang.recommend';
 }
 
 /**

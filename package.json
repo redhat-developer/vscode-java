@@ -1907,6 +1907,11 @@
         "command": "java.action.copyFullyQualifiedName",
         "title": "%java.action.copyFullyQualifiedName%",
         "category": "Java"
+      },
+      {
+        "command": "java.jbang.recommend",
+        "title": "%java.jbang.recommend%",
+        "category": "Java"
       }
     ],
     "keybindings": [

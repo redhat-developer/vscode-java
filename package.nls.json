@@ -26,5 +26,6 @@
 	"java.change.searchScope": "Change Search Scope",
 	"java.action.showExtendedOutline": "Open Extended Outline",
 	"java.runtimes.add": "Add Java Runtime",
-	"java.action.copyFullyQualifiedName": "Copy Fully Qualified Name"
+	"java.action.copyFullyQualifiedName": "Copy Fully Qualified Name",
+	"java.jbang.recommend": "Recommend JBang"
 }
