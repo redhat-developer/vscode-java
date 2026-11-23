@@ -200,7 +200,7 @@ export namespace Commands {
     /**
      * Custom paste action in files explorer
      */
-     export const FILESEXPLORER_ONPASTE = 'java.action.filesExplorerPasteAction';
+    export const FILESEXPLORER_ONPASTE = 'java.action.filesExplorerPasteAction';
     /**
      * Choose type to import.
      */
@@ -257,10 +257,10 @@ export namespace Commands {
      * Command to switch between standard mode and lightweight mode.
      */
     export const SWITCH_SERVER_MODE = 'java.server.mode.switch';
-	/**
+    /**
      * Command to restart the language server.
      */
-	export const RESTART_LANGUAGE_SERVER = 'java.server.restart';
+    export const RESTART_LANGUAGE_SERVER = 'java.server.restart';
 
     export const LEARN_MORE_ABOUT_REFACTORING = '_java.learnMoreAboutRefactorings';
 
@@ -348,26 +348,26 @@ export namespace Commands {
     */
     export const GET_VISIBLE_EDITOR_CONTENT = '_java.getVisibleEditorContent';
 
-	/**
+    /**
      * Get troubleshooting info command in jdt.ls
      */
     export const GET_TROUBLESHOOTING_INFO = 'java.getTroubleshootingInfo';
 
-	/**
-	 * Open Java Dashboard
-	 */
-	export const OPEN_JAVA_DASHBOARD = 'java.dashboard.open';
+    /**
+     * Open Java Dashboard
+     */
+    export const OPEN_JAVA_DASHBOARD = 'java.dashboard.open';
 
     /**
      * Add Java Runtime
      */
     export const ADD_JAVA_RUNTIME = 'java.runtimes.add';
 
-	/**
+    /**
      * Copy fully qualified name.
      */
-	export const COPY_FULLY_QUALIFIED_NAME = 'java.action.copyFullyQualifiedName';
-	export const GET_FULLY_QUALIFIED_NAME = 'java.getFullyQualifiedName';
+    export const COPY_FULLY_QUALIFIED_NAME = 'java.action.copyFullyQualifiedName';
+    export const GET_FULLY_QUALIFIED_NAME = 'java.getFullyQualifiedName';
 }
 
 /**
