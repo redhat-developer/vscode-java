@@ -1053,7 +1053,7 @@
           },
           "java.format.settings.url": {
             "type": "string",
-            "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings).",
+            "markdownDescription": "Specifies the url or file path to the [Eclipse formatter xml settings](https://github.com/redhat-developer/vscode-java/wiki/Formatter-settings). Don't have one yet? [Generate a starter file](command:java.open.formatter.settings) seeded from the current formatter settings.",
             "default": null,
             "scope": "window",
             "order": 20
