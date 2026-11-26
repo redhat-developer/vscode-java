@@ -197,6 +197,18 @@
           ],
           "*.constructor": [
             "entity.name.function.java"
+          ],
+          "comment": [
+            "comment.line.double-slash.java"
+          ],
+          "string": [
+            "string.quoted.double.java"
+          ],
+          "number": [
+            "constant.numeric.decimal.java"
+          ],
+          "operator": [
+            "keyword.operator.java"
           ]
         }
       }
