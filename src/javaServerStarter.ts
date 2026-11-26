@@ -274,7 +274,7 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 		params.push('-noverify');
 	}
 
-	const serverHome: string = process.env.JDT_LS_PATH || path.resolve(__dirname, '../server');
+	const serverHome: string = getServerHome();
 	const launchersFound: Array<string> = globSync('**/plugins/org.eclipse.equinox.launcher_*.jar', { cwd: serverHome });
 	if (launchersFound.length) {
 		params.push('-jar'); params.push(path.resolve(serverHome, launchersFound[0]));
@@ -300,6 +300,13 @@ function prepareParams(requirements: RequirementsData, workspacePath, context: E
 
 	params.push('-data'); params.push(workspacePath);
 	return params;
+}
+
+/**
+ * The JDT LS installation folder: `JDT_LS_PATH`, or the `server` folder bundled with the extension.
+ */
+export function getServerHome(): string {
+	return process.env.JDT_LS_PATH || path.resolve(__dirname, '../server');
 }
 
 function resolveIndexCache(context: ExtensionContext) {

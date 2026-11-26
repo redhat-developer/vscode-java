@@ -1,5 +1,6 @@
 import assert from 'assert';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import { env } from 'process';
 import * as vscode from 'vscode';
@@ -199,6 +200,32 @@ suite('Java Language Extension - Standard', () => {
 		const result = plugin.collectJavaExtensions(extensions);
 		assert(result.length === 1);
 		assert(result[0].endsWith(path.normalize('./bin/java.extend.jar')));
+	});
+
+	test('should skip contributed java extensions the server already ships', () => {
+		const serverPluginsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'server-plugins-'));
+		try {
+			fs.writeFileSync(path.join(serverPluginsDir, 'org.objectweb.asm_9.10.1.jar'), '');
+			const fakedExtension = {
+				id: 'test',
+				extensionUri: null,
+				extensionPath: '',
+				isActive: true,
+				packageJSON: {
+					contributes: {
+						javaExtensions: ['./server/org.objectweb.asm_9.10.1.jar', './server/org.objectweb.asm.tree_9.10.1.jar']
+					}
+				},
+				exports: '',
+				activate: null,
+				extensionKind: vscode.ExtensionKind.Workspace
+			};
+
+			const result = plugin.collectJavaExtensions([fakedExtension], serverPluginsDir);
+			assert.deepStrictEqual(result.map(bundle => path.basename(bundle)), ['org.objectweb.asm.tree_9.10.1.jar']);
+		} finally {
+			fs.rmSync(serverPluginsDir, { recursive: true, force: true });
+		}
 	});
 
 	test('should parse Java version', () => {
