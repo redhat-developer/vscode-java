@@ -1,12 +1,17 @@
 'use strict';
 
+import * as fs from 'fs';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Commands } from './commands';
 import { extensions } from 'vscode';
+import { getServerHome } from './javaServerStarter';
+import { logger } from './log';
 
 export let existingExtensions: Array<string> = [];
 export let buildFilePatterns: Array<string> = [];
+// collectJavaExtensions runs several times per session, so each skipped bundle is logged once.
+const loggedSkippedBundles = new Set<string>();
 
 let javaShortcuts: Array<IJavaShortcut> | undefined;
 export interface IJavaShortcut {
@@ -48,16 +53,32 @@ function getShortcutsRegistration(extension: vscode.Extension<any>): Array<IJava
 	return undefined;
 }
 
-export function collectJavaExtensions(extensions: readonly vscode.Extension<any>[]): string[] {
+/**
+ * Collects the bundles that extensions contribute through `contributes.javaExtensions`.
+ *
+ * A contributed jar is left out when the server's `plugins` folder already has a jar with the
+ * same file name. p2 names jars `<symbolicName>_<version>.jar`, so that is the same bundle at the
+ * same version, and installing it again fails with "A bundle is already installed".
+ */
+export function collectJavaExtensions(extensions: readonly vscode.Extension<any>[], serverPluginsDir: string = path.join(getServerHome(), 'plugins')): string[] {
 	const result = [];
 	if (extensions && extensions.length) {
+		const serverJars = listJars(serverPluginsDir);
 		for (const extension of extensions) {
 			const contributesSection = extension.packageJSON['contributes'];
 			if (contributesSection) {
 				const javaExtensions = contributesSection['javaExtensions'];
 				if (Array.isArray(javaExtensions) && javaExtensions.length) {
 					for (const javaExtensionPath of javaExtensions) {
-						result.push(path.resolve(extension.extensionPath, javaExtensionPath));
+						const bundlePath = path.resolve(extension.extensionPath, javaExtensionPath);
+						if (serverJars.has(path.basename(bundlePath))) {
+							if (!loggedSkippedBundles.has(bundlePath)) {
+								loggedSkippedBundles.add(bundlePath);
+								logger.info(`Skipping ${bundlePath} contributed by ${extension.id}: the server already has ${path.basename(bundlePath)}`);
+							}
+							continue;
+						}
+						result.push(bundlePath);
 					}
 				}
 			}
@@ -66,6 +87,15 @@ export function collectJavaExtensions(extensions: readonly vscode.Extension<any>
 	// Make a copy of extensions:
 	existingExtensions = result.slice();
 	return result;
+}
+
+function listJars(folder: string): Set<string> {
+	try {
+		return new Set(fs.readdirSync(folder).filter(file => file.endsWith('.jar')));
+	} catch {
+		// No server folder (for example, JDT LS started separately): skip nothing.
+		return new Set();
+	}
 }
 
 export function collectBuildFilePattern(extensions: readonly vscode.Extension<any>[]) {
