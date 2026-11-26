@@ -125,6 +125,12 @@ export namespace Commands {
     export const OPEN_FORMATTER = 'java.open.formatter.settings';
 
     /**
+     * Server-side command: generate a starter java.format.settings.url XML file, seeded from the
+     * current effective formatter settings.
+     */
+    export const GENERATE_FORMATTER_SETTINGS = 'java.project.generateFormatterSettings';
+
+    /**
      * Open a file given the URI
      */
     export const OPEN_FILE = 'java.open.file';

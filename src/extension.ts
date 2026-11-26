@@ -1090,7 +1090,6 @@ function openLogFile(logFile, openingFailureWarning: string, column: ViewColumn 
 }
 
 async function openFormatter(extensionPath) {
-	const defaultFormatter = path.join(extensionPath, 'formatters', 'eclipse-formatter.xml');
 	const formatterUrl: string = getJavaConfiguration().get('format.settings.url');
 	if (formatterUrl && formatterUrl.length > 0) {
 		if (isRemote(formatterUrl)) {
@@ -1098,7 +1097,7 @@ async function openFormatter(extensionPath) {
 		} else {
 			const document = getPath(formatterUrl);
 			if (document && fs.existsSync(document)) {
-				return openDocument(extensionPath, document, defaultFormatter, null);
+				return openDocument(document);
 			}
 		}
 	}
@@ -1115,13 +1114,13 @@ async function openFormatter(extensionPath) {
 		file = path.join(root, fileName);
 	}
 	if (!fs.existsSync(file)) {
-		addFormatter(extensionPath, file, defaultFormatter, relativePath);
+		await promptAndGenerateFormatterSettings(extensionPath, file, relativePath);
 	} else {
 		if (formatterUrl) {
 			getJavaConfiguration().update('format.settings.url', (relativePath !== null ? relativePath : file), global);
-			openDocument(extensionPath, file, file, defaultFormatter);
+			openDocument(file);
 		} else {
-			addFormatter(extensionPath, file, defaultFormatter, relativePath);
+			await promptAndGenerateFormatterSettings(extensionPath, file, relativePath);
 		}
 	}
 }
@@ -1140,12 +1139,9 @@ function getPath(f) {
 	return null;
 }
 
-function openDocument(extensionPath, formatterUrl, defaultFormatter, relativePath) {
+function openDocument(formatterUrl) {
 	return workspace.openTextDocument(formatterUrl)
 		.then(doc => {
-			if (!doc) {
-				addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath);
-			}
 			return window.showTextDocument(doc, window.activeTextEditor ?
 				window.activeTextEditor.viewColumn : undefined)
 				.then(editor => !!editor);
@@ -1153,10 +1149,8 @@ function openDocument(extensionPath, formatterUrl, defaultFormatter, relativePat
 		.then(didOpen => {
 			if (!didOpen) {
 				window.showWarningMessage('Could not open Formatter Settings file');
-				addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath);
-			} else {
-				return didOpen;
 			}
+			return didOpen;
 		});
 }
 
@@ -1164,55 +1158,69 @@ function isRemote(f) {
 	return f !== null && f.startsWith('http:/') || f.startsWith('https:/') || f.startsWith('file:/');
 }
 
-async function addFormatter(extensionPath, formatterUrl, defaultFormatter, relativePath) {
+/**
+ * Prompts for a settings file path (or a remote URL), then creates it - seeded with a
+ * java.format.settings.url template generated live from the server's current effective formatter
+ * settings (java.project.generateFormatterSettings), not a static bundled file, so it stays
+ * accurate as the server's defaults evolve and reflects any overrides already in effect.
+ * java.format.settings.url is only updated once the file is actually written, not before, so a
+ * failed write never leaves the setting pointing at a file that doesn't exist.
+ */
+async function promptAndGenerateFormatterSettings(extensionPath, formatterUrl, relativePath) {
 	const options: InputBoxOptions = {
 		value: (relativePath ? relativePath : formatterUrl),
 		prompt: 'please enter URL or Path:',
 		ignoreFocusOut: true
 	};
-	await window.showInputBox(options).then(f => {
-		if (f) {
-			const global = workspace.workspaceFolders === undefined;
-			if (isRemote(f)) {
-				commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(f));
-				getJavaConfiguration().update('format.settings.url', f, global);
-			} else {
-				if (!path.isAbsolute(f)) {
-					const fileName = f;
-					if (!global) {
-						f = path.join(workspace.workspaceFolders[0].uri.fsPath, fileName);
-						relativePath = fileName;
-					} else {
-						const root = path.join(extensionPath, '..', 'redhat.java');
-						ensureExists(root);
-						f = path.join(root, fileName);
-					}
-				} else {
-					relativePath = null;
-				}
-				getJavaConfiguration().update('format.settings.url', (relativePath !== null ? relativePath : f), global);
-				if (!fs.existsSync(f)) {
-					const name = relativePath !== null ? relativePath : f;
-					const msg = `' ${name} ' does not exist. Do you want to create it?`;
-					const action = 'Yes';
-					window.showWarningMessage(msg, action, 'No').then((selection) => {
-						if (action === selection) {
-							try {
-								ensureExists(path.dirname(f));
-								fs.createReadStream(defaultFormatter)
-									.pipe(fs.createWriteStream(f))
-									.on('finish', () => openDocument(extensionPath, f, defaultFormatter, relativePath));
-							} catch (error) {
-								window.showErrorMessage(`Failed to create ${f}: ${error}`);
-							}
-						}
-					});
-				} else {
-					openDocument(extensionPath, f, defaultFormatter, relativePath);
-				}
-			}
+	const f = await window.showInputBox(options);
+	if (!f) {
+		return;
+	}
+	const global = workspace.workspaceFolders === undefined;
+	if (isRemote(f)) {
+		commands.executeCommand(Commands.OPEN_BROWSER, Uri.parse(f));
+		getJavaConfiguration().update('format.settings.url', f, global);
+		return;
+	}
+	let target = f;
+	let targetRelativePath = relativePath;
+	if (!path.isAbsolute(f)) {
+		const fileName = f;
+		if (!global) {
+			target = path.join(workspace.workspaceFolders[0].uri.fsPath, fileName);
+			targetRelativePath = fileName;
+		} else {
+			const root = path.join(extensionPath, '..', 'redhat.java');
+			ensureExists(root);
+			target = path.join(root, fileName);
 		}
-	});
+	} else {
+		targetRelativePath = null;
+	}
+	if (fs.existsSync(target)) {
+		openDocument(target);
+		return;
+	}
+	let content: string;
+	try {
+		content = await commands.executeCommand<string>(Commands.EXECUTE_WORKSPACE_COMMAND, Commands.GENERATE_FORMATTER_SETTINGS);
+	} catch (error) {
+		window.showErrorMessage(`Failed to generate formatter settings: ${error}`);
+		return;
+	}
+	if (!content) {
+		window.showErrorMessage('Failed to generate formatter settings: the server returned no content.');
+		return;
+	}
+	try {
+		ensureExists(path.dirname(target));
+		await fs.promises.writeFile(target, content, 'utf8');
+	} catch (error) {
+		window.showErrorMessage(`Failed to create ${target}: ${error}`);
+		return;
+	}
+	getJavaConfiguration().update('format.settings.url', (targetRelativePath !== null ? targetRelativePath : target), global);
+	openDocument(target);
 }
 
 async function getTriggerFiles(): Promise<string[]> {
