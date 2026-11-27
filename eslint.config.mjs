@@ -24,7 +24,7 @@ export default defineConfig([globalIgnores([
 	"test-temp",
 	"vscode*.d.ts",
 ]), {
-	files: ["src/**"],
+	files: ["src/**/*.ts"],
 
 	plugins: {
 		"@typescript-eslint": tseslint.plugin,

@@ -1421,10 +1421,10 @@ export function escapeSnippetLiterals(value: string): string {
  * when it is made in a document other than the active one.
  * Any command the action already has is passed along and run first.
  */
-function addRevealCommand(client: LanguageClient, codeAction: CodeAction, lspEdit: { documentChanges?: any[], changes?: { [uri: string]: any[] } } | undefined): CodeAction {
+function addRevealCommand(client: LanguageClient, codeAction: CodeAction, lspEdit: { documentChanges?: any[]; changes?: { [uri: string]: any[] } } | undefined): CodeAction {
 	if (lspEdit && codeAction.command?.command !== Commands.REVEAL_EDIT) {
 		// Taken from the raw edit because WorkspaceEdit.entries() doesn't include snippet edits
-		let target: { uri: string, range: any } | undefined;
+		let target: { uri: string; range: any } | undefined;
 		for (const docChange of lspEdit.documentChanges ?? []) {
 			if ("textDocument" in docChange && docChange.edits.length > 0) {
 				target = { uri: docChange.textDocument.uri, range: docChange.edits[0].range };
